@@ -65,6 +65,60 @@
       "description": "A generic image for stories.",
       "imageUrl": "https://images.unsplash.com/photo-1712407209533-c1b7e6fff485?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxteXRob2xvZ3klMjBzY3JvbGx8ZW58MHx8fHwxNzYzNDY5OTIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "mythology scroll"
+    },
+    {
+      "id": "adala-volcanic-canyon",
+      "description": "Image for Adala Volcanic Canyon.",
+      "imageUrl": "https://images.unsplash.com/photo-1666817197262-ced3cf1fff7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx2b2xjYW5pYyUyMGNhbnlvbnxlbnwwfHx8fDE3NjM0NzEwODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "volcanic canyon"
+    },
+    {
+      "id": "adala-ataturk-house",
+      "description": "Image for Adala Atatürk House.",
+      "imageUrl": "https://images.unsplash.com/photo-1662020954789-32940334ef4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoaXN0b3JpYyUyMGhvdXNlfGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "historic house"
+    },
+    {
+      "id": "suuctu-waterfall",
+      "description": "Image for Suuçtu Waterfall.",
+      "imageUrl": "https://images.unsplash.com/photo-1628344253777-f73a64d8f983?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXRlcmZhbGwlMjBuYXR1cmV8ZW58MHx8fHwxNzYzNDI5ODk1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "waterfall nature"
+    },
+    {
+      "id": "kiz-koprusu-maidens-bridge",
+      "description": "Image for Kız Köprüsü (Maiden's Bridge).",
+      "imageUrl": "https://images.unsplash.com/photo-1548706421-21eac6677a07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RvbmUlMjBicmlkZ2V8ZW58MHx8fHwxNzYzNDYyMTQzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "stone bridge"
+    },
+    {
+      "id": "bintepeler-lydian-tumuli",
+      "description": "Image for Bintepeler Lydian Tumuli.",
+      "imageUrl": "https://images.unsplash.com/photo-1717514608857-15bbab3985d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhbmNpZW50JTIwaGlsbHN8ZW58MHx8fHwxNzYzNDcxMDgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancient hills"
+    },
+    {
+      "id": "gymnasium",
+      "description": "Image for the Gymnasium at Sardis.",
+      "imageUrl": "https://images.unsplash.com/photo-1696884279475-0304ff18b102?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhbmNpZW50JTIwZ3ltbmFzaXVtfGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancient gymnasium"
+    },
+    {
+      "id": "temple-of-artemis",
+      "description": "Image for the Temple of Artemis at Sardis.",
+      "imageUrl": "https://images.unsplash.com/photo-1650343301290-e22780fe2609?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhbmNpZW50JTIwdGVtcGxlfGVufDB8fHx8MTc2MzQ2NjA1MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancient temple"
+    },
+    {
+      "id": "mudire-hanim-mansion",
+      "description": "Image for Müdire Hanım Mansion.",
+      "imageUrl": "https://images.unsplash.com/photo-1656944522457-f12db58d57b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxvdHRvbWFuJTIwbWFuc2lvbnxlbnwwfHx8fDE3NjM0NzEwODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ottoman mansion"
+    },
+    {
+      "id": "ancient-marble-quarry",
+      "description": "Image for the Ancient Marble Quarry.",
+      "imageUrl": "https://images.unsplash.com/photo-1573156667501-0a20e838aa13?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWFyYmxlJTIwcXVhcnJ5fGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "marble quarry"
     }
   ]
 }

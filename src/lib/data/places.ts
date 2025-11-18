@@ -139,5 +139,212 @@ export const places: Place[] = [
         },
         category: 'nature',
         coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 }
+    },
+    {
+        id: '7',
+        slug: {
+            tr: 'adala-volkanik-kanyonu',
+            en: 'adala-volcanic-canyon',
+            fr: 'canyon-volcanique-adala',
+            de: 'vulkanischer-canyon-adala'
+        },
+        name: {
+            tr: 'Adala Volkanik Kanyonu',
+            en: 'Adala Volcanic Canyon',
+            fr: 'Canyon Volcanique d\'Adala',
+            de: 'Vulkanischer Canyon von Adala'
+        },
+        description: {
+            tr: 'Gediz Nehri\'nin binlerce yılda bazalt kayaları aşındırarak oluşturduğu bu kanyon, etkileyici manzaralar sunar. Doğa yürüyüşü ve fotoğrafçılık için ideal olan bölge, Kula-Salihli Jeoparkı\'nın önemli bir parçasıdır.',
+            en: 'This canyon, formed by the Gediz River eroding basalt rocks over thousands of years, offers impressive views. Ideal for hiking and photography, the area is an important part of the Kula-Salihli Geopark.',
+            fr: 'Ce canyon, formé par l\'érosion des roches basaltiques par la rivière Gediz au fil des milliers d\'années, offre des vues impressionnantes. Idéale pour la randonnée et la photographie, la région est une partie importante du Géoparc de Kula-Salihli.',
+            de: 'Diese Schlucht, die durch die Erosion von Basaltfelsen durch den Fluss Gediz über Tausende von Jahren entstanden ist, bietet beeindruckende Ausblicke. Ideal zum Wandern und Fotografieren, ist das Gebiet ein wichtiger Teil des Geoparks Kula-Salihli.'
+        },
+        category: 'nature',
+        coordinates: { lat: 38.5772, lng: 28.3225 }
+    },
+    {
+        id: '8',
+        slug: {
+            tr: 'adala-ataturk-evi',
+            en: 'adala-ataturk-house',
+            fr: 'maison-ataturk-adala',
+            de: 'adala-ataturk-haus'
+        },
+        name: {
+            tr: 'Adala Atatürk Evi',
+            en: 'Adala Atatürk House',
+            fr: 'Maison Atatürk d\'Adala',
+            de: 'Adala Atatürk-Haus'
+        },
+        description: {
+            tr: 'Kurtuluş Savaşı sırasında Mustafa Kemal Atatürk\'ün bir süre konakladığı bu ev, restore edilerek müzeye dönüştürülmüştür. O döneme ait eşyalar ve belgelerle tarihi bir yolculuğa çıkın.',
+            en: 'This house, where Mustafa Kemal Atatürk stayed for a while during the War of Independence, has been restored and turned into a museum. Take a historical journey with items and documents from that period.',
+            fr: 'Cette maison, où Mustafa Kemal Atatürk a séjourné pendant un certain temps pendant la guerre d\'indépendance, a été restaurée et transformée en musée. Faites un voyage historique avec des objets et des documents de cette période.',
+            de: 'Dieses Haus, in dem Mustafa Kemal Atatürk während des Unabhängigkeitskrieges eine Zeit lang wohnte, wurde restauriert und in ein Museum umgewandelt. Machen Sie eine historische Reise mit Gegenständen und Dokumenten aus dieser Zeit.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.5781, lng: 28.3255 }
+    },
+    {
+        id: '9',
+        slug: {
+            tr: 'suuctu-selalesi',
+            en: 'suuctu-waterfall',
+            fr: 'cascade-suuctu',
+            de: 'suuctu-wasserfall'
+        },
+        name: {
+            tr: 'Suuçtu Şelalesi',
+            en: 'Suuçtu Waterfall',
+            fr: 'Cascade de Suuçtu',
+            de: 'Suuçtu Wasserfall'
+        },
+        description: {
+            tr: 'Yemyeşil bir doğanın ortasında, yaklaşık 30 metreden dökülen sularıyla Suuçtu Şelalesi, özellikle bahar aylarında büyüleyici bir güzelliğe bürünür. Serinlemek ve piknik yapmak için popüler bir noktadır.',
+            en: 'In the midst of lush nature, Suuçtu Waterfall, with its waters pouring from about 30 meters, takes on a fascinating beauty, especially in the spring. It is a popular spot for cooling off and picnicking.',
+            fr: 'Au milieu d\'une nature luxuriante, la cascade de Suuçtu, avec ses eaux tombant d\'environ 30 mètres, revêt une beauté fascinante, surtout au printemps. C\'est un endroit populaire pour se rafraîchir et pique-niquer.',
+            de: 'Inmitten üppiger Natur entfaltet der Suuçtu-Wasserfall, dessen Wasser aus etwa 30 Metern Höhe herabstürzt, besonders im Frühling eine faszinierende Schönheit. Er ist ein beliebter Ort zum Abkühlen und Picknicken.'
+        },
+        category: 'nature',
+        coordinates: { lat: 38.3833, lng: 28.3667 }
+    },
+    {
+        id: '10',
+        slug: {
+            tr: 'kiz-koprusu',
+            en: 'kiz-koprusu-maidens-bridge',
+            fr: 'pont-des-demoiselles-kiz-koprusu',
+            de: 'jungfrauenbrucke-kiz-koprusu'
+        },
+        name: {
+            tr: 'Kız Köprüsü',
+            en: 'Kız Köprüsü (Maiden\'s Bridge)',
+            fr: 'Pont des Demoiselles (Kız Köprüsü)',
+            de: 'Jungfrauenbrücke (Kız Köprüsü)'
+        },
+        description: {
+            tr: 'Adala\'da Gediz Nehri üzerinde bulunan bu tarihi köprü, Roma dönemine aittir. Efsaneye göre, köprünün yapımı için halktan toplanan paralara bir kızın da çeyizini bağışlaması nedeniyle bu adı almıştır. Taş işçiliğinin güzel bir örneğidir.',
+            en: 'Located on the Gediz River in Adala, this historical bridge dates back to the Roman period. According to legend, it was named after a girl who donated her dowry to the money collected from the public for the construction of the bridge. It is a fine example of stonemasonry.',
+            fr: 'Situé sur la rivière Gediz à Adala, ce pont historique remonte à la période romaine. Selon la légende, il a été nommé ainsi d\'après une jeune fille qui a fait don de sa dot à l\'argent collecté auprès du public pour la construction du pont. C\'est un bel exemple de maçonnerie en pierre.',
+            de: 'Diese historische Brücke über den Fluss Gediz in Adala stammt aus der Römerzeit. Der Legende nach wurde sie nach einem Mädchen benannt, das ihre Mitgift dem für den Bau der Brücke von der Öffentlichkeit gesammelten Geld spendete. Sie ist ein schönes Beispiel für Steinmetzarbeiten.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.5750, lng: 28.3200 }
+    },
+    {
+        id: '11',
+        slug: {
+            tr: 'bintepeler-lidya-tumulusleri',
+            en: 'bintepeler-lydian-tumuli',
+            fr: 'tumulus-lydiens-de-bintepeler',
+            de: 'lydische-tumuli-von-bintepeler'
+        },
+        name: {
+            tr: 'Bintepeler Lidya Tümülüsleri',
+            en: 'Bintepeler Lydian Tumuli',
+            fr: 'Tumulus Lydiens de Bintepeler',
+            de: 'Lydische Tumuli von Bintepeler'
+        },
+        description: {
+            tr: 'Lidya kralları ve soyluları için yapılmış anıt mezarlardır. Anadolu\'nun en büyük tümülüslerinin bulunduğu bu alan, "Anadolu\'nun Piramitleri" olarak anılır. Karun ve Alyattes gibi ünlü kralların mezarları burada yer alır.',
+            en: 'These are monumental tombs built for Lydian kings and nobles. This area, which contains the largest tumuli in Anatolia, is known as the "Pyramids of Anatolia." The tombs of famous kings like Croesus and Alyattes are located here.',
+            fr: 'Ce sont des tombes monumentales construites pour les rois et les nobles lydiens. Cette zone, qui contient les plus grands tumulus d\'Anatolie, est connue sous le nom de "Pyramides d\'Anatolie". Les tombes de rois célèbres comme Crésus et Alyatte s\'y trouvent.',
+            de: 'Dies sind monumentale Gräber, die für lydische Könige und Adlige erbaut wurden. Dieses Gebiet, das die größten Tumuli Anatoliens enthält, ist als die "Pyramiden Anatoliens" bekannt. Die Gräber berühmter Könige wie Krösus und Alyattes befinden sich hier.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.5333, lng: 27.9667 }
+    },
+    {
+        id: '12',
+        slug: {
+            tr: 'gymnasium',
+            en: 'gymnasium',
+            fr: 'gymnase',
+            de: 'gymnasium'
+        },
+        name: {
+            tr: 'Gymnasium',
+            en: 'Gymnasium',
+            fr: 'Gymnase',
+            de: 'Gymnasium'
+        },
+        description: {
+            tr: 'Sardes Antik Kenti\'nin en etkileyici yapılarından biridir. Roma döneminde hem spor okulu hem de sosyalleşme alanı olarak kullanılmıştır. Büyüklüğü ve iyi korunmuş mermer avlusuyla dikkat çeker.',
+            en: 'One of the most impressive structures in the Ancient City of Sardis. It was used as both a sports school and a socialization area during the Roman period. It attracts attention with its size and well-preserved marble courtyard.',
+            fr: 'L\'une des structures les plus impressionnantes de la cité antique de Sardes. Il était utilisé à la fois comme école de sport et comme lieu de socialisation à l\'époque romaine. Il attire l\'attention par sa taille et sa cour en marbre bien conservée.',
+            de: 'Eines der beeindruckendsten Bauwerke in der antiken Stadt Sardes. Es wurde während der Römerzeit sowohl als Sportschule als auch als Sozialisationsbereich genutzt. Es fällt durch seine Größe und seinen gut erhaltenen Marmorhof auf.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.4867, lng: 28.0378 }
+    },
+    {
+        id: '13',
+        slug: {
+            tr: 'artemis-tapinagi',
+            en: 'temple-of-artemis',
+            fr: 'temple-artemis',
+            de: 'artemis-tempel'
+        },
+        name: {
+            tr: 'Artemis Tapınağı',
+            en: 'Temple of Artemis',
+            fr: 'Temple d\'Artémis',
+            de: 'Artemis-Tempel'
+        },
+        description: {
+            tr: 'Antik dünyanın en büyük dördüncü İyon düzeni tapınağıdır. Lidya döneminde yapımına başlanmış ve Roma dönemine kadar kullanılmıştır. Ayakta kalan devasa sütunları, yapının görkemini gözler önüne serer.',
+            en: 'It is the fourth largest Ionic order temple in the ancient world. Its construction began in the Lydian period and it was used until the Roman period. Its remaining giant columns reveal the magnificence of the structure.',
+            fr: 'C\'est le quatrième plus grand temple d\'ordre ionique du monde antique. Sa construction a commencé à l\'époque lydienne et il a été utilisé jusqu\'à l\'époque romaine. Ses colonnes géantes restantes révèlent la magnificence de la structure.',
+            de: 'Es ist der viertgrößte ionische Tempel der antiken Welt. Sein Bau begann in der lydischen Zeit und er wurde bis in die römische Zeit genutzt. Seine verbliebenen riesigen Säulen zeigen die Pracht des Bauwerks.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.4794, lng: 28.0416 }
+    },
+    {
+        id: '14',
+        slug: {
+            tr: 'mudire-hanim-konagi',
+            en: 'mudire-hanim-mansion',
+            fr: 'manoir-mudire-hanim',
+            de: 'herrenhaus-mudire-hanim'
+        },
+        name: {
+            tr: 'Müdire Hanım Konağı',
+            en: 'Müdire Hanım Mansion',
+            fr: 'Manoir Müdire Hanım',
+            de: 'Herrenhaus Müdire Hanım'
+        },
+        description: {
+            tr: 'Geç Osmanlı dönemine ait bu konak, sivil mimarinin zarif bir örneğidir. Adını, uzun yıllar okul olarak hizmet vermesinden ve "Müdire Hanım" olarak anılan yöneticisinden almıştır. Restore edilerek kültür merkezi olarak kullanılmaktadır.',
+            en: 'This mansion from the late Ottoman period is an elegant example of civil architecture. It gets its name from serving as a school for many years and from its administrator, known as "Müdire Hanım" (Headmistress). It has been restored and is used as a cultural center.',
+            fr: 'Ce manoir de la fin de la période ottomane est un élégant exemple d\'architecture civile. Il tire son nom du fait qu\'il a servi d\'école pendant de nombreuses années et de son administratrice, connue sous le nom de "Müdire Hanım" (Directrice). Il a été restauré et est utilisé comme centre culturel.',
+            de: 'Dieses Herrenhaus aus der späten osmanischen Zeit ist ein elegantes Beispiel für zivile Architektur. Seinen Namen verdankt es dem Umstand, dass es viele Jahre als Schule diente, und seiner Verwalterin, die als "Müdire Hanım" (Schulleiterin) bekannt war. Es wurde restauriert und wird als Kulturzentrum genutzt.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.4850, lng: 28.1420 }
+    },
+    {
+        id: '15',
+        slug: {
+            tr: 'antik-mermer-ocagi',
+            en: 'ancient-marble-quarry',
+            fr: 'carriere-de-marbre-antique',
+            de: 'antiker-marmorsteinbruch'
+        },
+        name: {
+            tr: 'Antik Mermer Ocağı',
+            en: 'Ancient Marble Quarry',
+            fr: 'Carrière de Marbre Antique',
+            de: 'Antiker Marmorsteinbruch'
+        },
+        description: {
+            tr: 'Sardes Antik Kenti\'nin ihtişamlı yapılarında kullanılan mermerlerin çıkarıldığı bu ocak, antik dönemdeki taş işçiliği ve mühendisliği hakkında önemli ipuçları sunar. Yarım kalmış sütunlar ve bloklar görülebilir.',
+            en: 'This quarry, where the marbles used in the magnificent structures of the Ancient City of Sardis were extracted, offers important clues about ancient stonemasonry and engineering. Unfinished columns and blocks can be seen.',
+            fr: 'Cette carrière, d\'où étaient extraits les marbres utilisés dans les magnifiques structures de la cité antique de Sardes, offre des indices importants sur la taille de pierre et l\'ingénierie antiques. On peut y voir des colonnes et des blocs inachevés.',
+            de: 'Dieser Steinbruch, in dem die für die prächtigen Bauten der antiken Stadt Sardes verwendeten Marmore abgebaut wurden, bietet wichtige Hinweise auf antike Steinmetzkunst und Ingenieurskunst. Unfertige Säulen und Blöcke sind zu sehen.'
+        },
+        category: 'history',
+        coordinates: { lat: 38.4680, lng: 28.0250 }
     }
 ];
