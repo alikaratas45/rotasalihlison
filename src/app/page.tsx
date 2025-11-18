@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -17,7 +18,7 @@ export default function Home() {
 
   const typedLanguage = language as Language;
 
-  const popularDestinations = places.filter(p => ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-odun-kofte'].includes(p.slug.en)).slice(0, 3);
+  const popularDestinations = places.filter(p => ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-wood-meatballs'].includes(p.slug.en)).slice(0, 3);
   const thematicRoutes = routes.slice(0, 3);
 
   const experienceMenu = [
@@ -68,14 +69,18 @@ export default function Home() {
                         alt={place.name[typedLanguage]}
                         data-ai-hint={placeholder?.imageHint || 'landmark'}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover md:group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:from-black/60 md:to-transparent" />
                     </div>
-                    <div className="absolute bottom-0 p-4 text-white">
+                    <div className="absolute bottom-0 p-4 text-white hidden md:block">
                       <h3 className="text-2xl font-bold font-headline">{place.name[typedLanguage]}</h3>
                       <span className="text-accent">{t('actions.seeDetails')}</span>
                     </div>
+                     <div className="p-4 bg-card text-card-foreground md:hidden">
+                        <h3 className="text-xl font-bold font-headline mb-1">{place.name[typedLanguage]}</h3>
+                        <span className="text-sm text-accent">{t('actions.seeDetails')}</span>
+                     </div>
                   </Link>
                 </CardContent>
               </Card>
