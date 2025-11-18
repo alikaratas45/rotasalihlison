@@ -14,7 +14,7 @@ import Link from 'next/link';
 export default function PlaceDetailPage() {
   const params = useParams();
   const slug = params.slug;
-  const { t, language } = useTranslation();
+  const { t, language, isAudioGuideEnabled } = useTranslation();
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
@@ -25,6 +25,12 @@ export default function PlaceDetailPage() {
   const description = place ? place.description[language] || place.description.tr : '';
 
   useEffect(() => {
+    if (!isAudioGuideEnabled) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      return;
+    }
+
     const synth = window.speechSynthesis;
     
     // Function to create and set up the utterance
@@ -59,10 +65,11 @@ export default function PlaceDetailPage() {
       synth.cancel();
       synth.onvoiceschanged = null; // Clean up the event listener
     };
-  }, [description, language]);
+  }, [description, language, isAudioGuideEnabled]);
 
 
   const handlePlayPause = () => {
+    if (!isAudioGuideEnabled) return;
     const synth = window.speechSynthesis;
     if (isPlaying) {
       synth.cancel(); // Stop speaking
@@ -118,10 +125,12 @@ export default function PlaceDetailPage() {
                     Haritada Göster
                 </a>
             </Button>
-            <Button size="lg" variant="outline" onClick={handlePlayPause}>
-                {isPlaying ? <Pause className="mr-2" /> : <Volume2 className="mr-2" />}
-                {isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
-            </Button>
+            {isAudioGuideEnabled && (
+                <Button size="lg" variant="outline" onClick={handlePlayPause}>
+                    {isPlaying ? <Pause className="mr-2" /> : <Volume2 className="mr-2" />}
+                    {isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
+                </Button>
+            )}
           </div>
         </div>
       </div>

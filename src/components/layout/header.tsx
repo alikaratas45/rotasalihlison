@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Globe } from 'lucide-react';
+import { Menu, Sun, Moon, Globe, Volume2, VolumeX } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -14,7 +14,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
 export function Header() {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -40,6 +40,7 @@ export function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
+          <AudioGuideToggle />
           <LanguageSwitcher />
           <ThemeToggle />
 
@@ -123,3 +124,23 @@ function LanguageSwitcher() {
       </DropdownMenu>
     );
 }
+
+function AudioGuideToggle() {
+    const { isAudioGuideEnabled, toggleAudioGuide } = useTranslation();
+  
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleAudioGuide}
+        aria-label="Toggle Audio Guide"
+      >
+        {isAudioGuideEnabled ? (
+          <Volume2 className="h-5 w-5" />
+        ) : (
+          <VolumeX className="h-5 w-5" />
+        )}
+        <span className="sr-only">Toggle Audio Guide</span>
+      </Button>
+    );
+  }

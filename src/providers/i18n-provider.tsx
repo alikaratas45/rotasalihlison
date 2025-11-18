@@ -10,6 +10,8 @@ interface I18nContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string, ...args: any[]) => string;
+  isAudioGuideEnabled: boolean;
+  toggleAudioGuide: () => void;
 }
 
 export const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -18,17 +20,34 @@ const translations: Record<Language, any> = { en, tr };
 
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>('tr');
+  const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
 
   useEffect(() => {
     const browserLang = navigator.language.split('-')[0];
     const initialLang = browserLang === 'tr' ? 'tr' : 'en';
     setLanguageState(initialLang);
     document.documentElement.lang = initialLang;
+
+    const savedAudioPreference = localStorage.getItem('audioGuideEnabled');
+    if (savedAudioPreference !== null) {
+        setIsAudioGuideEnabled(JSON.parse(savedAudioPreference));
+    }
   }, []);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     document.documentElement.lang = lang;
+  }, []);
+
+  const toggleAudioGuide = useCallback(() => {
+    setIsAudioGuideEnabled(prev => {
+        const newState = !prev;
+        localStorage.setItem('audioGuideEnabled', JSON.stringify(newState));
+        if (!newState) {
+            window.speechSynthesis.cancel();
+        }
+        return newState;
+    });
   }, []);
 
   const t = useCallback((key: string, ...args: any[]): string => {
@@ -51,7 +70,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [language]);
 
   return (
-    <I18nContext.Provider value={{ language, setLanguage, t }}>
+    <I18nContext.Provider value={{ language, setLanguage, t, isAudioGuideEnabled, toggleAudioGuide }}>
       {children}
     </I18nContext.Provider>
   );
