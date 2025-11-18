@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
+import { LanguageProvider } from '@/providers/language-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
-import { I18nProvider } from '@/providers/i18n-provider';
-import AppProviders from '@/providers/app-providers';
+import AppWrapper from '@/components/layout/app-wrapper';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -22,9 +22,13 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <AppProviders>
-          {children}
-        </AppProviders>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <LanguageProvider>
+            <AppWrapper>
+              {children}
+            </AppWrapper>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
