@@ -3,20 +3,18 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Languages, Globe, X, Mic } from 'lucide-react';
+import { Menu, Sun, Moon, Globe } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 
 import { Logo } from '@/components/icons/logo';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 
 export function Header() {
-  const { t, language, setLanguage } = useTranslation();
+  const { t, language } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -42,12 +40,6 @@ export function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
-            <div className="hidden md:flex items-center gap-2 mr-2">
-                <Mic className="w-4 h-4 text-muted-foreground"/>
-                <Label htmlFor="audio-guide-switch-desktop" className="text-sm text-muted-foreground pr-2">{t('header.audioGuide')}</Label>
-                <Switch id="audio-guide-switch-desktop" />
-            </div>
-
           <LanguageSwitcher />
           <ThemeToggle />
 
@@ -78,13 +70,6 @@ export function Header() {
                     </Link>
                   ))}
                 </nav>
-                 <div className="mt-auto border-t pt-4">
-                    <div className="flex items-center gap-2">
-                        <Mic className="w-5 h-5 text-muted-foreground"/>
-                        <Label htmlFor="audio-guide-switch-mobile" className="text-lg text-muted-foreground pr-2">{t('header.audioGuide')}</Label>
-                        <Switch id="audio-guide-switch-mobile" />
-                    </div>
-                </div>
               </div>
             </SheetContent>
           </Sheet>
