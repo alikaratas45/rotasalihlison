@@ -18,8 +18,8 @@ export default function PlaceDetailPage() {
   const { t, language, isAudioGuideEnabled } = useLanguage();
   
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false); // Used as a loading state
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const typedLanguage = language as Language;
 
@@ -31,8 +31,8 @@ export default function PlaceDetailPage() {
   const stopAudio = useCallback(() => {
     if (speechSynthesis.speaking) {
       speechSynthesis.cancel();
-      setIsPlaying(false);
     }
+    setIsPlaying(false);
   }, []);
 
   useEffect(() => {
@@ -47,63 +47,59 @@ export default function PlaceDetailPage() {
   }, [isAudioGuideEnabled, stopAudio]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    const speakText = () => {
-      setIsGenerating(false);
-      
+    
+    const trySpeak = () => {
+      setIsGenerating(true);
       const voices = speechSynthesis.getVoices();
+
       if (voices.length === 0) {
-        setIsGenerating(true);
-        speechSynthesis.addEventListener('voiceschanged', speakText, { once: true });
+        speechSynthesis.resume(); // Try to wake up the speech engine
+        speechSynthesis.addEventListener('voiceschanged', trySpeak, { once: true });
         return;
       }
+      setIsGenerating(false);
       
       const utterance = new SpeechSynthesisUtterance(text);
-      utteranceRef.current = utterance;
       
-      const langMap: Record<Language, string> = {
-        'tr': 'tr-TR',
-        'en': 'en-US',
-        'fr': 'fr-FR',
+      const langMap: Record<Language, string[]> = {
+        'tr': ['tr-TR'],
+        'en': ['en-US', 'en-GB'],
+        'fr': ['fr-FR'],
         'de': 'de-DE'
       };
-      const voiceLang = langMap[lang] || 'en-US';
-
-      // 1. Try to find the exact voice match first (e.g., 'tr-TR')
-      let selectedVoice = voices.find(voice => voice.lang === voiceLang);
       
-      // 2. If no exact match, find a voice that starts with the language code (e.g., 'en' for 'en-GB')
+      const voiceLang = lang;
+      
+      let selectedVoice = voices.find(voice => voice.lang.replace('_', '-') === langMap[voiceLang][0]);
+
       if (!selectedVoice) {
-        selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
+         selectedVoice = voices.find(voice => voice.lang.startsWith(voiceLang));
       }
       
       if (selectedVoice) {
         utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        utterance.lang = langMap[voiceLang][0] || 'en-US';
       }
-      utterance.lang = selectedVoice?.lang || voiceLang;
 
       utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
       utterance.onerror = (event) => {
         setIsPlaying(false);
+        setIsGenerating(false);
       };
       
       speechSynthesis.speak(utterance);
-    };
-
-    speakText();
+    }
+    trySpeak();
   }, []);
 
   const handlePlayPause = async () => {
-    if (!isAudioGuideEnabled) return;
+    if (!isAudioGuideEnabled || isGenerating) return;
 
     if (speechSynthesis.speaking) {
-      if (speechSynthesis.paused) {
-        speechSynthesis.resume();
-        setIsPlaying(true);
-      } else {
-        speechSynthesis.pause();
-        setIsPlaying(false);
-      }
+        stopAudio();
     } else {
       speak(description, typedLanguage);
     }
@@ -161,7 +157,7 @@ export default function PlaceDetailPage() {
                     ) : (
                         <Volume2 className="mr-2" />
                     )}
-                    {isGenerating ? "Yükleniyor..." : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
+                    {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
                 </Button>
             )}
           </div>

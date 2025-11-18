@@ -38,6 +38,7 @@
         "seeDetails": "See Details →",
         "listenAudio": "Listen Audio",
         "stopAudio": "Stop",
+        "loadingAudio": "Loading...",
         "startRouteOnMap": "Start Route on Map",
         "whereToEat": "Where to Eat?",
         "showOnMap": "Show on Map",
