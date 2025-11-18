@@ -72,5 +72,9 @@
         "notFoundDescription": "The story you are looking for does not exist.",
         "by": "By:",
         "relatedPlace": "Related Place"
+    },
+    "cuisine": {
+        "title": "Salihli's Flavor Map",
+        "description": "We are showing you the best dining places in Salihli on the map. Enjoy your meal!"
     }
 }

@@ -72,5 +72,9 @@
         "notFoundDescription": "L'histoire que vous recherchez n'existe pas.",
         "by": "Par :",
         "relatedPlace": "Lieu associé"
+    },
+    "cuisine": {
+        "title": "Carte des saveurs de Salihli",
+        "description": "Nous vous montrons les meilleurs restaurants de Salihli sur la carte. Bon appétit !"
     }
 }

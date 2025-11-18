@@ -71,5 +71,9 @@
         "notFoundDescription": "Aradığınız hikaye mevcut değil.",
         "by": "Yazan:",
         "relatedPlace": "İlişkili Mekan"
+    },
+    "cuisine": {
+        "title": "Salihli'nin Lezzet Haritası",
+        "description": "Salihli'nin en iyi yeme içme mekanlarını sizin için haritada gösteriyoruz. Afiyet olsun!"
     }
 }

@@ -72,5 +72,9 @@
         "notFoundDescription": "Die gesuchte Geschichte existiert nicht.",
         "by": "Von:",
         "relatedPlace": "Verwandter Ort"
+    },
+    "cuisine": {
+        "title": "Salihlis Geschmackskarte",
+        "description": "Wir zeigen Ihnen die besten Restaurants in Salihli auf der Karte. Guten Appetit!"
     }
 }
