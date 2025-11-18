@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { places } from '@/lib/data/places';
@@ -8,9 +8,10 @@ import { Placeholders } from '@/lib/placeholder-images';
 import { useTranslation } from '@/hooks/use-translation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Volume2, Pause } from 'lucide-react';
+import { MapPin, Volume2, Pause, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/providers/i18n-provider';
+import { generateAudioGuide, type AudioGuideOutput } from '@/ai/flows/text-to-speech-flow';
 
 export default function PlaceDetailPage() {
   const params = useParams();
@@ -18,7 +19,9 @@ export default function PlaceDetailPage() {
   const { t, language, isAudioGuideEnabled } = useTranslation();
   
   const [isPlaying, setIsPlaying] = useState(false);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [audioData, setAudioData] = useState<AudioGuideOutput | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const typedLanguage = language as Language;
 
@@ -28,87 +31,72 @@ export default function PlaceDetailPage() {
   const description = place ? place.description[typedLanguage] : '';
 
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    const updateVoices = () => {
-      setVoices(synth.getVoices());
-    };
-
-    // Voices are loaded asynchronously. We need to listen for the 'voiceschanged' event.
-    updateVoices();
-    synth.addEventListener('voiceschanged', updateVoices);
-
-    // Cleanup function
-    return () => {
-      synth.removeEventListener('voiceschanged', updateVoices);
-      synth.cancel(); // Stop any speech on component unmount
-    };
-  }, []);
-
-  useEffect(() => {
-    // Also stop speech when the audio guide is disabled from the header
+    // When the audio guide is disabled from the header, stop and reset audio
     if (!isAudioGuideEnabled) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+        setIsPlaying(false);
+        setAudioData(null);
     }
   }, [isAudioGuideEnabled]);
 
-  const speak = useCallback(() => {
-    const synth = window.speechSynthesis;
-    if (!description || synth.speaking) {
+  const handlePlayPause = async () => {
+    if (!isAudioGuideEnabled) return;
+
+    // If audio is currently playing, pause it
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(description);
-    
-    // Find a suitable voice for the current language
-    const langCode = language.split('-')[0];
-    const selectedVoice = voices.find(voice => voice.lang.startsWith(langCode));
-    
-    if (selectedVoice) {
-        utterance.voice = selectedVoice;
-    } else {
-        console.warn(`No voice found for language: ${langCode}. Using default.`);
+    // If audio is paused, resume playing
+    if (!isPlaying && audioData && audioRef.current) {
+        audioRef.current.play();
+        setIsPlaying(true);
+        return;
     }
 
-    utterance.onend = () => {
-      setIsPlaying(false);
-    };
-
-    utterance.onerror = (event) => {
-      console.error('SpeechSynthesisUtterance.onerror', event);
-      setIsPlaying(false);
-    };
-    
-    synth.cancel(); // Stop any previous speech just in case
-    synth.speak(utterance);
-    setIsPlaying(true);
-  }, [description, language, voices]);
-
-
-  const handlePlayPause = () => {
-    if (!isAudioGuideEnabled) return;
-
-    const synth = window.speechSynthesis;
-
-    if (isPlaying) {
-      synth.cancel();
-      setIsPlaying(false);
-    } else {
-       // If voices are not loaded yet, getVoices() and speak might fail
-       // We can try to speak directly, and it should queue if ready.
-       // The `speak` function handles finding the right voice from the state.
-       if (synth.getVoices().length === 0) {
-           // On some mobile browsers, getVoices is only populated after first speaking attempt
-            const utterance = new SpeechSynthesisUtterance(" ");
-            utterance.onend = () => {
-                speak();
-            }
-            synth.speak(utterance);
-       } else {
-            speak();
-       }
+    // If no audio data, generate it
+    if (!audioData) {
+        setIsGenerating(true);
+        try {
+            const result = await generateAudioGuide({ textToSpeak: description });
+            setAudioData(result);
+            // The audio will be played via the useEffect below once audioData is set
+        } catch (error) {
+            console.error("Error generating audio:", error);
+            // Optionally, show a toast notification to the user
+        } finally {
+            setIsGenerating(false);
+        }
     }
   };
+
+  // Effect to play audio when data becomes available
+  useEffect(() => {
+    if (audioData && audioRef.current) {
+        audioRef.current.src = audioData.audioDataUri;
+        audioRef.current.play().catch(e => console.error("Error playing audio:", e));
+        setIsPlaying(true);
+    }
+  }, [audioData]);
+
+  // Effect to handle audio ending
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    const handleAudioEnd = () => setIsPlaying(false);
+    
+    if (audioElement) {
+        audioElement.addEventListener('ended', handleAudioEnd);
+        return () => {
+            audioElement.removeEventListener('ended', handleAudioEnd);
+        };
+    }
+  }, []);
+
   
   const placeholder = place ? Placeholders.find(p => p.id === place.slug.en) : undefined;
 
@@ -154,14 +142,21 @@ export default function PlaceDetailPage() {
                 </a>
             </Button>
             {isAudioGuideEnabled && (
-                <Button size="lg" variant="outline" onClick={handlePlayPause}>
-                    {isPlaying ? <Pause className="mr-2" /> : <Volume2 className="mr-2" />}
-                    {isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
+                <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating}>
+                    {isGenerating ? (
+                        <Loader2 className="mr-2 animate-spin" />
+                    ) : isPlaying ? (
+                        <Pause className="mr-2" />
+                    ) : (
+                        <Volume2 className="mr-2" />
+                    )}
+                    {isGenerating ? "Üretiliyor..." : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
                 </Button>
             )}
           </div>
         </div>
       </div>
+      <audio ref={audioRef} className="hidden" />
     </div>
   );
 }
