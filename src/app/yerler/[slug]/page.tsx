@@ -26,48 +26,39 @@ export default function PlaceDetailPage() {
 
   useEffect(() => {
     const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(description);
     
-    // Find a Turkish voice if language is 'tr'
-    const voices = synth.getVoices();
-    if (language === 'tr') {
-      const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
-      if (turkishVoice) {
-        u.voice = turkishVoice;
-      }
-    }
-    
-    u.onend = () => {
-      setIsPlaying(false);
+    // Function to create and set up the utterance
+    const setupUtterance = () => {
+        const u = new SpeechSynthesisUtterance(description);
+        const voices = synth.getVoices();
+        
+        if (language === 'tr') {
+            const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
+            if (turkishVoice) {
+                u.voice = turkishVoice;
+            }
+        }
+        
+        u.onend = () => {
+            setIsPlaying(false);
+        };
+        
+        setUtterance(u);
     };
-    setUtterance(u);
+
+    // If voices are already loaded, set up immediately.
+    // Otherwise, set up when they are loaded.
+    if (synth.getVoices().length !== 0) {
+        setupUtterance();
+    } else {
+        synth.onvoiceschanged = setupUtterance;
+    }
 
     // Cleanup function to cancel speech when component unmounts or description changes
     return () => {
       synth.cancel();
+      synth.onvoiceschanged = null; // Clean up the event listener
     };
-  }, [description, language]);
-
-  // Load voices
-  useEffect(() => {
-      const synth = window.speechSynthesis;
-      if (synth.getVoices().length === 0) {
-          synth.onvoiceschanged = () => {
-               // Re-create utterance when voices are loaded to pick the correct one
-                const u = new SpeechSynthesisUtterance(description);
-                const voices = synth.getVoices();
-                 if (language === 'tr') {
-                    const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
-                    if (turkishVoice) {
-                        u.voice = turkishVoice;
-                    }
-                }
-                u.onend = () => {
-                    setIsPlaying(false);
-                };
-                setUtterance(u);
-          };
-      }
   }, [description, language]);
 
 
@@ -77,6 +68,8 @@ export default function PlaceDetailPage() {
       synth.cancel(); // Stop speaking
       setIsPlaying(false);
     } else if (utterance) {
+      // Ensure we cancel any previous speech before starting a new one
+      synth.cancel(); 
       synth.speak(utterance);
       setIsPlaying(true);
     }
