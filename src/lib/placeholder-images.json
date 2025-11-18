@@ -119,6 +119,12 @@
       "description": "Image for the Ancient Marble Quarry.",
       "imageUrl": "https://images.unsplash.com/photo-1573156667501-0a20e838aa13?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWFyYmxlJTIwcXVhcnJ5fGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "marble quarry"
+    },
+    {
+      "id": "gokeyup-pottery",
+      "description": "Image for Gökeyüp Pottery.",
+      "imageUrl": "https://images.unsplash.com/photo-1559190282-d46a48f43a2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwb3R0ZXJ5fGVufDB8fHx8MTc2MzkxOTcyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pottery workshop"
     }
   ]
 }

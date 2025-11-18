@@ -346,5 +346,28 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.4680, lng: 28.0250 }
+    },
+    {
+        id: '16',
+        slug: {
+            tr: 'gokeyup-comlekciligi',
+            en: 'gokeyup-pottery',
+            fr: 'poterie-de-gokeyup',
+            de: 'goekeyup-toepferei'
+        },
+        name: {
+            tr: 'Gökeyüp Çömlekçiliği',
+            en: 'Gökeyüp Pottery',
+            fr: 'Poterie de Gökeyüp',
+            de: 'Töpferei in Gökeyüp'
+        },
+        description: {
+            tr: 'Salihli\'ye bağlı Gökeyüp mahallesinde yüzyıllardır devam eden geleneksel çömlekçilik sanatı. Toprağın sanata dönüştüğü bu köyde, atölyeleri ziyaret edebilir ve el yapımı ürünlerden satın alabilirsiniz.',
+            en: 'The traditional art of pottery that has been going on for centuries in the Gökeyüp neighborhood of Salihli. In this village where soil turns into art, you can visit workshops and buy handmade products.',
+            fr: 'L\'art traditionnel de la poterie qui se perpétue depuis des siècles dans le quartier de Gökeyüp à Salihli. Dans ce village où la terre se transforme en art, vous pouvez visiter des ateliers et acheter des produits faits à la main.',
+            de: 'Die traditionelle Töpferkunst, die seit Jahrhunderten im Stadtteil Gökeyüp von Salihli fortbesteht. In diesem Dorf, in dem Erde zu Kunst wird, können Sie Werkstätten besuchen und handgefertigte Produkte kaufen.'
+        },
+        category: 'shopping',
+        coordinates: { lat: 38.6483, lng: 28.3245 }
     }
 ];
