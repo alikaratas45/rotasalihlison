@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { places } from '@/lib/data/places';
@@ -18,6 +18,7 @@ export default function PlaceDetailPage() {
   const { t, language, isAudioGuideEnabled } = useTranslation();
   
   const [isPlaying, setIsPlaying] = useState(false);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   const typedLanguage = language as Language;
 
@@ -27,9 +28,19 @@ export default function PlaceDetailPage() {
   const description = place ? place.description[typedLanguage] : '';
 
   useEffect(() => {
-    // Stop speech synthesis on component unmount or when dependencies change
+    const synth = window.speechSynthesis;
+    const updateVoices = () => {
+      setVoices(synth.getVoices());
+    };
+
+    // Voices are loaded asynchronously. We need to listen for the 'voiceschanged' event.
+    updateVoices();
+    synth.addEventListener('voiceschanged', updateVoices);
+
+    // Cleanup function
     return () => {
-      window.speechSynthesis.cancel();
+      synth.removeEventListener('voiceschanged', updateVoices);
+      synth.cancel(); // Stop any speech on component unmount
     };
   }, []);
 
@@ -41,32 +52,61 @@ export default function PlaceDetailPage() {
     }
   }, [isAudioGuideEnabled]);
 
+  const speak = useCallback(() => {
+    const synth = window.speechSynthesis;
+    if (!description || synth.speaking) {
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(description);
+    
+    // Find a suitable voice for the current language
+    const langCode = language.split('-')[0];
+    const selectedVoice = voices.find(voice => voice.lang.startsWith(langCode));
+    
+    if (selectedVoice) {
+        utterance.voice = selectedVoice;
+    } else {
+        console.warn(`No voice found for language: ${langCode}. Using default.`);
+    }
+
+    utterance.onend = () => {
+      setIsPlaying(false);
+    };
+
+    utterance.onerror = (event) => {
+      console.error('SpeechSynthesisUtterance.onerror', event);
+      setIsPlaying(false);
+    };
+    
+    synth.cancel(); // Stop any previous speech just in case
+    synth.speak(utterance);
+    setIsPlaying(true);
+  }, [description, language, voices]);
+
+
   const handlePlayPause = () => {
     if (!isAudioGuideEnabled) return;
+
     const synth = window.speechSynthesis;
 
     if (isPlaying) {
       synth.cancel();
       setIsPlaying(false);
     } else {
-      const u = new SpeechSynthesisUtterance(description);
-      const voices = synth.getVoices();
-      
-      // Find a suitable voice for the current language
-      const langCode = language.split('-')[0];
-      const selectedVoice = voices.find(voice => voice.lang.startsWith(langCode));
-      
-      if (selectedVoice) {
-          u.voice = selectedVoice;
-      }
-      
-      u.onend = () => {
-        setIsPlaying(false);
-      };
-      
-      synth.cancel(); // Stop any previous speech
-      synth.speak(u);
-      setIsPlaying(true);
+       // If voices are not loaded yet, getVoices() and speak might fail
+       // We can try to speak directly, and it should queue if ready.
+       // The `speak` function handles finding the right voice from the state.
+       if (synth.getVoices().length === 0) {
+           // On some mobile browsers, getVoices is only populated after first speaking attempt
+            const utterance = new SpeechSynthesisUtterance(" ");
+            utterance.onend = () => {
+                speak();
+            }
+            synth.speak(utterance);
+       } else {
+            speak();
+       }
     }
   };
   
