@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { places } from '@/lib/data/places';
 import { Placeholders } from '@/lib/placeholder-images';
@@ -11,7 +12,7 @@ import { MapPin, Volume2, Pause } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PlaceDetailPage() {
-  const params = useState();
+  const params = useParams();
   const slug = params.slug;
   const { t, language } = useTranslation();
   
