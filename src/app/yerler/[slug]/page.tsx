@@ -51,10 +51,15 @@ export default function PlaceDetailPage() {
       setIsGenerating(false);
       
       const voices = speechSynthesis.getVoices();
+      if (voices.length === 0) {
+        setIsGenerating(true);
+        speechSynthesis.addEventListener('voiceschanged', speakText, { once: true });
+        return;
+      }
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utteranceRef.current = utterance;
       
-      // Find a suitable voice. Prefer full match (e.g., 'en-US'), fallback to partial match (e.g., 'en').
       const langMap: Record<Language, string> = {
         'tr': 'tr-TR',
         'en': 'en-US',
@@ -63,7 +68,10 @@ export default function PlaceDetailPage() {
       };
       const voiceLang = langMap[lang] || 'en-US';
 
+      // 1. Try to find the exact voice match first (e.g., 'tr-TR')
       let selectedVoice = voices.find(voice => voice.lang === voiceLang);
+      
+      // 2. If no exact match, find a voice that starts with the language code (e.g., 'en' for 'en-GB')
       if (!selectedVoice) {
         selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
       }
@@ -71,24 +79,18 @@ export default function PlaceDetailPage() {
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
-      utterance.lang = voiceLang;
+      utterance.lang = selectedVoice?.lang || voiceLang;
 
       utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
       utterance.onerror = (event) => {
-        // console.error('SpeechSynthesisUtterance.onerror', event);
         setIsPlaying(false);
       };
       
       speechSynthesis.speak(utterance);
     };
 
-    if (speechSynthesis.getVoices().length === 0) {
-      setIsGenerating(true);
-      speechSynthesis.addEventListener('voiceschanged', speakText, { once: true });
-    } else {
-      speakText();
-    }
+    speakText();
   }, []);
 
   const handlePlayPause = async () => {
