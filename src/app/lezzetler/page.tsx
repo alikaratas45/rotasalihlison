@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useTranslation } from '@/hooks/use-translation';
+import { useLanguage } from '@/hooks/use-language';
 import { Utensils } from 'lucide-react';
 
 export default function LezzetlerPage() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setTimeout(() => {

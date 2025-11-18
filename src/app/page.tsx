@@ -9,11 +9,11 @@ import { Dna, Mountain, Utensils, ShoppingBag, MapPinned } from 'lucide-react';
 import { places } from '@/lib/data/places';
 import { routes } from '@/lib/data/routes';
 import { Placeholders } from '@/lib/placeholder-images';
-import { useTranslation } from '@/hooks/use-translation';
-import type { Language } from '@/providers/i18n-provider';
+import { useLanguage } from '@/hooks/use-language';
+import type { Language } from '@/context/language-context';
 
 export default function Home() {
-  const { t, language } = useTranslation();
+  const { t, language } = useLanguage();
   const heroImage = Placeholders.find(p => p.id === 'hero-main');
 
   const typedLanguage = language as Language;

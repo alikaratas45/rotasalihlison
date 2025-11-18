@@ -7,16 +7,16 @@ import Link from 'next/link';
 import { stories } from '@/lib/data/stories';
 import { places } from '@/lib/data/places';
 import { Placeholders } from '@/lib/placeholder-images';
-import { useTranslation } from '@/hooks/use-translation';
+import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, MapPin } from 'lucide-react';
-import type { Language } from '@/providers/i18n-provider';
+import type { Language } from '@/context/language-context';
 
 export default function StoryDetailPage() {
   const params = useParams();
   const slug = params.slug;
-  const { t, language } = useTranslation();
+  const { t, language } = useLanguage();
   const typedLanguage = language as Language;
 
   const story = stories.find(s => Object.values(s.slug).includes(slug as string));

@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { Logo } from '@/components/icons/logo';
-import { useTranslation } from '@/hooks/use-translation';
+import { useLanguage } from '@/hooks/use-language';
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const { t } = useTranslation();
+  const { t } = useLanguage();
 
   return (
     <footer className="bg-secondary/30 border-t">

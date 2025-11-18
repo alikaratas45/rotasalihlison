@@ -11,14 +11,14 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 import { Logo } from '@/components/icons/logo';
-import { FlagTR, FlagGB, FlagFR, FlagDE } from '@/components/icons/flags';
-import { useTranslation } from '@/hooks/use-translation';
+import { TurkishFlagIcon, UKFlagIcon, FrenchFlagIcon, GermanFlagIcon } from '@/components/icons/flags';
+import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
-import type { Language } from '@/providers/i18n-provider';
+import type { Language } from '@/context/language-context';
 import React from 'react';
 
 export function Header() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -103,14 +103,14 @@ function ThemeToggle() {
 }
 
 const languages: { code: Language; name: string; flag: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
-    { code: 'tr', name: 'Türkçe', flag: FlagTR },
-    { code: 'en', name: 'English', flag: FlagGB },
-    { code: 'fr', name: 'Français', flag: FlagFR },
-    { code: 'de', name: 'Deutsch', flag: FlagDE },
+    { code: 'tr', name: 'Türkçe', flag: TurkishFlagIcon },
+    { code: 'en', name: 'English', flag: UKFlagIcon },
+    { code: 'fr', name: 'Français', flag: FrenchFlagIcon },
+    { code: 'de', name: 'Deutsch', flag: GermanFlagIcon },
 ];
 
 function LanguageSwitcher() {
-    const { language, setLanguage } = useTranslation();
+    const { language, setLanguage } = useLanguage();
     
     const selectedLanguage = languages.find(lang => lang.code === language);
 
@@ -139,7 +139,7 @@ function LanguageSwitcher() {
 }
 
 function AudioGuideToggle() {
-    const { isAudioGuideEnabled, toggleAudioGuide } = useTranslation();
+    const { isAudioGuideEnabled, toggleAudioGuide } = useLanguage();
   
     return (
       <Button

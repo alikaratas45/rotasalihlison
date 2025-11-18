@@ -2,14 +2,14 @@
 
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/icons/logo';
-import { useTranslation } from '@/hooks/use-translation';
+import { useLanguage } from '@/hooks/use-language';
 
 interface SplashScreenProps {
   isLoading: boolean;
 }
 
 export function SplashScreen({ isLoading }: SplashScreenProps) {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
 
   return (
     <div

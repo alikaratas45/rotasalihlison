@@ -8,14 +8,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { places } from '@/lib/data/places';
 import { Placeholders } from '@/lib/placeholder-images';
-import { useTranslation } from '@/hooks/use-translation';
+import { useLanguage } from '@/hooks/use-language';
 import { Suspense } from 'react';
-import type { Language } from '@/providers/i18n-provider';
+import type { Language } from '@/context/language-context';
 
 function YerlerContent() {
   const searchParams = useSearchParams();
   const category = searchParams.get('category');
-  const { t, language } = useTranslation();
+  const { t, language } = useLanguage();
 
   const typedLanguage = language as Language;
 

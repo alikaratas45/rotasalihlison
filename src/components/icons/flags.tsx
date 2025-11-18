@@ -1,7 +1,7 @@
 
 import type { SVGProps } from 'react';
 
-export function FlagTR(props: SVGProps<SVGSVGElement>) {
+export function TurkishFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" {...props}>
         <rect width="900" height="600" fill="#E30A17" />
@@ -12,7 +12,7 @@ export function FlagTR(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function FlagGB(props: SVGProps<SVGSVGElement>) {
+export function UKFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" {...props}>
       <clipPath id="a">
@@ -49,7 +49,7 @@ export function FlagGB(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function FlagFR(props: SVGProps<SVGSVGElement>) {
+export function FrenchFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" {...props}>
       <path fill="#002395" d="M0 0h300v600H0z" />
@@ -59,7 +59,7 @@ export function FlagFR(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function FlagDE(props: SVGProps<SVGSVGElement>) {
+export function GermanFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 3" {...props}>
       <path d="M0 0h5v3H0z" />

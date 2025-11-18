@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { LanguageProvider } from '@/providers/language-provider';
+import { LanguageProvider } from '@/context/language-context';
 import { ThemeProvider } from '@/providers/theme-provider';
 import AppWrapper from '@/components/layout/app-wrapper';
 import './globals.css';

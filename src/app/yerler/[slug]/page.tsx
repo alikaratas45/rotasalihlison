@@ -5,17 +5,17 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { places } from '@/lib/data/places';
 import { Placeholders } from '@/lib/placeholder-images';
-import { useTranslation } from '@/hooks/use-translation';
+import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MapPin, Volume2, Pause, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import type { Language } from '@/providers/i18n-provider';
+import type { Language } from '@/context/language-context';
 
 export default function PlaceDetailPage() {
   const params = useParams();
   const slug = params.slug;
-  const { t, language, isAudioGuideEnabled } = useTranslation();
+  const { t, language, isAudioGuideEnabled } = useLanguage();
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false); // Used as a loading state
