@@ -38,7 +38,7 @@ export default function Home() {
             Salihli'yi Keşfet
           </h1>
           <p className="mt-4 text-lg md:text-2xl drop-shadow-md">
-            Sardes'in Mirası, Gediz'in İncisi
+            Sardes'in mirası, paranın merkezi
           </p>
           <Button asChild className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90">
             <Link href="/yerler">Hemen Başla</Link>

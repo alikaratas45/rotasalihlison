@@ -6,7 +6,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Rota Salihli',
-  description: "Sardes'in Mirası, Gediz'in İncisi",
+  description: "Sardes'in mirası, paranın merkezi",
 };
 
 export default function RootLayout({
