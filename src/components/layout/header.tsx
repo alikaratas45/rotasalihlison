@@ -102,7 +102,7 @@ function ThemeToggle() {
   );
 }
 
-const languages: { code: Language; name: string; flag: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
+const languages: { code: Language; name: string; flag: React.FC<any> }[] = [
     { code: 'tr', name: 'Türkçe', flag: TurkishFlagIcon },
     { code: 'en', name: 'English', flag: UKFlagIcon },
     { code: 'fr', name: 'Français', flag: FrenchFlagIcon },
