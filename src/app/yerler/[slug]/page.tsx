@@ -54,15 +54,19 @@ export default function PlaceDetailPage() {
       const utterance = new SpeechSynthesisUtterance(text);
       utteranceRef.current = utterance;
       
+      // Find a suitable voice. Prefer full match (e.g., 'en-US'), fallback to partial match (e.g., 'en').
       const langMap: Record<Language, string> = {
         'tr': 'tr-TR',
         'en': 'en-US',
         'fr': 'fr-FR',
         'de': 'de-DE'
       };
-      
       const voiceLang = langMap[lang] || 'en-US';
-      const selectedVoice = voices.find(voice => voice.lang === voiceLang);
+
+      let selectedVoice = voices.find(voice => voice.lang === voiceLang);
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
+      }
       
       if (selectedVoice) {
         utterance.voice = selectedVoice;
@@ -72,7 +76,7 @@ export default function PlaceDetailPage() {
       utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
       utterance.onerror = (event) => {
-        console.error('SpeechSynthesisUtterance.onerror', event);
+        // console.error('SpeechSynthesisUtterance.onerror', event);
         setIsPlaying(false);
       };
       
