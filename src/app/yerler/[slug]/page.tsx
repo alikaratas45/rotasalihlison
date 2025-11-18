@@ -7,16 +7,44 @@ import { Placeholders } from '@/lib/placeholder-images';
 import { useTranslation } from '@/hooks/use-translation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Ear } from 'lucide-react';
+import { MapPin, Ear, Loader, Play, Pause } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useRef, useEffect } from 'react';
+import { generateAudioGuide } from '@/ai/flows/text-to-speech-flow';
+import { useToast } from '@/hooks/use-toast';
 
 export default function PlaceDetailPage() {
   const params = useParams();
   const slug = params.slug;
   const { t, language } = useTranslation();
+  const { toast } = useToast();
+
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const place = places.find(p => p.slug.tr === slug || p.slug.en === slug);
   const placeholder = place ? Placeholders.find(p => p.id === place.slug.en) : undefined;
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, [audioRef.current]);
 
   if (!place) {
     return (
@@ -34,6 +62,38 @@ export default function PlaceDetailPage() {
   const description = place.description[language] || place.description.tr;
 
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`;
+
+  const handleAudioGuide = async () => {
+    if (audioUrl && audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      return;
+    }
+
+    setIsLoadingAudio(true);
+    try {
+      const result = await generateAudioGuide({ textToSpeak: description });
+      setAudioUrl(result.audioDataUri);
+    } catch (error) {
+      console.error('Error generating audio guide:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Sesli Rehber Hatası',
+        description: 'Sesli rehber oluşturulurken bir sorun oluştu. Lütfen tekrar deneyin.',
+      });
+    } finally {
+      setIsLoadingAudio(false);
+    }
+  };
+  
+  useEffect(() => {
+    if (audioUrl && audioRef.current) {
+        audioRef.current.play();
+    }
+  }, [audioUrl]);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -62,13 +122,20 @@ export default function PlaceDetailPage() {
                     Haritada Göster
                 </a>
             </Button>
-            <Button size="lg" variant="outline">
-              <Ear className="mr-2" />
-              {t('actions.listenAudio')}
+            <Button size="lg" variant="outline" onClick={handleAudioGuide} disabled={isLoadingAudio}>
+                {isLoadingAudio ? (
+                    <Loader className="mr-2 animate-spin" />
+                ) : isPlaying ? (
+                    <Pause className="mr-2" />
+                ) : (
+                    <Play className="mr-2" />
+                )}
+                {isPlaying ? t('Durdur') : t('actions.listenAudio')}
             </Button>
           </div>
         </div>
       </div>
+      {audioUrl && <audio ref={audioRef} src={audioUrl} />}
     </div>
   );
 }
