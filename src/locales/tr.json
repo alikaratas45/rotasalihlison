@@ -37,11 +37,15 @@
         "listenAudio": "Sesli Dinle",
         "stopAudio": "Durdur",
         "startRouteOnMap": "Rotayı Haritada Başlat",
-        "whereToEat": "Nerede Yenir?"
+        "whereToEat": "Nerede Yenir?",
+        "showOnMap": "Haritada Göster",
+        "viewAllPlaces": "Tüm Yerleri Gör"
     },
     "places": {
         "title": "Tüm Yerleri Keşfet",
-        "description": "Salihli'nin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin."
+        "description": "Salihli'nin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin.",
+        "notFoundTitle": "Yer Bulunamadı",
+        "notFoundDescription": "Aradığınız yer mevcut değil."
     },
     "history": {
         "title": "Tarihe Yolculuk",

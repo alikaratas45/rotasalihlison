@@ -1,8 +1,12 @@
+"use client";
+
 import Link from 'next/link';
 import { Logo } from '@/components/icons/logo';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const { t } = useTranslation();
 
   return (
     <footer className="bg-secondary/30 border-t">
@@ -14,20 +18,20 @@ export function Footer() {
               <span className="font-bold text-lg font-headline">Rota Salihli</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Rota Salihli, Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.
+              {t('footer.about')}
             </p>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Bağlantılar</h4>
+            <h4 className="font-semibold mb-4">{t('footer.links')}</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/yerler" className="text-muted-foreground hover:text-primary">Yerler</Link></li>
-              <li><Link href="/rotalar" className="text-muted-foreground hover:text-primary">Rotalar</Link></li>
-              <li><Link href="/hikayeler" className="text-muted-foreground hover:text-primary">Hikayeler</Link></li>
-              <li><Link href="/lezzetler" className="text-muted-foreground hover:text-primary">Lezzetler</Link></li>
+              <li><Link href="/yerler" className="text-muted-foreground hover:text-primary">{t('header.places')}</Link></li>
+              <li><Link href="/rotalar" className="text-muted-foreground hover:text-primary">{t('header.routes')}</Link></li>
+              <li><Link href="/hikayeler" className="text-muted-foreground hover:text-primary">{t('header.stories')}</Link></li>
+              <li><Link href="/lezzetler" className="text-muted-foreground hover:text-primary">{t('header.cuisine')}</Link></li>
             </ul>
           </div>
            <div>
-            <h4 className="font-semibold mb-4">İletişim</h4>
+            <h4 className="font-semibold mb-4">{t('footer.contact')}</h4>
              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Salihli Belediyesi</li>
                 <li>Mithatpaşa, 25. Sk., 45300 Salihli/Manisa</li>
@@ -36,7 +40,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {year} Salihli Belediyesi. Tüm hakları saklıdır.</p>
+          <p>&copy; {year} Salihli Belediyesi. {t('footer.copyright')}</p>
         </div>
       </div>
     </footer>

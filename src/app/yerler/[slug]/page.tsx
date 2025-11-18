@@ -25,64 +25,49 @@ export default function PlaceDetailPage() {
   const description = place ? place.description[language] || place.description.tr : '';
 
   useEffect(() => {
+    const synth = window.speechSynthesis;
+    
+    // Cleanup on component unmount or when dependencies change
+    return () => {
+      synth.cancel();
+    };
+  }, [description, language]);
+
+  useEffect(() => {
     if (!isAudioGuideEnabled) {
       window.speechSynthesis.cancel();
       setIsPlaying(false);
-      return;
     }
-
-    const synth = window.speechSynthesis;
-    
-    // Function to create and set up the utterance
-    const setupUtterance = () => {
-        const u = new SpeechSynthesisUtterance(description);
-        const voices = synth.getVoices();
-        
-        if (language === 'tr') {
-            const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
-            if (turkishVoice) {
-                u.voice = turkishVoice;
-            }
-        } else if (language === 'en') {
-            const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
-            if (englishVoice) {
-                u.voice = englishVoice;
-            }
-        }
-        
-        u.onend = () => {
-            setIsPlaying(false);
-        };
-        
-        setUtterance(u);
-    };
-
-    // If voices are already loaded, set up immediately.
-    // Otherwise, set up when they are loaded.
-    if (synth.getVoices().length !== 0) {
-        setupUtterance();
-    } else {
-        synth.onvoiceschanged = setupUtterance;
-    }
-
-    // Cleanup function to cancel speech when component unmounts or description changes
-    return () => {
-      synth.cancel();
-      synth.onvoiceschanged = null; // Clean up the event listener
-    };
-  }, [description, language, isAudioGuideEnabled]);
-
+  }, [isAudioGuideEnabled]);
 
   const handlePlayPause = () => {
     if (!isAudioGuideEnabled) return;
     const synth = window.speechSynthesis;
+
     if (isPlaying) {
-      synth.cancel(); // Stop speaking
+      synth.cancel();
       setIsPlaying(false);
-    } else if (utterance) {
-      // Ensure we cancel any previous speech before starting a new one
-      synth.cancel(); 
-      synth.speak(utterance);
+    } else {
+      const u = new SpeechSynthesisUtterance(description);
+      const voices = synth.getVoices();
+      
+      let selectedVoice;
+      if (language === 'tr') {
+          selectedVoice = voices.find(voice => voice.lang.startsWith('tr'));
+      } else if (language === 'en') {
+          selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+      }
+      
+      if (selectedVoice) {
+          u.voice = selectedVoice;
+      }
+      
+      u.onend = () => {
+        setIsPlaying(false);
+      };
+      
+      synth.cancel(); // Stop any previous speech
+      synth.speak(u);
       setIsPlaying(true);
     }
   };
@@ -92,10 +77,10 @@ export default function PlaceDetailPage() {
   if (!place) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-4xl font-bold">Yer Bulunamadı</h1>
-        <p className="text-muted-foreground mt-4">Aradığınız yer mevcut değil.</p>
+        <h1 className="text-4xl font-bold">{t('places.notFoundTitle')}</h1>
+        <p className="text-muted-foreground mt-4">{t('places.notFoundDescription')}</p>
         <Button asChild className="mt-8">
-          <Link href="/yerler">Tüm Yerleri Gör</Link>
+          <Link href="/yerler">{t('actions.viewAllPlaces')}</Link>
         </Button>
       </div>
     );
@@ -127,7 +112,7 @@ export default function PlaceDetailPage() {
              <Button size="lg" asChild>
                 <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
                     <MapPin className="mr-2" />
-                    Haritada Göster
+                    {t('actions.showOnMap')}
                 </a>
             </Button>
             {isAudioGuideEnabled && (

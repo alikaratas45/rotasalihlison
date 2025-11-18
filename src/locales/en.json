@@ -37,11 +37,15 @@
         "listenAudio": "Listen Audio",
         "stopAudio": "Stop",
         "startRouteOnMap": "Start Route on Map",
-        "whereToEat": "Where to Eat?"
+        "whereToEat": "Where to Eat?",
+        "showOnMap": "Show on Map",
+        "viewAllPlaces": "View All Places"
     },
     "places": {
         "title": "Discover All Places",
-        "description": "Explore all the historical, natural, and cultural riches that Salihli has to offer."
+        "description": "Explore all the historical, natural, and cultural riches that Salihli has to offer.",
+        "notFoundTitle": "Place Not Found",
+        "notFoundDescription": "The place you are looking for does not exist."
     },
     "history": {
         "title": "Journey to History",

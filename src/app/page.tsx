@@ -1,3 +1,5 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -6,18 +8,20 @@ import { Dna, Mountain, Utensils, ShoppingBag, MapPinned } from 'lucide-react';
 import { places } from '@/lib/data/places';
 import { routes } from '@/lib/data/routes';
 import { Placeholders } from '@/lib/placeholder-images';
-
-const popularDestinations = places.filter(p => ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-odun-kofte'].includes(p.slug.en)).slice(0, 3);
-const thematicRoutes = routes.slice(0, 3);
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function Home() {
+  const { t, language } = useTranslation();
   const heroImage = Placeholders.find(p => p.id === 'hero-main');
 
+  const popularDestinations = places.filter(p => ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-odun-kofte'].includes(p.slug.en)).slice(0, 3);
+  const thematicRoutes = routes.slice(0, 3);
+
   const experienceMenu = [
-    { name: 'Tarihe Yolculuk', icon: Dna, link: '/yerler?category=history' },
-    { name: 'Doğa ve Huzur', icon: Mountain, link: '/yerler?category=nature' },
-    { name: 'Lezzet Durakları', icon: Utensils, link: '/lezzetler' },
-    { name: 'Alışveriş', icon: ShoppingBag, link: '/yerler?category=shopping' },
+    { name: t('home.historyTrip'), icon: Dna, link: '/yerler?category=history' },
+    { name: t('home.naturePeace'), icon: Mountain, link: '/yerler?category=nature' },
+    { name: t('home.flavorStops'), icon: Utensils, link: '/lezzetler' },
+    { name: t('home.shopping'), icon: ShoppingBag, link: '/yerler?category=shopping' },
   ];
 
   return (
@@ -35,13 +39,13 @@ export default function Home() {
         )}
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center p-4">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline drop-shadow-lg">
-            Salihli'yi Keşfet
+            {t('home.heroTitle')}
           </h1>
           <p className="mt-4 text-lg md:text-2xl drop-shadow-md">
-            Sardes'in mirası, paranın merkezi
+            {t('home.heroSubtitle')}
           </p>
           <Button asChild className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link href="/yerler">Hemen Başla</Link>
+            <Link href="/yerler">{t('home.getStarted')}</Link>
           </Button>
         </div>
       </section>
@@ -54,11 +58,11 @@ export default function Home() {
               return (
               <Card key={place.id} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
                 <CardContent className="p-0">
-                  <Link href={`/yerler/${place.slug.tr}`} className="block">
+                  <Link href={`/yerler/${place.slug[language]}`} className="block">
                     <div className="relative h-64 w-full">
                       <Image
                         src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                        alt={place.name.tr}
+                        alt={place.name[language]}
                         data-ai-hint={placeholder?.imageHint || 'landmark'}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -66,8 +70,8 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     </div>
                     <div className="absolute bottom-0 p-4 text-white">
-                      <h3 className="text-2xl font-bold font-headline">{place.name.tr}</h3>
-                      <span className="text-accent">Detayları Gör →</span>
+                      <h3 className="text-2xl font-bold font-headline">{place.name[language]}</h3>
+                      <span className="text-accent">{t('actions.seeDetails')}</span>
                     </div>
                   </Link>
                 </CardContent>
@@ -79,8 +83,8 @@ export default function Home() {
 
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold font-headline mb-2">Salihli'de Bir Gün</h2>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">Farklı deneyimler arasından seçimini yap, Salihli maceranı kişiselleştir.</p>
+          <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {experienceMenu.map((item) => (
               <Link href={item.link} key={item.name} className="group">
@@ -97,23 +101,23 @@ export default function Home() {
       <section className="py-12 md:py-20 bg-secondary/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold font-headline mb-2">Tematik Rotalar</h2>
-            <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">Salihli'nin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.</p>
+            <h2 className="text-3xl font-bold font-headline mb-2">{t('home.thematicRoutesTitle')}</h2>
+            <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">{t('home.thematicRoutesSubtitle')}</p>
             <Button asChild variant="outline">
-                <Link href="/rotalar">Tüm Rotaları Gör</Link>
+                <Link href="/rotalar">{t('home.allRoutes')}</Link>
             </Button>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {thematicRoutes.map(route => {
               const placeholder = Placeholders.find(p => p.id === route.slug.en);
               return (
-              <Link href={`/rotalar/${route.slug.tr}`} key={route.id} className="group">
+              <Link href={`/rotalar/${route.slug[language]}`} key={route.id} className="group">
                 <Card className="overflow-hidden h-full">
                   <CardContent className="p-0 flex flex-col h-full">
                     <div className="relative h-48 w-full">
                       <Image
                         src={placeholder?.imageUrl || `https://picsum.photos/seed/${route.id}/600/400`}
-                        alt={route.name.tr}
+                        alt={route.name[language]}
                         data-ai-hint={placeholder?.imageHint || 'route map'}
                         fill
                         className="object-cover"
@@ -121,11 +125,11 @@ export default function Home() {
                       <div className="absolute inset-0 bg-black/20" />
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
-                      <h3 className="text-xl font-bold font-headline mb-2">{route.name.tr}</h3>
-                      <p className="text-muted-foreground text-sm flex-grow">{route.description.tr.substring(0, 100)}...</p>
+                      <h3 className="text-xl font-bold font-headline mb-2">{route.name[language]}</h3>
+                      <p className="text-muted-foreground text-sm flex-grow">{route.description[language].substring(0, 100)}...</p>
                       <div className="flex items-center text-sm text-primary font-semibold mt-4">
                         <MapPinned className="w-4 h-4 mr-2"/>
-                        <span>{route.stops.length} Durak</span>
+                        <span>{route.stops.length} {t('home.stops', {count: route.stops.length})}</span>
                       </div>
                     </div>
                   </CardContent>
