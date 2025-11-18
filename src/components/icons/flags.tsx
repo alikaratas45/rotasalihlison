@@ -3,13 +3,14 @@ import type { SVGProps } from 'react';
 import Image from 'next/image';
 
 export function TurkishFlagIcon(props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) {
+  const { width = 24, height = 16, ...rest } = props;
   return (
     <Image
       src="/Turkey.png"
       alt="Turkish Flag"
-      width={24}
-      height={16}
-      {...props}
+      width={width}
+      height={height}
+      {...rest}
     />
   );
 }
