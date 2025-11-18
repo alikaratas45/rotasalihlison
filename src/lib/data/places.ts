@@ -23,7 +23,7 @@ export const places: Place[] = [
             de: 'Sardes, die prächtige Hauptstadt des Lydischen Königreichs, war Schauplatz vieler Neuerungen, die den Lauf der Geschichte veränderten. Bekannt als der erste Ort, an dem im 7. Jahrhundert v. Chr. Geld geprägt wurde, war diese antike Stadt mit ihrem Reichtum und ihrer Macht eine der wichtigsten Metropolen der antiken Welt. Die Stadt bietet eine Zeitreise mit ihrem riesigen Artemis-Tempel, der beeindruckend restaurierten Synagoge, dem Gymnasium und den Geschäften aus der Römerzeit. Bei einem Spaziergang durch dieses Land, in dem der Fluss Pactolus (Sart) Gold geführt haben soll, werden Sie das reiche Erbe Lydiens und die Pracht Roms zugleich spüren.'
         },
         category: 'history',
-        coordinates: { lat: 38.4893, lng: 28.0396 }
+        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 }
     },
     {
         id: '2',
@@ -46,7 +46,7 @@ export const places: Place[] = [
             de: 'Die Thermalquellen von Kurşunlu, eines der Naturparadiese von Salihli, sind berühmt für ihr heilendes Thermalwasser, das seit Jahrhunderten Heilung bringt. In einer ruhigen und friedlichen Atmosphäre inmitten von Pinienwäldern gelegen, sind diese Quellen für ihr mineralreiches Wasser bekannt, von dem angenommen wird, dass es viele Beschwerden von rheumatischen Erkrankungen bis hin zu Hautkrankheiten heilt. Mit seinen modernen Einrichtungen, Unterkunftsmöglichkeiten und seiner natürlichen Schönheit ist Kurşunlu ein einzigartiger Zufluchtsort für diejenigen, die sich sowohl körperlich als auch geistig erholen möchten.'
         },
         category: 'nature',
-        coordinates: { lat: 38.5833, lng: 28.2500 }
+        coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 }
     },
     {
         id: '3',
@@ -115,7 +115,7 @@ export const places: Place[] = [
             de: 'Das Stadtmuseum Salihli, das in einem historischen Herrenhaus untergebracht ist, beleuchtet die reiche soziale, kulturelle und wirtschaftliche Vergangenheit der Stadt. Das Museum stellt ethnografische Artefakte aus, die den traditionellen Lebensstil widerspiegeln, landwirtschaftliche Werkzeuge, alte Fotografien und Dokumente. Besucher können sich über viele Themen informieren, von der Rolle Salihlis im Unabhängigkeitskrieg bis zu seiner landwirtschaftlichen Entwicklung und seinem kulturellen Gefüge. Dieses Museum ist ein Muss, um den Geist und die Identität von Salihli zu verstehen.'
         },
         category: 'history',
-        coordinates: { lat: 38.4845, lng: 28.1415 }
+        coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 }
     },
     {
         id: '6',
@@ -161,7 +161,7 @@ export const places: Place[] = [
             de: 'Diese Schlucht, die durch die Erosion von Basaltfelsen durch den Fluss Gediz über Tausende von Jahren entstanden ist, bietet beeindruckende Ausblicke. Ideal zum Wandern und Fotografieren, ist das Gebiet ein wichtiger Teil des Geoparks Kula-Salihli.'
         },
         category: 'nature',
-        coordinates: { lat: 38.5772, lng: 28.3225 }
+        coordinates: { lat: 38.581712325205984, lng: 28.271791613037774 }
     },
     {
         id: '8',
@@ -184,7 +184,7 @@ export const places: Place[] = [
             de: 'Dieses Haus, in dem Mustafa Kemal Atatürk während des Unabhängigkeitskrieges eine Zeit lang wohnte, wurde restauriert und in ein Museum umgewandelt. Machen Sie eine historische Reise mit Gegenständen und Dokumenten aus dieser Zeit.'
         },
         category: 'history',
-        coordinates: { lat: 38.5781, lng: 28.3255 }
+        coordinates: { lat: 38.57849271604208, lng: 28.270398205456143 }
     },
     {
         id: '9',
@@ -207,7 +207,7 @@ export const places: Place[] = [
             de: 'Inmitten üppiger Natur entfaltet der Suuçtu-Wasserfall, dessen Wasser aus etwa 30 Metern Höhe herabstürzt, besonders im Frühling eine faszinierende Schönheit. Er ist ein beliebter Ort zum Abkühlen und Picknicken.'
         },
         category: 'nature',
-        coordinates: { lat: 38.3833, lng: 28.3667 }
+        coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 }
     },
     {
         id: '10',
@@ -230,7 +230,7 @@ export const places: Place[] = [
             de: 'Diese historische Brücke über den Fluss Gediz in Adala stammt aus der Römerzeit. Der Legende nach wurde sie nach einem Mädchen benannt, das ihre Mitgift dem für den Bau der Brücke von der Öffentlichkeit gesammelten Geld spendete. Sie ist ein schönes Beispiel für Steinmetzarbeiten.'
         },
         category: 'history',
-        coordinates: { lat: 38.5750, lng: 28.3200 }
+        coordinates: { lat: 38.610014244679405, lng: 28.298125541176937 }
     },
     {
         id: '11',
@@ -253,7 +253,7 @@ export const places: Place[] = [
             de: 'Dies sind monumentale Gräber, die für lydische Könige und Adlige erbaut wurden. Dieses Gebiet, das die größten Tumuli Anatoliens enthält, ist als die "Pyramiden Anatoliens" bekannt. Die Gräber berühmter Könige wie Krösus und Alyattes befinden sich hier.'
         },
         category: 'history',
-        coordinates: { lat: 38.5333, lng: 27.9667 }
+        coordinates: { lat: 38.579235811237744, lng: 28.007434965748573 }
     },
     {
         id: '12',
@@ -276,7 +276,7 @@ export const places: Place[] = [
             de: 'Eines der beeindruckendsten Bauwerke in der antiken Stadt Sardes. Es wurde während der Römerzeit sowohl als Sportschule als auch als Sozialisationsbereich genutzt. Es fällt durch seine Größe und seinen gut erhaltenen Marmorhof auf.'
         },
         category: 'history',
-        coordinates: { lat: 38.4867, lng: 28.0378 }
+        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 }
     },
     {
         id: '13',
@@ -299,30 +299,30 @@ export const places: Place[] = [
             de: 'Es ist der viertgrößte ionische Tempel der antiken Welt. Sein Bau begann in der lydischen Zeit und er wurde bis in die römische Zeit genutzt. Seine verbliebenen riesigen Säulen zeigen die Pracht des Bauwerks.'
         },
         category: 'history',
-        coordinates: { lat: 38.4794, lng: 28.0416 }
+        coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 }
     },
     {
         id: '14',
-        slug: {
-            tr: 'mudire-hanim-konagi',
-            en: 'mudire-hanim-mansion',
-            fr: 'manoir-mudire-hanim',
-            de: 'herrenhaus-mudire-hanim'
+        slug: { 
+            tr: 'salihli-kent-muzesi', 
+            en: 'salihli-city-museum',
+            fr: 'musee-de-la-ville-de-salihli',
+            de: 'stadtmuseum-salihli'
         },
-        name: {
-            tr: 'Müdire Hanım Konağı',
-            en: 'Müdire Hanım Mansion',
-            fr: 'Manoir Müdire Hanım',
-            de: 'Herrenhaus Müdire Hanım'
+        name: { 
+            tr: 'Salihli Kent Müzesi', 
+            en: 'Salihli City Museum',
+            fr: 'Musée de la Ville de Salihli',
+            de: 'Stadtmuseum Salihli'
         },
-        description: {
-            tr: 'Geç Osmanlı dönemine ait bu konak, sivil mimarinin zarif bir örneğidir. Adını, uzun yıllar okul olarak hizmet vermesinden ve "Müdire Hanım" olarak anılan yöneticisinden almıştır. Restore edilerek kültür merkezi olarak kullanılmaktadır.',
-            en: 'This mansion from the late Ottoman period is an elegant example of civil architecture. It gets its name from serving as a school for many years and from its administrator, known as "Müdire Hanım" (Headmistress). It has been restored and is used as a cultural center.',
-            fr: 'Ce manoir de la fin de la période ottomane est un élégant exemple d\'architecture civile. Il tire son nom du fait qu\'il a servi d\'école pendant de nombreuses années et de son administratrice, connue sous le nom de "Müdire Hanım" (Directrice). Il a été restauré et est utilisé comme centre culturel.',
-            de: 'Dieses Herrenhaus aus der späten osmanischen Zeit ist ein elegantes Beispiel für zivile Architektur. Seinen Namen verdankt es dem Umstand, dass es viele Jahre als Schule diente, und seiner Verwalterin, die als "Müdire Hanım" (Schulleiterin) bekannt war. Es wurde restauriert und wird als Kulturzentrum genutzt.'
+        description: { 
+            tr: 'Tarihi bir konakta hizmet veren Salihli Kent Müzesi, şehrin zengin sosyal, kültürel ve ekonomik geçmişine ışık tutar. Müzede, geleneksel yaşam tarzını yansıtan etnografik eserler, tarım aletleri, eski fotoğraflar ve belgeler sergilenmektedir. Ziyaretçiler, Salihli\'nin Kurtuluş Savaşı\'ndaki rolünden, tarımsal gelişimine ve kültürel dokusuna kadar pek çok konuda bilgi edinebilirler. Bu müze, Salihli\'nin ruhunu ve kimliğini anlamak için mutlaka ziyaret edilmesi gereken bir yerdir.',
+            en: 'Serving in a historical mansion, the Salihli City Museum sheds light on the rich social, cultural, and economic past of the city. The museum exhibits ethnographic artifacts reflecting the traditional way of life, agricultural tools, old photographs, and documents. Visitors can learn about many subjects, from Salihli\'s role in the War of Independence to its agricultural development and cultural fabric. This museum is a must-visit place to understand the spirit and identity of Salihli.',
+            fr: 'Installé dans un manoir historique, le musée de la ville de Salihli met en lumière le riche passé social, culturel et économique de la ville. Le musée expose des artefacts ethnographiques reflétant le mode de vie traditionnel, des outils agricoles, des photographies anciennes et des documents. Les visiteurs peuvent s\'informer sur de nombreux sujets, du rôle de Salihli dans la guerre d\'indépendance à son développement agricole et à son tissu culturel. Ce musée est un lieu incontournable pour comprendre l\'esprit et l\'identité de Salihli.',
+            de: 'Das Stadtmuseum Salihli, das in einem historischen Herrenhaus untergebracht ist, beleuchtet die reiche soziale, kulturelle und wirtschaftliche Vergangenheit der Stadt. Das Museum stellt ethnografische Artefakte aus, die den traditionellen Lebensstil widerspiegeln, landwirtschaftliche Werkzeuge, alte Fotografien und Dokumente. Besucher können sich über viele Themen informieren, von der Rolle Salihlis im Unabhängigkeitskrieg bis zu seiner landwirtschaftlichen Entwicklung und seinem kulturellen Gefüge. Dieses Museum ist ein Muss, um den Geist und die Identität von Salihli zu verstehen.'
         },
         category: 'history',
-        coordinates: { lat: 38.4850, lng: 28.1420 }
+        coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 }
     },
     {
         id: '15',
@@ -345,7 +345,7 @@ export const places: Place[] = [
             de: 'Dieser Steinbruch, in dem die für die prächtigen Bauten der antiken Stadt Sardes verwendeten Marmore abgebaut wurden, bietet wichtige Hinweise auf antike Steinmetzkunst und Ingenieurskunst. Unfertige Säulen und Blöcke sind zu sehen.'
         },
         category: 'history',
-        coordinates: { lat: 38.4680, lng: 28.0250 }
+        coordinates: { lat: 38.45680901086971, lng: 28.016172179836534 }
     },
     {
         id: '16',
