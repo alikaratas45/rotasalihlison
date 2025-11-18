@@ -41,7 +41,11 @@
         "startRouteOnMap": "Démarrer l'itinéraire sur la carte",
         "whereToEat": "Où manger?",
         "showOnMap": "Afficher sur la carte",
-        "viewAllPlaces": "Voir tous les lieux"
+        "viewAllPlaces": "Voir tous les lieux",
+        "viewAllStories": "Voir toutes les histoires",
+        "readMore": "Lire la suite →",
+        "backToStories": "Retour aux histoires",
+        "discoverPlace": "Découvrir le lieu"
     },
     "places": {
         "title": "Découvrez tous les lieux",
@@ -60,5 +64,13 @@
     "shopping": {
         "title": "Arrêts Shopping",
         "description": "Découvrez les lieux de shopping à Salihli, des marchés locaux aux magasins modernes, où vous trouverez tout ce que vous cherchez."
+    },
+    "stories": {
+        "title": "Histoires et Légendes de Salihli",
+        "description": "Explorez les mythes et les contes qui ont façonné ces terres anciennes depuis des millénaires.",
+        "notFoundTitle": "Histoire non trouvée",
+        "notFoundDescription": "L'histoire que vous recherchez n'existe pas.",
+        "by": "Par :",
+        "relatedPlace": "Lieu associé"
     }
 }

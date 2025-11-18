@@ -1,0 +1,71 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { stories } from '@/lib/data/stories';
+import { Placeholders } from '@/lib/placeholder-images';
+import { useTranslation } from '@/hooks/use-translation';
+import { Suspense } from 'react';
+import type { Language } from '@/providers/i18n-provider';
+import { places } from '@/lib/data/places';
+
+function HikayelerContent() {
+  const { t, language } = useTranslation();
+  const typedLanguage = language as Language;
+
+  return (
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold font-headline mb-4">{t('stories.title')}</h1>
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t('stories.description')}</p>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {stories.map(story => {
+          const relatedPlace = story.placeId ? places.find(p => p.id === story.placeId) : null;
+          const placeholder = relatedPlace ? Placeholders.find(p => p.id === relatedPlace.slug.en) : Placeholders.find(p => p.id === 'story-generic');
+          
+          return (
+            <Link href={`/hikayeler/${story.slug[typedLanguage]}`} key={story.id} className="group">
+              <Card className="overflow-hidden h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
+                <CardContent className="p-0 flex flex-col h-full">
+                  <div className="relative h-64 w-full">
+                    <Image
+                      src={placeholder?.imageUrl || `https://picsum.photos/seed/${story.id}/600/400`}
+                      alt={story.title[typedLanguage]}
+                      data-ai-hint={placeholder?.imageHint || 'story cover'}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                     <div className="absolute bottom-0 p-6 text-white">
+                        <h3 className="text-2xl font-bold font-headline mb-2">{story.title[typedLanguage]}</h3>
+                        <p className="text-sm opacity-90">{t('stories.by')} {story.author[typedLanguage]}</p>
+                      </div>
+                  </div>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <p className="text-muted-foreground flex-grow text-sm">{story.content[typedLanguage].substring(0, 150)}...</p>
+                    <Button variant="link" className="text-accent p-0 h-auto mt-4 self-start">
+                        {t('actions.readMore')}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          )
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+export default function HikayelerPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <HikayelerContent />
+        </Suspense>
+    )
+}

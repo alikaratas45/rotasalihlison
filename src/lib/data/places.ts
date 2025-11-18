@@ -116,5 +116,28 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.4845, lng: 28.1415 }
+    },
+    {
+        id: '6',
+        slug: { 
+            tr: 'tabak-deresi-dev-kazanlari', 
+            en: 'tabak-creek-giant-cauldrons',
+            fr: 'chaudrons-geants-du-ruisseau-tabak',
+            de: 'riesenkessel-am-tabak-bach'
+        },
+        name: { 
+            tr: 'Tabak Deresi Dev Kazanları', 
+            en: 'Tabak Creek Giant Cauldrons',
+            fr: 'Chaudrons Géants du Ruisseau Tabak',
+            de: 'Riesenkessel am Tabak-Bach'
+        },
+        description: { 
+            tr: 'Efsaneye göre, Kral Midas\'ın her dokunduğunu altına çevirme lanetinden kurtulduğu yer olan Paktalos (Sart) Çayı\'nın bir kolu olan Tabak Deresi, ilginç jeolojik oluşumlara ev sahipliği yapar. "Dev Kazanları" olarak bilinen bu çukurlar, suyun kayaları binlerce yılda aşındırmasıyla oluşmuş doğal havuzlardır. Midas\'ın altın dokunuşunun bu sularda son bulduğuna inanılması, bölgeye mistik bir hava katmaktadır. Serin suları ve etkileyici manzarasıyla Dev Kazanları, hem bir doğa harikası hem de antik bir efsanenin canlı tanığıdır.',
+            en: 'According to legend, Tabak Creek, a branch of the Pactolus (Sart) River where King Midas was freed from the curse of turning everything he touched into gold, is home to interesting geological formations. These pits, known as the "Giant Cauldrons," are natural pools formed by the water eroding the rocks over thousands of years. The belief that Midas\'s golden touch ended in these waters adds a mystical atmosphere to the region. With its cool waters and impressive scenery, the Giant Cauldrons are both a natural wonder and a living witness to an ancient legend.',
+            fr: 'Selon la légende, le ruisseau Tabak, une branche de la rivière Pactole (Sart) où le roi Midas fut libéré de la malédiction de transformer tout ce qu\'il touchait en or, abrite d\'intéressantes formations géologiques. Ces fosses, connues sous le nom de "Chaudrons Géants", sont des bassins naturels formés par l\'érosion des roches par l\'eau pendant des milliers d\'années. La croyance que le toucher d\'or de Midas a pris fin dans ces eaux ajoute une atmosphère mystique à la région. Avec ses eaux fraîches et ses paysages impressionnants, les Chaudrons Géants sont à la fois une merveille naturelle et un témoin vivant d\'une ancienne légende.',
+            de: 'Der Legende nach ist der Tabak-Bach, ein Nebenarm des Flusses Paktolos (Sart), an dem König Midas vom Fluch befreit wurde, alles, was er berührte, in Gold zu verwandeln, die Heimat interessanter geologischer Formationen. Diese Gruben, bekannt als die "Riesenkessel", sind natürliche Becken, die durch die Erosion der Felsen durch das Wasser über Tausende von Jahren entstanden sind. Der Glaube, dass Midas\' goldene Berührung in diesen Gewässern endete, verleiht der Region eine mystische Atmosphäre. Mit seinem kühlen Wasser und der beeindruckenden Landschaft sind die Riesenkessel sowohl ein Naturwunder als auch ein lebendiges Zeugnis einer alten Legende.'
+        },
+        category: 'nature',
+        coordinates: { lat: 38.4789, lng: 28.0531 }
     }
 ];

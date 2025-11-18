@@ -40,7 +40,11 @@
         "startRouteOnMap": "Rotayı Haritada Başlat",
         "whereToEat": "Nerede Yenir?",
         "showOnMap": "Haritada Göster",
-        "viewAllPlaces": "Tüm Yerleri Gör"
+        "viewAllPlaces": "Tüm Yerleri Gör",
+        "viewAllStories": "Tüm Hikayeleri Gör",
+        "readMore": "Devamını Oku →",
+        "backToStories": "Hikayelere Geri Dön",
+        "discoverPlace": "Mekanı Keşfet"
     },
     "places": {
         "title": "Tüm Yerleri Keşfet",
@@ -59,5 +63,13 @@
     "shopping": {
         "title": "Alışveriş Durakları",
         "description": "Salihli'nin yerel pazarlarından modern mağazalarına, aradığınız her şeyi bulabileceğiniz alışveriş noktalarını keşfedin."
+    },
+    "stories": {
+        "title": "Salihli'nin Hikayeleri ve Efsaneleri",
+        "description": "Bu kadim toprakları binlerce yıldır şekillendiren mitleri ve anlatıları keşfedin.",
+        "notFoundTitle": "Hikaye Bulunamadı",
+        "notFoundDescription": "Aradığınız hikaye mevcut değil.",
+        "by": "Yazan:",
+        "relatedPlace": "İlişkili Mekan"
     }
 }
