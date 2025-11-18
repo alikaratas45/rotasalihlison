@@ -43,6 +43,11 @@ export default function PlaceDetailPage() {
             if (turkishVoice) {
                 u.voice = turkishVoice;
             }
+        } else if (language === 'en') {
+            const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+            if (englishVoice) {
+                u.voice = englishVoice;
+            }
         }
         
         u.onend = () => {
