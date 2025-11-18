@@ -38,5 +38,21 @@
         "listenAudio": "Listen Audio",
         "startRouteOnMap": "Start Route on Map",
         "whereToEat": "Where to Eat?"
+    },
+    "places": {
+        "title": "Discover All Places",
+        "description": "Explore all the historical, natural, and cultural riches that Salihli has to offer."
+    },
+    "history": {
+        "title": "Journey to History",
+        "description": "Salihli is home to a rich historical heritage stretching from ancient times to the present day. Sardis, the capital of the Lydian Kingdom where money was invented, is the most precious treasure of these lands. As an important metropolis during the Roman Empire, the city hosted one of the first seven churches of Christianity. During the Byzantine period, it maintained its importance as a strategic episcopal center. This journey invites you to trace the footsteps of thousands of years of civilizations."
+    },
+    "nature": {
+        "title": "Nature and Peace",
+        "description": "Rest your soul in the natural beauties of Salihli. It awaits you with its healing waters, lush forests, and unique landscapes."
+    },
+    "shopping": {
+        "title": "Shopping Stops",
+        "description": "Discover shopping spots in Salihli, from local markets to modern stores, where you can find everything you're looking for."
     }
 }

@@ -17,7 +17,7 @@ export default function Home() {
     { name: 'Tarihe Yolculuk', icon: Dna, link: '/yerler?category=history' },
     { name: 'Doğa ve Huzur', icon: Mountain, link: '/yerler?category=nature' },
     { name: 'Lezzet Durakları', icon: Utensils, link: '/lezzetler' },
-    { name: 'Alışveriş', icon: ShoppingBag, link: '/yakindakiler?category=shopping' },
+    { name: 'Alışveriş', icon: ShoppingBag, link: '/yerler?category=shopping' },
   ];
 
   return (
@@ -54,22 +54,22 @@ export default function Home() {
               return (
               <Card key={place.id} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
                 <CardContent className="p-0">
-                  <div className="relative h-64 w-full">
-                    <Image
-                      src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                      alt={place.name.tr}
-                      data-ai-hint={placeholder?.imageHint || 'landmark'}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  </div>
-                  <div className="absolute bottom-0 p-4 text-white">
-                    <h3 className="text-2xl font-bold font-headline">{place.name.tr}</h3>
-                    <Button asChild variant="link" className="text-accent p-0 h-auto">
-                        <Link href={`/yerler/${place.slug.tr}`}>Detayları Gör →</Link>
-                    </Button>
-                  </div>
+                  <Link href={`/yerler/${place.slug.tr}`} className="block">
+                    <div className="relative h-64 w-full">
+                      <Image
+                        src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
+                        alt={place.name.tr}
+                        data-ai-hint={placeholder?.imageHint || 'landmark'}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    </div>
+                    <div className="absolute bottom-0 p-4 text-white">
+                      <h3 className="text-2xl font-bold font-headline">{place.name.tr}</h3>
+                      <span className="text-accent">Detayları Gör →</span>
+                    </div>
+                  </Link>
                 </CardContent>
               </Card>
             )})}

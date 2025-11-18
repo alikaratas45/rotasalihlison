@@ -38,5 +38,21 @@
         "listenAudio": "Sesli Dinle",
         "startRouteOnMap": "Rotayı Haritada Başlat",
         "whereToEat": "Nerede Yenir?"
+    },
+    "places": {
+        "title": "Tüm Yerleri Keşfet",
+        "description": "Salihli'nin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin."
+    },
+    "history": {
+        "title": "Tarihe Yolculuk",
+        "description": "Salihli, antik çağlardan günümüze uzanan zengin bir tarih mirasına ev sahipliği yapmaktadır. Paranın icat edildiği Lidya Krallığı'nın başkenti Sardes, bu toprakların en değerli hazinesidir. Roma İmparatorluğu döneminde önemli bir metropol olan kent, Hristiyanlığın ilk yedi kilisesinden birine ev sahipliği yapmıştır. Bizans döneminde ise stratejik bir piskoposluk merkezi olarak önemini korumuştur. Bu yolculuk, sizi binlerce yıllık medeniyetlerin izlerini sürmeye davet ediyor."
+    },
+    "nature": {
+        "title": "Doğa ve Huzur",
+        "description": "Salihli'nin doğal güzellikleri içinde ruhunuzu dinlendirin. Şifalı suları, yemyeşil ormanları ve eşsiz manzaralarıyla sizi bekliyor."
+    },
+    "shopping": {
+        "title": "Alışveriş Durakları",
+        "description": "Salihli'nin yerel pazarlarından modern mağazalarına, aradığınız her şeyi bulabileceğiniz alışveriş noktalarını keşfedin."
     }
 }
