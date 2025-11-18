@@ -79,7 +79,7 @@ export default function Home() {
                     </div>
                      <div className="p-4 bg-card text-card-foreground md:hidden">
                         <h3 className="text-xl font-bold font-headline mb-1">{place.name[typedLanguage]}</h3>
-                        <span className="text-sm text-accent">{t('actions.seeDetails')}</span>
+                        <span className="text-sm font-semibold text-accent">{t('actions.seeDetails')}</span>
                      </div>
                   </Link>
                 </CardContent>

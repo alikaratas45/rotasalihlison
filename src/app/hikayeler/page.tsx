@@ -47,7 +47,7 @@ function HikayelerContent() {
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
                     <p className="text-muted-foreground flex-grow text-sm">{story.content[typedLanguage].substring(0, 150)}...</p>
-                    <Button variant="link" className="text-accent p-0 h-auto mt-4 self-start">
+                    <Button variant="link" className="p-0 h-auto mt-4 self-start">
                         {t('actions.readMore')}
                     </Button>
                   </div>

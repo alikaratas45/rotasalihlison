@@ -74,7 +74,7 @@ function YerlerContent() {
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="text-2xl font-bold font-headline mb-2">{place.name[typedLanguage]}</h3>
                     <p className="text-muted-foreground flex-grow">{place.description[typedLanguage].substring(0, 120)}...</p>
-                    <Button variant="link" className="text-accent p-0 h-auto mt-4 self-start">
+                    <Button variant="link" className="p-0 h-auto mt-4 self-start">
                         {t('actions.seeDetails')}
                     </Button>
                   </div>
