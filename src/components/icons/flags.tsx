@@ -5,7 +5,7 @@ import Image from 'next/image';
 export function TurkishFlagIcon(props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) {
   return (
     <Image
-      src="/Turkey.svg"
+      src="/Turkey.png"
       alt="Turkish Flag"
       width={24}
       height={16}
