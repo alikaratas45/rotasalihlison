@@ -4,16 +4,18 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Globe, Volume2, VolumeX } from 'lucide-react';
+import { Menu, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 import { Logo } from '@/components/icons/logo';
+import { FlagTR, FlagGB, FlagFR, FlagDE } from '@/components/icons/flags';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import type { Language } from '@/providers/i18n-provider';
+import React from 'react';
 
 export function Header() {
   const { t } = useTranslation();
@@ -100,20 +102,23 @@ function ThemeToggle() {
   );
 }
 
+const languages: { code: Language; name: string; flag: React.FC<React.SVGProps<SVGSVGElement>> }[] = [
+    { code: 'tr', name: 'Türkçe', flag: FlagTR },
+    { code: 'en', name: 'English', flag: FlagGB },
+    { code: 'fr', name: 'Français', flag: FlagFR },
+    { code: 'de', name: 'Deutsch', flag: FlagDE },
+];
+
 function LanguageSwitcher() {
     const { language, setLanguage } = useTranslation();
-    const languages: { code: Language; name: string }[] = [
-        { code: 'tr', name: 'Türkçe (TR)' },
-        { code: 'en', name: 'English (EN)' },
-        { code: 'fr', name: 'Français (FR)' },
-        { code: 'de', name: 'Deutsch (DE)' },
-    ];
     
+    const selectedLanguage = languages.find(lang => lang.code === language);
+
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
-            <Globe className="h-5 w-5" />
+            {selectedLanguage && <selectedLanguage.flag className="h-5 w-5 rounded-sm" />}
             <span className="sr-only">Change language</span>
           </Button>
         </DropdownMenuTrigger>
@@ -121,10 +126,11 @@ function LanguageSwitcher() {
           {languages.map((lang) => (
             <DropdownMenuItem
                 key={lang.code}
-                className={cn(language === lang.code && 'bg-accent')}
+                className={cn("gap-2", language === lang.code && 'bg-accent')}
                 onClick={() => setLanguage(lang.code)}
             >
-                {lang.name}
+                <lang.flag className="h-4 w-4 rounded-sm" />
+                <span>{lang.name}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
