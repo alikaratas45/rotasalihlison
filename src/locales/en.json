@@ -1,0 +1,42 @@
+{
+    "header": {
+        "home": "Home",
+        "places": "Places",
+        "routes": "Routes",
+        "stories": "Stories",
+        "cuisine": "Cuisine",
+        "nearby": "Nearby",
+        "qrScanner": "QR Scanner",
+        "audioGuide": "Audio Guide"
+    },
+    "footer": {
+        "about": "Rota Salihli is a digital guide to discover the historical, cultural and natural beauties of Salihli.",
+        "copyright": "All rights reserved.",
+        "links": "Links",
+        "contact": "Contact"
+    },
+    "splash": {
+        "slogan": "Legacy of Sardis, Pearl of Gediz"
+    },
+    "home": {
+        "heroTitle": "Discover Salihli",
+        "heroSubtitle": "Legacy of Sardis, Pearl of Gediz",
+        "getStarted": "Get Started",
+        "experienceTitle": "A Day in Salihli",
+        "experienceSubtitle": "Choose among different experiences, personalize your Salihli adventure.",
+        "historyTrip": "Journey to History",
+        "naturePeace": "Nature and Peace",
+        "flavorStops": "Flavor Stops",
+        "shopping": "Shopping",
+        "thematicRoutesTitle": "Thematic Routes",
+        "thematicRoutesSubtitle": "Discover the riches of Salihli with specially prepared routes.",
+        "allRoutes": "See All Routes",
+        "stops": "Stops"
+    },
+    "actions": {
+        "seeDetails": "See Details →",
+        "listenAudio": "Listen Audio",
+        "startRouteOnMap": "Start Route on Map",
+        "whereToEat": "Where to Eat?"
+    }
+}

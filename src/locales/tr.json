@@ -1,0 +1,42 @@
+{
+    "header": {
+        "home": "Ana Sayfa",
+        "places": "Yerler",
+        "routes": "Rotalar",
+        "stories": "Hikayeler",
+        "cuisine": "Lezzetler",
+        "nearby": "Yakındakiler",
+        "qrScanner": "QR Okuyucu",
+        "audioGuide": "Sesli Rehber"
+    },
+    "footer": {
+        "about": "Rota Salihli, Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.",
+        "copyright": "Tüm hakları saklıdır.",
+        "links": "Bağlantılar",
+        "contact": "İletişim"
+    },
+    "splash": {
+        "slogan": "Sardes'in Mirası, Gediz'in İncisi"
+    },
+    "home": {
+        "heroTitle": "Salihli'yi Keşfet",
+        "heroSubtitle": "Sardes'in Mirası, Gediz'in İncisi",
+        "getStarted": "Hemen Başla",
+        "experienceTitle": "Salihli'de Bir Gün",
+        "experienceSubtitle": "Farklı deneyimler arasından seçimini yap, Salihli maceranı kişiselleştir.",
+        "historyTrip": "Tarihe Yolculuk",
+        "naturePeace": "Doğa ve Huzur",
+        "flavorStops": "Lezzet Durakları",
+        "shopping": "Alışveriş",
+        "thematicRoutesTitle": "Tematik Rotalar",
+        "thematicRoutesSubtitle": "Salihli'nin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
+        "allRoutes": "Tüm Rotaları Gör",
+        "stops": "Durak"
+    },
+    "actions": {
+        "seeDetails": "Detayları Gör →",
+        "listenAudio": "Sesli Dinle",
+        "startRouteOnMap": "Rotayı Haritada Başlat",
+        "whereToEat": "Nerede Yenir?"
+    }
+}

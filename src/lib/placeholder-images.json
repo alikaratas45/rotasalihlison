@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-main",
+      "description": "Hero image for the main page, showing a panoramic view of Salihli.",
+      "imageUrl": "https://picsum.photos/seed/salihli-hero/1920/1080",
+      "imageHint": "Salihli landscape"
+    },
+    {
+      "id": "sardes-ancient-city",
+      "description": "Image for Sardes Ancient City.",
+      "imageUrl": "https://images.unsplash.com/photo-1573540374799-d527e9ee392b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhbmNpZW50JTIwcnVpbnN8ZW58MHx8fHwxNzYzNDY4MDUwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancient ruins"
+    },
+    {
+      "id": "kursunlu-thermal-springs",
+      "description": "Image for Kursunlu Thermal Springs.",
+      "imageUrl": "https://images.unsplash.com/photo-1582490841511-81e1363fb48c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxob3QlMjBzcHJpbmdzfGVufDB8fHx8MTc2MzQ2ODA1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hot springs"
+    },
+    {
+      "id": "salihli-odun-kofte",
+      "description": "Image for Salihli's famous Odun Kofte.",
+      "imageUrl": "https://images.unsplash.com/photo-1606388005136-b00566b2d833?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxncmlsbGVkJTIwbWVhdGJhbGxzfGVufDB8fHx8MTc2MzQ2ODA1MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "grilled meatballs"
+    },
+    {
+      "id": "lydian-treasures-route",
+      "description": "Image for the Lydian Treasures Route.",
+      "imageUrl": "https://images.unsplash.com/photo-1752122887476-336f7c5cdbc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YW5jaWVudCUyMGdvbGR8ZW58MHx8fHwxNzYzNDY4MDUwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ancient gold"
+    },
+    {
+      "id": "gediz-valley-route",
+      "description": "Image for the Gediz Valley Nature Route.",
+      "imageUrl": "https://images.unsplash.com/photo-1624347648284-d7627b1381fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyaXZlciUyMHZhbGxleXxlbnwwfHx8fDE3NjM0NjgwNTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "river valley"
+    },
+    {
+      "id": "salihli-flavors-route",
+      "description": "Image for the Salihli Flavors Route.",
+      "imageUrl": "https://images.unsplash.com/photo-1572402123736-c79526db405a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxsb2NhbCUyMGZvb2R8ZW58MHx8fHwxNzYzNDY4MDUwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "local food"
+    },
+    {
+      "id": "ataturk-monument",
+      "description": "Image of the Atatürk Monument in Salihli.",
+      "imageUrl": "https://images.unsplash.com/photo-1684863935495-7b04dc83e5f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdGF0dWUlMjBtb251bWVudHxlbnwwfHx8fDE3NjM0NjgwNTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "statue monument"
+    },
+    {
+      "id": "kent-muzesi",
+      "description": "Image of the Salihli City Museum.",
+      "imageUrl": "https://images.unsplash.com/photo-1715633869797-b36b1f1ac8e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaXR5JTIwbXVzZXVtfGVufDB8fHx8MTc2MzM4NDcxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city museum"
+    }
+  ]
 }
