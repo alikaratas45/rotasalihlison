@@ -1,0 +1,64 @@
+
+{
+    "header": {
+        "home": "Startseite",
+        "places": "Orte",
+        "routes": "Routen",
+        "stories": "Geschichten",
+        "cuisine": "Küche",
+        "nearby": "In der Nähe",
+        "qrScanner": "QR-Scanner"
+    },
+    "footer": {
+        "about": "Rota Salihli ist ein digitaler Führer, um die historischen, kulturellen und natürlichen Schönheiten von Salihli zu entdecken.",
+        "copyright": "Alle Rechte vorbehalten.",
+        "links": "Links",
+        "contact": "Kontakt"
+    },
+    "splash": {
+        "slogan": "Erbe von Sardes, Zentrum des Geldes"
+    },
+    "home": {
+        "heroTitle": "Entdecken Sie Salihli",
+        "heroSubtitle": "Erbe von Sardes, Zentrum des Geldes",
+        "getStarted": "Loslegen",
+        "experienceTitle": "Ein Tag in Salihli",
+        "experienceSubtitle": "Wählen Sie aus verschiedenen Erlebnissen und personalisieren Sie Ihr Salihli-Abenteuer.",
+        "historyTrip": "Reise in die Geschichte",
+        "naturePeace": "Natur und Frieden",
+        "flavorStops": "Geschmacksstopps",
+        "shopping": "Einkaufen",
+        "thematicRoutesTitle": "Thematische Routen",
+        "thematicRoutesSubtitle": "Entdecken Sie die Reichtümer von Salihli mit speziell vorbereiteten Routen.",
+        "allRoutes": "Alle Routen ansehen",
+        "stops": "Stopp",
+        "stops_plural": "Stopps"
+    },
+    "actions": {
+        "seeDetails": "Details ansehen →",
+        "listenAudio": "Audio anhören",
+        "stopAudio": "Stopp",
+        "startRouteOnMap": "Route auf der Karte starten",
+        "whereToEat": "Wo essen?",
+        "showOnMap": "Auf der Karte anzeigen",
+        "viewAllPlaces": "Alle Orte ansehen"
+    },
+    "places": {
+        "title": "Alle Orte entdecken",
+        "description": "Entdecken Sie alle historischen, natürlichen und kulturellen Reichtümer, die Salihli zu bieten hat.",
+        "notFoundTitle": "Ort nicht gefunden",
+        "notFoundDescription": "Der gesuchte Ort existiert nicht."
+    },
+    "history": {
+        "title": "Reise in die Geschichte",
+        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geld erfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
+    },
+    "nature": {
+        "title": "Natur und Frieden",
+        "description": "Lassen Sie Ihre Seele in den Naturschönheiten von Salihli baumeln. Es erwartet Sie mit seinen heilenden Wassern, üppigen Wäldern und einzigartigen Landschaften."
+    },
+    "shopping": {
+        "title": "Einkaufsstopps",
+        "description": "Entdecken Sie Einkaufsmöglichkeiten in Salihli, von lokalen Märkten bis zu modernen Geschäften, in denen Sie alles finden, was Sie suchen."
+    }
+}

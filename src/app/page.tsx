@@ -9,10 +9,13 @@ import { places } from '@/lib/data/places';
 import { routes } from '@/lib/data/routes';
 import { Placeholders } from '@/lib/placeholder-images';
 import { useTranslation } from '@/hooks/use-translation';
+import type { Language } from '@/providers/i18n-provider';
 
 export default function Home() {
   const { t, language } = useTranslation();
   const heroImage = Placeholders.find(p => p.id === 'hero-main');
+
+  const typedLanguage = language as Language;
 
   const popularDestinations = places.filter(p => ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-odun-kofte'].includes(p.slug.en)).slice(0, 3);
   const thematicRoutes = routes.slice(0, 3);
@@ -58,11 +61,11 @@ export default function Home() {
               return (
               <Card key={place.id} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
                 <CardContent className="p-0">
-                  <Link href={`/yerler/${place.slug[language]}`} className="block">
+                  <Link href={`/yerler/${place.slug[typedLanguage]}`} className="block">
                     <div className="relative h-64 w-full">
                       <Image
                         src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                        alt={place.name[language]}
+                        alt={place.name[typedLanguage]}
                         data-ai-hint={placeholder?.imageHint || 'landmark'}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -70,7 +73,7 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     </div>
                     <div className="absolute bottom-0 p-4 text-white">
-                      <h3 className="text-2xl font-bold font-headline">{place.name[language]}</h3>
+                      <h3 className="text-2xl font-bold font-headline">{place.name[typedLanguage]}</h3>
                       <span className="text-accent">{t('actions.seeDetails')}</span>
                     </div>
                   </Link>
@@ -111,13 +114,13 @@ export default function Home() {
             {thematicRoutes.map(route => {
               const placeholder = Placeholders.find(p => p.id === route.slug.en);
               return (
-              <Link href={`/rotalar/${route.slug[language]}`} key={route.id} className="group">
+              <Link href={`/rotalar/${route.slug[typedLanguage]}`} key={route.id} className="group">
                 <Card className="overflow-hidden h-full">
                   <CardContent className="p-0 flex flex-col h-full">
                     <div className="relative h-48 w-full">
                       <Image
                         src={placeholder?.imageUrl || `https://picsum.photos/seed/${route.id}/600/400`}
-                        alt={route.name[language]}
+                        alt={route.name[typedLanguage]}
                         data-ai-hint={placeholder?.imageHint || 'route map'}
                         fill
                         className="object-cover"
@@ -125,8 +128,8 @@ export default function Home() {
                       <div className="absolute inset-0 bg-black/20" />
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
-                      <h3 className="text-xl font-bold font-headline mb-2">{route.name[language]}</h3>
-                      <p className="text-muted-foreground text-sm flex-grow">{route.description[language].substring(0, 100)}...</p>
+                      <h3 className="text-xl font-bold font-headline mb-2">{route.name[typedLanguage]}</h3>
+                      <p className="text-muted-foreground text-sm flex-grow">{route.description[typedLanguage].substring(0, 100)}...</p>
                       <div className="flex items-center text-sm text-primary font-semibold mt-4">
                         <MapPinned className="w-4 h-4 mr-2"/>
                         <span>{route.stops.length} {t('home.stops', {count: route.stops.length})}</span>

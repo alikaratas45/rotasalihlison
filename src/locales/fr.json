@@ -1,0 +1,64 @@
+
+{
+    "header": {
+        "home": "Accueil",
+        "places": "Lieux",
+        "routes": "Itinéraires",
+        "stories": "Histoires",
+        "cuisine": "Cuisine",
+        "nearby": "À proximité",
+        "qrScanner": "Scanner QR"
+    },
+    "footer": {
+        "about": "Rota Salihli est un guide numérique pour découvrir les beautés historiques, culturelles et naturelles de Salihli.",
+        "copyright": "Tous droits réservés.",
+        "links": "Liens",
+        "contact": "Contact"
+    },
+    "splash": {
+        "slogan": "Héritage de Sardes, centre de la monnaie"
+    },
+    "home": {
+        "heroTitle": "Découvrez Salihli",
+        "heroSubtitle": "Héritage de Sardes, centre de la monnaie",
+        "getStarted": "Commencer",
+        "experienceTitle": "Une journée à Salihli",
+        "experienceSubtitle": "Choisissez parmi différentes expériences, personnalisez votre aventure à Salihli.",
+        "historyTrip": "Voyage dans l'Histoire",
+        "naturePeace": "Nature et Paix",
+        "flavorStops": "Arrêts Gourmands",
+        "shopping": "Shopping",
+        "thematicRoutesTitle": "Itinéraires Thématiques",
+        "thematicRoutesSubtitle": "Découvrez les richesses de Salihli avec des itinéraires spécialement préparés.",
+        "allRoutes": "Voir tous les itinéraires",
+        "stops": "Arrêt",
+        "stops_plural": "Arrêts"
+    },
+    "actions": {
+        "seeDetails": "Voir les détails →",
+        "listenAudio": "Écouter l'audio",
+        "stopAudio": "Arrêter",
+        "startRouteOnMap": "Démarrer l'itinéraire sur la carte",
+        "whereToEat": "Où manger?",
+        "showOnMap": "Afficher sur la carte",
+        "viewAllPlaces": "Voir tous les lieux"
+    },
+    "places": {
+        "title": "Découvrez tous les lieux",
+        "description": "Explorez toutes les richesses historiques, naturelles et culturelles que Salihli a à offrir.",
+        "notFoundTitle": "Lieu non trouvé",
+        "notFoundDescription": "Le lieu que vous recherchez n'existe pas."
+    },
+    "history": {
+        "title": "Voyage dans l'Histoire",
+        "description": "Salihli abrite un riche patrimoine historique qui s'étend de l'Antiquité à nos jours. Sardes, la capitale du royaume de Lydie où la monnaie a été inventée, est le trésor le plus précieux de ces terres. Métropole importante sous l'Empire romain, la ville a accueilli l'une des sept premières églises du christianisme. Pendant la période byzantine, elle a conservé son importance en tant que centre épiscopal stratégique. Ce voyage vous invite à suivre les traces de milliers d'années de civilisations."
+    },
+    "nature": {
+        "title": "Nature et Paix",
+        "description": "Reposez votre âme dans les beautés naturelles de Salihli. Elle vous attend avec ses eaux curatives, ses forêts verdoyantes et ses paysages uniques."
+    },
+    "shopping": {
+        "title": "Arrêts Shopping",
+        "description": "Découvrez les lieux de shopping à Salihli, des marchés locaux aux magasins modernes, où vous trouverez tout ce que vous cherchez."
+    }
+}

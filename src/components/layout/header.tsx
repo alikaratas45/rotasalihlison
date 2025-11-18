@@ -12,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Logo } from '@/components/icons/logo';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import type { Language } from '@/providers/i18n-provider';
 
 export function Header() {
   const { t } = useTranslation();
@@ -98,6 +99,12 @@ function ThemeToggle() {
 
 function LanguageSwitcher() {
     const { language, setLanguage } = useTranslation();
+    const languages: { code: Language; name: string }[] = [
+        { code: 'tr', name: 'Türkçe (TR)' },
+        { code: 'en', name: 'English (EN)' },
+        { code: 'fr', name: 'Français (FR)' },
+        { code: 'de', name: 'Deutsch (DE)' },
+    ];
     
     return (
         <DropdownMenu>
@@ -108,18 +115,15 @@ function LanguageSwitcher() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className={cn(language === 'tr' && 'bg-accent')}
-            onClick={() => setLanguage('tr')}
-          >
-            Türkçe (TR)
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className={cn(language === 'en' && 'bg-accent')}
-            onClick={() => setLanguage('en')}
-          >
-            English (EN)
-          </DropdownMenuItem>
+          {languages.map((lang) => (
+            <DropdownMenuItem
+                key={lang.code}
+                className={cn(language === lang.code && 'bg-accent')}
+                onClick={() => setLanguage(lang.code)}
+            >
+                {lang.name}
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
     );

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MapPin, Volume2, Pause } from 'lucide-react';
 import Link from 'next/link';
+import type { Language } from '@/providers/i18n-provider';
 
 export default function PlaceDetailPage() {
   const params = useParams();
@@ -17,23 +18,23 @@ export default function PlaceDetailPage() {
   const { t, language, isAudioGuideEnabled } = useTranslation();
   
   const [isPlaying, setIsPlaying] = useState(false);
-  const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
-  const place = places.find(p => p.slug.tr === slug || p.slug.en === slug);
+  const typedLanguage = language as Language;
+
+  const place = places.find(p => Object.values(p.slug).includes(slug as string));
   
-  const name = place ? place.name[language] || place.name.tr : '';
-  const description = place ? place.description[language] || place.description.tr : '';
+  const name = place ? place.name[typedLanguage] : '';
+  const description = place ? place.description[typedLanguage] : '';
 
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    
-    // Cleanup on component unmount or when dependencies change
+    // Stop speech synthesis on component unmount or when dependencies change
     return () => {
-      synth.cancel();
+      window.speechSynthesis.cancel();
     };
-  }, [description, language]);
+  }, []);
 
   useEffect(() => {
+    // Also stop speech when the audio guide is disabled from the header
     if (!isAudioGuideEnabled) {
       window.speechSynthesis.cancel();
       setIsPlaying(false);
@@ -51,12 +52,9 @@ export default function PlaceDetailPage() {
       const u = new SpeechSynthesisUtterance(description);
       const voices = synth.getVoices();
       
-      let selectedVoice;
-      if (language === 'tr') {
-          selectedVoice = voices.find(voice => voice.lang.startsWith('tr'));
-      } else if (language === 'en') {
-          selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-      }
+      // Find a suitable voice for the current language
+      const langCode = language.split('-')[0];
+      const selectedVoice = voices.find(voice => voice.lang.startsWith(langCode));
       
       if (selectedVoice) {
           u.voice = selectedVoice;

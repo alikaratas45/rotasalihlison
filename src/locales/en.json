@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Home",
@@ -30,7 +31,8 @@
         "thematicRoutesTitle": "Thematic Routes",
         "thematicRoutesSubtitle": "Discover the riches of Salihli with specially prepared routes.",
         "allRoutes": "See All Routes",
-        "stops": "Stops"
+        "stops": "Stop",
+        "stops_plural": "Stops"
     },
     "actions": {
         "seeDetails": "See Details →",

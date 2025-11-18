@@ -1,6 +1,8 @@
-export type LangPair = {
+export type LocalizedString = {
     tr: string;
     en: string;
+    fr: string;
+    de: string;
 };
 
 export type Coordinates = {
@@ -10,34 +12,33 @@ export type Coordinates = {
 
 export type Place = {
     id: string;
-    slug: LangPair;
-    name: LangPair;
-    description: LangPair;
+    slug: LocalizedString;
+    name: LocalizedString;
+    description: LocalizedString;
     category: 'history' | 'nature' | 'food' | 'shopping' | 'poi';
     coordinates: Coordinates;
 };
 
 export type Route = {
     id: string;
-    slug: LangPair;
-    name: LangPair;
-    description: LangPair;
-
+    slug: LocalizedString;
+    name: LocalizedString;
+    description: LocalizedString;
     stops: string[]; // Array of place IDs
 };
 
 export type Story = {
     id: string;
-    slug: LangPair;
-    title: LangPair;
-    author: LangPair;
-    content: LangPair;
+    slug: LocalizedString;
+    title: LocalizedString;
+    author: LocalizedString;
+    content: LocalizedString;
 };
 
 export type Cuisine = {
     id: string;
-    slug: LangPair;
-    name: LangPair;
-    description: LangPair;
+    slug: LocalizedString;
+    name: LocalizedString;
+    description: LocalizedString;
     mapSearchQuery: string;
 };

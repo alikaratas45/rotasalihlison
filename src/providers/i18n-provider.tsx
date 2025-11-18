@@ -3,8 +3,10 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import en from '@/locales/en.json';
 import tr from '@/locales/tr.json';
+import fr from '@/locales/fr.json';
+import de from '@/locales/de.json';
 
-export type Language = 'en' | 'tr';
+export type Language = 'en' | 'tr' | 'fr' | 'de';
 
 interface I18nContextType {
   language: Language;
@@ -16,15 +18,15 @@ interface I18nContextType {
 
 export const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-const translations: Record<Language, any> = { en, tr };
+const translations: Record<Language, any> = { en, tr, fr, de };
 
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
 
   useEffect(() => {
-    const browserLang = navigator.language.split('-')[0];
-    const initialLang = browserLang === 'tr' ? 'tr' : 'en';
+    const browserLang = navigator.language.split('-')[0] as Language;
+    const initialLang = ['tr', 'en', 'fr', 'de'].includes(browserLang) ? browserLang : 'en';
     setLanguageState(initialLang);
     document.documentElement.lang = initialLang;
 
@@ -56,10 +58,26 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     for (const k of keys) {
       result = result?.[k];
       if (result === undefined) {
-        return key;
+        // Fallback to English if translation is missing
+        let fallbackResult = translations['en'];
+        for (const fk of keys) {
+            fallbackResult = fallbackResult?.[fk];
+            if(fallbackResult === undefined) return key;
+        }
+        result = fallbackResult;
+        break;
       }
     }
     
+    if (typeof result === 'string' && args.length > 0 && args[0].count !== undefined) {
+       if (language === 'tr') {
+         // No pluralization for Turkish
+         return result;
+       }
+       const count = args[0].count;
+       return count === 1 ? result : (translations[language][key + '_plural'] || `${result}s`);
+    }
+
     if (typeof result === 'string' && args.length > 0) {
       return result.replace(/{(\d+)}/g, (match, number) => {
         return typeof args[number] !== 'undefined' ? args[number] : match;

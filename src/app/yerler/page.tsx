@@ -10,11 +10,14 @@ import { places } from '@/lib/data/places';
 import { Placeholders } from '@/lib/placeholder-images';
 import { useTranslation } from '@/hooks/use-translation';
 import { Suspense } from 'react';
+import type { Language } from '@/providers/i18n-provider';
 
 function YerlerContent() {
   const searchParams = useSearchParams();
   const category = searchParams.get('category');
   const { t, language } = useTranslation();
+
+  const typedLanguage = language as Language;
 
   const filteredPlaces = category ? places.filter(p => p.category === category) : places;
 
@@ -55,13 +58,13 @@ function YerlerContent() {
         {filteredPlaces.map(place => {
           const placeholder = Placeholders.find(p => p.id === place.slug.en);
           return (
-            <Link href={`/yerler/${place.slug[language]}`} key={place.id} className="group">
+            <Link href={`/yerler/${place.slug[typedLanguage]}`} key={place.id} className="group">
               <Card className="overflow-hidden h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
                 <CardContent className="p-0 flex flex-col h-full">
                   <div className="relative h-64 w-full">
                     <Image
                       src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                      alt={place.name[language]}
+                      alt={place.name[typedLanguage]}
                       data-ai-hint={placeholder?.imageHint || 'landmark'}
                       fill
                       className="object-cover"
@@ -69,8 +72,8 @@ function YerlerContent() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-2xl font-bold font-headline mb-2">{place.name[language]}</h3>
-                    <p className="text-muted-foreground flex-grow">{place.description[language].substring(0, 120)}...</p>
+                    <h3 className="text-2xl font-bold font-headline mb-2">{place.name[typedLanguage]}</h3>
+                    <p className="text-muted-foreground flex-grow">{place.description[typedLanguage].substring(0, 120)}...</p>
                     <Button variant="link" className="text-accent p-0 h-auto mt-4 self-start">
                         {t('actions.seeDetails')}
                     </Button>
