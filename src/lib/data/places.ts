@@ -138,6 +138,6 @@ export const places: Place[] = [
             de: 'Der Legende nach ist der Tabak-Bach, ein Nebenarm des Flusses Paktolos (Sart), an dem König Midas vom Fluch befreit wurde, alles, was er berührte, in Gold zu verwandeln, die Heimat interessanter geologischer Formationen. Diese Gruben, bekannt als die "Riesenkessel", sind natürliche Becken, die durch die Erosion der Felsen durch das Wasser über Tausende von Jahren entstanden sind. Der Glaube, dass Midas\' goldene Berührung in diesen Gewässern endete, verleiht der Region eine mystische Atmosphäre. Mit seinem kühlen Wasser und der beeindruckenden Landschaft sind die Riesenkessel sowohl ein Naturwunder als auch ein lebendiges Zeugnis einer alten Legende.'
         },
         category: 'nature',
-        coordinates: { lat: 38.4789, lng: 28.0531 }
+        coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 }
     }
 ];
