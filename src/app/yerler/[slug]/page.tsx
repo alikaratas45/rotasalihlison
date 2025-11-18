@@ -1,21 +1,86 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'next/navigation';
 import Image from 'next/image';
 import { places } from '@/lib/data/places';
 import { Placeholders } from '@/lib/placeholder-images';
 import { useTranslation } from '@/hooks/use-translation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin } from 'lucide-react';
+import { MapPin, Volume2, Pause } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PlaceDetailPage() {
-  const params = useParams();
+  const params = useState();
   const slug = params.slug;
-  const { language } = useTranslation();
+  const { t, language } = useTranslation();
+  
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
   const place = places.find(p => p.slug.tr === slug || p.slug.en === slug);
+  
+  const name = place ? place.name[language] || place.name.tr : '';
+  const description = place ? place.description[language] || place.description.tr : '';
+
+  useEffect(() => {
+    const synth = window.speechSynthesis;
+    const u = new SpeechSynthesisUtterance(description);
+    
+    // Find a Turkish voice if language is 'tr'
+    const voices = synth.getVoices();
+    if (language === 'tr') {
+      const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
+      if (turkishVoice) {
+        u.voice = turkishVoice;
+      }
+    }
+    
+    u.onend = () => {
+      setIsPlaying(false);
+    };
+    setUtterance(u);
+
+    // Cleanup function to cancel speech when component unmounts or description changes
+    return () => {
+      synth.cancel();
+    };
+  }, [description, language]);
+
+  // Load voices
+  useEffect(() => {
+      const synth = window.speechSynthesis;
+      if (synth.getVoices().length === 0) {
+          synth.onvoiceschanged = () => {
+               // Re-create utterance when voices are loaded to pick the correct one
+                const u = new SpeechSynthesisUtterance(description);
+                const voices = synth.getVoices();
+                 if (language === 'tr') {
+                    const turkishVoice = voices.find(voice => voice.lang.startsWith('tr'));
+                    if (turkishVoice) {
+                        u.voice = turkishVoice;
+                    }
+                }
+                u.onend = () => {
+                    setIsPlaying(false);
+                };
+                setUtterance(u);
+          };
+      }
+  }, [description, language]);
+
+
+  const handlePlayPause = () => {
+    const synth = window.speechSynthesis;
+    if (isPlaying) {
+      synth.cancel(); // Stop speaking
+      setIsPlaying(false);
+    } else if (utterance) {
+      synth.speak(utterance);
+      setIsPlaying(true);
+    }
+  };
+  
   const placeholder = place ? Placeholders.find(p => p.id === place.slug.en) : undefined;
 
   if (!place) {
@@ -29,9 +94,6 @@ export default function PlaceDetailPage() {
       </div>
     );
   }
-
-  const name = place.name[language] || place.name.tr;
-  const description = place.description[language] || place.description.tr;
 
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`;
 
@@ -61,6 +123,10 @@ export default function PlaceDetailPage() {
                     <MapPin className="mr-2" />
                     Haritada Göster
                 </a>
+            </Button>
+            <Button size="lg" variant="outline" onClick={handlePlayPause}>
+                {isPlaying ? <Pause className="mr-2" /> : <Volume2 className="mr-2" />}
+                {isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
             </Button>
           </div>
         </div>

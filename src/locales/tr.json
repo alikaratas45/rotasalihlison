@@ -35,6 +35,7 @@
     "actions": {
         "seeDetails": "Detayları Gör →",
         "listenAudio": "Sesli Dinle",
+        "stopAudio": "Durdur",
         "startRouteOnMap": "Rotayı Haritada Başlat",
         "whereToEat": "Nerede Yenir?"
     },
@@ -53,6 +54,5 @@
     "shopping": {
         "title": "Alışveriş Durakları",
         "description": "Salihli'nin yerel pazarlarından modern mağazalarına, aradığınız her şeyi bulabileceğiniz alışveriş noktalarını keşfedin."
-    },
-    "Durdur": "Durdur"
+    }
 }

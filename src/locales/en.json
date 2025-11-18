@@ -35,6 +35,7 @@
     "actions": {
         "seeDetails": "See Details →",
         "listenAudio": "Listen Audio",
+        "stopAudio": "Stop",
         "startRouteOnMap": "Start Route on Map",
         "whereToEat": "Where to Eat?"
     },
