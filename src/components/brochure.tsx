@@ -13,27 +13,22 @@ interface BrochureViewerProps {
 
 export function BrochureViewer({ brochure }: BrochureViewerProps) {
   const [currentPage, setCurrentPage] = useState(0);
-  const totalSpreads = Math.ceil(brochure.pages.length / 2);
+  const totalPages = brochure.pages.length;
 
   const goToPrevPage = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
   const goToNextPage = () => {
-    setCurrentPage((prev) => Math.min(totalSpreads - 1, prev + 1));
+    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
   };
 
   return (
     <div className="flex flex-col items-center gap-4 w-full">
       <div
-        className="relative w-full max-w-4xl aspect-[2/1] perspective-1000"
+        className="relative w-full max-w-md aspect-[3/4] perspective-1000"
       >
-        {Array.from({ length: totalSpreads }).map((_, index) => {
-          const leftPageIndex = index * 2;
-          const rightPageIndex = index * 2 + 1;
-          const leftPage = brochure.pages[leftPageIndex];
-          const rightPage = brochure.pages[rightPageIndex];
-
+        {brochure.pages.map((page, index) => {
           const isCurrent = index === currentPage;
           const isPast = index < currentPage;
           
@@ -46,30 +41,18 @@ export function BrochureViewer({ brochure }: BrochureViewerProps) {
                 !isCurrent && 'pointer-events-none'
               )}
               style={{
-                transform: isPast ? 'translateX(-100%) rotateY(-180deg)' : 'translateX(0) rotateY(0deg)',
+                transform: isPast ? 'translateX(-100%)' : 'translateX(0)',
+                opacity: isCurrent ? 1 : 0,
               }}
             >
-              <div className="absolute w-1/2 h-full left-0 origin-right transform-style-3d backface-hidden">
-                {leftPage && (
-                    <Image
-                        src={leftPage.imageUrl}
-                        alt={`Brochure page ${leftPageIndex + 1}`}
-                        data-ai-hint={leftPage.imageHint}
-                        fill
-                        className="object-cover rounded-l-md shadow-md"
-                    />
-                )}
-              </div>
-              <div className="absolute w-1/2 h-full right-0 origin-left transform-style-3d backface-hidden">
-                {rightPage && (
-                    <Image
-                        src={rightPage.imageUrl}
-                        alt={`Brochure page ${rightPageIndex + 1}`}
-                        data-ai-hint={rightPage.imageHint}
-                        fill
-                        className="object-cover rounded-r-md shadow-md"
-                    />
-                )}
+              <div className="w-full h-full">
+                <Image
+                    src={page.imageUrl}
+                    alt={`Brochure page ${index + 1}`}
+                    data-ai-hint={page.imageHint}
+                    fill
+                    className="object-cover rounded-md shadow-lg"
+                />
               </div>
             </div>
           );
@@ -82,9 +65,9 @@ export function BrochureViewer({ brochure }: BrochureViewerProps) {
           Önceki
         </Button>
         <span className="text-muted-foreground font-medium">
-          Sayfa {currentPage + 1} / {totalSpreads}
+          Sayfa {currentPage + 1} / {totalPages}
         </span>
-        <Button onClick={goToNextPage} disabled={currentPage >= totalSpreads - 1} variant="outline">
+        <Button onClick={goToNextPage} disabled={currentPage >= totalPages - 1} variant="outline">
           Sonraki
           <ChevronRight className="ml-2" />
         </Button>
