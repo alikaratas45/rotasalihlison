@@ -43,3 +43,14 @@ export type Cuisine = {
     description: LocalizedString;
     mapSearchQuery: string;
 };
+
+export type BrochurePage = {
+    imageUrl: string;
+    imageHint: string;
+};
+
+export type Brochure = {
+    id: string;
+    title: LocalizedString;
+    pages: BrochurePage[];
+};

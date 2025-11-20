@@ -6,6 +6,7 @@
         "routes": "Rotalar",
         "stories": "Hikayeler",
         "cuisine": "Lezzetler",
+        "brochures": "Broşürlerimiz",
         "nearby": "Yakındakiler",
         "qrScanner": "QR Okuyucu"
     },
@@ -76,5 +77,9 @@
     "cuisine": {
         "title": "Salihli'nin Lezzet Haritası",
         "description": "Salihli'nin en iyi yeme içme mekanlarını sizin için haritada gösteriyoruz. Afiyet olsun!"
+    },
+    "brochures": {
+        "title": "Broşürlerimiz",
+        "description": "Salihli'nin güzelliklerini ve olanaklarını interaktif dijital broşürlerimizle keşfedin."
     }
 }

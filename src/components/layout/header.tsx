@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
+import { Menu, Sun, Moon, Volume2, VolumeX, BookOpen } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -26,6 +26,7 @@ export function Header() {
     { href: '/rotalar', label: t('header.routes') },
     { href: '/hikayeler', label: t('header.stories') },
     { href: '/lezzetler', label: t('header.cuisine') },
+    { href: '/brosurler', label: t('header.brochures') },
     { href: '/yakindakiler', label: t('header.nearby') },
   ];
 

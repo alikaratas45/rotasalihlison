@@ -6,6 +6,7 @@
         "routes": "Routen",
         "stories": "Geschichten",
         "cuisine": "Küche",
+        "brochures": "Unsere Broschüren",
         "nearby": "In der Nähe",
         "qrScanner": "QR-Scanner"
     },
@@ -77,5 +78,9 @@
     "cuisine": {
         "title": "Salihlis Geschmackskarte",
         "description": "Wir zeigen Ihnen die besten Restaurants in Salihli auf der Karte. Guten Appetit!"
+    },
+    "brochures": {
+        "title": "Unsere Broschüren",
+        "description": "Entdecken Sie die Schönheiten und Möglichkeiten von Salihli mit unseren interaktiven digitalen Broschüren."
     }
 }
