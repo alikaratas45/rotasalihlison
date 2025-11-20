@@ -47,6 +47,8 @@ export type Cuisine = {
 export type BrochurePage = {
     imageUrl: string;
     imageHint: string;
+    title?: LocalizedString;
+    text?: LocalizedString;
 };
 
 export type Brochure = {
