@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
     } catch (error: any) {
       let description = 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.';
       if (error.code === 'auth/invalid-credential') {
-        description = 'Kimlik bilgileri geçersiz. Firebase konsolunda yönetici kullanıcısını (alikarataskula@gmail.com) oluşturduğunuzdan ve şifrenin doğru olduğundan (salihli) emin olun.';
+        description = "Şifre hatalı. Lütfen şifrenin 'salihli' olduğundan emin olun. Gerekirse, Firebase Authentication panelinden 'alikarataskula@gmail.com' kullanıcısının şifresini 'salihli' olarak güncelleyebilirsiniz.";
       }
       toast({
         variant: 'destructive',
