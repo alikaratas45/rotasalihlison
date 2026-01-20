@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { addPlace } from '@/firebase/firestore/places-service';
 import { useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { seedPlaces } from '@/firebase/firestore/seed-service';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -44,6 +45,7 @@ export default function AdminPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,6 +61,8 @@ export default function AdminPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
+    
+    const randomSeed = Math.random().toString(36).substring(7);
 
     // Diğer diller için Türkçe verileri geçici olarak kullanıyoruz.
     const newPlace = {
@@ -88,6 +92,8 @@ export default function AdminPage() {
         lat: values.lat,
         lng: values.lng,
       },
+      imageUrl: `https://picsum.photos/seed/${randomSeed}/600/400`,
+      imageHint: 'landmark',
     };
 
     try {
@@ -108,123 +114,161 @@ export default function AdminPage() {
     }
   }
 
+  async function handleSeedDatabase() {
+    setIsSeeding(true);
+    try {
+      const { addedCount, skippedCount } = await seedPlaces(firestore);
+      toast({
+        title: 'Veritabanı Beslendi!',
+        description: `${addedCount} yeni yer eklendi. ${skippedCount} yer zaten mevcuttu ve atlandı.`,
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Hata!',
+        description: 'Veritabanı beslenirken bir sorun oluştu. Lütfen konsolu kontrol edin.',
+      });
+      console.error(error);
+    } finally {
+      setIsSeeding(false);
+    }
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Yeni Yer Ekle</CardTitle>
-        <CardDescription>
-          Formu doldurarak uygulamaya yeni bir mekan ekleyin. Diğer diller için
-          girişler otomatik olarak Türkçe metin üzerinden atanacaktır.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="name_tr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>İsim</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="slug_tr"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Link</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      URL'de görünecek kısım. Örn: "sardes-antik-kenti"
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="description_tr"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Açıklama</FormLabel>
-                  <FormControl>
-                    <Textarea rows={5} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Kategori</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <div className="space-y-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>Yeni Yer Ekle</CardTitle>
+          <CardDescription>
+            Formu doldurarak uygulamaya yeni bir mekan ekleyin. Diğer diller için
+            girişler otomatik olarak Türkçe metin üzerinden atanacaktır.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="name_tr"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>İsim</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Kategori seçin" />
-                        </SelectTrigger>
+                        <Input {...field} />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="history">Tarih</SelectItem>
-                        <SelectItem value="nature">Doğa</SelectItem>
-                        <SelectItem value="food">Lezzet</SelectItem>
-                        <SelectItem value="shopping">Alışveriş</SelectItem>
-                        <SelectItem value="poi">Önemli Nokta</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="slug_tr"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        URL'de görünecek kısım. Örn: "sardes-antik-kenti"
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
-                name="lat"
+                name="description_tr"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Latitude</FormLabel>
+                    <FormLabel>Açıklama</FormLabel>
                     <FormControl>
-                      <Input type="number" step="any" {...field} />
+                      <Textarea rows={5} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="lng"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Longitude</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="any" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Yeni Yeri Ekle
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Kategori</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Kategori seçin" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="history">Tarih</SelectItem>
+                          <SelectItem value="nature">Doğa</SelectItem>
+                          <SelectItem value="food">Lezzet</SelectItem>
+                          <SelectItem value="shopping">Alışveriş</SelectItem>
+                          <SelectItem value="poi">Önemli Nokta</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Latitude</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="any" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lng"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Longitude</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="any" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Yeni Yeri Ekle
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Veritabanı Yönetimi</CardTitle>
+          <CardDescription>
+            Uygulamanın başlangıç verilerini Firestore veritabanına yükleyin.
+            Bu işlem mevcut verilerin üzerine yazmaz, sadece eksik olanları ekler.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={handleSeedDatabase} disabled={isSeeding}>
+            {isSeeding && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Başlangıç Verilerini Yükle
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

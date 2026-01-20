@@ -5,12 +5,85 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dna, Mountain, Utensils, ShoppingBag, MapPinned } from 'lucide-react';
-import { places } from '@/lib/data/places';
-import { routes } from '@/lib/data/routes';
-import { Placeholders } from '@/lib/placeholder-images';
+import { Dna, Mountain, Utensils, ShoppingBag, MapPinned, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import type { Place } from '@/lib/definitions';
+import { useMemo } from 'react';
+import { Placeholders } from '@/lib/placeholder-images';
+import { Skeleton } from '@/components/ui/skeleton';
+import { routes } from '@/lib/data/routes';
+
+function PopularDestinations() {
+    const { t, language } = useLanguage();
+    const typedLanguage = language as Language;
+    const firestore = useFirestore();
+
+    const popularSlugs = ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-wood-meatballs'];
+
+    const popularPlacesQuery = useMemo(() => {
+        return query(collection(firestore, 'places'), where('slug.en', 'in', popularSlugs));
+    }, [firestore]);
+
+    const { data: popularDestinations, loading } = useCollection<Place>(popularPlacesQuery);
+
+    if (loading) {
+        return (
+            <div className="grid md:grid-cols-3 gap-8 -mt-32 md:-mt-48 z-10 relative">
+                {Array.from({ length: 3 }).map((_, i) => (
+                     <Card key={i} className="overflow-hidden shadow-xl">
+                        <CardContent className="p-0">
+                            <Skeleton className="h-64 w-full" />
+                             <div className="p-4 bg-card text-card-foreground md:hidden">
+                                <Skeleton className="h-6 w-3/4 mb-2" />
+                                <Skeleton className="h-4 w-1/2" />
+                             </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        );
+    }
+    
+    // Sort the results to match the order in popularSlugs
+    const sortedDestinations = popularDestinations?.sort((a, b) => {
+        return popularSlugs.indexOf(a.slug.en) - popularSlugs.indexOf(b.slug.en);
+    }) || [];
+
+    return (
+        <div className="grid md:grid-cols-3 gap-8 -mt-32 md:-mt-48 z-10 relative">
+            {sortedDestinations.map(place => (
+              <Card key={place.id} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
+                <CardContent className="p-0">
+                  <Link href={`/yerler/${place.slug[typedLanguage]}`} className="block">
+                    <div className="relative h-64 w-full">
+                      <Image
+                        src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
+                        alt={place.name[typedLanguage]}
+                        data-ai-hint={place.imageHint || 'landmark'}
+                        fill
+                        className="object-cover md:group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:from-black/60 md:to-transparent" />
+                    </div>
+                    <div className="absolute bottom-0 p-4 text-white hidden md:block">
+                      <h3 className="text-2xl font-bold font-headline">{place.name[typedLanguage]}</h3>
+                      <span className="text-green-400">{t('actions.seeDetails')}</span>
+                    </div>
+                     <div className="p-4 bg-card text-card-foreground md:hidden">
+                        <h3 className="text-xl font-bold font-headline mb-1">{place.name[typedLanguage]}</h3>
+                        <span className="text-sm font-semibold text-green-600">{t('actions.seeDetails')}</span>
+                     </div>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+        </div>
+    );
+}
+
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -18,7 +91,6 @@ export default function Home() {
 
   const typedLanguage = language as Language;
 
-  const popularDestinations = places.filter(p => ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-wood-meatballs'].includes(p.slug.en)).slice(0, 3);
   const thematicRoutes = routes.slice(0, 3);
 
   const experienceMenu = [
@@ -56,36 +128,7 @@ export default function Home() {
 
       <section className="py-12 md:py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 -mt-32 md:-mt-48 z-10 relative">
-            {popularDestinations.map(place => {
-              const placeholder = Placeholders.find(p => p.id === place.slug.en);
-              return (
-              <Card key={place.id} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
-                <CardContent className="p-0">
-                  <Link href={`/yerler/${place.slug[typedLanguage]}`} className="block">
-                    <div className="relative h-64 w-full">
-                      <Image
-                        src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                        alt={place.name[typedLanguage]}
-                        data-ai-hint={placeholder?.imageHint || 'landmark'}
-                        fill
-                        className="object-cover md:group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:from-black/60 md:to-transparent" />
-                    </div>
-                    <div className="absolute bottom-0 p-4 text-white hidden md:block">
-                      <h3 className="text-2xl font-bold font-headline">{place.name[typedLanguage]}</h3>
-                      <span className="text-green-400">{t('actions.seeDetails')}</span>
-                    </div>
-                     <div className="p-4 bg-card text-card-foreground md:hidden">
-                        <h3 className="text-xl font-bold font-headline mb-1">{place.name[typedLanguage]}</h3>
-                        <span className="text-sm font-semibold text-green-600">{t('actions.seeDetails')}</span>
-                     </div>
-                  </Link>
-                </CardContent>
-              </Card>
-            )})}
-          </div>
+          <PopularDestinations />
         </div>
       </section>
 

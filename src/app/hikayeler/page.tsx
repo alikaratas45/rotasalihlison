@@ -5,15 +5,60 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { stories } from '@/lib/data/stories';
-import { Placeholders } from '@/lib/placeholder-images';
 import { useLanguage } from '@/hooks/use-language';
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 import type { Language } from '@/context/language-context';
-import { places } from '@/lib/data/places';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import type { Place } from '@/lib/definitions';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 function HikayelerContent() {
   const { t, language } = useLanguage();
   const typedLanguage = language as Language;
+  
+  const firestore = useFirestore();
+  const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+  const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
+
+  const enrichedStories = useMemo(() => {
+    if (!places) return stories.map(story => ({...story, placeholder: {imageUrl: `https://picsum.photos/seed/${story.id}/600/400`, imageHint: 'story cover'}}));
+    
+    return stories.map(story => {
+        const relatedPlace = story.placeId ? places.find(p => p.id === story.placeId) : null;
+        const placeholder = relatedPlace ? 
+                              { imageUrl: relatedPlace.imageUrl, imageHint: relatedPlace.imageHint } :
+                              { imageUrl: `https://picsum.photos/seed/${story.id}/600/400`, imageHint: 'story cover' };
+        return { ...story, placeholder };
+    });
+  }, [places]);
+
+  if (placesLoading) {
+      return (
+          <div className="container mx-auto px-4 py-8 md:py-12">
+              <div className="text-center mb-12">
+                    <Skeleton className="h-10 w-1/2 mx-auto mb-4" />
+                    <Skeleton className="h-6 w-3/4 mx-auto" />
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                      <Card key={i} className="overflow-hidden h-full">
+                          <CardContent className="p-0 flex flex-col h-full">
+                              <Skeleton className="h-64 w-full" />
+                              <div className="p-6 flex flex-col flex-grow">
+                                  <Skeleton className="h-8 w-3/4 mb-4" />
+                                  <Skeleton className="h-4 w-full mb-2" />
+                                  <Skeleton className="h-4 w-2/3 mb-4" />
+                                  <Skeleton className="h-5 w-24 mt-auto" />
+                              </div>
+                          </CardContent>
+                      </Card>
+                  ))}
+              </div>
+          </div>
+      );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -23,19 +68,15 @@ function HikayelerContent() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {stories.map(story => {
-          const relatedPlace = story.placeId ? places.find(p => p.id === story.placeId) : null;
-          const placeholder = relatedPlace ? Placeholders.find(p => p.id === relatedPlace.slug.en) : Placeholders.find(p => p.id === 'story-generic');
-          
-          return (
+        {enrichedStories.map(story => (
             <Link href={`/hikayeler/${story.slug[typedLanguage]}`} key={story.id} className="group">
               <Card className="overflow-hidden h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
                 <CardContent className="p-0 flex flex-col h-full">
                   <div className="relative h-64 w-full">
                     <Image
-                      src={placeholder?.imageUrl || `https://picsum.photos/seed/${story.id}/600/400`}
+                      src={story.placeholder?.imageUrl || `https://picsum.photos/seed/${story.id}/600/400`}
                       alt={story.title[typedLanguage]}
-                      data-ai-hint={placeholder?.imageHint || 'story cover'}
+                      data-ai-hint={story.placeholder?.imageHint || 'story cover'}
                       fill
                       className="object-cover"
                     />
@@ -55,7 +96,7 @@ function HikayelerContent() {
               </Card>
             </Link>
           )
-        })}
+        )}
       </div>
     </div>
   );

@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { stories } from '@/lib/data/stories';
-import { places } from '@/lib/data/places';
-import { Placeholders } from '@/lib/placeholder-images';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { ArrowLeft, Loader2, MapPin } from 'lucide-react';
 import type { Language } from '@/context/language-context';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import type { Place } from '@/lib/definitions';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StoryDetailPage() {
   const params = useParams();
@@ -19,9 +21,17 @@ export default function StoryDetailPage() {
   const { t, language } = useLanguage();
   const typedLanguage = language as Language;
 
+  const firestore = useFirestore();
+  const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+  const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
+
   const story = stories.find(s => Object.values(s.slug).includes(slug as string));
-  const relatedPlace = story && story.placeId ? places.find(p => p.id === story.placeId) : null;
-  const placeholder = relatedPlace ? Placeholders.find(p => p.id === relatedPlace.slug.en) : null;
+
+  const relatedPlace = useMemo(() => {
+    if (!story?.placeId || !places) return null;
+    return places.find(p => p.id === story.placeId) || null;
+  }, [story, places]);
+
 
   if (!story) {
     return (
@@ -53,14 +63,27 @@ export default function StoryDetailPage() {
         <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 text-center">{title}</h1>
         <p className="text-center text-muted-foreground mb-8">{t('stories.by')} {author}</p>
         
-        {relatedPlace && (
+        {placesLoading && story?.placeId && (
+            <Card className="mb-8 overflow-hidden shadow-lg">
+                <div className="grid md:grid-cols-2">
+                    <Skeleton className="h-64 md:h-auto w-full" />
+                    <div className="p-6 flex flex-col justify-center">
+                        <Skeleton className="h-6 w-32 mb-4" />
+                        <Skeleton className="h-8 w-48 mb-6" />
+                        <Skeleton className="h-11 w-40" />
+                    </div>
+                </div>
+            </Card>
+        )}
+
+        {!placesLoading && relatedPlace && (
           <Card className="mb-8 overflow-hidden shadow-lg">
             <div className="grid md:grid-cols-2">
               <div className="relative h-64 md:h-auto">
                 <Image
-                  src={placeholder?.imageUrl || `https://picsum.photos/seed/${relatedPlace.id}/600/400`}
+                  src={relatedPlace.imageUrl || `https://picsum.photos/seed/${relatedPlace.id}/600/400`}
                   alt={relatedPlace.name[typedLanguage]}
-                  data-ai-hint={placeholder?.imageHint || 'landscape'}
+                  data-ai-hint={relatedPlace.imageHint || 'landscape'}
                   fill
                   className="object-cover"
                 />

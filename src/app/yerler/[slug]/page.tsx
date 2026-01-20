@@ -1,16 +1,43 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { places } from '@/lib/data/places';
-import { Placeholders } from '@/lib/placeholder-images';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MapPin, Volume2, Pause, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import type { Place } from '@/lib/definitions';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function PlaceDetailSkeleton() {
+    return (
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <div className="grid md:grid-cols-5 gap-8 lg:gap-12">
+                <div className="md:col-span-3">
+                    <Card className="overflow-hidden shadow-lg">
+                        <Skeleton className="h-[300px] md:h-[450px] w-full" />
+                    </Card>
+                </div>
+                <div className="md:col-span-2">
+                    <Skeleton className="h-10 w-3/4 mb-4" />
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-5 w-full mb-2" />
+                    <Skeleton className="h-5 w-2/3 mb-6" />
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Skeleton className="h-12 w-40" />
+                        <Skeleton className="h-12 w-40" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 
 export default function PlaceDetailPage() {
   const params = useParams();
@@ -23,7 +50,14 @@ export default function PlaceDetailPage() {
 
   const typedLanguage = language as Language;
 
-  const place = places.find(p => Object.values(p.slug).includes(slug as string));
+  const firestore = useFirestore();
+  const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+  const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
+
+  const place = useMemo(() => {
+    if (!places) return null;
+    return places.find(p => Object.values(p.slug).includes(slug as string));
+  }, [places, slug]);
   
   const name = place ? place.name[typedLanguage] : '';
   const description = place ? place.description[typedLanguage] : '';
@@ -110,7 +144,9 @@ export default function PlaceDetailPage() {
     }
   };
   
-  const placeholder = place ? Placeholders.find(p => p.id === place.slug.en) : undefined;
+  if (placesLoading) {
+      return <PlaceDetailSkeleton />;
+  }
 
   if (!place) {
     return (
@@ -133,9 +169,9 @@ export default function PlaceDetailPage() {
           <Card className="overflow-hidden shadow-lg">
             <div className="relative h-[300px] md:h-[450px] w-full">
               <Image
-                src={placeholder?.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`}
+                src={place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`}
                 alt={name}
-                data-ai-hint={placeholder?.imageHint || 'landmark'}
+                data-ai-hint={place.imageHint || 'landmark'}
                 fill
                 className="object-cover"
                 priority
