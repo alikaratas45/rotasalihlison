@@ -41,6 +41,9 @@ export function Footer() {
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
           <p>&copy; {year} Salihli Belediyesi. {t('footer.copyright')}</p>
+           <div className="mt-2">
+             <Link href="/admin/login" className="text-xs text-muted-foreground hover:text-primary">Admin Girişi</Link>
+          </div>
         </div>
       </div>
     </footer>

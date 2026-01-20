@@ -16,6 +16,8 @@ export const createUserProfileDocument = async (userAuth: User) => {
         const usersCollectionRef = collection(firestore, 'users');
         const usersSnapshot = await getDocs(usersCollectionRef);
         const isFirstUser = usersSnapshot.empty;
+        
+        const isHardcodedAdmin = userAuth.email === 'alikarataskula@gmail.com';
 
         const { email, displayName, photoURL } = userAuth;
         
@@ -24,7 +26,7 @@ export const createUserProfileDocument = async (userAuth: User) => {
             email,
             displayName,
             photoURL,
-            isAdmin: isFirstUser, // Make the first user an admin
+            isAdmin: isFirstUser || isHardcodedAdmin, // Make the first user or the hardcoded user an admin
         };
 
         try {
