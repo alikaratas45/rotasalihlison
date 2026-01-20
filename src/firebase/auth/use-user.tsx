@@ -1,6 +1,5 @@
 'use client';
 import { doc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { useDoc } from '../firestore/use-doc';
@@ -11,38 +10,20 @@ export function useUser() {
   const auth = useAuth();
   const firestore = useFirestore();
   const [user, userLoading, userError] = useAuthState(auth);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
+  // Create a document reference. useDoc will handle the null case.
   const userDocRef = user ? doc(firestore, `users/${user.uid}`) : null;
+  
+  // Use our new, stable useDoc hook to get the profile
   const {
-    data: profileData,
+    data: profile,
     loading: profileLoading,
     error: profileError,
   } = useDoc<UserProfile>(userDocRef);
 
-  useEffect(() => {
-    setLoading(userLoading || profileLoading);
-  }, [userLoading, profileLoading]);
-
-  useEffect(() => {
-    if (userError) {
-      setError(userError);
-    } else if (profileError) {
-      setError(profileError);
-    } else {
-      setError(null);
-    }
-  }, [userError, profileError]);
-
-  useEffect(() => {
-    if (profileData) {
-      setProfile(profileData);
-    } else {
-      setProfile(null);
-    }
-  }, [profileData]);
+  // Combine loading states and errors
+  const loading = userLoading || profileLoading;
+  const error = userError || profileError;
 
   return { user, profile, loading, error };
 }

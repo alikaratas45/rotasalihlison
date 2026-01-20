@@ -1,54 +1,23 @@
 // IMPORTANT: This file is a work in progress and should not be used in production.
 'use client';
-import {
-  type DocumentReference,
-  type DocumentData,
-  onSnapshot,
-  type FirestoreError,
-} from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import { errorEmitter } from '../error-emitter';
-import { FirestorePermissionError } from '../errors';
+import { type DocumentReference, type DocumentData } from 'firebase/firestore';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
 
 export const useDoc = <T,>(
   docRef: DocumentReference<DocumentData> | null
 ): {
   data: (T & { id: string }) | null;
   loading: boolean;
-  error: FirestoreError | null;
+  error: Error | null;
 } => {
-  const [data, setData] = useState<(T & { id: string }) | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<FirestoreError | null>(null);
-
-  useEffect(() => {
-    if (docRef) {
-      const unsubscribe = onSnapshot(
-        docRef,
-        (doc) => {
-          if (doc.exists()) {
-            setData({ id: doc.id, ...(doc.data() as T) });
-          } else {
-            setData(null);
-          }
-          setLoading(false);
-        },
-        async (err) => {
-          const permissionError = new FirestorePermissionError({
-            path: (docRef as any)._path?.segments.join('/'),
-            operation: 'get',
-          });
-          errorEmitter.emit('permission-error', permissionError);
-          setError(err);
-          setLoading(false);
-        }
-      );
-      return () => unsubscribe();
-    } else {
-      setData(null);
-      setLoading(false);
+  // react-firebase-hooks' useDocumentData is stable and handles connection state.
+  // The idField option automatically includes the document ID in the data.
+  const [data, loading, error] = useDocumentData<T & { id: string }>(
+    docRef as DocumentReference<T & { id: string }>,
+    {
+      idField: 'id',
     }
-  }, [docRef]);
+  );
 
-  return { data, loading, error };
+  return { data: data || null, loading, error: error || null };
 };
