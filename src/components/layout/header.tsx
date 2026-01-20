@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import type { Language } from '@/context/language-context';
 import React from 'react';
 import { useUser } from '@/firebase';
-import { signOutWithGoogle } from '@/firebase/auth/auth-service';
+import { signOutUser } from '@/firebase/auth/auth-service';
 
 export function Header() {
   const { t } = useLanguage();

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { signOutWithGoogle } from '@/firebase/auth/auth-service';
+import { signOutUser } from '@/firebase/auth/auth-service';
 import { Logo } from '../icons/logo';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
@@ -64,7 +64,7 @@ export function AdminSidebar() {
       </div>
       <div className="mt-auto p-4">
         {user && (
-             <Button variant="ghost" className="w-full justify-start" onClick={signOutWithGoogle}>
+             <Button variant="ghost" className="w-full justify-start" onClick={signOutUser}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Sign Out
             </Button>
