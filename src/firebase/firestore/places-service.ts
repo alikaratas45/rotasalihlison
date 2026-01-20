@@ -4,8 +4,6 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import type { Place } from '@/lib/definitions';
 
-// We are defining a type for the data we expect to add, excluding the ID,
-// as Firestore will generate it.
 type NewPlaceData = Omit<Place, 'id'>;
 
 export function addPlace(
@@ -36,20 +34,10 @@ export function addPlace(
     });
 }
 
-// Data shape coming from the admin form
-export type PlaceFormData = {
-  name_tr: string;
-  slug_tr: string;
-  description_tr: string;
-  category: Place['category'];
-  lat: number;
-  lng: number;
-};
-
 export function updatePlace(
   firestore: Firestore,
   placeId: string,
-  formData: PlaceFormData,
+  formData: any, // The type is enforced by zod in the page
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
     if (!firestore || !placeId) {
@@ -60,26 +48,30 @@ export function updatePlace(
     }
   const placeDocRef = doc(firestore, 'places', placeId);
 
-  // Construct the data with dot notation for Firestore update and copy to other languages
   const updatedData = {
-    'name.tr': formData.name_tr,
-    'name.en': formData.name_tr,
-    'name.fr': formData.name_tr,
-    'name.de': formData.name_tr,
-    'name.ja': formData.name_tr,
-    'slug.tr': formData.slug_tr,
-    'slug.en': formData.slug_tr,
-    'slug.fr': formData.slug_tr,
-    'slug.de': formData.slug_tr,
-    'slug.ja': formData.slug_tr,
-    'description.tr': formData.description_tr,
-    'description.en': formData.description_tr,
-    'description.fr': formData.description_tr,
-    'description.de': formData.description_tr,
-    'description.ja': formData.description_tr,
-    'category': formData.category,
-    'coordinates.lat': formData.lat,
-    'coordinates.lng': formData.lng,
+    name: {
+      tr: formData.name_tr,
+      en: formData.name_en || formData.name_tr,
+      fr: formData.name_fr || formData.name_tr,
+      de: formData.name_de || formData.name_tr,
+      ja: formData.name_ja || formData.name_tr,
+    },
+    slug: {
+      tr: formData.slug_tr,
+      en: formData.slug_en || formData.slug_tr,
+      fr: formData.slug_fr || formData.slug_tr,
+      de: formData.slug_de || formData.slug_tr,
+      ja: formData.slug_ja || formData.slug_tr,
+    },
+    description: {
+      tr: formData.description_tr,
+      en: formData.description_en || formData.description_tr,
+      fr: formData.description_fr || formData.description_tr,
+      de: formData.description_de || formData.description_tr,
+      ja: formData.description_ja || formData.description_tr,
+    },
+    category: formData.category,
+    coordinates: { lat: formData.lat, lng: formData.lng },
   };
 
   updateDoc(placeDocRef, updatedData)

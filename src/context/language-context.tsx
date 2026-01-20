@@ -9,6 +9,14 @@ import ja from '@/locales/ja.json';
 
 export type Language = 'en' | 'tr' | 'fr' | 'de' | 'ja';
 
+export const languages: { code: Language; name: string }[] = [
+    { code: 'tr', name: 'Türkçe' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'Français' },
+    { code: 'de', name: 'Deutsch' },
+    { code: 'ja', name: '日本語' },
+];
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
