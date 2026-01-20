@@ -192,7 +192,7 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger>
                           <SelectValue placeholder="Kategori seçin" />
                         </SelectTrigger>
