@@ -14,6 +14,8 @@ import {
   FirebaseProvider,
 } from './provider';
 import { FirebaseClientProvider } from './client-provider';
+import { useUser } from './auth/use-user';
+
 
 function initializeFirebase() {
   const apps = getApps();
@@ -29,6 +31,7 @@ export {
   FirebaseClientProvider,
   useCollection,
   useDoc,
+  useUser,
   useFirebase,
   useFirebaseApp,
   useFirestore,
