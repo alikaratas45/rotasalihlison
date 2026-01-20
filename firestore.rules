@@ -22,25 +22,25 @@ service cloud.firestore {
     // ---
     // All users can read public content.
     // Only admins can write content.
-    match /places/{document=**} {
+    match /places/{placeId} {
       allow read: if true;
       allow write: if isAdmin();
     }
-     match /routes/{document=**} {
+     match /routes/{routeId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
-     match /stories/{document=**} {
+     match /stories/{storyId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
-     match /brochures/{document=**} {
+     match /brochures/{brochureId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
-     match /menu-items/{document=**} {
+     match /menu-items/{menuItemId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isAdmin();
     }
   }
 }
