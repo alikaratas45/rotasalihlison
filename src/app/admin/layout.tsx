@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/icons/logo';
+import { useAuth } from '@/firebase';
 
 export default function AdminLayout({
   children,
@@ -17,20 +18,33 @@ export default function AdminLayout({
   const { user, isAdmin, loading } = useUser();
   const router = useRouter();
   const pathname = usePathname();
+  const auth = useAuth();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        // If not logged in, redirect to login page
-        router.push('/admin/login');
-      } else if (!isAdmin && pathname !== '/admin/unauthorized') {
-        // If logged in but not an admin, redirect to an unauthorized page
-        // For simplicity, we are just redirecting to home.
-        router.push('/');
-      }
+    if (loading) {
+      return; // Yüklenirken bir şey yapma
+    }
+
+    // Giriş yapılmamışsa ve giriş sayfasında değilse, girişe yönlendir
+    if (!user && pathname !== '/admin/login') {
+      router.push('/admin/login');
+      return;
+    }
+
+    // Admin olarak giriş yapılmışsa ve giriş sayfasındaysa, admin paneline yönlendir
+    if (user && isAdmin && pathname === '/admin/login') {
+      router.push('/admin');
+      return;
+    }
+    
+    // Giriş yapılmış ama admin değilse, ana sayfaya yönlendir
+    if (user && !isAdmin) {
+      router.push('/');
+      return;
     }
   }, [user, isAdmin, loading, router, pathname]);
 
+  // Kimlik doğrulama durumu belirlenirken genel bir yükleyici göster
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -39,13 +53,25 @@ export default function AdminLayout({
     );
   }
 
-  if (!isAdmin) {
-    // While redirecting, you might want to show a loader or null
-    return null;
+  // Giriş sayfasındaysa, sadece çocukları (giriş formunu) render et
+  // Yukarıdaki useEffect, zaten giriş yapılmışsa yönlendirmeyi halleder.
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
   }
   
+  // Kullanıcı admin değilse ve giriş sayfasında değilse, yönlendirilirken bir yükleyici göster.
+  if (!isAdmin) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+  
+  // Buradaysak, kullanıcı bir admindir ve bir admin sayfasındadır.
+  // Tam admin düzenini göster.
   const handleSignOut = async () => {
-    await signOut();
+    await signOut(auth);
     router.push('/admin/login');
   };
 
