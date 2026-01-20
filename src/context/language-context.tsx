@@ -24,13 +24,28 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
 
+  // This effect runs only on the client, after the initial render, to sync with browser settings.
+  useEffect(() => {
+    // Set language from browser settings
+    const browserLang = navigator.language.split('-')[0] as Language;
+    if (['tr', 'en', 'fr', 'de'].includes(browserLang)) {
+      setLanguageState(browserLang);
+    }
+
+    // Set audio guide preference from localStorage
+    const savedAudioPreference = localStorage.getItem('audioGuideEnabled');
+    if (savedAudioPreference !== null) {
+      setIsAudioGuideEnabled(JSON.parse(savedAudioPreference));
+    }
+  }, []); // Empty dependency array ensures it runs only once on the client mount.
+
+  // This effect synchronizes the document's lang attribute whenever the language state changes.
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-    document.documentElement.lang = lang;
   }, []);
 
   const toggleAudioGuide = useCallback(() => {
