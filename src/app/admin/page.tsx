@@ -186,18 +186,16 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <option value="history">Tarih</option>
-                            <option value="nature">Doğa</option>
-                            <option value="food">Lezzet</option>
-                            <option value="shopping">Alışveriş</option>
-                            <option value="poi">Önemli Nokta</option>
-                          </select>
-                        </FormControl>
+                      <select
+                        {...field}
+                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <option value="history">Tarih</option>
+                        <option value="nature">Doğa</option>
+                        <option value="food">Lezzet</option>
+                        <option value="shopping">Alışveriş</option>
+                        <option value="poi">Önemli Nokta</option>
+                      </select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -298,18 +296,16 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <option value="history">Tarih</option>
-                            <option value="nature">Doğa</option>
-                            <option value="food">Lezzet</option>
-                            <option value="shopping">Alışveriş</option>
-                            <option value="poi">Önemli Nokta</option>
-                          </select>
-                        </FormControl>
+                        <select
+                          {...field}
+                          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <option value="history">Tarih</option>
+                          <option value="nature">Doğa</option>
+                          <option value="food">Lezzet</option>
+                          <option value="shopping">Alışveriş</option>
+                          <option value="poi">Önemli Nokta</option>
+                        </select>
                       <FormMessage />
                     </FormItem>
                   )}
