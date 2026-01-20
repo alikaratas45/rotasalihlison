@@ -45,17 +45,18 @@ export default function AdminLoginPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // As requested, map username 'ali' to the admin email.
-    if (values.username !== 'ali' || values.password !== 'salihli') {
+    if (values.username !== 'ali') {
       toast({
         variant: 'destructive',
         title: 'Giriş Başarısız',
-        description: 'Kullanıcı adı veya şifre hatalı.',
+        description: 'Kullanıcı adı hatalı.',
       });
       return;
     }
 
     try {
       // Use the designated admin email with the provided password.
+      // Firebase will handle the password validation.
       await signInWithEmail('alikarataskula@gmail.com', values.password);
       toast({
         title: 'Giriş Başarılı',
