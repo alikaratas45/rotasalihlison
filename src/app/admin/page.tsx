@@ -184,18 +184,20 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Kategori seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="history">Tarih</SelectItem>
-                          <SelectItem value="nature">Doğa</SelectItem>
-                          <SelectItem value="food">Lezzet</SelectItem>
-                          <SelectItem value="shopping">Alışveriş</SelectItem>
-                          <SelectItem value="poi">Önemli Nokta</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Kategori seçin" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="history">Tarih</SelectItem>
+                            <SelectItem value="nature">Doğa</SelectItem>
+                            <SelectItem value="food">Lezzet</SelectItem>
+                            <SelectItem value="shopping">Alışveriş</SelectItem>
+                            <SelectItem value="poi">Önemli Nokta</SelectItem>
+                          </SelectContent>
+                        </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -299,9 +301,11 @@ export default function AdminPage() {
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Kategori seçin" />
-                        </SelectTrigger>
+                        <FormControl>
+                          <SelectTrigger>
+                              <SelectValue placeholder="Kategori seçin" />
+                          </SelectTrigger>
+                        </FormControl>
                         <SelectContent>
                           <SelectItem value="history">Tarih</SelectItem>
                           <SelectItem value="nature">Doğa</SelectItem>
