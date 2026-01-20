@@ -51,10 +51,14 @@ export default function AdminLoginPage() {
         description: 'Yönetim paneline yönlendiriliyorsunuz.',
       });
     } catch (error: any) {
+      let description = 'E-posta veya şifre hatalı. Lütfen tekrar deneyin.';
+      if (error.code === 'auth/invalid-credential') {
+        description = 'E-posta veya şifre yanlış. Firebase konsolunda kullanıcıyı oluşturduğunuzdan ve E-posta/Şifre sağlayıcısını etkinleştirdiğinizden emin olun.';
+      }
       toast({
         variant: 'destructive',
         title: 'Giriş Başarısız',
-        description: 'E-posta veya şifre hatalı. Lütfen tekrar deneyin.',
+        description: description,
       });
     }
   }
