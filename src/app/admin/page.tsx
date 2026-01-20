@@ -137,11 +137,10 @@ export default function AdminPage() {
     try {
       await deletePlace(firestore, deletingPlace.id);
       toast({ title: 'Başarılı!', description: `"${deletingPlace.name.tr}" silindi.` });
-      setDeletingPlace(null);
     } catch (error) {
       toast({ variant: 'destructive', title: 'Hata!', description: 'Yer silinirken bir sorun oluştu.' });
     } finally {
-      setDeletingPlace(false);
+      setDeletingPlace(null);
     }
   }
 
@@ -176,9 +175,46 @@ export default function AdminPage() {
         <CardContent>
           <Form {...addForm}>
             <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-8">
-              <FormField control={addForm.control} name="name_tr" render={({ field }) => ( <FormItem> <FormLabel>İsim</FormLabel> <FormControl> <Input {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-              <FormField control={addForm.control} name="slug_tr" render={({ field }) => ( <FormItem> <FormLabel>Link</FormLabel> <FormControl> <Input {...field} /> </FormControl> <FormDescription>URL'de görünecek kısım. Örn: "sardes-antik-kenti"</FormDescription> <FormMessage /> </FormItem> )}/>
-              <FormField control={addForm.control} name="description_tr" render={({ field }) => ( <FormItem> <FormLabel>Açıklama</FormLabel> <FormControl> <Textarea rows={5} {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+              <FormField
+                control={addForm.control}
+                name="name_tr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>İsim</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addForm.control}
+                name="slug_tr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>URL'de görünecek kısım. Örn: "sardes-antik-kenti"</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addForm.control}
+                name="description_tr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Açıklama</FormLabel>
+                    <FormControl>
+                      <Textarea rows={5} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <FormField
                   control={addForm.control}
@@ -186,6 +222,7 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
+                      {/* Using a native select element to avoid component conflicts */}
                       <select
                         {...field}
                         className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -200,10 +237,36 @@ export default function AdminPage() {
                     </FormItem>
                   )}
                 />
-                <FormField control={addForm.control} name="lat" render={({ field }) => ( <FormItem> <FormLabel>Latitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                <FormField control={addForm.control} name="lng" render={({ field }) => ( <FormItem> <FormLabel>Longitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+                <FormField
+                  control={addForm.control}
+                  name="lat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Latitude</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="any" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={addForm.control}
+                  name="lng"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Longitude</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="any" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-              <Button type="submit" disabled={isAddSubmitting}> {isAddSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Yeri Ekle </Button>
+              <Button type="submit" disabled={isAddSubmitting}>
+                {isAddSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Yeri Ekle
+              </Button>
             </form>
           </Form>
         </CardContent>
@@ -215,7 +278,9 @@ export default function AdminPage() {
           <CardDescription>Uygulamanın başlangıç verilerini veritabanına yükleyin. Bu işlem sadece eksik olan başlangıç verilerini ekler, mevcut verilerinize dokunmaz.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={handleSeedDatabase} disabled={isSeeding}> {isSeeding && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Başlangıç Verilerini Yükle </Button>
+          <Button onClick={handleSeedDatabase} disabled={isSeeding}>
+            {isSeeding && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Başlangıç Verilerini Yükle
+          </Button>
         </CardContent>
       </Card>
       
@@ -286,9 +351,45 @@ export default function AdminPage() {
           </DialogHeader>
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-6 py-4">
-              <FormField control={editForm.control} name="name_tr" render={({ field }) => ( <FormItem> <FormLabel>İsim</FormLabel> <FormControl> <Input {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-              <FormField control={editForm.control} name="slug_tr" render={({ field }) => ( <FormItem> <FormLabel>Link</FormLabel> <FormControl> <Input {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-              <FormField control={editForm.control} name="description_tr" render={({ field }) => ( <FormItem> <FormLabel>Açıklama</FormLabel> <FormControl> <Textarea rows={5} {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+              <FormField
+                control={editForm.control}
+                name="name_tr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>İsim</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={editForm.control}
+                name="slug_tr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={editForm.control}
+                name="description_tr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Açıklama</FormLabel>
+                    <FormControl>
+                      <Textarea rows={5} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <FormField
                   control={editForm.control}
@@ -296,6 +397,7 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
+                       {/* Using a native select element to avoid component conflicts */}
                         <select
                           {...field}
                           className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -310,8 +412,32 @@ export default function AdminPage() {
                     </FormItem>
                   )}
                 />
-                <FormField control={editForm.control} name="lat" render={({ field }) => ( <FormItem> <FormLabel>Latitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                <FormField control={editForm.control} name="lng" render={({ field }) => ( <FormItem> <FormLabel>Longitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
+                <FormField
+                  control={editForm.control}
+                  name="lat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Latitude</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="any" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editForm.control}
+                  name="lng"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Longitude</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="any" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <DialogFooter>
                 <DialogClose asChild>
