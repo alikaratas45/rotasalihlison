@@ -23,10 +23,13 @@ async function doTranslate(text: string, targetLanguage: Language): Promise<stri
     } catch (error) {
         console.error(`Error translating to ${targetLangName}:`, error);
         if (error instanceof Error) {
-            if (error.message.includes('Generative Language API has not been enabled') || error.message.includes('403 Forbidden')) {
-                 throw new Error(`Google Generative AI API'si henüz tam olarak aktifleşmemiş olabilir. Lütfen birkaç dakika bekleyip tekrar deneyin. Eğer sorun devam ederse, Google Cloud projenizde "Generative Language API"nin etkin olduğundan emin olun.`);
+            if (error.message.includes('API key not valid')) {
+                 throw new Error(`Çeviri için kullanılan API anahtarı geçersiz. Lütfen sistem yöneticisiyle iletişime geçin.`);
             }
-            throw new Error(`Çeviri sırasında bir hata oluştu: ${error.message}`);
+            if (error.message.includes('Generative Language API has not been enabled') || error.message.includes('403 Forbidden')) {
+                 throw new Error(`Google AI servisine erişim izni alınamadı. Lütfen Google Cloud projenizde "Generative Language API"nin etkin olduğundan ve projenize bir fatura hesabının bağlı olduğundan emin olun. (Not: Ücretsiz kullanım kotası genellikle yeterlidir, fatura hesabı bir güvenlik adımıdır.)`);
+            }
+            throw new Error(`Çeviri servisinde beklenmedik bir hata oluştu: ${error.message}`);
         }
         throw new Error(`Bilinmeyen bir çeviri hatası oluştu.`);
     }
