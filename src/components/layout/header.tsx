@@ -14,7 +14,7 @@ import { Logo } from '@/components/icons/logo';
 import { TurkishFlagIcon, UKFlagIcon, FrenchFlagIcon, GermanFlagIcon, JapaneseFlagIcon } from '@/components/icons/flags';
 import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
-import type { Language } from '@/context/language-context';
+import type { Language } from '@/lib/language-config';
 import React from 'react';
 
 export function Header() {

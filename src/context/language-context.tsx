@@ -6,16 +6,7 @@ import tr from '@/locales/tr.json';
 import fr from '@/locales/fr.json';
 import de from '@/locales/de.json';
 import ja from '@/locales/ja.json';
-
-export type Language = 'en' | 'tr' | 'fr' | 'de' | 'ja';
-
-export const languages: { code: Language; name: string }[] = [
-    { code: 'tr', name: 'Türkçe' },
-    { code: 'en', name: 'English' },
-    { code: 'fr', name: 'Français' },
-    { code: 'de', name: 'Deutsch' },
-    { code: 'ja', name: '日本語' },
-];
+import { type Language, languages } from '@/lib/language-config';
 
 interface LanguageContextType {
   language: Language;
@@ -37,7 +28,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     // Set language from browser settings
     const browserLang = navigator.language.split('-')[0] as Language;
-    if (['tr', 'en', 'fr', 'de', 'ja'].includes(browserLang)) {
+    if (languages.some(l => l.code === browserLang)) {
       setLanguageState(browserLang);
     }
 

@@ -38,7 +38,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { languages } from '@/context/language-context';
+import { type Language, languages } from '@/lib/language-config';
 
 
 const placeFormSchema = z.object({
@@ -136,14 +136,14 @@ export default function AdminPage() {
         
         // Dynamically set values for other languages
         for (const lang of languages) {
-            if (lang.code !== 'tr' && translations[lang.code]) {
-                form.setValue(`${field}_${lang.code}`, translations[lang.code]);
+            if (lang.code !== 'tr' && translations[lang.code as Exclude<Language, 'tr'>]) {
+                form.setValue(`${field}_${lang.code}`, translations[lang.code as Exclude<Language, 'tr'>]);
             }
         }
 
         toast({ title: 'Çeviri Başarılı', description: `Alan diğer dillere çevrildi.` });
-      } catch (error) {
-        toast({ variant: 'destructive', title: 'Çeviri Hatası', description: 'Çeviri sırasında bir hata oluştu.' });
+      } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Çeviri Hatası', description: error.message || 'Çeviri sırasında bilinmeyen bir hata oluştu.' });
       } finally {
         setIsTranslating(null);
       }

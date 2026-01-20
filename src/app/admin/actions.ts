@@ -1,20 +1,12 @@
 'use server';
 
 import { ai } from '@/ai';
-import { Language, languages } from '@/context/language-context';
+import { Language, languages, languageMap } from '@/lib/language-config';
 
 async function doTranslate(text: string, targetLanguage: Language): Promise<string> {
     if (!text) return '';
     
-    const langMap: Record<Language, string> = {
-        tr: 'Turkish',
-        en: 'English',
-        fr: 'French',
-        de: 'German',
-        ja: 'Japanese'
-    };
-
-    const targetLangName = langMap[targetLanguage];
+    const targetLangName = languageMap[targetLanguage];
 
     const prompt = `Translate the following Turkish text to ${targetLangName}. Respond with only the translated text, without any additional explanations or context.\n\nText to translate: "${text}"`;
 
@@ -30,7 +22,10 @@ async function doTranslate(text: string, targetLanguage: Language): Promise<stri
         return response.text;
     } catch (error) {
         console.error(`Error translating to ${targetLangName}:`, error);
-        return `Error: Could not translate.`;
+        if (error instanceof Error) {
+            throw new Error(`Error translating to ${targetLangName}: ${error.message}`);
+        }
+        throw new Error(`An unknown error occurred during translation to ${targetLangName}.`);
     }
 }
 
