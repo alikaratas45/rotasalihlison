@@ -77,6 +77,14 @@ export default function AdminPage() {
 
   const editForm = useForm<PlaceFormData>({
     resolver: zodResolver(placeFormSchema),
+    defaultValues: {
+      name_tr: '',
+      slug_tr: '',
+      description_tr: '',
+      category: 'poi',
+      lat: 0,
+      lng: 0,
+    },
   });
 
   useEffect(() => {
