@@ -20,7 +20,7 @@ async function doTranslate(text: string, targetLanguage: Language): Promise<stri
         });
 
         return response.text;
-    } catch (error) {
+    } catch (error: any) {
         console.error(`Error translating to ${targetLangName}:`, error);
         if (error instanceof Error) {
             if (error.message.includes('API key not valid')) {
