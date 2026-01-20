@@ -8,21 +8,32 @@ import type { Place } from '@/lib/definitions';
 // as Firestore will generate it.
 type NewPlaceData = Omit<Place, 'id'>;
 
-export function addPlace(firestore: Firestore, placeData: NewPlaceData) {
+export function addPlace(
+  firestore: Firestore,
+  placeData: NewPlaceData,
+  callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
+) {
+  if (!firestore) {
+    const error = new Error("Firestore instance is missing.");
+    console.error("Error in addPlace:", error);
+    callbacks?.onError?.(error);
+    return;
+  }
   const placesCollection = collection(firestore, 'places');
-  
-  addDoc(placesCollection, placeData).catch((serverError) => {
-    console.error('Error adding document: ', serverError);
-
-    // Create a contextual error and emit it
-    const permissionError = new FirestorePermissionError({
-      path: 'places',
-      operation: 'create',
-      requestResourceData: placeData,
+  addDoc(placesCollection, placeData)
+    .then(() => {
+      callbacks?.onSuccess?.();
+    })
+    .catch((serverError) => {
+      console.error('Error adding document: ', serverError);
+      const permissionError = new FirestorePermissionError({
+        path: 'places',
+        operation: 'create',
+        requestResourceData: placeData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      callbacks?.onError?.(serverError);
     });
-
-    errorEmitter.emit('permission-error', permissionError);
-  });
 }
 
 // Data shape coming from the admin form
@@ -35,7 +46,18 @@ export type PlaceFormData = {
   lng: number;
 };
 
-export function updatePlace(firestore: Firestore, placeId: string, formData: PlaceFormData) {
+export function updatePlace(
+  firestore: Firestore,
+  placeId: string,
+  formData: PlaceFormData,
+  callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
+) {
+    if (!firestore || !placeId) {
+        const error = new Error("Firestore instance or placeId is missing.");
+        console.error("Error in updatePlace:", error);
+        callbacks?.onError?.(error);
+        return;
+    }
   const placeDocRef = doc(firestore, 'places', placeId);
 
   // Construct the data with dot notation for Firestore update and copy to other languages
@@ -60,27 +82,46 @@ export function updatePlace(firestore: Firestore, placeId: string, formData: Pla
     'coordinates.lng': formData.lng,
   };
 
-  updateDoc(placeDocRef, updatedData).catch((serverError) => {
-    console.error(`Error updating document ${placeId}: `, serverError);
-
-    const permissionError = new FirestorePermissionError({
-      path: placeDocRef.path,
-      operation: 'update',
-      requestResourceData: updatedData,
+  updateDoc(placeDocRef, updatedData)
+    .then(() => {
+      callbacks?.onSuccess?.();
+    })
+    .catch((serverError) => {
+      console.error(`Error updating document ${placeId}: `, serverError);
+      const permissionError = new FirestorePermissionError({
+        path: placeDocRef.path,
+        operation: 'update',
+        requestResourceData: updatedData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      callbacks?.onError?.(serverError);
     });
-    errorEmitter.emit('permission-error', permissionError);
-  });
 }
 
-export function deletePlace(firestore: Firestore, placeId: string) {
+export function deletePlace(
+  firestore: Firestore,
+  placeId: string,
+  callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
+) {
+  if (!firestore || !placeId) {
+    const error = new Error("Firestore instance or placeId is missing.");
+    console.error("Error in deletePlace:", error);
+    callbacks?.onError?.(error);
+    return;
+  }
+
   const placeDocRef = doc(firestore, 'places', placeId);
-  deleteDoc(placeDocRef).catch((serverError) => {
-    console.error(`Error deleting document ${placeId}: `, serverError);
-    
-    const permissionError = new FirestorePermissionError({
-      path: placeDocRef.path,
-      operation: 'delete',
+  deleteDoc(placeDocRef)
+    .then(() => {
+      callbacks?.onSuccess?.();
+    })
+    .catch((serverError) => {
+      console.error(`Error deleting document ${placeId}: `, serverError);
+      const permissionError = new FirestorePermissionError({
+        path: placeDocRef.path,
+        operation: 'delete',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      callbacks?.onError?.(serverError);
     });
-    errorEmitter.emit('permission-error', permissionError);
-  });
 }

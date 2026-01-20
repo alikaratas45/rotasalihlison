@@ -98,28 +98,49 @@ export default function AdminPage() {
       imageHint: 'landmark',
     };
 
-    addPlace(firestore, newPlace);
-    toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla eklendi.` });
-    addForm.reset();
-    setIsSubmitting(false);
+    addPlace(firestore, newPlace, {
+        onSuccess: () => {
+            toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla eklendi.` });
+            addForm.reset();
+            setIsSubmitting(false);
+        },
+        onError: (error) => {
+            toast({ variant: 'destructive', title: 'Hata!', description: `Yer eklenirken bir hata oluştu: ${error.message}` });
+            setIsSubmitting(false);
+        }
+    });
   }
 
   function onEditSubmit(values: z.infer<typeof placeFormSchema>) {
     if (!editingPlace) return;
     setIsSubmitting(true);
     
-    updatePlace(firestore, editingPlace.id, values);
-    toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla güncellendi.` });
-    setEditingPlace(null);
-    setIsSubmitting(false);
+    updatePlace(firestore, editingPlace.id, values, {
+        onSuccess: () => {
+            toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla güncellendi.` });
+            setEditingPlace(null);
+            setIsSubmitting(false);
+        },
+        onError: (error) => {
+            toast({ variant: 'destructive', title: 'Hata!', description: `Yer güncellenirken bir hata oluştu: ${error.message}` });
+            setIsSubmitting(false);
+        }
+    });
   }
 
   function handleDeleteConfirm() {
     if (!deletingPlace) return;
     
-    deletePlace(firestore, deletingPlace.id);
-    toast({ title: 'Başarılı!', description: `"${deletingPlace.name.tr}" silindi.` });
-    setDeletingPlace(null);
+    deletePlace(firestore, deletingPlace.id, {
+        onSuccess: () => {
+            toast({ title: 'Başarılı!', description: `"${deletingPlace.name.tr}" silindi.` });
+            setDeletingPlace(null);
+        },
+        onError: (error) => {
+            toast({ variant: 'destructive', title: 'Hata!', description: `Yer silinirken bir hata oluştu: ${error.message}` });
+            setDeletingPlace(null);
+        }
+    });
   }
 
   async function handleSeedDatabase() {
