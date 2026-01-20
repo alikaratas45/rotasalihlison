@@ -7,19 +7,22 @@ export const stories: Story[] = [
             tr: 'kral-midasin-altin-dokunusu',
             en: 'king-midas-golden-touch',
             fr: 'la-touche-doree-du-roi-midas',
-            de: 'koenig-midas-goldene-beruehrung'
+            de: 'koenig-midas-goldene-beruehrung',
+            ja: 'king-midas-golden-touch-ja'
         },
         title: {
             tr: 'Kral Midas ve Altın Dokunuş',
             en: 'King Midas and the Golden Touch',
             fr: 'Le Roi Midas et la Touche d\'Or',
-            de: 'König Midas und die goldene Berührung'
+            de: 'König Midas und die goldene Berührung',
+            ja: 'ミダス王と黄金のタッチ'
         },
         author: {
             tr: 'Ovidius',
             en: 'Ovid',
             fr: 'Ovide',
-            de: 'Ovid'
+            de: 'Ovid',
+            ja: 'オウィディウス'
         },
         content: {
             tr: `Efsaneye göre, Frigya Kralı Midas, tanrı Dionysos'un yoldaşı bir satiri konuk eder ve onu ağırlar. Bu iyiliğinden etkilenen Dionysos, krala bir dilek hakkı sunar. Gözü zenginlikte olan Midas, dokunduğu her şeyin altına dönüşmesini diler.
@@ -49,7 +52,8 @@ Anfangs fasziniert von seiner neuen Macht, war Midas entsetzt, als er sah, dass 
 
 Der Gott hatte Mitleid mit dem König und zeigte ihm den Weg zur Erlösung: Er musste sich im Fluss Paktolos (dem heutigen Sart Çayı) im Lande Lydien waschen. König Midas kommt nach Salihli und stürzt sich in die Wasser des Flusses. Während er badet, verlässt ihn seine goldene Berührung und vermischt sich mit dem Sand des Flusses. Man glaubt, dass der Fluss Paktolos seit diesem Tag Gold führt und dass dies die Quelle des Reichtums des Lydischen Königreichs ist.
 
-Die "Riesenkessel" im Tabak-Bach, die als einer der Orte gelten, an denen Midas von diesem Fluch befreit wurde, sind bis heute als lebendiges Denkmal dieser Legende erhalten geblieben. Diese natürlichen Becken, die durch das Aushöhlen der Felsen durch das Wasser entstanden sind, sind wie riesige Kessel, in denen Midas seine goldene Last hinterlassen hat.`
+Die "Riesenkessel" im Tabak-Bach, die als einer der Orte gelten, an denen Midas von diesem Fluch befreit wurde, sind bis heute als lebendiges Denkmal dieser Legende erhalten geblieben. Diese natürlichen Becken, die durch das Aushöhlen der Felsen durch das Wasser entstanden sind, sind wie riesige Kessel, in denen Midas seine goldene Last hinterlassen hat.`,
+            ja: `伝説によると、フリギアのミダス王は、神ディオニュソスの仲間であるサテュロスをもてなしました。彼の親切に感銘を受けたディオニュソスは、王に1つの願いを叶えました。富に目がくらんだミダスは、触れるものすべてが金に変わることを望みました。\n\n当初、彼の新しい力に魅了されていたミダスは、食べた食べ物、飲んだ水、そして愛情を込めて抱きしめた娘でさえ金に変わるのを見て愕然としました。飢えと悲しみに苦しむ王は、神ディオニュソスにこの呪いを解くように懇願しました。\n\n神は王に同情し、彼に救いの道を示しました。彼はリディアの地のパクトロス川（現在のサルトチャイ）で身を清めなければなりませんでした。ミダス王はサリフリに来て、川の水に身を投げます。彼が身を清めると、彼の黄金のタッチは彼から離れ、川の砂と混ざります。その日から、パクトロス川は金を運び、これがリディア王国の富の源であると信じられています。\n\nミダスがこの呪いから解放された場所の1つと見なされているタバッククリークの「巨大な大釜」は、この伝説の生きた記念碑として今日まで生き残っています。水が岩を彫って形成されたこれらの自然のプールは、ミダスが黄金の重荷を置いた巨大な大釜のようです。`
         },
         placeId: '6'
     }

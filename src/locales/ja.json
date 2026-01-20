@@ -1,0 +1,86 @@
+
+{
+    "header": {
+        "home": "ホーム",
+        "places": "場所",
+        "routes": "ルート",
+        "stories": "物語",
+        "cuisine": "料理",
+        "brochures": "パンフレット",
+        "nearby": "近く",
+        "qrScanner": "QRスキャナー"
+    },
+    "footer": {
+        "about": "Rota Salihliは、サリフリの歴史的、文化的、自然の美しさを発見するためのデジタルガイドです。",
+        "copyright": "無断複写・転載を禁じます。",
+        "links": "リンク",
+        "contact": "連絡先"
+    },
+    "splash": {
+        "slogan": "サルディスの遺産、お金の中心"
+    },
+    "home": {
+        "heroTitle": "サリフリを発見",
+        "heroSubtitle": "サルディスの遺産、お金の中心",
+        "getStarted": "始めましょう",
+        "experienceTitle": "サリフリでの一日",
+        "experienceSubtitle": "さまざまな体験から選び、サリフリの冒険をパーソナライズしてください。",
+        "historyTrip": "歴史への旅",
+        "naturePeace": "自然と平和",
+        "flavorStops": "味の停留所",
+        "shopping": "ショッピング",
+        "thematicRoutesTitle": "テーマ別ルート",
+        "thematicRoutesSubtitle": "特別に準備されたルートでサリフリの豊かさを発見してください。",
+        "allRoutes": "すべてのルートを見る",
+        "stops": "停止",
+        "stops_plural": "停止"
+    },
+    "actions": {
+        "seeDetails": "詳細を見る →",
+        "listenAudio": "音声を聞く",
+        "stopAudio": "停止",
+        "loadingAudio": "読み込み中...",
+        "startRouteOnMap": "地図でルートを開始",
+        "whereToEat": "どこで食べる？",
+        "showOnMap": "地図に表示",
+        "viewAllPlaces": "すべての場所を見る",
+        "viewAllStories": "すべての物語を見る",
+        "readMore": "続きを読む →",
+        "backToStories": "物語に戻る",
+        "discoverPlace": "場所を発見"
+    },
+    "places": {
+        "title": "すべての場所を発見",
+        "description": "サリフリが提供するすべての歴史的、自然的、文化的豊かさを探検してください。",
+        "notFoundTitle": "場所が見つかりません",
+        "notFoundDescription": "お探しの場所は存在しません。"
+    },
+    "history": {
+        "title": "歴史への旅",
+        "description": "サリフリには、古代から現在に至る豊かな歴史遺産があります。お金が発明されたリュディア王国の首都サルディスは、これらの土地の最も貴重な宝です。ローマ帝国時代の重要な大都市として、この都市はキリスト教の最初の7つの教会の1つをホストしました。ビザンチン時代には、戦略的な司教の中心地としての重要性を維持しました。この旅は、何千年もの文明の足跡をたどるよう誘います。"
+    },
+    "nature": {
+        "title": "自然と平和",
+        "description": "サリフリの自然の美しさで魂を休ませてください。癒しの水、緑豊かな森、ユニークな風景があなたを待っています。"
+    },
+    "shopping": {
+        "title": "ショッピングストップ",
+        "description": "地元の市場から近代的な店まで、サリフリのショッピングスポットを発見し、探しているものがすべて見つかります。"
+    },
+    "stories": {
+        "title": "サリフリの物語と伝説",
+        "description": "何千年もの間、これらの古代の土地を形作ってきた神話や物語を探検してください。",
+        "notFoundTitle": "物語が見つかりません",
+        "notFoundDescription": "お探しの物語は存在しません。",
+        "by": "作成者：",
+        "relatedPlace": "関連場所"
+    },
+    "cuisine": {
+        "title": "サリフリの味マップ",
+        "description": "サリフリで最高の食事場所を地図に表示しています。お食事をお楽しみください！"
+    },
+    "brochures": {
+        "title": "私たちのパンフレット",
+        "description": "インタラクティブなデジタルパンフレットで、サリフリの美しさと機会を発見してください。"
+    }
+}

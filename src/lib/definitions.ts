@@ -3,6 +3,7 @@ export type LocalizedString = {
     en: string;
     fr: string;
     de: string;
+    ja: string;
 };
 
 export type Coordinates = {

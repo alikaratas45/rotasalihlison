@@ -67,18 +67,21 @@ export default function AdminPage() {
         en: values.name_tr,
         fr: values.name_tr,
         de: values.name_tr,
+        ja: values.name_tr,
       },
       slug: {
         tr: values.slug_tr,
         en: values.slug_tr,
         fr: values.slug_tr,
         de: values.slug_tr,
+        ja: values.slug_tr,
       },
       description: {
         tr: values.description_tr,
         en: values.description_tr,
         fr: values.description_tr,
         de: values.description_tr,
+        ja: values.description_tr,
       },
       category: values.category,
       coordinates: {

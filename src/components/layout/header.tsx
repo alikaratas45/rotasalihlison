@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 import { Logo } from '@/components/icons/logo';
-import { TurkishFlagIcon, UKFlagIcon, FrenchFlagIcon, GermanFlagIcon } from '@/components/icons/flags';
+import { TurkishFlagIcon, UKFlagIcon, FrenchFlagIcon, GermanFlagIcon, JapaneseFlagIcon } from '@/components/icons/flags';
 import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
 import type { Language } from '@/context/language-context';
@@ -109,6 +109,7 @@ const languages: { code: Language; name: string; flag: React.FC<any> }[] = [
     { code: 'en', name: 'English', flag: UKFlagIcon },
     { code: 'fr', name: 'Français', flag: FrenchFlagIcon },
     { code: 'de', name: 'Deutsch', flag: GermanFlagIcon },
+    { code: 'ja', name: '日本語', flag: JapaneseFlagIcon },
 ];
 
 function LanguageSwitcher() {

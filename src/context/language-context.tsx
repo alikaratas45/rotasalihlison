@@ -5,8 +5,9 @@ import en from '@/locales/en.json';
 import tr from '@/locales/tr.json';
 import fr from '@/locales/fr.json';
 import de from '@/locales/de.json';
+import ja from '@/locales/ja.json';
 
-export type Language = 'en' | 'tr' | 'fr' | 'de';
+export type Language = 'en' | 'tr' | 'fr' | 'de' | 'ja';
 
 interface LanguageContextType {
   language: Language;
@@ -18,7 +19,7 @@ interface LanguageContextType {
 
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations: Record<Language, any> = { en, tr, fr, de };
+const translations: Record<Language, any> = { en, tr, fr, de, ja };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>('tr');
@@ -28,7 +29,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     // Set language from browser settings
     const browserLang = navigator.language.split('-')[0] as Language;
-    if (['tr', 'en', 'fr', 'de'].includes(browserLang)) {
+    if (['tr', 'en', 'fr', 'de', 'ja'].includes(browserLang)) {
       setLanguageState(browserLang);
     }
 
