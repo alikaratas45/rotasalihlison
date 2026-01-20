@@ -18,10 +18,6 @@
         "photoURL": {
           "type": "string",
           "format": "uri"
-        },
-        "isAdmin": {
-          "type": "boolean",
-          "description": "Whether the user has admin privileges."
         }
       },
       "required": [

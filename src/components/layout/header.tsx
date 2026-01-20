@@ -16,13 +16,10 @@ import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
 import type { Language } from '@/context/language-context';
 import React from 'react';
-import { useUser } from '@/firebase';
-import { signOutUser } from '@/firebase/auth/auth-service';
 
 export function Header() {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, profile } = useUser();
 
 
   const navLinks = [
@@ -52,14 +49,6 @@ export function Header() {
           <AudioGuideToggle />
           <LanguageSwitcher />
           <ThemeToggle />
-          {profile?.isAdmin && (
-            <Button asChild variant="outline" size="icon">
-              <Link href="/admin">
-                <Lock className="h-5 w-5" />
-                <span className="sr-only">Admin Panel</span>
-              </Link>
-            </Button>
-          )}
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">

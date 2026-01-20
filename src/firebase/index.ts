@@ -6,7 +6,6 @@ import { firebaseConfig } from './config';
 
 import { useCollection } from './firestore/use-collection';
 import { useDoc } from './firestore/use-doc';
-import { useUser } from './auth/use-user';
 import {
   useFirebase,
   useFirebaseApp,
@@ -30,7 +29,6 @@ export {
   FirebaseClientProvider,
   useCollection,
   useDoc,
-  useUser,
   useFirebase,
   useFirebaseApp,
   useFirestore,
