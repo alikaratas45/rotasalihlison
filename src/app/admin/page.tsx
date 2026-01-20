@@ -71,13 +71,13 @@ export default function AdminPage() {
   const editForm = useForm<PlaceFormData>({
     resolver: zodResolver(placeFormSchema),
     defaultValues: {
-      name_tr: '',
-      slug_tr: '',
-      description_tr: '',
-      category: 'poi',
-      lat: 0,
-      lng: 0,
-    },
+        name_tr: '',
+        slug_tr: '',
+        description_tr: '',
+        category: 'poi',
+        lat: 0,
+        lng: 0,
+    }
   });
 
   useEffect(() => {
@@ -140,6 +140,8 @@ export default function AdminPage() {
       setDeletingPlace(null);
     } catch (error) {
       toast({ variant: 'destructive', title: 'Hata!', description: 'Yer silinirken bir sorun oluştu.' });
+    } finally {
+      setDeletingPlace(false);
     }
   }
 
@@ -166,7 +168,6 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-8">
-      {/* Existing Cards for Add and Seed */}
       <Card>
         <CardHeader>
           <CardTitle>Yeni Yer Ekle</CardTitle>
@@ -220,7 +221,6 @@ export default function AdminPage() {
         </CardContent>
       </Card>
       
-      {/* Places List Card */}
       <Card>
         <CardHeader>
           <CardTitle>Mevcut Yerler</CardTitle>
@@ -281,7 +281,6 @@ export default function AdminPage() {
         </CardContent>
       </Card>
       
-      {/* Edit Dialog */}
        <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
@@ -332,7 +331,6 @@ export default function AdminPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Alert Dialog */}
       <AlertDialog open={!!deletingPlace} onOpenChange={(open) => !open && setDeletingPlace(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
