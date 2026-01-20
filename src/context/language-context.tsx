@@ -28,13 +28,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     document.documentElement.lang = language;
   }, [language]);
 
-  useEffect(() => {
-    const savedAudioPreference = localStorage.getItem('audioGuideEnabled');
-    if (savedAudioPreference !== null) {
-        setIsAudioGuideEnabled(JSON.parse(savedAudioPreference));
-    }
-  }, []);
-
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     document.documentElement.lang = lang;

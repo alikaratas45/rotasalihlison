@@ -25,8 +25,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
-  email: z.string().email('Geçerli bir e-posta adresi girin.'),
-  password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır.'),
+  username: z.string().min(1, 'Kullanıcı adı gereklidir.'),
+  password: z.string().min(1, 'Şifre gereklidir.'),
 });
 
 export default function AdminLoginPage() {
@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      username: '',
       password: '',
     },
   });
@@ -44,16 +44,27 @@ export default function AdminLoginPage() {
   const { isSubmitting } = form.formState;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    // As requested, map username 'ali' to the admin email.
+    if (values.username !== 'ali' || values.password !== 'salihli') {
+      toast({
+        variant: 'destructive',
+        title: 'Giriş Başarısız',
+        description: 'Kullanıcı adı veya şifre hatalı.',
+      });
+      return;
+    }
+
     try {
-      await signInWithEmail(values.email, values.password);
+      // Use the designated admin email with the provided password.
+      await signInWithEmail('alikarataskula@gmail.com', values.password);
       toast({
         title: 'Giriş Başarılı',
         description: 'Yönetim paneline yönlendiriliyorsunuz.',
       });
     } catch (error: any) {
-      let description = 'E-posta veya şifre hatalı. Lütfen tekrar deneyin.';
+      let description = 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.';
       if (error.code === 'auth/invalid-credential') {
-        description = 'E-posta veya şifre yanlış. Firebase konsolunda kullanıcıyı oluşturduğunuzdan ve E-posta/Şifre sağlayıcısını etkinleştirdiğinizden emin olun.';
+        description = 'Kimlik bilgileri geçersiz. Firebase konsolunda yönetici kullanıcısını (alikarataskula@gmail.com) oluşturduğunuzdan ve şifrenin doğru olduğundan (salihli) emin olun.';
       }
       toast({
         variant: 'destructive',
@@ -77,14 +88,13 @@ export default function AdminLoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>E-posta</FormLabel>
+                    <FormLabel>Kullanıcı Adı</FormLabel>
                     <FormControl>
                       <Input
-                        type="email"
-                        placeholder="admin@example.com"
+                        placeholder="ali"
                         {...field}
                       />
                     </FormControl>
