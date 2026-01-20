@@ -8,12 +8,10 @@ import type { Place } from '@/lib/definitions';
 // as Firestore will generate it.
 type NewPlaceData = Omit<Place, 'id'>;
 
-export async function addPlace(firestore: Firestore, placeData: NewPlaceData) {
-  try {
-    const placesCollection = collection(firestore, 'places');
-    const docRef = await addDoc(placesCollection, placeData);
-    return docRef.id;
-  } catch (serverError) {
+export function addPlace(firestore: Firestore, placeData: NewPlaceData) {
+  const placesCollection = collection(firestore, 'places');
+  
+  addDoc(placesCollection, placeData).catch((serverError) => {
     console.error('Error adding document: ', serverError);
 
     // Create a contextual error and emit it
@@ -24,10 +22,7 @@ export async function addPlace(firestore: Firestore, placeData: NewPlaceData) {
     });
 
     errorEmitter.emit('permission-error', permissionError);
-    
-    // Re-throw the original error to be caught by the calling function
-    throw serverError;
-  }
+  });
 }
 
 // Data shape coming from the admin form
@@ -40,7 +35,7 @@ export type PlaceFormData = {
   lng: number;
 };
 
-export async function updatePlace(firestore: Firestore, placeId: string, formData: PlaceFormData) {
+export function updatePlace(firestore: Firestore, placeId: string, formData: PlaceFormData) {
   const placeDocRef = doc(firestore, 'places', placeId);
 
   // Construct the data with dot notation for Firestore update and copy to other languages
@@ -65,9 +60,7 @@ export async function updatePlace(firestore: Firestore, placeId: string, formDat
     'coordinates.lng': formData.lng,
   };
 
-  try {
-    await updateDoc(placeDocRef, updatedData);
-  } catch (serverError) {
+  updateDoc(placeDocRef, updatedData).catch((serverError) => {
     console.error(`Error updating document ${placeId}: `, serverError);
 
     const permissionError = new FirestorePermissionError({
@@ -76,15 +69,12 @@ export async function updatePlace(firestore: Firestore, placeId: string, formDat
       requestResourceData: updatedData,
     });
     errorEmitter.emit('permission-error', permissionError);
-    throw serverError;
-  }
+  });
 }
 
-export async function deletePlace(firestore: Firestore, placeId: string) {
+export function deletePlace(firestore: Firestore, placeId: string) {
   const placeDocRef = doc(firestore, 'places', placeId);
-  try {
-    await deleteDoc(placeDocRef);
-  } catch (serverError) {
+  deleteDoc(placeDocRef).catch((serverError) => {
     console.error(`Error deleting document ${placeId}: `, serverError);
     
     const permissionError = new FirestorePermissionError({
@@ -92,6 +82,5 @@ export async function deletePlace(firestore: Firestore, placeId: string) {
       operation: 'delete',
     });
     errorEmitter.emit('permission-error', permissionError);
-    throw serverError;
-  }
+  });
 }

@@ -21,27 +21,26 @@ service cloud.firestore {
     // CONTENT
     // ---
     // All users can read public content.
-    // ** TEMPORARY RULE FOR DIAGNOSTICS **
-    // Allow any authenticated user to write content to isolate the isAdmin() issue.
+    // Only admins can write, update, or delete content.
     match /places/{placeId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
      match /routes/{routeId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
      match /stories/{storyId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
      match /brochures/{brochureId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
      match /menu-items/{menuItemId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
   }
 }

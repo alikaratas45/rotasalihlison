@@ -46,9 +46,8 @@ const placeFormSchema = z.object({
 export default function AdminPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
-  const [isAddSubmitting, setIsAddSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
-  const [isEditSubmitting, setIsEditSubmitting] = useState(false);
 
   const [editingPlace, setEditingPlace] = useState<Place | null>(null);
   const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
@@ -56,7 +55,7 @@ export default function AdminPage() {
   const placesQuery = useMemo(() => collection(firestore, 'places'), [firestore]);
   const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
 
-  const addForm = useForm<PlaceFormData>({
+  const addForm = useForm<z.infer<typeof placeFormSchema>>({
     resolver: zodResolver(placeFormSchema),
     defaultValues: {
       name_tr: '',
@@ -68,16 +67,8 @@ export default function AdminPage() {
     },
   });
 
-  const editForm = useForm<PlaceFormData>({
+  const editForm = useForm<z.infer<typeof placeFormSchema>>({
     resolver: zodResolver(placeFormSchema),
-    defaultValues: {
-        name_tr: '',
-        slug_tr: '',
-        description_tr: '',
-        category: 'poi',
-        lat: 0,
-        lng: 0,
-    }
   });
 
   useEffect(() => {
@@ -93,8 +84,8 @@ export default function AdminPage() {
     }
   }, [editingPlace, editForm]);
 
-  async function onAddSubmit(values: PlaceFormData) {
-    setIsAddSubmitting(true);
+  function onAddSubmit(values: z.infer<typeof placeFormSchema>) {
+    setIsSubmitting(true);
     const randomSeed = Math.random().toString(36).substring(7);
 
     const newPlace = {
@@ -107,41 +98,28 @@ export default function AdminPage() {
       imageHint: 'landmark',
     };
 
-    try {
-      await addPlace(firestore, newPlace);
-      toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla eklendi.` });
-      addForm.reset();
-    } catch (error) {
-      toast({ variant: 'destructive', title: 'Hata!', description: 'Yer eklenirken bir sorun oluştu.' });
-    } finally {
-      setIsAddSubmitting(false);
-    }
+    addPlace(firestore, newPlace);
+    toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla eklendi.` });
+    addForm.reset();
+    setIsSubmitting(false);
   }
 
-  async function onEditSubmit(values: PlaceFormData) {
+  function onEditSubmit(values: z.infer<typeof placeFormSchema>) {
     if (!editingPlace) return;
-    setIsEditSubmitting(true);
-    try {
-      await updatePlace(firestore, editingPlace.id, values);
-      toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla güncellendi.` });
-      setEditingPlace(null);
-    } catch (error) {
-      toast({ variant: 'destructive', title: 'Hata!', description: 'Yer güncellenirken bir sorun oluştu.' });
-    } finally {
-      setIsEditSubmitting(false);
-    }
+    setIsSubmitting(true);
+    
+    updatePlace(firestore, editingPlace.id, values);
+    toast({ title: 'Başarılı!', description: `"${values.name_tr}" başarıyla güncellendi.` });
+    setEditingPlace(null);
+    setIsSubmitting(false);
   }
 
-  async function handleDeleteConfirm() {
+  function handleDeleteConfirm() {
     if (!deletingPlace) return;
-    try {
-      await deletePlace(firestore, deletingPlace.id);
-      toast({ title: 'Başarılı!', description: `"${deletingPlace.name.tr}" silindi.` });
-    } catch (error) {
-      toast({ variant: 'destructive', title: 'Hata!', description: 'Yer silinirken bir sorun oluştu.' });
-    } finally {
-      setDeletingPlace(null);
-    }
+    
+    deletePlace(firestore, deletingPlace.id);
+    toast({ title: 'Başarılı!', description: `"${deletingPlace.name.tr}" silindi.` });
+    setDeletingPlace(null);
   }
 
   async function handleSeedDatabase() {
@@ -222,7 +200,6 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      {/* Using a native select element to avoid component conflicts */}
                       <select
                         {...field}
                         className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -264,8 +241,8 @@ export default function AdminPage() {
                   )}
                 />
               </div>
-              <Button type="submit" disabled={isAddSubmitting}>
-                {isAddSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Yeri Ekle
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Yeri Ekle
               </Button>
             </form>
           </Form>
@@ -397,7 +374,6 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                       {/* Using a native select element to avoid component conflicts */}
                         <select
                           {...field}
                           className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -443,8 +419,8 @@ export default function AdminPage() {
                 <DialogClose asChild>
                   <Button type="button" variant="outline">İptal</Button>
                 </DialogClose>
-                <Button type="submit" disabled={isEditSubmitting}>
-                  {isEditSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Değişiklikleri Kaydet
                 </Button>
               </DialogFooter>
