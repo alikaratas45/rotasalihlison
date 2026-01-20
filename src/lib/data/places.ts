@@ -391,5 +391,31 @@ export const places: Place[] = [
         },
         category: 'shopping',
         coordinates: { lat: 38.6483, lng: 28.3245 }
+    },
+    {
+        id: '17',
+        slug: {
+            tr: 'kemer-koyu',
+            en: 'kemer-village',
+            fr: 'village-de-kemer',
+            de: 'kemer-dorf',
+            ja: 'kemer-village-ja'
+        },
+        name: {
+            tr: 'Kemer Köyü',
+            en: 'Kemer Village',
+            fr: 'Village de Kemer',
+            de: 'Kemer Dorf',
+            ja: 'ケメル村'
+        },
+        description: {
+            tr: 'Salihli\'nin Kemer mahallesi, tarihi taş köprüleri ve Gediz Nehri\'nin eşsiz manzaralarına ev sahipliği yapar. Roma döneminden kaldığı düşünülen Kız Köprüsü bu bölgededir. Sakin atmosferi ve doğal güzellikleriyle bilinir.',
+            en: 'The Kemer neighborhood of Salihli is home to historic stone bridges and unique views of the Gediz River. The Maiden\'s Bridge (Kız Köprüsü), thought to be from the Roman period, is in this area. It is known for its calm atmosphere and natural beauty.',
+            fr: 'Le quartier de Kemer à Salihli abrite des ponts de pierre historiques et des vues uniques sur la rivière Gediz. Le Pont des Demoiselles (Kız Köprüsü), qui daterait de l\'époque romaine, se trouve dans cette zone. Il est connu pour son atmosphère calme et sa beauté naturelle.',
+            de: 'Das Viertel Kemer von Salihli beheimatet historische Steinbrücken und einzigartige Ausblicke auf den Fluss Gediz. Die Jungfrauenbrücke (Kız Köprüsü), die vermutlich aus der Römerzeit stammt, befindet sich in diesem Gebiet. Es ist bekannt für seine ruhige Atmosphäre und natürliche Schönheit.',
+            ja: 'サリフリのケメル地区には、歴史的な石橋とゲディズ川のユニークな景色があります。ローマ時代からあると考えられている乙女の橋（クズ・キョプリュス）もこの地域にあります。穏やかな雰囲気と自然の美しさで知られています。'
+        },
+        category: 'history',
+        coordinates: { lat: 38.601, lng: 28.305 }
     }
 ];
