@@ -3,10 +3,10 @@
 // Get this config from the Firebase console
 // https://console.firebase.google.com/
 export const firebaseConfig = {
-  apiKey: "TODO",
-  authDomain: "TODO",
-  projectId: "TODO",
-  storageBucket: "TODO",
-  messagingSenderId: "TODO",
-  appId: "TODO"
+  "projectId": "studio-4936508951-29568",
+  "appId": "1:1072483529946:web:b8b6d0358737294b3461e3",
+  "apiKey": "AIzaSyCDj4LGlWpD7ruDdtNyFbV-lDAdrcpd6qM",
+  "authDomain": "studio-4936508951-29568.firebaseapp.com",
+  "measurementId": "",
+  "messagingSenderId": "1072483529946"
 };
