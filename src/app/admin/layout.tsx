@@ -3,13 +3,20 @@
 import { useAuthRedirect } from '@/hooks/use-auth-redirect';
 import { useUser } from '@/firebase';
 import { AdminLayout } from '@/components/admin/layout';
-import { notFound } from 'next/navigation';
+import { notFound, usePathname } from 'next/navigation';
 
 export default function ProtectedAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  // Do not apply protection to the login page itself
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
   useAuthRedirect({ to: '/admin/login', condition: (user) => !user });
   
   const { profile, loading } = useUser();
@@ -22,6 +29,7 @@ export default function ProtectedAdminLayout({
     );
   }
 
+  // After loading, if there's no profile or the user is not an admin, show not found.
   if (!profile?.isAdmin) {
     return notFound();
   }
