@@ -7,7 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/use-language';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState, useEffect } from 'react';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -46,6 +46,11 @@ function YerlerContent() {
   const category = searchParams.get('category');
   const { t, language } = useLanguage();
   const firestore = useFirestore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const typedLanguage = language as Language;
 
@@ -76,7 +81,7 @@ function YerlerContent() {
 
   const currentInfo = category ? pageInfo[category] : null;
 
-  if (loading) {
+  if (!isMounted || loading) {
       return <YerlerPageSkeleton />;
   }
 
