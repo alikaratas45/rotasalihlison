@@ -54,8 +54,8 @@ function PopularDestinations() {
 
     return (
         <div className="grid md:grid-cols-3 gap-8 -mt-32 md:-mt-48 z-10 relative">
-            {sortedDestinations.map(place => (
-              <Card key={place.id} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
+            {sortedDestinations.map((place, index) => (
+              <Card key={`${place.id}-${index}`} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
                 <CardContent className="p-0">
                   <Link href={`/yerler/${place.slug[typedLanguage]}`} className="block">
                     <div className="relative h-64 w-full">

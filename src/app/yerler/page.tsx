@@ -99,9 +99,9 @@ function YerlerContent() {
       )}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredPlaces.map(place => {
+        {filteredPlaces.map((place, index) => {
           return (
-            <div key={place.id} className="group h-full">
+            <div key={`${place.id}-${index}`} className="group h-full">
                 <Link href={`/yerler/${place.slug[typedLanguage]}`} className="block h-full">
                 <Card className="overflow-hidden h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
                     <CardContent className="p-0 flex flex-col h-full">
