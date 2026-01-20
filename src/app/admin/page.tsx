@@ -309,8 +309,8 @@ export default function AdminPage() {
                         </TableRow>
                     ))
                 )}
-                {!placesLoading && places?.map((place) => (
-                  <TableRow key={place.id}>
+                {!placesLoading && places?.map((place, index) => (
+                  <TableRow key={`${place.id}-${index}`}>
                     <TableCell className="font-medium">{place.name.tr}</TableCell>
                     <TableCell className="hidden md:table-cell">
                         <Badge variant="secondary">{categoryLabels[place.category] || 'Diğer'}</Badge>
