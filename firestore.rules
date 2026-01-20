@@ -21,26 +21,26 @@ service cloud.firestore {
     // CONTENT
     // ---
     // All users can read public content.
-    // Only admins can write content.
+    // Only admins can write (create, update, delete) content.
     match /places/{placeId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update, delete: if isAdmin();
     }
      match /routes/{routeId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update, delete: if isAdmin();
     }
      match /stories/{storyId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update, delete: if isAdmin();
     }
      match /brochures/{brochureId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update, delete: if isAdmin();
     }
      match /menu-items/{menuItemId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update, delete: if isAdmin();
     }
   }
 }
