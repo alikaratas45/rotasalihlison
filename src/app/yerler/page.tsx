@@ -46,11 +46,6 @@ function YerlerContent() {
   const category = searchParams.get('category');
   const { t, language } = useLanguage();
   const firestore = useFirestore();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const typedLanguage = language as Language;
 
@@ -81,7 +76,7 @@ function YerlerContent() {
 
   const currentInfo = category ? pageInfo[category] : null;
 
-  if (!isMounted || loading) {
+  if (loading) {
       return <YerlerPageSkeleton />;
   }
 
