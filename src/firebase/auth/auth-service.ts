@@ -9,7 +9,7 @@ import {
 import { createUserProfileDocument } from '../firestore/user-service';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 
-const ADMIN_EMAIL = 'admin@salihli.bel.tr';
+const ADMIN_EMAIL = 'alikarataskula@gmail.com';
 
 export const signInWithUsername = async (auth: Auth, firestore: Firestore, username: string, password: string): Promise<User | null> => {
   if (username.toLowerCase() !== 'admin') {

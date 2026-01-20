@@ -21,7 +21,7 @@ export function useUser() {
     if (user && profile) {
       // Check if the user's email matches the admin email.
       // In a real app, this might be a role in the user's profile document.
-      setIsAdmin(user.email === 'admin@salihli.bel.tr');
+      setIsAdmin(user.email === 'alikarataskula@gmail.com');
     } else {
       setIsAdmin(false);
     }

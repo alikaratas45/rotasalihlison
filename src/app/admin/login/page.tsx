@@ -21,6 +21,7 @@ import { signInWithUsername } from '@/firebase/auth/auth-service';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/icons/logo';
 import { Loader2 } from 'lucide-react';
+import { useAuth, useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   username: z.string().min(1, { message: 'Kullanıcı adı gereklidir.' }),
@@ -31,6 +32,8 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const auth = useAuth();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +57,7 @@ export default function LoginPage() {
     }
 
     try {
-      const user = await signInWithUsername(values.username, values.password);
+      const user = await signInWithUsername(auth, firestore, values.username, values.password);
       if (user) {
         toast({
           title: 'Giriş Başarılı',
@@ -66,7 +69,7 @@ export default function LoginPage() {
       let description = 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.';
        if (error.code === 'auth/invalid-credential') {
          description =
-           'Kimlik bilgileri geçersiz. Şifrenizin yanlış olmadığından ve Firebase projenizde yönetici kullanıcısının (admin@salihli.bel.tr) doğru şifreyle (salihliadmin) oluşturulduğundan emin olun.';
+           'Kimlik bilgileri geçersiz. Şifrenizin yanlış olmadığından ve Firebase projenizde yönetici kullanıcısının (alikarataskula@gmail.com) doğru şifreyle (salihliadmin) oluşturulduğundan emin olun.';
        }
 
       toast({
