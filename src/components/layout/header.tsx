@@ -4,11 +4,11 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Volume2, VolumeX, BookOpen } from 'lucide-react';
+import { Menu, Sun, Moon, Volume2, VolumeX, BookOpen, User, Lock } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 import { Logo } from '@/components/icons/logo';
 import { TurkishFlagIcon, UKFlagIcon, FrenchFlagIcon, GermanFlagIcon } from '@/components/icons/flags';
@@ -16,10 +16,14 @@ import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
 import type { Language } from '@/context/language-context';
 import React from 'react';
+import { useUser } from '@/firebase';
+import { signOutWithGoogle } from '@/firebase/auth/auth-service';
 
 export function Header() {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, profile } = useUser();
+
 
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
@@ -48,6 +52,14 @@ export function Header() {
           <AudioGuideToggle />
           <LanguageSwitcher />
           <ThemeToggle />
+          {profile?.isAdmin && (
+            <Button asChild variant="outline" size="icon">
+              <Link href="/admin">
+                <Lock className="h-5 w-5" />
+                <span className="sr-only">Admin Panel</span>
+              </Link>
+            </Button>
+          )}
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
