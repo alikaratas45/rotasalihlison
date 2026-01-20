@@ -1,13 +1,9 @@
 'use client';
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, type Firestore } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
-import { initializeFirebase } from '..';
 import type { UserProfile } from '@/lib/definitions';
-import { getFirestore } from 'firebase/firestore';
 
-export const createUserProfileDocument = async (userAuth: User) => {
-    const app = initializeFirebase();
-    const firestore = getFirestore(app);
+export const createUserProfileDocument = async (firestore: Firestore, userAuth: User) => {
     const userDocRef = doc(firestore, `users/${userAuth.uid}`);
     const snapshot = await getDoc(userDocRef);
 

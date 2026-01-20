@@ -23,6 +23,7 @@ import { signInWithEmail } from '@/firebase/auth/auth-service';
 import { useAuthRedirect } from '@/hooks/use-auth-redirect';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { useAuth, useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   username: z.string().min(1, 'Kullanıcı adı gereklidir.'),
@@ -32,6 +33,9 @@ const formSchema = z.object({
 export default function AdminLoginPage() {
   useAuthRedirect({ to: '/admin', condition: (user) => !!user });
   const { toast } = useToast();
+  const auth = useAuth();
+  const firestore = useFirestore();
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,7 +61,7 @@ export default function AdminLoginPage() {
     try {
       // Use the designated admin email with the provided password.
       // Firebase will handle the password validation.
-      await signInWithEmail('alikarataskula@gmail.com', values.password);
+      await signInWithEmail(auth, firestore, 'alikarataskula@gmail.com', values.password);
       toast({
         title: 'Giriş Başarılı',
         description: 'Yönetim paneline yönlendiriliyorsunuz.',

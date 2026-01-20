@@ -21,7 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { signOutUser } from '@/firebase/auth/auth-service';
 import { Logo } from '../icons/logo';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
 
 const menuItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
@@ -36,6 +36,7 @@ const menuItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
+  const auth = useAuth();
 
   return (
     <div className="flex h-full max-h-screen flex-col gap-2">
@@ -64,7 +65,7 @@ export function AdminSidebar() {
       </div>
       <div className="mt-auto p-4">
         {user && (
-             <Button variant="ghost" className="w-full justify-start" onClick={signOutUser}>
+             <Button variant="ghost" className="w-full justify-start" onClick={() => signOutUser(auth)}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Sign Out
             </Button>

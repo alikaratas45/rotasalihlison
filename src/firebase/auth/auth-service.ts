@@ -1,21 +1,18 @@
 'use client';
 import {
-  getAuth,
   signInWithEmailAndPassword,
   signOut,
+  type Auth,
 } from 'firebase/auth';
-import { initializeFirebase } from '..';
+import type { Firestore } from 'firebase/firestore';
 import { createUserProfileDocument } from '../firestore/user-service';
 
-const app = initializeFirebase();
-const auth = getAuth(app);
-
-export const signInWithEmail = async (email, password) => {
+export const signInWithEmail = async (auth: Auth, firestore: Firestore, email: string, password: string) => {
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
     const user = result.user;
     // Create a user document in Firestore if it doesn't exist
-    await createUserProfileDocument(user);
+    await createUserProfileDocument(firestore, user);
   } catch (error) {
     console.error('Error signing in with email and password: ', error);
     // Re-throw the error to be handled by the UI
@@ -24,7 +21,7 @@ export const signInWithEmail = async (email, password) => {
 };
 
 
-export const signOutUser = async () => {
+export const signOutUser = async (auth: Auth) => {
   try {
     await signOut(auth);
   } catch (error) {
