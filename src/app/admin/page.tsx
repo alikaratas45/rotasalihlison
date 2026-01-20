@@ -184,20 +184,20 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Kategori seçin" />
-                            </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="history">Tarih</SelectItem>
-                            <SelectItem value="nature">Doğa</SelectItem>
-                            <SelectItem value="food">Lezzet</SelectItem>
-                            <SelectItem value="shopping">Alışveriş</SelectItem>
-                            <SelectItem value="poi">Önemli Nokta</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Kategori seçin" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="history">Tarih</SelectItem>
+                          <SelectItem value="nature">Doğa</SelectItem>
+                          <SelectItem value="food">Lezzet</SelectItem>
+                          <SelectItem value="shopping">Alışveriş</SelectItem>
+                          <SelectItem value="poi">Önemli Nokta</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -300,20 +300,20 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="history">Tarih</SelectItem>
-                            <SelectItem value="nature">Doğa</SelectItem>
-                            <SelectItem value="food">Lezzet</SelectItem>
-                            <SelectItem value="shopping">Alışveriş</SelectItem>
-                            <SelectItem value="poi">Önemli Nokta</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="history">Tarih</SelectItem>
+                          <SelectItem value="nature">Doğa</SelectItem>
+                          <SelectItem value="food">Lezzet</SelectItem>
+                          <SelectItem value="shopping">Alışveriş</SelectItem>
+                          <SelectItem value="poi">Önemli Nokta</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
