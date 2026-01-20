@@ -37,8 +37,8 @@ export default function AdminLayout({
       return;
     }
     
-    // Giriş yapılmış ama admin değilse, ana sayfaya yönlendir
-    if (user && !isAdmin) {
+    // Giriş yapılmış ama admin değilse VE GİRİŞ SAYFASINDA DEĞİLSE, ana sayfaya yönlendir
+    if (user && !isAdmin && pathname !== '/admin/login') {
       router.push('/');
       return;
     }
