@@ -65,13 +65,18 @@ export default function PlaceDetailPage() {
         'tr': ['tr-TR'],
         'en': ['en-US', 'en-GB'],
         'fr': ['fr-FR'],
-        'de': 'de-DE'
+        'de': ['de-DE'],
+        'ja': ['ja-JP'],
       };
       
       const voiceLang = lang;
-      
-      let selectedVoice = voices.find(voice => voice.lang.replace('_', '-') === langMap[voiceLang][0]);
+      const voicePreferences = langMap[voiceLang];
 
+      let selectedVoice;
+      if (voicePreferences && voicePreferences.length > 0) {
+        selectedVoice = voices.find(voice => voice.lang.replace('_', '-') === voicePreferences[0]);
+      }
+      
       if (!selectedVoice) {
          selectedVoice = voices.find(voice => voice.lang.startsWith(voiceLang));
       }
@@ -80,7 +85,7 @@ export default function PlaceDetailPage() {
         utterance.voice = selectedVoice;
         utterance.lang = selectedVoice.lang;
       } else {
-        utterance.lang = langMap[voiceLang][0] || 'en-US';
+        utterance.lang = (voicePreferences && voicePreferences.length > 0) ? voicePreferences[0] : 'en-US';
       }
 
       utterance.onstart = () => setIsPlaying(true);
