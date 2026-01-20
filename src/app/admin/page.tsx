@@ -22,13 +22,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -192,18 +185,18 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Kategori seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="history">Tarih</SelectItem>
-                          <SelectItem value="nature">Doğa</SelectItem>
-                          <SelectItem value="food">Lezzet</SelectItem>
-                          <SelectItem value="shopping">Alışveriş</SelectItem>
-                          <SelectItem value="poi">Önemli Nokta</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            <option value="history">Tarih</option>
+                            <option value="nature">Doğa</option>
+                            <option value="food">Lezzet</option>
+                            <option value="shopping">Alışveriş</option>
+                            <option value="poi">Önemli Nokta</option>
+                          </select>
+                        </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -306,18 +299,18 @@ export default function AdminPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Kategori</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Kategori seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="history">Tarih</SelectItem>
-                          <SelectItem value="nature">Doğa</SelectItem>
-                          <SelectItem value="food">Lezzet</SelectItem>
-                          <SelectItem value="shopping">Alışveriş</SelectItem>
-                          <SelectItem value="poi">Önemli Nokta</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            <option value="history">Tarih</option>
+                            <option value="nature">Doğa</option>
+                            <option value="food">Lezzet</option>
+                            <option value="shopping">Alışveriş</option>
+                            <option value="poi">Önemli Nokta</option>
+                          </select>
+                        </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
