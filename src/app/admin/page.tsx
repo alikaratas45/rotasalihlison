@@ -178,7 +178,24 @@ export default function AdminPage() {
               <FormField control={addForm.control} name="slug_tr" render={({ field }) => ( <FormItem> <FormLabel>Link</FormLabel> <FormControl> <Input {...field} /> </FormControl> <FormDescription>URL'de görünecek kısım. Örn: "sardes-antik-kenti"</FormDescription> <FormMessage /> </FormItem> )}/>
               <FormField control={addForm.control} name="description_tr" render={({ field }) => ( <FormItem> <FormLabel>Açıklama</FormLabel> <FormControl> <Textarea rows={5} {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <FormField control={addForm.control} name="category" render={({ field }) => ( <FormItem> <FormLabel>Kategori</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger> <SelectValue placeholder="Kategori seçin" /> </SelectTrigger> </FormControl> <SelectContent> <SelectItem value="history">Tarih</SelectItem> <SelectItem value="nature">Doğa</SelectItem> <SelectItem value="food">Lezzet</SelectItem> <SelectItem value="shopping">Alışveriş</SelectItem> <SelectItem value="poi">Önemli Nokta</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
+                <FormField control={addForm.control} name="category" render={({ field }) => ( 
+                    <FormItem> 
+                        <FormLabel>Kategori</FormLabel> 
+                        <FormControl> 
+                            <Select onValueChange={field.onChange} defaultValue={field.value}> 
+                                <SelectTrigger> <SelectValue placeholder="Kategori seçin" /> </SelectTrigger>
+                                <SelectContent> 
+                                    <SelectItem value="history">Tarih</SelectItem> 
+                                    <SelectItem value="nature">Doğa</SelectItem> 
+                                    <SelectItem value="food">Lezzet</SelectItem> 
+                                    <SelectItem value="shopping">Alışveriş</SelectItem> 
+                                    <SelectItem value="poi">Önemli Nokta</SelectItem> 
+                                </SelectContent> 
+                            </Select> 
+                        </FormControl> 
+                        <FormMessage /> 
+                    </FormItem> 
+                )}/>
                 <FormField control={addForm.control} name="lat" render={({ field }) => ( <FormItem> <FormLabel>Latitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
                 <FormField control={addForm.control} name="lng" render={({ field }) => ( <FormItem> <FormLabel>Longitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
               </div>
@@ -271,7 +288,24 @@ export default function AdminPage() {
               <FormField control={editForm.control} name="slug_tr" render={({ field }) => ( <FormItem> <FormLabel>Link</FormLabel> <FormControl> <Input {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
               <FormField control={editForm.control} name="description_tr" render={({ field }) => ( <FormItem> <FormLabel>Açıklama</FormLabel> <FormControl> <Textarea rows={5} {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <FormField control={editForm.control} name="category" render={({ field }) => ( <FormItem> <FormLabel>Kategori</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl> <SelectTrigger> <SelectValue /> </SelectTrigger> </FormControl> <SelectContent> <SelectItem value="history">Tarih</SelectItem> <SelectItem value="nature">Doğa</SelectItem> <SelectItem value="food">Lezzet</SelectItem> <SelectItem value="shopping">Alışveriş</SelectItem> <SelectItem value="poi">Önemli Nokta</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
+                <FormField control={editForm.control} name="category" render={({ field }) => ( 
+                    <FormItem> 
+                        <FormLabel>Kategori</FormLabel> 
+                        <FormControl>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}> 
+                                <SelectTrigger> <SelectValue /> </SelectTrigger>
+                                <SelectContent> 
+                                    <SelectItem value="history">Tarih</SelectItem> 
+                                    <SelectItem value="nature">Doğa</SelectItem> 
+                                    <SelectItem value="food">Lezzet</SelectItem> 
+                                    <SelectItem value="shopping">Alışveriş</SelectItem> 
+                                    <SelectItem value="poi">Önemli Nokta</SelectItem> 
+                                </SelectContent> 
+                            </Select> 
+                        </FormControl>
+                        <FormMessage /> 
+                    </FormItem> 
+                )}/>
                 <FormField control={editForm.control} name="lat" render={({ field }) => ( <FormItem> <FormLabel>Latitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
                 <FormField control={editForm.control} name="lng" render={({ field }) => ( <FormItem> <FormLabel>Longitude</FormLabel> <FormControl> <Input type="number" step="any" {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
               </div>
