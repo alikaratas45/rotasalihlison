@@ -6,7 +6,7 @@ import {
   onSnapshot,
   type FirestoreError,
 } from 'firebase/firestore';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 import { errorEmitter } from '../error-emitter';
 import { FirestorePermissionError } from '../errors';
@@ -22,12 +22,10 @@ export const useCollection = <T,>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
 
-  const queryRef = useRef(query);
-
   useEffect(() => {
-    if (queryRef.current) {
+    if (query) {
       const unsubscribe = onSnapshot(
-        queryRef.current,
+        query,
         (querySnapshot) => {
           const docs = querySnapshot.docs.map((doc) => ({
             id: doc.id,
