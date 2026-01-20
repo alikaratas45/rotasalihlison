@@ -334,37 +334,11 @@ export const places: Place[] = [
             tr: 'Antik dünyanın en büyük dördüncü İyon düzeni tapınağıdır. Lidya döneminde yapımına başlanmış ve Roma dönemine kadar kullanılmıştır. Ayakta kalan devasa sütunları, yapının görkemini gözler önüne serer.',
             en: 'It is the fourth largest Ionic order temple in the ancient world. Its construction began in the Lydian period and it was used until the Roman period. Its remaining giant columns reveal the magnificence of the structure.',
             fr: 'C\'est le quatrième plus grand temple d\'ordre ionique du monde antique. Sa construction a commencé à l\'époque lydienne et il a été utilisé jusqu\'à l\'époque romaine. Ses colonnes géantes restantes révèlent la magnificence de la structure.',
-            de: 'Es ist der viertgrößte ionische Tempel der antiken Welt. Sein Bau begann in der lydischen Zeit und er wurde bis in die römische Zeit genutzt. Seine verbliebenen riesigen Säulen zeigen die Pracht des Bauwerks.',
+            de: 'Es ist der vierte größte ionische Tempel der antiken Welt. Sein Bau begann in der lydischen Zeit und er wurde bis in die römische Zeit genutzt. Seine verbliebenen riesigen Säulen zeigen die Pracht des Bauwerks.',
             ja: '古代世界で4番目に大きいイオニア式の寺院です。その建設はリディア時代に始まり、ローマ時代まで使用されていました。残っている巨大な柱は、構造の壮大さを明らかにしています。'
         },
         category: 'history',
         coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 }
-    },
-    {
-        id: '14',
-        slug: { 
-            tr: 'salihli-kent-muzesi', 
-            en: 'salihli-city-museum',
-            fr: 'musee-de-la-ville-de-salihli',
-            de: 'stadtmuseum-salihli',
-            ja: 'salihli-city-museum-ja'
-        },
-        name: { 
-            tr: 'Salihli Kent Müzesi', 
-            en: 'Salihli City Museum',
-            fr: 'Musée de la Ville de Salihli',
-            de: 'Stadtmuseum Salihli',
-            ja: 'サリフリ市立博物館'
-        },
-        description: { 
-            tr: 'Tarihi bir konakta hizmet veren Salihli Kent Müzesi, şehrin zengin sosyal, kültürel ve ekonomik geçmişine ışık tutar. Müzede, geleneksel yaşam tarzını yansıtan etnografik eserler, tarım aletleri, eski fotoğraflar ve belgeler sergilenmektedir. Ziyaretçiler, Salihli\'nin Kurtuluş Savaşı\'ndaki rolünden, tarımsal gelişimine ve kültürel dokusuna kadar pek çok konuda bilgi edinebilirler. Bu müze, Salihli\'nin ruhunu ve kimliğini anlamak için mutlaka ziyaret edilmesi gereken bir yerdir.',
-            en: 'Serving in a historical mansion, the Salihli City Museum sheds light on the rich social, cultural, and economic past of the city. The museum exhibits ethnographic artifacts reflecting the traditional way of life, agricultural tools, old photographs, and documents. Visitors can learn about many subjects, from Salihli\'s role in the War of Independence to its agricultural development and cultural fabric. This museum is a must-visit place to understand the spirit and identity of Salihli.',
-            fr: 'Installé dans un manoir historique, le musée de la ville de Salihli met en lumière le riche passé social, culturel et économique de la ville. Le musée expose des artefacts ethnographiques reflétant le mode de vie traditionnel, des outils agricoles, des photographies anciennes et des documents. Les visiteurs peuvent s\'informer sur de nombreux sujets, du rôle de Salihli dans la guerre d\'indépendance à son développement agricole et à son tissu culturel. Ce musée est un lieu incontournable pour comprendre l\'esprit et l\'identité de Salihli.',
-            de: 'Das Stadtmuseum Salihli, das in einem historischen Herrenhaus untergebracht ist, beleuchtet die reiche soziale, kulturelle und wirtschaftliche Vergangenheit der Stadt. Das Museum stellt ethnografische Artefakte aus, die den traditionellen Lebensstil widerspiegeln, landwirtschaftliche Werkzeuge, alte Fotografien und Dokumente. Besucher können sich über viele Themen informieren, von der Rolle Salihlis im Unabhängigkeitskrieg bis zu seiner landwirtschaftlichen Entwicklung und seinem kulturellen Gefüge. Dieses Museum ist ein Muss, um den Geist und die Identität von Salihli zu verstehen.',
-            ja: '歴史的な邸宅で提供されるサリフリ市立博物館は、市の豊かな社会的、文化的、経済的な過去に光を当てます。博物館には、伝統的な生活様式を反映した民族誌的遺物、農具、古い写真、文書が展示されています。訪問者は、独立戦争におけるサリフリの役割から、農業の発展、文化的な構造まで、多くの主題について学ぶことができます。この博物館は、サリフリの精神とアイデンティティを理解するために必見の場所です。'
-        },
-        category: 'history',
-        coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 }
     },
     {
         id: '15',
