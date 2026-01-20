@@ -17,6 +17,8 @@ export type Place = {
     description: LocalizedString;
     category: 'history' | 'nature' | 'food' | 'shopping' | 'poi';
     coordinates: Coordinates;
+    imageUrl?: string;
+    imageHint?: string;
 };
 
 export type Route = {

@@ -14,6 +14,7 @@ import {
   Route,
   SignOut,
   LogOut,
+  Menu as MenuIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,11 +25,11 @@ import { useUser } from '@/firebase';
 
 const menuItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
-    { href: '/admin/places', label: 'Places', icon: Map },
-    { href: '/admin/routes', label: 'Routes', icon: Route },
-    { href: '/admin/stories', label: 'Stories', icon: Book },
-    { href: '/admin/brochures', label: 'Brochures', icon: Newspaper },
-    { href: '/admin/menu', label: 'Menu Management', icon: Users },
+    { href: '/admin/places', label: 'Yerler', icon: Map },
+    { href: '/admin/routes', label: 'Rotalar', icon: Route },
+    { href: '/admin/stories', label: 'Hikayeler', icon: Book },
+    { href: '/admin/brochures', label: 'Broşürler', icon: Newspaper },
+    { href: '/admin/menu', label: 'Menü Yönetimi', icon: MenuIcon },
   ];
   
 
@@ -52,7 +53,7 @@ export function AdminSidebar() {
               href={href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
-                pathname === href && 'bg-muted text-primary'
+                pathname.startsWith(href) && href !== '/admin' ? 'bg-muted text-primary' : pathname === href ? 'bg-muted text-primary' : ''
               )}
             >
               <Icon className="h-4 w-4" />
