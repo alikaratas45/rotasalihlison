@@ -29,18 +29,18 @@ export const routes: Route[] = [
     {
         id: 'r2',
         slug: { 
-            tr: 'gediz-vadisi-doga-rotasi', 
-            en: 'gediz-valley-nature-route',
-            fr: 'route-nature-de-la-vallee-de-gediz',
-            de: 'naturroute-gediz-tal',
-            ja: 'gediz-valley-nature-route-ja'
+            tr: 'doga-rotasi', 
+            en: 'nature-route',
+            fr: 'route-nature',
+            de: 'naturroute',
+            ja: 'nature-route-ja'
         },
         name: { 
-            tr: 'Gediz Vadisi Doğa Rotası', 
-            en: 'Gediz Valley Nature Route',
-            fr: 'Route Nature de la Vallée de Gediz',
-            de: 'Naturroute Gediz-Tal',
-            ja: 'ゲディズ渓谷自然ルート'
+            tr: 'Doğa Rotası', 
+            en: 'Nature Route',
+            fr: 'Route Nature',
+            de: 'Naturroute',
+            ja: '自然ルート'
         },
         description: { 
             tr: 'Gediz Nehri\'nin bereketli topraklarında bir yolculuğa çıkın. Bu rota, sizi Kurşunlu\'nun şifalı sularından, volkanik kanyonlara ve tarihi köprülere uzanan bir huzur yolculuğuna çıkaracak.',
