@@ -28,18 +28,6 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Doğa Rotaları',
-      en: 'Nature Routes',
-      fr: 'Itinéraires Nature',
-      de: 'Naturrouten',
-      ja: '自然のルート'
-    },
-    icon: 'Leaf',
-    link: '/rotalar',
-    order: 3
-  },
-  {
-    name: {
       tr: 'Lezzet Durakları',
       en: 'Flavor Stops',
       fr: 'Arrêts Gourmands',
@@ -48,7 +36,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Utensils',
     link: '/lezzetler',
-    order: 4
+    order: 3
   },
   {
     name: {
@@ -60,7 +48,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Route',
     link: '/rota-olustur',
-    order: 5
+    order: 4
   },
   {
     name: {
@@ -72,6 +60,6 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'BookOpen',
     link: '/hikayeler',
-    order: 6
+    order: 5
   }
 ];
