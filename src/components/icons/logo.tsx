@@ -1,20 +1,20 @@
-import type { SVGProps } from 'react';
+import Image from 'next/image';
 
-export function Logo(props: SVGProps<SVGSVGElement>) {
+// The new logo is a colorful image, not a single-color SVG.
+// We accept a className to allow for sizing, but other SVG-specific props are not applicable.
+export function Logo({ className }: { className?: string }) {
+    // !! PLACEHOLDER !! Using a temporary image until the real logo URL is provided.
+  const logoUrl = 'https://i.imgur.com/IT6VuDV.jpeg';
+
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <title>Rota Salihli Logo</title>
-      <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
+    <div className={`relative ${className || 'h-8 w-8'}`}>
+      <Image
+        src={logoUrl}
+        alt="Rota Salihli Logo"
+        fill
+        style={{ objectFit: 'contain' }}
+        sizes="(max-width: 768px) 10vw, 5vw"
+      />
+    </div>
   );
 }
