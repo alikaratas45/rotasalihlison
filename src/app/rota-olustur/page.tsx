@@ -170,25 +170,6 @@ export default function RotaOlusturPage() {
                     </CardContent>
                 </Card>
                 <div className="lg:col-span-2 space-y-8">
-                   <Card>
-                        <CardHeader>
-                            <CardTitle>{t('routePlanner.selectedPlaces')}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {selectedPlaces.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {selectedPlaces.map((place, index) => (
-                                         <Badge key={place.id} variant="secondary" className="flex items-center gap-2 text-base py-1 px-3">
-                                            <span>{index + 1}. {place.name[typedLanguage]}</span>
-                                            <button onClick={() => handlePlaceSelection(place)} className="rounded-full hover:bg-muted-foreground/20 p-0.5">
-                                                <X className="h-3 w-3"/>
-                                            </button>
-                                        </Badge>
-                                    ))}
-                                </div>
-                            ) : <p className="text-muted-foreground text-sm">{t('routePlanner.startPlanning')}</p>}
-                        </CardContent>
-                    </Card>
                     <Card className="min-h-[400px]">
                         <CardHeader>
                             <CardTitle>{t('routePlanner.routeMap')}</CardTitle>
@@ -219,6 +200,25 @@ export default function RotaOlusturPage() {
                                     {t('routePlanner.openInMaps')}
                                 </Button>
                             )}
+                        </CardContent>
+                    </Card>
+                   <Card>
+                        <CardHeader>
+                            <CardTitle>{t('routePlanner.selectedPlaces')}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {selectedPlaces.length > 0 ? (
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedPlaces.map((place, index) => (
+                                         <Badge key={place.id} variant="secondary" className="flex items-center gap-2 text-base py-1 px-3">
+                                            <span>{index + 1}. {place.name[typedLanguage]}</span>
+                                            <button onClick={() => handlePlaceSelection(place)} className="rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                                <X className="h-3 w-3"/>
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                </div>
+                            ) : <p className="text-muted-foreground text-sm">{t('routePlanner.startPlanning')}</p>}
                         </CardContent>
                     </Card>
                 </div>
