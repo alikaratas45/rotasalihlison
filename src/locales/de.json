@@ -94,5 +94,9 @@
         "maxLimitToastDescription": "Sie können maximal 10 Orte auswählen.",
         "startPlanning": "Wählen Sie Orte aus, um mit der Planung zu beginnen",
         "routeMap": "Routenkarte"
+    },
+    "bicycleRoutes": {
+        "title": "Fahrradrouten",
+        "description": "Entdecken Sie Fahrradwege und Pfade in und um Salihli. Treten Sie in die Pedale!"
     }
 }

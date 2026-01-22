@@ -94,5 +94,9 @@
         "maxLimitToastDescription": "最大10か所まで選択できます。",
         "startPlanning": "計画を開始する場所を選択してください",
         "routeMap": "ルートマップ"
+    },
+    "bicycleRoutes": {
+        "title": "自転車ルート",
+        "description": "サリフリとその周辺の自転車コースや小道を発見してください。ペダルをこぎ始めましょう！"
     }
 }

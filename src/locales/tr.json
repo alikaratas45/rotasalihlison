@@ -94,5 +94,9 @@
         "maxLimitToastDescription": "En fazla 10 yer seçebilirsiniz.",
         "startPlanning": "Planlamaya Başlamak için Yer Seçin",
         "routeMap": "Rota Haritası"
+    },
+    "bicycleRoutes": {
+        "title": "Bisiklet Rotaları",
+        "description": "Salihli ve çevresindeki bisiklet parkurlarını ve yollarını keşfedin. Pedal çevirmeye başlayın!"
     }
 }

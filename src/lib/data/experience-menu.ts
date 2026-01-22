@@ -61,5 +61,17 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     icon: 'BookOpen',
     link: '/hikayeler',
     order: 5
+  },
+  {
+    name: {
+      tr: 'Bisiklet Rotaları',
+      en: 'Bicycle Routes',
+      fr: 'Pistes Cyclables',
+      de: 'Fahrradrouten',
+      ja: '自転車ルート'
+    },
+    icon: 'Bike',
+    link: '/bisiklet-rotalari',
+    order: 6
   }
 ];

@@ -94,5 +94,9 @@
         "maxLimitToastDescription": "You can select a maximum of 10 places.",
         "startPlanning": "Select Places to Start Planning",
         "routeMap": "Route Map"
+    },
+    "bicycleRoutes": {
+        "title": "Bicycle Routes",
+        "description": "Discover bicycle tracks and paths in and around Salihli. Start pedaling!"
     }
 }

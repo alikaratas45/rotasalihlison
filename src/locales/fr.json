@@ -94,5 +94,9 @@
         "maxLimitToastDescription": "Vous pouvez sélectionner un maximum de 10 lieux.",
         "startPlanning": "Sélectionnez des lieux pour commencer à planifier",
         "routeMap": "Carte de l'itinéraire"
+    },
+    "bicycleRoutes": {
+        "title": "Pistes Cyclables",
+        "description": "Découvrez les pistes et sentiers cyclables à Salihli et ses environs. Commencez à pédaler !"
     }
 }
