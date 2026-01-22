@@ -31,7 +31,7 @@ function PopularDestinations() {
 
     if (loading) {
         return (
-            <div className="grid md:grid-cols-3 gap-8 -mt-32 md:-mt-48 z-10 relative">
+            <div className="grid md:grid-cols-3 gap-8 z-10 relative">
                 {Array.from({ length: 3 }).map((_, i) => (
                      <Card key={i} className="overflow-hidden shadow-xl">
                         <CardContent className="p-0">
@@ -53,7 +53,7 @@ function PopularDestinations() {
     }) || [];
 
     return (
-        <div className="grid md:grid-cols-3 gap-8 -mt-32 md:-mt-48 z-10 relative">
+        <div className="grid md:grid-cols-3 gap-8 z-10 relative">
             {sortedDestinations.map((place, index) => (
               <Card key={`${place.id}-${index}`} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
                 <CardContent className="p-0">
@@ -126,12 +126,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <PopularDestinations />
-        </div>
-      </section>
-
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
@@ -146,6 +140,12 @@ export default function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <PopularDestinations />
         </div>
       </section>
 
