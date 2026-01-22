@@ -32,7 +32,8 @@
         "thematicRoutesTitle": "Tematik Rotalar",
         "thematicRoutesSubtitle": "Salihli'nin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
         "allRoutes": "Tüm Rotaları Gör",
-        "stops": "Durak"
+        "stops": "Durak",
+        "stops_plural": "Durak"
     },
     "actions": {
         "seeDetails": "Detayları Gör →",
@@ -81,5 +82,17 @@
     "brochures": {
         "title": "Broşürlerimiz",
         "description": "Salihli'nin güzelliklerini ve olanaklarını interaktif dijital broşürlerimizle keşfedin."
+    },
+    "routePlanner": {
+        "title": "Kendi Rotanı Oluştur",
+        "description": "Gezmek istediğiniz yerleri seçerek kişisel rotanızı oluşturun (en fazla 10 yer).",
+        "selectPlaces": "Gezilecek Yerler",
+        "selectedPlaces": "Seçilen Duraklar",
+        "openInMaps": "Google Haritalar'da Aç",
+        "noSelection": "Rota oluşturmak için lütfen listeden en az iki yer seçin.",
+        "maxLimitToastTitle": "Limit Aşıldı",
+        "maxLimitToastDescription": "En fazla 10 yer seçebilirsiniz.",
+        "startPlanning": "Planlamaya Başlamak için Yer Seçin",
+        "routeMap": "Rota Haritası"
     }
 }

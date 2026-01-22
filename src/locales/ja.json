@@ -82,5 +82,17 @@
     "brochures": {
         "title": "私たちのパンフレット",
         "description": "インタラクティブなデジタルパンフレットで、サリフリの美しさと機会を発見してください。"
+    },
+    "routePlanner": {
+        "title": "独自のルートを作成",
+        "description": "訪問したい場所を選択して、個人ルートを作成します（最大10か所）。",
+        "selectPlaces": "場所",
+        "selectedPlaces": "選択した停車地",
+        "openInMaps": "Googleマップで開く",
+        "noSelection": "ルートを作成するには、リストから少なくとも2つの場所を選択してください。",
+        "maxLimitToastTitle": "上限を超えました",
+        "maxLimitToastDescription": "最大10か所まで選択できます。",
+        "startPlanning": "計画を開始する場所を選択してください",
+        "routeMap": "ルートマップ"
     }
 }

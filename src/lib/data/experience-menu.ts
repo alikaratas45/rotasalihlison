@@ -40,14 +40,14 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Alışveriş',
-      en: 'Shopping',
-      fr: 'Shopping',
-      de: 'Einkaufen',
-      ja: 'ショッピング'
+      tr: 'Rota Oluştur',
+      en: 'Create Route',
+      fr: 'Créer un Itinéraire',
+      de: 'Route Erstellen',
+      ja: 'ルートを作成'
     },
-    icon: 'ShoppingBag',
-    link: '/yerler?category=shopping',
+    icon: 'Route',
+    link: '/rota-olustur',
     order: 4
   }
 ];

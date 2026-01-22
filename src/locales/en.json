@@ -82,5 +82,17 @@
     "brochures": {
         "title": "Our Brochures",
         "description": "Discover the beauties and opportunities of Salihli with our interactive digital brochures."
+    },
+    "routePlanner": {
+        "title": "Create Your Own Route",
+        "description": "Create your personal route by selecting the places you want to visit (max 10 places).",
+        "selectPlaces": "Places",
+        "selectedPlaces": "Selected Stops",
+        "openInMaps": "Open in Google Maps",
+        "noSelection": "Please select at least two places from the list to create a route.",
+        "maxLimitToastTitle": "Limit Exceeded",
+        "maxLimitToastDescription": "You can select a maximum of 10 places.",
+        "startPlanning": "Select Places to Start Planning",
+        "routeMap": "Route Map"
     }
 }

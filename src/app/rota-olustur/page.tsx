@@ -1,0 +1,169 @@
+'use client';
+
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import { useLanguage } from '@/hooks/use-language';
+import { useToast } from '@/hooks/use-toast';
+import type { Place } from '@/lib/definitions';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2, Map, Route as RouteIcon, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import type { Language } from '@/context/language-context';
+
+const MAX_STOPS = 10;
+
+export default function RotaOlusturPage() {
+    const { t, language } = useLanguage();
+    const typedLanguage = language as Language;
+    const firestore = useFirestore();
+    const { toast } = useToast();
+
+    const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([]);
+    const [mapUrl, setMapUrl] = useState<string>('');
+    const [googleMapsLink, setGoogleMapsLink] = useState<string>('');
+
+    const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+    const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
+    const sortedPlaces = useMemo(() => places?.slice().sort((a, b) => a.name[typedLanguage].localeCompare(b.name[typedLanguage], language)) || [], [places, language, typedLanguage]);
+
+    const handlePlaceSelection = useCallback((place: Place) => {
+        setSelectedPlaces(prev => {
+            const isSelected = prev.find(p => p.id === place.id);
+            if (isSelected) {
+                return prev.filter(p => p.id !== place.id);
+            } else {
+                if (prev.length >= MAX_STOPS) {
+                    toast({
+                        variant: 'destructive',
+                        title: t('routePlanner.maxLimitToastTitle'),
+                        description: t('routePlanner.maxLimitToastDescription'),
+                    });
+                    return prev;
+                }
+                return [...prev, place];
+            }
+        });
+    }, [toast, t]);
+
+    useEffect(() => {
+        if (selectedPlaces.length < 2) {
+            setMapUrl('');
+            setGoogleMapsLink('');
+            return;
+        }
+
+        const saddr = `${selectedPlaces[0].coordinates.lat},${selectedPlaces[0].coordinates.lng}`;
+        const daddr = selectedPlaces.slice(1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('+to:');
+        const finalEmbedUrl = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed&z=10&hl=${language}`;
+        setMapUrl(finalEmbedUrl);
+        
+        const origin = `origin=${selectedPlaces[0].coordinates.lat},${selectedPlaces[0].coordinates.lng}`;
+        const destination = `destination=${selectedPlaces[selectedPlaces.length - 1].coordinates.lat},${selectedPlaces[selectedPlaces.length - 1].coordinates.lng}`;
+        const waypoints = selectedPlaces.slice(1, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
+        const finalLink = `https://www.google.com/maps/dir/?api=1&${origin}&${destination}${waypoints ? `&waypoints=${waypoints}`: ''}`;
+
+        setGoogleMapsLink(finalLink);
+    }, [selectedPlaces, language]);
+
+    return (
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold font-headline mb-4">{t('routePlanner.title')}</h1>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t('routePlanner.description')}</p>
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+                <Card className="lg:col-span-1 h-fit">
+                     <CardHeader>
+                        <CardTitle>{t('routePlanner.selectPlaces')}</CardTitle>
+                        <CardDescription>{selectedPlaces.length} / {MAX_STOPS} {t('home.stops_plural')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {placesLoading ? (
+                            <div className="flex items-center justify-center h-96">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        ) : (
+                            <ScrollArea className="h-96">
+                                <div className="space-y-4 pr-4">
+                                    {sortedPlaces.map(place => (
+                                        <div key={place.id} className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted transition-colors">
+                                            <Checkbox
+                                                id={place.id}
+                                                checked={selectedPlaces.some(p => p.id === place.id)}
+                                                onCheckedChange={() => handlePlaceSelection(place)}
+                                                disabled={selectedPlaces.length >= MAX_STOPS && !selectedPlaces.some(p => p.id === place.id)}
+                                            />
+                                            <label htmlFor={place.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1">
+                                                {place.name[typedLanguage]}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        )}
+                    </CardContent>
+                </Card>
+                <div className="lg:col-span-2 space-y-8">
+                   <Card>
+                        <CardHeader>
+                            <CardTitle>{t('routePlanner.selectedPlaces')}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {selectedPlaces.length > 0 ? (
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedPlaces.map((place, index) => (
+                                         <Badge key={place.id} variant="secondary" className="flex items-center gap-2 text-base py-1 px-3">
+                                            <span>{index + 1}. {place.name[typedLanguage]}</span>
+                                            <button onClick={() => handlePlaceSelection(place)} className="rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                                <X className="h-3 w-3"/>
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                </div>
+                            ) : <p className="text-muted-foreground text-sm">{t('routePlanner.startPlanning')}</p>}
+                        </CardContent>
+                    </Card>
+                    <Card className="min-h-[400px]">
+                        <CardHeader>
+                            <CardTitle>{t('routePlanner.routeMap')}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {mapUrl ? (
+                                <div className="aspect-video w-full rounded-lg overflow-hidden border">
+                                    <iframe
+                                        src={mapUrl}
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen={true}
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        title={t('routePlanner.routeMap')}
+                                    ></iframe>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-full aspect-video bg-muted/50 rounded-lg">
+                                    <RouteIcon className="h-12 w-12 text-muted-foreground mb-4"/>
+                                    <p className="text-muted-foreground text-center">{t('routePlanner.noSelection')}</p>
+                                </div>
+                            )}
+                             {googleMapsLink && (
+                                <Button asChild className="mt-4 w-full" size="lg">
+                                    <a href={googleMapsLink} target="_blank" rel="noopener noreferrer">
+                                        <Map className="mr-2"/>
+                                        {t('routePlanner.openInMaps')}
+                                    </a>
+                                </Button>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    );
+}
