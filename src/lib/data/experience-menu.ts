@@ -49,5 +49,17 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     icon: 'Route',
     link: '/rota-olustur',
     order: 4
+  },
+  {
+    name: {
+      tr: 'Hikayeler',
+      en: 'Stories',
+      fr: 'Histoires',
+      de: 'Geschichten',
+      ja: '物語'
+    },
+    icon: 'BookOpen',
+    link: '/hikayeler',
+    order: 5
   }
 ];
