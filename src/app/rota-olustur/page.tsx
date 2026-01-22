@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import { useLanguage } from '@/hooks/use-language';
@@ -13,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Map, Route as RouteIcon, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Language } from '@/context/language-context';
+import { cn } from '@/lib/utils';
 
 const MAX_STOPS = 10;
 
@@ -82,27 +84,51 @@ export default function RotaOlusturPage() {
                         <CardTitle>{t('routePlanner.selectPlaces')}</CardTitle>
                         <CardDescription>{selectedPlaces.length} / {MAX_STOPS} {t('home.stops_plural')}</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                         {placesLoading ? (
-                            <div className="flex items-center justify-center h-96">
+                            <div className="flex items-center justify-center h-[70vh]">
                                 <Loader2 className="h-8 w-8 animate-spin" />
                             </div>
                         ) : (
-                            <ScrollArea className="h-96">
-                                <div className="space-y-4 pr-4">
-                                    {sortedPlaces.map(place => (
-                                        <div key={place.id} className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted transition-colors">
-                                            <Checkbox
-                                                id={place.id}
-                                                checked={selectedPlaces.some(p => p.id === place.id)}
-                                                onCheckedChange={() => handlePlaceSelection(place)}
-                                                disabled={selectedPlaces.length >= MAX_STOPS && !selectedPlaces.some(p => p.id === place.id)}
-                                            />
-                                            <label htmlFor={place.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1">
-                                                {place.name[typedLanguage]}
+                            <ScrollArea className="h-[70vh] p-4 lg:p-6">
+                                <div className="space-y-4">
+                                    {sortedPlaces.map(place => {
+                                        const isSelected = selectedPlaces.some(p => p.id === place.id);
+                                        const isDisabled = !isSelected && selectedPlaces.length >= MAX_STOPS;
+                                        return (
+                                            <label
+                                                key={place.id}
+                                                htmlFor={place.id}
+                                                className={cn(
+                                                    "flex items-center gap-4 p-3 rounded-lg border transition-colors",
+                                                    isSelected ? "bg-secondary ring-2 ring-primary" : "hover:bg-muted",
+                                                    isDisabled ? "opacity-50 cursor-not-allowed bg-muted/50" : "cursor-pointer",
+                                                )}
+                                            >
+                                                <div className="relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden">
+                                                    <Image
+                                                         src={place.imageUrl || `https://picsum.photos/seed/${place.id}/200/200`}
+                                                         alt={place.name[typedLanguage]}
+                                                         data-ai-hint={place.imageHint || 'landmark'}
+                                                         fill
+                                                         className="object-cover"
+                                                         sizes="64px"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-semibold text-sm truncate">{place.name[typedLanguage]}</h3>
+                                                    <p className="text-xs text-muted-foreground line-clamp-2">{place.description[typedLanguage]}</p>
+                                                </div>
+                                                <Checkbox
+                                                    id={place.id}
+                                                    checked={isSelected}
+                                                    onCheckedChange={() => { if(!isDisabled) handlePlaceSelection(place) }}
+                                                    disabled={isDisabled}
+                                                    className="ml-auto h-5 w-5"
+                                                />
                                             </label>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                             </ScrollArea>
                         )}
