@@ -5,18 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dna, Mountain, Utensils, ShoppingBag, MapPinned, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
-import type { Place, Route, ExperienceItem } from '@/lib/definitions';
+import { collection, query, orderBy } from 'firebase/firestore';
+import type { ExperienceItem } from '@/lib/definitions';
 import { useMemo } from 'react';
 import { Placeholders } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LucideIcon } from '@/components/icons/lucide-icon';
 import { experienceItems as staticExperienceItems } from '@/lib/data/experience-menu';
-import { routes as staticRoutes } from '@/lib/data/routes';
 
 
 export default function Home() {
@@ -29,9 +28,6 @@ export default function Home() {
   const experienceItemsQuery = useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]);
   const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(experienceItemsQuery);
 
-  const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
-  const { data: routes, loading: routesLoading } = useCollection<Route>(routesQuery);
-
   const displayExperienceItems = useMemo(() => {
     if (experienceItems && experienceItems.length > 0) {
       // Sort items by order, as Firestore might not guarantee it in all edge cases
@@ -41,10 +37,6 @@ export default function Home() {
     return [...staticExperienceItems].sort((a,b) => a.order - b.order).map((item, index) => ({...item, id: `static-exp-${index}`}));
   }, [experienceItems]);
   
-  const thematicRoutes = useMemo(() => {
-      const displayRoutes = (routes && routes.length > 0) ? routes : staticRoutes;
-      return displayRoutes.slice(0, 3);
-  }, [routes]);
 
   return (
     <div className="flex flex-col">
@@ -90,71 +82,6 @@ export default function Home() {
                 </Card>
               </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-20 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold font-headline mb-2">{t('home.thematicRoutesTitle')}</h2>
-            <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">{t('home.thematicRoutesSubtitle')}</p>
-            <Button asChild variant="outline">
-                <Link href="/rotalar">{t('home.allRoutes')}</Link>
-            </Button>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {routesLoading ? Array.from({length: 3}).map((_, i) => (
-                <Card key={i} className="overflow-hidden h-full"><CardContent className="p-0 flex flex-col h-full">
-                    <Skeleton className="h-48 w-full" />
-                    <div className="p-6 flex flex-col flex-grow">
-                        <Skeleton className="h-6 w-3/4 mb-2" />
-                        <Skeleton className="h-4 w-full mb-4" />
-                        <Skeleton className="h-5 w-20 mt-auto" />
-                    </div>
-                </CardContent></Card>
-            )) : thematicRoutes.map(route => {
-              let imageId = '';
-              switch (route.slug.en) {
-                case 'lydian-treasures-route':
-                  imageId = 'gymnasium';
-                  break;
-                case 'nature-route':
-                  imageId = 'adala-volcanic-canyon';
-                  break;
-                case 'salihli-flavors-route':
-                  imageId = 'salihli-wood-meatballs';
-                  break;
-                default:
-                  imageId = route.id; // fallback
-              }
-              const placeholder = Placeholders.find(p => p.id === imageId);
-              return (
-              <Link href={`/rotalar/${route.slug[typedLanguage]}`} key={route.id} className="group">
-                <Card className="overflow-hidden h-full">
-                  <CardContent className="p-0 flex flex-col h-full">
-                    <div className="relative h-48 w-full">
-                      <Image
-                        src={placeholder?.imageUrl || `https://picsum.photos/seed/${route.id}/600/400`}
-                        alt={route.name[typedLanguage]}
-                        data-ai-hint={placeholder?.imageHint || 'route map'}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/20" />
-                    </div>
-                    <div className="p-6 flex flex-col flex-grow">
-                      <h3 className="text-xl font-bold font-headline mb-2">{route.name[typedLanguage]}</h3>
-                      <p className="text-muted-foreground text-sm flex-grow">{route.description[typedLanguage].substring(0, 100)}...</p>
-                      <div className="flex items-center text-sm text-primary font-semibold mt-4">
-                        <MapPinned className="w-4 h-4 mr-2"/>
-                        <span>{route.stops.length} {t('home.stops', {count: route.stops.length})}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            )})}
           </div>
         </div>
       </section>
