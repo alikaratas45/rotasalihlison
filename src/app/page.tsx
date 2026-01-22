@@ -68,14 +68,14 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
-          <div className="grid grid-cols-3 gap-4 md:gap-8">
-            {experienceLoading ? Array.from({length: 7}).map((_, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+            {experienceLoading ? Array.from({length: 8}).map((_, i) => (
                 <Card key={i} className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 h-full">
                     <Skeleton className="w-12 h-12 rounded-full mb-4" />
                     <Skeleton className="h-5 w-3/4" />
                 </Card>
             )) : displayExperienceItems.map((item) => (
-              <Link href={item.link} key={item.id} className="group">
+              <Link href={item.link} key={item.id} className="group h-full">
                 <Card className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 hover:bg-secondary transition-colors duration-300 h-full">
                   <LucideIcon name={item.icon} className="w-12 h-12 text-primary mb-4" />
                   <h3 className="font-semibold text-center">{item.name[typedLanguage]}</h3>
