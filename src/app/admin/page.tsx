@@ -422,81 +422,83 @@ export default function AdminPage() {
             <DialogTitle>Yeri Düzenle</DialogTitle>
           </DialogHeader>
           <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-6 py-4">
-               {renderFormFields(editForm)}
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <FormField
-                  control={editForm.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kategori</FormLabel>
-                        <select
-                          {...field}
-                          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option value="history">Tarih</option>
-                          <option value="nature">Doğa</option>
-                          <option value="food">Lezzet</option>
-                          <option value="shopping">Alışveriş</option>
-                          <option value="poi">Önemli Nokta</option>
-                        </select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={editForm.control}
-                  name="lat"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Latitude</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="any" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={editForm.control}
-                  name="lng"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Longitude</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="any" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <FormField
+            <form onSubmit={editForm.handleSubmit(onEditSubmit)}>
+              <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto pr-4">
+                {renderFormFields(editForm)}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  <FormField
                     control={editForm.control}
-                    name="imageUrl"
+                    name="category"
                     render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Resim URL'si</FormLabel>
-                        <FormControl><Input placeholder="https://picsum.photos/..." {...field} value={field.value ?? ''} /></FormControl>
+                      <FormItem>
+                        <FormLabel>Kategori</FormLabel>
+                          <select
+                            {...field}
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            <option value="history">Tarih</option>
+                            <option value="nature">Doğa</option>
+                            <option value="food">Lezzet</option>
+                            <option value="shopping">Alışveriş</option>
+                            <option value="poi">Önemli Nokta</option>
+                          </select>
                         <FormMessage />
-                    </FormItem>
+                      </FormItem>
                     )}
-                />
-                <FormField
+                  />
+                  <FormField
                     control={editForm.control}
-                    name="imageHint"
+                    name="lat"
                     render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Resim İpucu (AI için)</FormLabel>
-                        <FormControl><Input placeholder="landmark" {...field} value={field.value ?? ''} /></FormControl>
+                      <FormItem>
+                        <FormLabel>Latitude</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="any" {...field} />
+                        </FormControl>
                         <FormMessage />
-                    </FormItem>
+                      </FormItem>
                     )}
-                />
+                  />
+                  <FormField
+                    control={editForm.control}
+                    name="lng"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Longitude</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="any" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <FormField
+                      control={editForm.control}
+                      name="imageUrl"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel>Resim URL'si</FormLabel>
+                          <FormControl><Input placeholder="https://picsum.photos/..." {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+                  <FormField
+                      control={editForm.control}
+                      name="imageHint"
+                      render={({ field }) => (
+                      <FormItem>
+                          <FormLabel>Resim İpucu (AI için)</FormLabel>
+                          <FormControl><Input placeholder="landmark" {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                      </FormItem>
+                      )}
+                  />
+                </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="pt-4">
                 <DialogClose asChild>
                   <Button type="button" variant="outline">İptal</Button>
                 </DialogClose>
