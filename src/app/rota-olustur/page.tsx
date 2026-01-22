@@ -26,7 +26,7 @@ export default function RotaOlusturPage() {
 
     const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([]);
     const [mapUrl, setMapUrl] = useState<string>('');
-    const [googleMapsLink, setGoogleMapsLink] = useState<string>('');
+    const [isMapLoading, setIsMapLoading] = useState(false);
 
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
     const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
@@ -54,7 +54,6 @@ export default function RotaOlusturPage() {
     useEffect(() => {
         if (selectedPlaces.length < 2) {
             setMapUrl('');
-            setGoogleMapsLink('');
             return;
         }
 
@@ -62,14 +61,50 @@ export default function RotaOlusturPage() {
         const daddr = selectedPlaces.slice(1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('+to:');
         const finalEmbedUrl = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed&z=10&hl=${language}`;
         setMapUrl(finalEmbedUrl);
-        
-        const origin = `origin=${selectedPlaces[0].coordinates.lat},${selectedPlaces[0].coordinates.lng}`;
-        const destination = `destination=${selectedPlaces[selectedPlaces.length - 1].coordinates.lat},${selectedPlaces[selectedPlaces.length - 1].coordinates.lng}`;
-        const waypoints = selectedPlaces.slice(1, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
-        const finalLink = `https://www.google.com/maps/dir/?api=1&${origin}&${destination}${waypoints ? `&waypoints=${waypoints}`: ''}`;
-
-        setGoogleMapsLink(finalLink);
     }, [selectedPlaces, language]);
+    
+    const handleOpenInMaps = useCallback(() => {
+        if (selectedPlaces.length === 0) {
+            toast({
+                variant: 'destructive',
+                title: 'Rota Boş',
+                description: 'Lütfen haritada açmak için en az bir yer seçin.',
+            });
+            return;
+        }
+        setIsMapLoading(true);
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                const origin = `${latitude},${longitude}`;
+                
+                let mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}`;
+                
+                if (selectedPlaces.length === 1) {
+                    const destination = `${selectedPlaces[0].coordinates.lat},${selectedPlaces[0].coordinates.lng}`;
+                    mapsUrl += `&destination=${destination}`;
+                } else {
+                    const destination = selectedPlaces[selectedPlaces.length - 1];
+                    const destinationCoords = `${destination.coordinates.lat},${destination.coordinates.lng}`;
+                    const waypoints = selectedPlaces.slice(0, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
+                    mapsUrl += `&destination=${destinationCoords}&waypoints=${waypoints}`;
+                }
+
+                window.open(mapsUrl, '_blank');
+                setIsMapLoading(false);
+            },
+            () => {
+                toast({
+                    variant: 'destructive',
+                    title: 'Konum Alınamadı',
+                    description: 'Rota oluşturmak için konum izninize ihtiyacımız var.',
+                });
+                setIsMapLoading(false);
+            },
+            { enableHighAccuracy: true }
+        );
+    }, [selectedPlaces, toast]);
 
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
@@ -178,12 +213,10 @@ export default function RotaOlusturPage() {
                                     <p className="text-muted-foreground text-center">{t('routePlanner.noSelection')}</p>
                                 </div>
                             )}
-                             {googleMapsLink && (
-                                <Button asChild className="mt-4 w-full" size="lg">
-                                    <a href={googleMapsLink} target="_blank" rel="noopener noreferrer">
-                                        <Map className="mr-2"/>
-                                        {t('routePlanner.openInMaps')}
-                                    </a>
+                            {selectedPlaces.length > 0 && (
+                                <Button onClick={handleOpenInMaps} disabled={isMapLoading} className="mt-4 w-full" size="lg">
+                                    {isMapLoading ? <Loader2 className="mr-2 animate-spin" /> : <Map className="mr-2"/>}
+                                    {t('routePlanner.openInMaps')}
                                 </Button>
                             )}
                         </CardContent>
