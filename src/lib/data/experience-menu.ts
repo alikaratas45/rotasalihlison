@@ -10,7 +10,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       de: 'Reise in die Geschichte',
       ja: '歴史への旅'
     },
-    icon: 'Dna',
+    icon: 'Landmark',
     link: '/yerler?category=history',
     order: 1
   },
