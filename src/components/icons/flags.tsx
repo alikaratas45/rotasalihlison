@@ -3,10 +3,14 @@ import type { SVGProps } from 'react';
 
 export function TurkishFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" {...props}>
-        <path fill="#e30a17" d="M0 0h36v24H0z"/>
-        <path fill="#fff" d="M18 12a6 6 0 100-.001 4.8 4.8 0 110 .001"/>
-        <path fill="#fff" d="m21 12-3.81 2.81 1.45-4.55-3.8-2.82h4.7l1.46-4.55 1.46 4.55h4.7l-3.8 2.82 1.45 4.55z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" {...props}>
+      <rect width="900" height="600" fill="#E30A17" />
+      <circle cx="300" cy="300" r="150" fill="#FFF" />
+      <circle cx="337.5" cy="300" r="120" fill="#E30A17" />
+      <path
+        d="M446.25 300l114.3 35.25-70.65-92.25v114l70.65-92.25-114.3 35.25z"
+        fill="#FFF"
+      />
     </svg>
   );
 }
