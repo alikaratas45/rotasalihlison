@@ -142,21 +142,16 @@ function LanguageSwitcher() {
 }
 
 function AudioGuideToggle() {
-    const { isAudioGuideEnabled, toggleAudioGuide } = useLanguage();
+    const { isAudioGuideEnabled, toggleAudioGuide, t } = useLanguage();
   
     return (
       <Button
         variant="ghost"
-        size="icon"
         onClick={toggleAudioGuide}
-        aria-label="Toggle Audio Guide"
+        aria-label={t('header.audioGuide')}
+        className={cn("px-3 text-sm h-10", !isAudioGuideEnabled && "line-through text-muted-foreground")}
       >
-        {isAudioGuideEnabled ? (
-          <Volume2 className="h-5 w-5" />
-        ) : (
-          <VolumeX className="h-5 w-5" />
-        )}
-        <span className="sr-only">Toggle Audio Guide</span>
+        {t('header.audioGuide')}
       </Button>
     );
   }

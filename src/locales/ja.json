@@ -8,7 +8,8 @@
         "cuisine": "料理",
         "brochures": "パンフレット",
         "nearby": "近く",
-        "qrScanner": "QRスキャナー"
+        "qrScanner": "QRスキャナー",
+        "audioGuide": "音声ガイド"
     },
     "footer": {
         "about": "Rota Salihliは、サリフリの歴史的、文化的、自然の美しさを発見するためのデジタルガイドです。",

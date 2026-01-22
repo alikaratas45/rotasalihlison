@@ -8,7 +8,8 @@
         "cuisine": "Cuisine",
         "brochures": "Nos Brochures",
         "nearby": "À proximité",
-        "qrScanner": "Scanner QR"
+        "qrScanner": "Scanner QR",
+        "audioGuide": "Guide Audio"
     },
     "footer": {
         "about": "Rota Salihli est un guide numérique pour découvrir les beautés historiques, culturelles et naturelles de Salihli.",
