@@ -19,75 +19,6 @@ import { experienceItems as staticExperienceItems } from '@/lib/data/experience-
 import { routes as staticRoutes } from '@/lib/data/routes';
 
 
-function PopularDestinations() {
-    const { t, language } = useLanguage();
-    const typedLanguage = language as Language;
-    const firestore = useFirestore();
-
-    const popularSlugs = ['sardes-ancient-city', 'kursunlu-thermal-springs', 'salihli-wood-meatballs'];
-
-    const popularPlacesQuery = useMemo(() => {
-        return query(collection(firestore, 'places'), where('slug.en', 'in', popularSlugs));
-    }, [firestore]);
-
-    const { data: popularDestinations, loading } = useCollection<Place>(popularPlacesQuery);
-
-    if (loading) {
-        return (
-            <div className="grid md:grid-cols-3 gap-8 z-10 relative">
-                {Array.from({ length: 3 }).map((_, i) => (
-                     <Card key={i} className="overflow-hidden shadow-xl">
-                        <CardContent className="p-0">
-                            <Skeleton className="h-64 w-full" />
-                             <div className="p-4 bg-card text-card-foreground md:hidden">
-                                <Skeleton className="h-6 w-3/4 mb-2" />
-                                <Skeleton className="h-4 w-1/2" />
-                             </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-        );
-    }
-    
-    // Sort the results to match the order in popularSlugs
-    const sortedDestinations = popularDestinations?.sort((a, b) => {
-        return popularSlugs.indexOf(a.slug.en) - popularSlugs.indexOf(b.slug.en);
-    }) || [];
-
-    return (
-        <div className="grid md:grid-cols-3 gap-8 z-10 relative">
-            {sortedDestinations.map((place, index) => (
-              <Card key={`${place.id}-${index}`} className="overflow-hidden group border-2 border-transparent hover:border-accent transition-all duration-300 shadow-xl">
-                <CardContent className="p-0">
-                  <Link href={`/yerler/${place.slug[typedLanguage]}`} className="block">
-                    <div className="relative h-64 w-full">
-                      <Image
-                        src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                        alt={place.name[typedLanguage]}
-                        data-ai-hint={place.imageHint || 'landmark'}
-                        fill
-                        className="object-cover md:group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:from-black/60 md:to-transparent" />
-                    </div>
-                    <div className="absolute bottom-0 p-4 text-white hidden md:block">
-                      <h3 className="text-2xl font-bold font-headline">{place.name[typedLanguage]}</h3>
-                      <span className="text-green-400">{t('actions.seeDetails')}</span>
-                    </div>
-                     <div className="p-4 bg-card text-card-foreground md:hidden">
-                        <h3 className="text-xl font-bold font-headline mb-1">{place.name[typedLanguage]}</h3>
-                        <span className="text-sm font-semibold text-green-600">{t('actions.seeDetails')}</span>
-                     </div>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-        </div>
-    );
-}
-
-
 export default function Home() {
   const { t, language } = useLanguage();
   const heroImage = Placeholders.find(p => p.id === 'hero-main');
@@ -158,12 +89,6 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <PopularDestinations />
         </div>
       </section>
 

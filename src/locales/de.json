@@ -32,7 +32,6 @@
         "thematicRoutesTitle": "Thematische Routen",
         "thematicRoutesSubtitle": "Entdecken Sie die Reichtümer von Salihli mit speziell vorbereiteten Routen.",
         "allRoutes": "Alle Routen ansehen",
-        "popularDestinations": "Beliebte Reiseziele",
         "stops": "Stopp",
         "stops_plural": "Stopps"
     },
@@ -58,7 +57,7 @@
     },
     "history": {
         "title": "Reise in die Geschichte",
-        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geld erfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
+        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geld erfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum bei. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
     },
     "nature": {
         "title": "Natur und Frieden",
