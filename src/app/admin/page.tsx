@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,18 +30,35 @@ import { Loader2, MoreHorizontal, FilePenLine, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
+const localizedStringSchema = z.object({
+  tr: z.string().min(1, 'Bu alan gereklidir.'),
+  en: z.string().min(1, 'Bu alan gereklidir.'),
+  fr: z.string().optional(),
+  de: z.string().optional(),
+  ja: z.string().optional(),
+});
 
 const placeFormSchema = z.object({
-  name: z.string().min(1, 'İsim gerekli.'),
-  slug: z.string().min(1, 'Link gerekli.'),
-  description: z.string().min(1, 'Açıklama gerekli.'),
+  name: localizedStringSchema,
+  slug: localizedStringSchema,
+  description: localizedStringSchema,
   category: z.enum(['history', 'nature', 'food', 'shopping', 'poi']),
   lat: z.coerce.number().min(-90).max(90),
   lng: z.coerce.number().min(-180).max(180),
 });
 
 type PlaceFormData = z.infer<typeof placeFormSchema>;
+
+const languageNames: Record<string, string> = {
+    tr: 'Türkçe',
+    en: 'English',
+    fr: 'Français',
+    de: 'Deutsch',
+    ja: '日本語',
+};
+const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
 
 export default function AdminPage() {
   const firestore = useFirestore();
@@ -57,9 +73,9 @@ export default function AdminPage() {
   const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
 
   const defaultFormValues: PlaceFormData = {
-      name: '',
-      slug: '',
-      description: '',
+      name: { tr: '', en: '', fr: '', de: '', ja: '' },
+      slug: { tr: '', en: '', fr: '', de: '', ja: '' },
+      description: { tr: '', en: '', fr: '', de: '', ja: '' },
       category: 'poi',
       lat: 38.48,
       lng: 28.14,
@@ -77,9 +93,27 @@ export default function AdminPage() {
   useEffect(() => {
     if (editingPlace) {
       editForm.reset({
-        name: editingPlace.name.tr,
-        slug: editingPlace.slug.tr,
-        description: editingPlace.description.tr,
+        name: {
+          tr: editingPlace.name.tr || '',
+          en: editingPlace.name.en || '',
+          fr: editingPlace.name.fr || '',
+          de: editingPlace.name.de || '',
+          ja: editingPlace.name.ja || '',
+        },
+        slug: {
+          tr: editingPlace.slug.tr || '',
+          en: editingPlace.slug.en || '',
+          fr: editingPlace.slug.fr || '',
+          de: editingPlace.slug.de || '',
+          ja: editingPlace.slug.ja || '',
+        },
+        description: {
+          tr: editingPlace.description.tr || '',
+          en: editingPlace.description.en || '',
+          fr: editingPlace.description.fr || '',
+          de: editingPlace.description.de || '',
+          ja: editingPlace.description.ja || '',
+        },
         category: editingPlace.category,
         lat: editingPlace.coordinates.lat,
         lng: editingPlace.coordinates.lng,
@@ -92,9 +126,9 @@ export default function AdminPage() {
     const randomSeed = Math.random().toString(36).substring(7);
 
     const newPlace = {
-      name: { tr: values.name, en: values.name, fr: values.name, de: values.name, ja: values.name },
-      slug: { tr: values.slug, en: values.slug, fr: values.slug, de: values.slug, ja: values.slug },
-      description: { tr: values.description, en: values.description, fr: values.description, de: values.description, ja: values.description },
+      name: values.name,
+      slug: values.slug,
+      description: values.description,
       category: values.category,
       coordinates: { lat: values.lat, lng: values.lng },
       imageUrl: `https://picsum.photos/seed/${randomSeed}/600/400`,
@@ -103,7 +137,7 @@ export default function AdminPage() {
 
     addPlace(firestore, newPlace, {
         onSuccess: () => {
-            toast({ title: 'Başarılı!', description: `"${values.name}" başarıyla eklendi.` });
+            toast({ title: 'Başarılı!', description: `"${values.name.tr}" başarıyla eklendi.` });
             addForm.reset(defaultFormValues);
             setIsSubmitting(false);
         },
@@ -120,7 +154,7 @@ export default function AdminPage() {
     
     updatePlace(firestore, editingPlace.id, values, {
         onSuccess: () => {
-            toast({ title: 'Başarılı!', description: `"${values.name}" başarıyla güncellendi.` });
+            toast({ title: 'Başarılı!', description: `"${values.name.tr}" başarıyla güncellendi.` });
             setEditingPlace(null);
             setIsSubmitting(false);
         },
@@ -168,42 +202,48 @@ export default function AdminPage() {
   };
 
   const renderFormFields = (form: typeof addForm | typeof editForm) => (
-    <>
-      <FormField
-        control={form.control}
-        name="name"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>İsim</FormLabel>
-            <FormControl><Input {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="slug"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Link</FormLabel>
-            <FormControl><Input {...field} /></FormControl>
-            <FormDescription>URL'de görünecek kısım. Örn: "sardes-antik-kenti"</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Açıklama</FormLabel>
-            <FormControl><Textarea rows={5} {...field} /></FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </>
+    <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
+        {languages.map((lang) => (
+            <AccordionItem value={lang} key={lang}>
+                <AccordionTrigger>{languageNames[lang]}</AccordionTrigger>
+                <AccordionContent className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name={`name.${lang}`}
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>İsim ({lang})</FormLabel>
+                            <FormControl><Input {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name={`slug.${lang}`}
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Link ({lang})</FormLabel>
+                            <FormControl><Input {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name={`description.${lang}`}
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Açıklama ({lang})</FormLabel>
+                            <FormControl><Textarea rows={5} {...field} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                </AccordionContent>
+            </AccordionItem>
+        ))}
+    </Accordion>
   );
 
   return (

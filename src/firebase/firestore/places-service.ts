@@ -49,27 +49,9 @@ export function updatePlace(
   const placeDocRef = doc(firestore, 'places', placeId);
 
   const updatedData = {
-    name: {
-      tr: formData.name,
-      en: formData.name,
-      fr: formData.name,
-      de: formData.name,
-      ja: formData.name,
-    },
-    slug: {
-      tr: formData.slug,
-      en: formData.slug,
-      fr: formData.slug,
-      de: formData.slug,
-      ja: formData.slug,
-    },
-    description: {
-      tr: formData.description,
-      en: formData.description,
-      fr: formData.description,
-      de: formData.description,
-      ja: formData.description,
-    },
+    name: formData.name,
+    slug: formData.slug,
+    description: formData.description,
     category: formData.category,
     coordinates: { lat: formData.lat, lng: formData.lng },
   };
