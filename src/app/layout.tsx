@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/providers/theme-provider';
 import AppWrapper from '@/components/layout/app-wrapper';
 import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { GoogleMapsProvider } from '@/components/google-maps-provider';
 
 export const metadata: Metadata = {
   title: 'Rota Salihli',
@@ -26,6 +27,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider>
             <FirebaseClientProvider>
+              <GoogleMapsProvider />
               <AppWrapper>
                 {children}
               </AppWrapper>

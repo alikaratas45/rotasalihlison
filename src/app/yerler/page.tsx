@@ -13,6 +13,7 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PlacesMap } from '@/components/places-map';
 
 function YerlerPageSkeleton() {
     return (
@@ -46,7 +47,6 @@ function YerlerContent() {
   const category = searchParams.get('category');
   const { t, language } = useLanguage();
   const firestore = useFirestore();
-  const [mapUrl, setMapUrl] = useState('');
 
   const typedLanguage = language as Language;
 
@@ -59,19 +59,6 @@ function YerlerContent() {
   }, [firestore, category]);
 
   const { data: places, loading } = useCollection<Place>(placesQuery);
-
-  useEffect(() => {
-    // We only want to show the map when viewing all places
-    if (places && places.length > 0 && !category) {
-        const mapQuery = places.map(p => `"${p.name[typedLanguage]}"@${p.coordinates.lat},${p.coordinates.lng}`).join(' OR ');
-        const salihliCoords = "38.48,28.14"; // Salihli center
-        const zoomLevel = 11; 
-        const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&ll=${salihliCoords}&z=${zoomLevel}&output=embed&hl=${language}`;
-        setMapUrl(embedUrl);
-    } else {
-        setMapUrl('');
-    }
-  }, [places, category, typedLanguage, language]);
 
   const pageInfo: { [key: string]: { title: string, description: string } } = {
     history: {
@@ -95,6 +82,7 @@ function YerlerContent() {
   }
 
   const filteredPlaces = places || [];
+  const showMap = !category && filteredPlaces.length > 0;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -113,19 +101,10 @@ function YerlerContent() {
       )}
 
       {/* NEW MAP SECTION */}
-      {mapUrl && (
+      {showMap && (
         <div className="mb-12">
             <div className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border">
-                <iframe
-                    src={mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={true}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={t('places.title')}
-                ></iframe>
+                <PlacesMap places={filteredPlaces} className="w-full h-full" />
             </div>
         </div>
       )}
