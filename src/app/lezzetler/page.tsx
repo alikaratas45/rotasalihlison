@@ -5,8 +5,12 @@ import { useLanguage } from '@/hooks/use-language';
 export default function LezzetlerPage() {
   const { t } = useLanguage();
 
-  const mapQuery = "Salihli'deki restoranlar";
-  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+  const mapQuery = "restoranlar"; // 'restoranlar' için arama yap
+  const salihliCoords = "38.48,28.14"; // Salihli'nin merkezi
+  const zoomLevel = 14; // Biraz daha yakın bir zoom seviyesi
+
+  // Bu URL yapısı haritayı Salihli'de ortalar ve yakındaki restoranları arar.
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&ll=${salihliCoords}&z=${zoomLevel}&output=embed`;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
