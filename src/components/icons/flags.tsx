@@ -1,20 +1,15 @@
 'use client';
 import type { SVGProps } from 'react';
-import Image from 'next/image';
 
-export function TurkishFlagIcon(props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) {
-  const { width = 24, height = 16, ...rest } = props;
+export function TurkishFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <Image
-      src="/Turkey.png"
-      alt="Turkish Flag"
-      width={width}
-      height={height}
-      {...rest}
-    />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" {...props}>
+        <path fill="#e30a17" d="M0 0h36v24H0z"/>
+        <path fill="#fff" d="M18 12a6 6 0 100-.001 4.8 4.8 0 110 .001"/>
+        <path fill="#fff" d="m21 12-3.81 2.81 1.45-4.55-3.8-2.82h4.7l1.46-4.55 1.46 4.55h4.7l-3.8 2.82 1.45 4.55z"/>
+    </svg>
   );
 }
-
 
 export function UKFlagIcon(props: SVGProps<SVGSVGElement>) {
   return (
