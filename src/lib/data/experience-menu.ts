@@ -1,0 +1,53 @@
+import type { ExperienceItem } from '@/lib/definitions';
+
+// Omit 'id' because it will be auto-generated during seeding
+export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
+  {
+    name: {
+      tr: 'Tarihe Yolculuk',
+      en: 'Journey to History',
+      fr: 'Voyage dans l\'Histoire',
+      de: 'Reise in die Geschichte',
+      ja: '歴史への旅'
+    },
+    icon: 'Dna',
+    link: '/yerler?category=history',
+    order: 1
+  },
+  {
+    name: {
+      tr: 'Doğa ve Huzur',
+      en: 'Nature and Peace',
+      fr: 'Nature et Paix',
+      de: 'Natur und Frieden',
+      ja: '自然と平和'
+    },
+    icon: 'Mountain',
+    link: '/yerler?category=nature',
+    order: 2
+  },
+  {
+    name: {
+      tr: 'Lezzet Durakları',
+      en: 'Flavor Stops',
+      fr: 'Arrêts Gourmands',
+      de: 'Geschmacksstopps',
+      ja: '味の停留所'
+    },
+    icon: 'Utensils',
+    link: '/lezzetler',
+    order: 3
+  },
+  {
+    name: {
+      tr: 'Alışveriş',
+      en: 'Shopping',
+      fr: 'Shopping',
+      de: 'Einkaufen',
+      ja: 'ショッピング'
+    },
+    icon: 'ShoppingBag',
+    link: '/yerler?category=shopping',
+    order: 4
+  }
+];

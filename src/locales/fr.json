@@ -22,7 +22,7 @@
     "home": {
         "heroTitle": "Découvrez Salihli",
         "heroSubtitle": "Héritage de Sardes, centre de la monnaie",
-        "getStarted": "Commencer",
+        "getStarted": "Voir tous les lieux",
         "experienceTitle": "Une journée à Salihli",
         "experienceSubtitle": "Choisissez parmi différentes expériences, personnalisez votre aventure à Salihli.",
         "historyTrip": "Voyage dans l'Histoire",
@@ -32,6 +32,7 @@
         "thematicRoutesTitle": "Itinéraires Thématiques",
         "thematicRoutesSubtitle": "Découvrez les richesses de Salihli avec des itinéraires spécialement préparés.",
         "allRoutes": "Voir tous les itinéraires",
+        "popularDestinations": "Destinations populaires",
         "stops": "Arrêt",
         "stops_plural": "Arrêts"
     },

@@ -22,7 +22,7 @@
     "home": {
         "heroTitle": "Entdecken Sie Salihli",
         "heroSubtitle": "Erbe von Sardes, Zentrum des Geldes",
-        "getStarted": "Loslegen",
+        "getStarted": "Alle Orte ansehen",
         "experienceTitle": "Ein Tag in Salihli",
         "experienceSubtitle": "Wählen Sie aus verschiedenen Erlebnissen und personalisieren Sie Ihr Salihli-Abenteuer.",
         "historyTrip": "Reise in die Geschichte",
@@ -32,6 +32,7 @@
         "thematicRoutesTitle": "Thematische Routen",
         "thematicRoutesSubtitle": "Entdecken Sie die Reichtümer von Salihli mit speziell vorbereiteten Routen.",
         "allRoutes": "Alle Routen ansehen",
+        "popularDestinations": "Beliebte Reiseziele",
         "stops": "Stopp",
         "stops_plural": "Stopps"
     },

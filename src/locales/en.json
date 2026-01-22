@@ -22,7 +22,7 @@
     "home": {
         "heroTitle": "Discover Salihli",
         "heroSubtitle": "Heritage of Sardis, center of money",
-        "getStarted": "Get Started",
+        "getStarted": "View All Places",
         "experienceTitle": "A Day in Salihli",
         "experienceSubtitle": "Choose among different experiences, personalize your Salihli adventure.",
         "historyTrip": "Journey to History",
@@ -32,6 +32,7 @@
         "thematicRoutesTitle": "Thematic Routes",
         "thematicRoutesSubtitle": "Discover the riches of Salihli with specially prepared routes.",
         "allRoutes": "See All Routes",
+        "popularDestinations": "Popular Destinations",
         "stops": "Stop",
         "stops_plural": "Stops"
     },

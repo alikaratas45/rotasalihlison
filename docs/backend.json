@@ -5,253 +5,127 @@
       "description": "Represents a user's public profile information.",
       "type": "object",
       "properties": {
-        "uid": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string",
-          "format": "email"
-        },
-        "displayName": {
-          "type": "string"
-        },
-        "photoURL": {
-          "type": "string",
-          "format": "uri"
-        },
-        "isAdmin": {
-          "type": "boolean"
-        }
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "isAdmin": { "type": "boolean" }
       },
-      "required": [
-        "uid",
-        "email"
-      ]
+      "required": ["uid", "email"]
     },
     "Place": {
       "title": "Place",
       "description": "A location of interest.",
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "slug": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "name": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "description": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "category": {
-          "type": "string",
-          "enum": [
-            "history",
-            "nature",
-            "food",
-            "shopping",
-            "poi"
-          ]
-        },
-        "coordinates": {
-          "$ref": "#/backend/entities/Coordinates"
-        },
-        "imageUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "imageHint": {
-          "type": "string"
-        }
+        "id": { "type": "string" },
+        "slug": { "$ref": "#/backend/entities/LocalizedString" },
+        "name": { "$ref": "#/backend/entities/LocalizedString" },
+        "description": { "$ref": "#/backend/entities/LocalizedString" },
+        "category": { "type": "string", "enum": ["history", "nature", "food", "shopping", "poi"] },
+        "coordinates": { "$ref": "#/backend/entities/Coordinates" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "imageHint": { "type": "string" }
       },
-      "required": [
-        "id",
-        "slug",
-        "name",
-        "description",
-        "category",
-        "coordinates"
-      ]
+      "required": ["id", "slug", "name", "description", "category", "coordinates"]
     },
     "Route": {
       "title": "Route",
       "description": "A thematic route with multiple stops.",
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "slug": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "name": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "description": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "stops": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
+        "id": { "type": "string" },
+        "slug": { "$ref": "#/backend/entities/LocalizedString" },
+        "name": { "$ref": "#/backend/entities/LocalizedString" },
+        "description": { "$ref": "#/backend/entities/LocalizedString" },
+        "stops": { "type": "array", "items": { "type": "string" } }
       },
-      "required": [
-        "id",
-        "slug",
-        "name",
-        "description",
-        "stops"
-      ]
+      "required": ["id", "slug", "name", "description", "stops"]
+    },
+    "ExperienceItem": {
+      "title": "Experience Item",
+      "description": "An item in the 'A Day in Salihli' experience menu on the home page.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "$ref": "#/backend/entities/LocalizedString" },
+        "icon": { "type": "string", "description": "The name of the lucide-react icon to display." },
+        "link": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["id", "name", "icon", "link", "order"]
     },
     "Story": {
       "title": "Story",
       "description": "A story or legend related to a place.",
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "slug": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "title": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "author": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "content": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "placeId": {
-          "type": "string"
-        }
+        "id": { "type": "string" },
+        "slug": { "$ref": "#/backend/entities/LocalizedString" },
+        "title": { "$ref": "#/backend/entities/LocalizedString" },
+        "author": { "$ref": "#/backend/entities/LocalizedString" },
+        "content": { "$ref": "#/backend/entities/LocalizedString" },
+        "placeId": { "type": "string" }
       },
-      "required": [
-        "id",
-        "slug",
-        "title",
-        "author",
-        "content"
-      ]
+      "required": ["id", "slug", "title", "author", "content"]
     },
     "Brochure": {
       "title": "Brochure",
       "description": "A digital brochure with multiple pages.",
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "title": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "pages": {
-          "type": "array",
-          "items": {
-            "$ref": "#/backend/entities/BrochurePage"
-          }
-        }
+        "id": { "type": "string" },
+        "title": { "$ref": "#/backend/entities/LocalizedString" },
+        "pages": { "type": "array", "items": { "$ref": "#/backend/entities/BrochurePage" } }
       },
-      "required": [
-        "id",
-        "title",
-        "pages"
-      ]
+      "required": ["id", "title", "pages"]
     },
     "BrochurePage": {
       "title": "Brochure Page",
       "description": "A single page within a brochure.",
       "type": "object",
       "properties": {
-        "imageUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "imageHint": {
-          "type": "string"
-        },
-        "title": {
-          "$ref": "#/backend/entities/LocalizedString"
-        },
-        "text": {
-          "$ref": "#/backend/entities/LocalizedString"
-        }
+        "imageUrl": { "type": "string", "format": "uri" },
+        "imageHint": { "type": "string" },
+        "title": { "$ref": "#/backend/entities/LocalizedString" },
+        "text": { "$ref": "#/backend/entities/LocalizedString" }
       },
-      "required": [
-        "imageUrl",
-        "imageHint"
-      ]
+      "required": ["imageUrl", "imageHint"]
     },
     "MenuItem": {
       "title": "Menu Item",
       "description": "An item in the main navigation menu.",
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "labelKey": {
-          "type": "string",
-          "description": "The key for the translation file (e.g., 'header.places')."
-        },
-        "href": {
-          "type": "string"
-        },
-        "order": {
-          "type": "number"
-        }
+        "id": { "type": "string" },
+        "labelKey": { "type": "string", "description": "The key for the translation file (e.g., 'header.places')." },
+        "href": { "type": "string" },
+        "order": { "type": "number" }
       },
-      "required": [
-        "id",
-        "labelKey",
-        "href",
-        "order"
-      ]
+      "required": ["id", "labelKey", "href", "order"]
     },
     "LocalizedString": {
       "title": "Localized String",
       "description": "A string that can be localized into multiple languages.",
       "type": "object",
       "properties": {
-        "tr": {
-          "type": "string"
-        },
-        "en": {
-          "type": "string"
-        },
-        "fr": {
-          "type": "string"
-        },
-        "de": {
-          "type": "string"
-        }
+        "tr": { "type": "string" },
+        "en": { "type": "string" },
+        "fr": { "type": "string" },
+        "de": { "type": "string" },
+        "ja": { "type": "string" }
       },
-      "required": [
-        "tr",
-        "en"
-      ]
+      "required": ["tr", "en"]
     },
     "Coordinates": {
       "title": "Coordinates",
       "description": "Geographical coordinates.",
       "type": "object",
       "properties": {
-        "lat": {
-          "type": "number"
-        },
-        "lng": {
-          "type": "number"
-        }
+        "lat": { "type": "number" },
+        "lng": { "type": "number" }
       },
-      "required": [
-        "lat",
-        "lng"
-      ]
+      "required": ["lat", "lng"]
     }
   },
   "auth": {
@@ -261,39 +135,31 @@
   },
   "firestore": {
     "/users/{userId}": {
-      "schema": {
-        "$ref": "#/backend/entities/UserProfile"
-      },
+      "schema": { "$ref": "#/backend/entities/UserProfile" },
       "description": "Stores user profile information."
     },
     "/places": {
-      "schema": {
-        "$ref": "#/backend/entities/Place"
-      },
+      "schema": { "$ref": "#/backend/entities/Place" },
       "description": "Collection of all places of interest."
     },
     "/routes": {
-      "schema": {
-        "$ref": "#/backend/entities/Route"
-      },
+      "schema": { "$ref": "#/backend/entities/Route" },
       "description": "Collection of all thematic routes."
     },
+    "/experience-items": {
+      "schema": { "$ref": "#/backend/entities/ExperienceItem" },
+      "description": "Collection of items for the 'A Day in Salihli' experience menu."
+    },
     "/stories": {
-      "schema": {
-        "$ref": "#/backend/entities/Story"
-      },
+      "schema": { "$ref": "#/backend/entities/Story" },
       "description": "Collection of all stories and legends."
     },
     "/brochures": {
-      "schema": {
-        "$ref": "#/backend/entities/Brochure"
-      },
+      "schema": { "$ref": "#/backend/entities/Brochure" },
       "description": "Collection of all brochures."
     },
     "/menu-items": {
-      "schema": {
-        "$ref": "#/backend/entities/MenuItem"
-      },
+      "schema": { "$ref": "#/backend/entities/MenuItem" },
       "description": "Collection of main navigation menu items."
     }
   }

@@ -22,7 +22,7 @@
     "home": {
         "heroTitle": "サリフリを発見",
         "heroSubtitle": "サルディスの遺産、お金の中心",
-        "getStarted": "始めましょう",
+        "getStarted": "すべての場所を表示",
         "experienceTitle": "サリフリでの一日",
         "experienceSubtitle": "さまざまな体験から選び、サリフリの冒険をパーソナライズしてください。",
         "historyTrip": "歴史への旅",
@@ -32,6 +32,7 @@
         "thematicRoutesTitle": "テーマ別ルート",
         "thematicRoutesSubtitle": "特別に準備されたルートでサリフリの豊かさを発見してください。",
         "allRoutes": "すべてのルートを見る",
+        "popularDestinations": "人気の目的地",
         "stops": "停止",
         "stops_plural": "停止"
     },

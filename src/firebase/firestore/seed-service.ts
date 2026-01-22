@@ -1,50 +1,73 @@
 'use client';
-import { collection, doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
-import { places as staticPlaces } from '@/lib/data/places';
+import { collection, doc, getDoc, setDoc, writeBatch, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
-import type { Place } from '@/lib/definitions';
 
-// This function seeds the Firestore database with the static places data.
-// It's designed to be idempotent: it checks if a place with the same ID
-// already exists before writing, preventing duplicates and data loss.
-export async function seedPlaces(firestore: Firestore): Promise<{ addedCount: number, skippedCount: number }> {
-  const placesCollection = collection(firestore, 'places');
-  let addedCount = 0;
-  let skippedCount = 0;
+import { places as staticPlaces } from '@/lib/data/places';
+import { routes as staticRoutes } from '@/lib/data/routes';
+import { experienceItems as staticExperienceItems } from '@/lib/data/experience-menu';
 
-  for (const place of staticPlaces) {
-    // Use the static ID as the document ID in Firestore for consistency
-    const docRef = doc(placesCollection, place.id);
-    const docSnap = await getDoc(docRef);
+import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 
-    if (!docSnap.exists()) {
-      // If the document doesn't exist, create it.
-      // Ensure every place has an image for visual consistency.
-      const placeData: Place = {
-        ...place,
-        imageUrl: place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`,
-        imageHint: place.imageHint || 'landmark'
-      };
-      
-      try {
-        await setDoc(docRef, placeData);
-        addedCount++;
-      } catch (serverError) {
-         console.error(`Error seeding document ${place.id}: `, serverError);
-         const permissionError = new FirestorePermissionError({
-            path: docRef.path,
-            operation: 'create',
-            requestResourceData: placeData,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-          // Re-throw to notify the calling function
-          throw serverError;
-      }
-    } else {
-      skippedCount++;
+
+async function seedCollection<T extends {id: string}>(
+    firestore: Firestore,
+    collectionName: string,
+    staticData: T[],
+    dataProcessor: (item: T) => any = (item) => item
+): Promise<{ added: number, skipped: number, errors: number }> {
+    let added = 0, skipped = 0, errors = 0;
+    const collectionRef = collection(firestore, collectionName);
+
+    for (const item of staticData) {
+        const docRef = doc(collectionRef, item.id);
+        try {
+            const docSnap = await getDoc(docRef);
+            if (!docSnap.exists()) {
+                const processedData = dataProcessor(item);
+                await setDoc(docRef, processedData);
+                added++;
+            } else {
+                skipped++;
+            }
+        } catch (serverError) {
+            console.error(`Error seeding document ${item.id} in ${collectionName}: `, serverError);
+            const permissionError = new FirestorePermissionError({
+                path: docRef.path,
+                operation: 'create',
+                requestResourceData: dataProcessor(item),
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            errors++;
+        }
     }
+    return { added, skipped, errors };
+}
+
+
+export async function seedDatabase(firestore: Firestore): Promise<{
+    places: { added: number, skipped: number },
+    routes: { added: number, skipped: number },
+    experienceItems: { added: number, skipped: number }
+}> {
+  
+  const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place) => ({
+    ...place,
+    imageUrl: place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`,
+    imageHint: place.imageHint || 'landmark'
+  }));
+
+  const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);
+  
+  const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})));
+  
+  if (placesResult.errors > 0 || routesResult.errors > 0 || experienceResult.errors > 0) {
+      throw new Error("One or more errors occurred during database seeding. Check console for details.");
   }
 
-  return { addedCount, skippedCount };
+  return {
+    places: { added: placesResult.added, skipped: placesResult.skipped },
+    routes: { added: routesResult.added, skipped: routesResult.skipped },
+    experienceItems: { added: experienceResult.added, skipped: experienceResult.skipped },
+  };
 }

@@ -3,16 +3,48 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { routes } from '@/lib/data/routes';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
 import { Placeholders } from '@/lib/placeholder-images';
 import { MapPinned } from 'lucide-react';
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import type { Route } from '@/lib/definitions';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function RotalarContent() {
   const { t, language } = useLanguage();
   const typedLanguage = language as Language;
+  const firestore = useFirestore();
+
+  const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
+  const { data: routes, loading } = useCollection<Route>(routesQuery);
+
+  if (loading) {
+      return (
+          <div className="container mx-auto px-4 py-8 md:py-12">
+              <div className="text-center mb-12">
+                  <Skeleton className="h-10 w-1/2 mx-auto mb-4" />
+                  <Skeleton className="h-6 w-3/4 mx-auto" />
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                      <Card key={i} className="overflow-hidden h-full">
+                          <CardContent className="p-0 flex flex-col h-full">
+                              <Skeleton className="h-64 w-full" />
+                              <div className="p-6 flex flex-col flex-grow">
+                                  <Skeleton className="h-8 w-3/4 mb-2" />
+                                  <Skeleton className="h-4 w-full mb-4" />
+                                  <Skeleton className="h-5 w-20 mt-auto" />
+                              </div>
+                          </CardContent>
+                      </Card>
+                  ))}
+              </div>
+          </div>
+      );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -22,7 +54,7 @@ function RotalarContent() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {routes.map(route => {
+        {routes?.map(route => {
             let imageId = '';
             switch (route.slug.en) {
               case 'lydian-treasures-route':

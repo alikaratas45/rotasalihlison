@@ -30,6 +30,14 @@ export type Route = {
     stops: string[]; // Array of place IDs
 };
 
+export type ExperienceItem = {
+  id: string;
+  name: LocalizedString;
+  icon: string;
+  link: string;
+  order: number;
+};
+
 export type Story = {
     id: string;
     slug: LocalizedString;

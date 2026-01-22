@@ -9,12 +9,13 @@ import { Dna, Mountain, Utensils, ShoppingBag, MapPinned, Loader2 } from 'lucide
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
-import type { Place } from '@/lib/definitions';
+import { collection, query, where, orderBy } from 'firebase/firestore';
+import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 import { useMemo } from 'react';
 import { Placeholders } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
-import { routes } from '@/lib/data/routes';
+import { LucideIcon } from '@/components/icons/lucide-icon';
+
 
 function PopularDestinations() {
     const { t, language } = useLanguage();
@@ -88,17 +89,17 @@ function PopularDestinations() {
 export default function Home() {
   const { t, language } = useLanguage();
   const heroImage = Placeholders.find(p => p.id === 'hero-main');
-
   const typedLanguage = language as Language;
+  const firestore = useFirestore();
 
-  const thematicRoutes = routes.slice(0, 3);
+  // Fetch dynamic data
+  const experienceItemsQuery = useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]);
+  const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(experienceItemsQuery);
 
-  const experienceMenu = [
-    { name: t('home.historyTrip'), icon: Dna, link: '/yerler?category=history' },
-    { name: t('home.naturePeace'), icon: Mountain, link: '/yerler?category=nature' },
-    { name: t('home.flavorStops'), icon: Utensils, link: '/lezzetler' },
-    { name: t('home.shopping'), icon: ShoppingBag, link: '/yerler?category=shopping' },
-  ];
+  const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
+  const { data: routes, loading: routesLoading } = useCollection<Route>(routesQuery);
+
+  const thematicRoutes = useMemo(() => routes?.slice(0, 3) || [], [routes]);
 
   return (
     <div className="flex flex-col">
@@ -131,11 +132,16 @@ export default function Home() {
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {experienceMenu.map((item) => (
-              <Link href={item.link} key={item.name} className="group">
+            {experienceLoading ? Array.from({length: 4}).map((_, i) => (
+                <Card key={i} className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50">
+                    <Skeleton className="w-12 h-12 rounded-full mb-4" />
+                    <Skeleton className="h-5 w-3/4" />
+                </Card>
+            )) : experienceItems?.map((item) => (
+              <Link href={item.link} key={item.id} className="group">
                 <Card className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 hover:bg-secondary transition-colors duration-300">
-                  <item.icon className="w-12 h-12 text-primary mb-4" />
-                  <h3 className="font-semibold text-center">{item.name}</h3>
+                  <LucideIcon name={item.icon} className="w-12 h-12 text-primary mb-4" />
+                  <h3 className="font-semibold text-center">{item.name[typedLanguage]}</h3>
                 </Card>
               </Link>
             ))}
@@ -159,7 +165,16 @@ export default function Home() {
             </Button>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {thematicRoutes.map(route => {
+            {routesLoading ? Array.from({length: 3}).map((_, i) => (
+                <Card key={i} className="overflow-hidden h-full"><CardContent className="p-0 flex flex-col h-full">
+                    <Skeleton className="h-48 w-full" />
+                    <div className="p-6 flex flex-col flex-grow">
+                        <Skeleton className="h-6 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-full mb-4" />
+                        <Skeleton className="h-5 w-20 mt-auto" />
+                    </div>
+                </CardContent></Card>
+            )) : thematicRoutes.map(route => {
               let imageId = '';
               switch (route.slug.en) {
                 case 'lydian-treasures-route':
