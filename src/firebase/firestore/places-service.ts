@@ -54,6 +54,8 @@ export function updatePlace(
     description: formData.description,
     category: formData.category,
     coordinates: { lat: formData.lat, lng: formData.lng },
+    imageUrl: formData.imageUrl,
+    imageHint: formData.imageHint,
   };
 
   updateDoc(placeDocRef, updatedData)

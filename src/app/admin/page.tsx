@@ -47,6 +47,8 @@ const placeFormSchema = z.object({
   category: z.enum(['history', 'nature', 'food', 'shopping', 'poi']),
   lat: z.coerce.number().min(-90).max(90),
   lng: z.coerce.number().min(-180).max(180),
+  imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
+  imageHint: z.string().optional(),
 });
 
 type PlaceFormData = z.infer<typeof placeFormSchema>;
@@ -79,6 +81,8 @@ export default function AdminPage() {
       category: 'poi',
       lat: 38.48,
       lng: 28.14,
+      imageUrl: '',
+      imageHint: '',
   };
 
   const addForm = useForm<PlaceFormData>({
@@ -117,6 +121,8 @@ export default function AdminPage() {
         category: editingPlace.category,
         lat: editingPlace.coordinates.lat,
         lng: editingPlace.coordinates.lng,
+        imageUrl: editingPlace.imageUrl || '',
+        imageHint: editingPlace.imageHint || '',
       });
     }
   }, [editingPlace, editForm]);
@@ -131,8 +137,8 @@ export default function AdminPage() {
       description: values.description,
       category: values.category,
       coordinates: { lat: values.lat, lng: values.lng },
-      imageUrl: `https://picsum.photos/seed/${randomSeed}/600/400`,
-      imageHint: 'landmark',
+      imageUrl: values.imageUrl || `https://picsum.photos/seed/${randomSeed}/600/400`,
+      imageHint: values.imageHint || 'landmark',
     };
 
     addPlace(firestore, newPlace, {
@@ -306,6 +312,30 @@ export default function AdminPage() {
                   )}
                 />
               </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <FormField
+                    control={addForm.control}
+                    name="imageUrl"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Resim URL'si</FormLabel>
+                        <FormControl><Input placeholder="https://picsum.photos/..." {...field} value={field.value ?? ''} /></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={addForm.control}
+                    name="imageHint"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Resim İpucu (AI için)</FormLabel>
+                        <FormControl><Input placeholder="landmark" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+              </div>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Yeri Ekle
               </Button>
@@ -440,6 +470,30 @@ export default function AdminPage() {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <FormField
+                    control={editForm.control}
+                    name="imageUrl"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Resim URL'si</FormLabel>
+                        <FormControl><Input placeholder="https://picsum.photos/..." {...field} value={field.value ?? ''} /></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={editForm.control}
+                    name="imageHint"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Resim İpucu (AI için)</FormLabel>
+                        <FormControl><Input placeholder="landmark" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
                 />
               </div>
               <DialogFooter>
