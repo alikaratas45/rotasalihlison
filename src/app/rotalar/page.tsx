@@ -23,7 +23,21 @@ function RotalarContent() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {routes.map(route => {
-            const placeholder = Placeholders.find(p => p.id === route.slug.en);
+            let imageId = '';
+            switch (route.slug.en) {
+              case 'lydian-treasures-route':
+                imageId = 'gymnasium';
+                break;
+              case 'gediz-valley-nature-route':
+                imageId = 'adala-volcanic-canyon';
+                break;
+              case 'salihli-flavors-route':
+                imageId = 'salihli-wood-meatballs';
+                break;
+              default:
+                imageId = route.id; // fallback
+            }
+            const placeholder = Placeholders.find(p => p.id === imageId);
             return (
                 <Link href={`/rotalar/${route.slug[typedLanguage]}`} key={route.id} className="group">
                 <Card className="overflow-hidden h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">

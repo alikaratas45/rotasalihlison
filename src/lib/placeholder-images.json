@@ -25,24 +25,6 @@
       "imageHint": "grilled meatballs"
     },
     {
-      "id": "lydian-treasures-route",
-      "description": "Image for the Lydian Treasures Route.",
-      "imageUrl": "https://images.unsplash.com/photo-1696884279475-0304ff18b102?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhbmNpZW50JTIwZ3ltbmFzaXVtfGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ancient gymnasium"
-    },
-    {
-      "id": "gediz-valley-nature-route",
-      "description": "Image for the Gediz Valley Nature Route.",
-      "imageUrl": "https://images.unsplash.com/photo-1666817197262-ced3cf1fff7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx2b2xjYW5pYyUyMGNhbnlvbnxlbnwwfHx8fDE3NjM0NzEwODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "volcanic canyon"
-    },
-    {
-      "id": "salihli-flavors-route",
-      "description": "Image for the Salihli Flavors Route.",
-      "imageUrl": "https://images.unsplash.com/photo-1606388005136-b00566b2d833?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxncmlsbGVkJTIwbWVhdGJhbGxzfGVufDB8fHx8MTc2MzQ2ODA1MHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "grilled meatballs"
-    },
-    {
       "id": "ataturk-monument",
       "description": "Image of the Atatürk Monument in Salihli.",
       "imageUrl": "https://images.unsplash.com/photo-1684863935495-7b04dc83e5f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdGF0dWUlMjBtb251bWVudHxlbnwwfHx8fDE3NjM0NjgwNTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -75,13 +57,13 @@
     {
       "id": "adala-ataturk-house",
       "description": "Image for Adala Atatürk House.",
-      "imageUrl": "https://images.unsplash.com/photo-1662020954789-32940334ef4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoaXN0b3JpYyUyMGhvdXNlfGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1662020954789-32940334ef4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoaXN0b3JpYyUyMGhvdXNlfGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "historic house"
     },
     {
       "id": "suuctu-waterfall",
       "description": "Image for Suuçtu Waterfall.",
-      "imageUrl": "https://images.unsplash.com/photo-1628344253777-f73a64d8f983?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXRlcmZhbGwlMjBuYXR1cmV8ZW58MHx8fHwxNzYzNDI5ODk1fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1628344253777-f73a64d8f983?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXRlcmZhbGwlMjBuYXR1cmV8ZW58MHx8fHwxNzYzNDI5ODk1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "waterfall nature"
     },
     {
@@ -111,7 +93,7 @@
     {
       "id": "mudire-hanim-mansion",
       "description": "Image for Müdire Hanım Mansion.",
-      "imageUrl": "https://images.unsplash.com/photo-1656944522457-f12db58d57b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxvdHRvbWFuJTIwbWFuc2lvbnxlbnwwfHx8fDE3NjM0NzEwODJ8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1656944522457-f12db58d57b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxvdHRvbWFuJTIwbWFuc2lvbnxlbnwwfHx8fDE3NjM0NzEwODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "ottoman mansion"
     },
     {

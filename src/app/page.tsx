@@ -160,7 +160,21 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {thematicRoutes.map(route => {
-              const placeholder = Placeholders.find(p => p.id === route.slug.en);
+              let imageId = '';
+              switch (route.slug.en) {
+                case 'lydian-treasures-route':
+                  imageId = 'gymnasium';
+                  break;
+                case 'gediz-valley-nature-route':
+                  imageId = 'adala-volcanic-canyon';
+                  break;
+                case 'salihli-flavors-route':
+                  imageId = 'salihli-wood-meatballs';
+                  break;
+                default:
+                  imageId = route.id; // fallback
+              }
+              const placeholder = Placeholders.find(p => p.id === imageId);
               return (
               <Link href={`/rotalar/${route.slug[typedLanguage]}`} key={route.id} className="group">
                 <Card className="overflow-hidden h-full">
