@@ -24,7 +24,7 @@ export const routes: Route[] = [
             de: 'Folgen Sie den Spuren des reichsten Königreichs der Antike. Diese Route führt Sie in die Länder, in denen das Geld geboren wurde, zu prächtigen Tempeln und den Geheimnissen des alten Lydien.',
             ja: '古代世界で最も豊かな王国の足跡をたどってください。このルートは、お金が生まれた土地、壮大な寺院、古代リディアの秘密へとあなたを導きます。'
         },
-        stops: ['1', '5']
+        stops: ['12', '13']
     },
     {
         id: 'r2',
@@ -43,13 +43,13 @@ export const routes: Route[] = [
             ja: 'ゲディズ渓谷自然ルート'
         },
         description: { 
-            tr: 'Gediz Nehri\'nin bereketli topraklarında bir yolculuğa çıkın. Bu rota, sizi Kurşunlu\'nun şifalı sularından, yemyeşil vadilere uzanan bir huzur yolculuğuna çıkaracak.',
-            en: 'Embark on a journey through the fertile lands of the Gediz River. This route will take you on a peaceful journey from the healing waters of Kurşunlu to lush green valleys.',
-            fr: 'Embarquez pour un voyage à travers les terres fertiles de la rivière Gediz. Cet itinéraire vous emmènera dans un voyage paisible des eaux curatives de Kurşunlu aux vallées verdoyantes.',
-            de: 'Begeben Sie sich auf eine Reise durch die fruchtbaren Länder des Gediz-Flusses. Diese Route führt Sie auf eine friedliche Reise von den heilenden Wassern von Kurşunlu zu üppig grünen Tälern.',
-            ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から緑豊かな谷へと続く平和な旅にあなたを連れて行きます。'
+            tr: 'Gediz Nehri\'nin bereketli topraklarında bir yolculuğa çıkın. Bu rota, sizi Kurşunlu\'nun şifalı sularından, volkanik kanyonlara ve tarihi köprülere uzanan bir huzur yolculuğuna çıkaracak.',
+            en: 'Embark on a journey through the fertile lands of the Gediz River. This route will take you on a peaceful journey from the healing waters of Kurşunlu to volcanic canyons and historic bridges.',
+            fr: 'Embarquez pour un voyage à travers les terres fertiles de la rivière Gediz. Cet itinéraire vous emmènera dans un voyage paisible des eaux curatives de Kurşunlu aux canyons volcaniques et aux ponts historiques.',
+            de: 'Begeben Sie sich auf eine Reise durch die fruchtbaren Länder des Gediz-Flusses. Diese Route führt Sie auf eine friedliche Reise von den heilenden Wassern von Kurşunlu zu vulkanischen Schluchten und historischen Brücken.',
+            ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から火山の峡谷や歴史的な橋へと続く平和な旅にあなたを連れて行きます。'
         },
-        stops: ['2']
+        stops: ['2', '7', '9', '10']
     },
     {
         id: 'r3',
