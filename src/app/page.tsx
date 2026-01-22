@@ -15,6 +15,8 @@ import { useMemo } from 'react';
 import { Placeholders } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LucideIcon } from '@/components/icons/lucide-icon';
+import { experienceItems as staticExperienceItems } from '@/lib/data/experience-menu';
+import { routes as staticRoutes } from '@/lib/data/routes';
 
 
 function PopularDestinations() {
@@ -99,7 +101,17 @@ export default function Home() {
   const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
   const { data: routes, loading: routesLoading } = useCollection<Route>(routesQuery);
 
-  const thematicRoutes = useMemo(() => routes?.slice(0, 3) || [], [routes]);
+  const displayExperienceItems = useMemo(() => {
+    if (experienceItems && experienceItems.length > 0) {
+      return experienceItems;
+    }
+    return staticExperienceItems.map((item, index) => ({...item, id: `static-exp-${index}`}));
+  }, [experienceItems]);
+  
+  const thematicRoutes = useMemo(() => {
+      const displayRoutes = (routes && routes.length > 0) ? routes : staticRoutes;
+      return displayRoutes.slice(0, 3);
+  }, [routes]);
 
   return (
     <div className="flex flex-col">
@@ -137,7 +149,7 @@ export default function Home() {
                     <Skeleton className="w-12 h-12 rounded-full mb-4" />
                     <Skeleton className="h-5 w-3/4" />
                 </Card>
-            )) : experienceItems?.map((item) => (
+            )) : displayExperienceItems.map((item) => (
               <Link href={item.link} key={item.id} className="group">
                 <Card className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 hover:bg-secondary transition-colors duration-300">
                   <LucideIcon name={item.icon} className="w-12 h-12 text-primary mb-4" />

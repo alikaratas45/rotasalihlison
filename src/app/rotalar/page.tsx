@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -12,6 +13,8 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import type { Route } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { routes as staticRoutes } from '@/lib/data/routes';
+
 
 function RotalarContent() {
   const { t, language } = useLanguage();
@@ -20,6 +23,13 @@ function RotalarContent() {
 
   const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
   const { data: routes, loading } = useCollection<Route>(routesQuery);
+
+  const displayRoutes = useMemo(() => {
+    if (routes && routes.length > 0) {
+      return routes;
+    }
+    return staticRoutes;
+  }, [routes]);
 
   if (loading) {
       return (
@@ -54,7 +64,7 @@ function RotalarContent() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {routes?.map(route => {
+        {displayRoutes.map(route => {
             let imageId = '';
             switch (route.slug.en) {
               case 'lydian-treasures-route':
