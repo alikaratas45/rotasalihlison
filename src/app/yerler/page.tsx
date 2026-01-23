@@ -7,13 +7,15 @@ import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/use-language';
-import { Suspense, useMemo, useState, useEffect } from 'react';
+import { Suspense, useMemo } from 'react';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlacesMap } from '@/components/places-map';
+import { googleMapsApiKey } from '@/lib/config';
+import { AlertTriangle } from 'lucide-react';
 
 function YerlerPageSkeleton() {
     return (
@@ -82,7 +84,7 @@ function YerlerContent() {
   }
 
   const filteredPlaces = places || [];
-  const showMap = !category && filteredPlaces.length > 0;
+  const showMapSection = !category && filteredPlaces.length > 0;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -100,12 +102,26 @@ function YerlerContent() {
         </div>
       )}
 
-      {/* NEW MAP SECTION */}
-      {showMap && (
+      {/* MAP SECTION */}
+      {showMapSection && (
         <div className="mb-12">
-            <div className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border">
-                <PlacesMap places={filteredPlaces} className="w-full h-full" />
-            </div>
+            {!googleMapsApiKey ? (
+                <Card className="p-4 bg-destructive/10 border-destructive/50 text-destructive">
+                    <div className="flex items-start gap-4">
+                        <AlertTriangle className="h-6 w-6 mt-1 flex-shrink-0" />
+                        <div>
+                            <h3 className="font-bold">Google Haritalar Yüklenemedi</h3>
+                            <p className="text-sm">
+                                Haritayı görüntülemek için geçerli bir Google Haritalar API anahtarı gereklidir. Lütfen projenizin ana dizinindeki `.env` dosyasına `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=YOUR_API_KEY` şeklinde anahtarınızı ekleyin.
+                            </p>
+                        </div>
+                    </div>
+                </Card>
+            ) : (
+                <div className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border">
+                    <PlacesMap places={filteredPlaces} className="w-full h-full" />
+                </div>
+            )}
         </div>
       )}
 
