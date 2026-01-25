@@ -13,6 +13,7 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PlacesMap } from '@/components/places-map';
 
 function YerlerPageSkeleton() {
     return (
@@ -79,20 +80,6 @@ function YerlerContent() {
 
   const currentInfo = category ? pageInfo[category] : null;
 
-  const mapQuery = useMemo(() => {
-    if (places && places.length > 0) {
-      // Creates a query like: "Sardes Antik Kenti" OR "Kurşunlu Kaplıcaları"
-      return places.map(p => `"${p.name[typedLanguage]}"`).join(' OR ');
-    }
-    // Fallback if places are not loaded yet or the category is empty
-    if (category && pageInfo[category]) {
-        return `${pageInfo[category].title}, Salihli`;
-    }
-    return t('places.mapSearchQuery');
-  }, [places, typedLanguage, t, category, pageInfo]);
-
-  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${language}&z=11&output=embed`;
-
   if (loading) {
       return <YerlerPageSkeleton />;
   }
@@ -119,18 +106,7 @@ function YerlerContent() {
       {/* MAP SECTION */}
       {showMapSection && (
         <div className="mb-12">
-            <div className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border">
-                <iframe
-                    src={embedUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={true}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={t('places.title')}
-                ></iframe>
-            </div>
+            <PlacesMap places={filteredPlaces} className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border" />
         </div>
       )}
 
