@@ -13,9 +13,6 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlacesMap } from '@/components/places-map';
-import { googleMapsApiKey } from '@/lib/config';
-import { AlertTriangle } from 'lucide-react';
 
 function YerlerPageSkeleton() {
     return (
@@ -23,6 +20,9 @@ function YerlerPageSkeleton() {
              <div className="text-center mb-12">
                 <Skeleton className="h-10 w-1/2 mx-auto mb-4" />
                 <Skeleton className="h-6 w-3/4 mx-auto" />
+            </div>
+            <div className="mb-12 h-[60vh] w-full">
+                <Skeleton className="w-full h-full rounded-lg" />
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -85,6 +85,9 @@ function YerlerContent() {
 
   const filteredPlaces = places || [];
   const showMapSection = !category && filteredPlaces.length > 0;
+  
+  const mapQuery = t('places.mapSearchQuery');
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${language}&z=12&output=embed`;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -105,23 +108,18 @@ function YerlerContent() {
       {/* MAP SECTION */}
       {showMapSection && (
         <div className="mb-12">
-            {!googleMapsApiKey ? (
-                <Card className="p-4 bg-destructive/10 border-destructive/50 text-destructive">
-                    <div className="flex items-start gap-4">
-                        <AlertTriangle className="h-6 w-6 mt-1 flex-shrink-0" />
-                        <div>
-                            <h3 className="font-bold">Google Haritalar Yüklenemedi</h3>
-                            <p className="text-sm">
-                                Haritayı görüntülemek için geçerli bir Google Haritalar API anahtarı gereklidir. Lütfen projenizin ana dizinindeki `.env` dosyasına `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=YOUR_API_KEY` şeklinde anahtarınızı ekleyin.
-                            </p>
-                        </div>
-                    </div>
-                </Card>
-            ) : (
-                <div className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border">
-                    <PlacesMap places={filteredPlaces} className="w-full h-full" />
-                </div>
-            )}
+            <div className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border">
+                <iframe
+                    src={embedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={true}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title={t('places.title')}
+                ></iframe>
+            </div>
         </div>
       )}
 

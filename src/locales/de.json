@@ -53,6 +53,7 @@
     "places": {
         "title": "Alle Orte entdecken",
         "description": "Entdecken Sie alle historischen, natürlichen und kulturellen Reichtümer, die Salihli zu bieten hat.",
+        "mapSearchQuery": "Salihli, Manisa, Türkei, sehenswürdigkeiten",
         "notFoundTitle": "Ort nicht gefunden",
         "notFoundDescription": "Der gesuchte Ort existiert nicht."
     },

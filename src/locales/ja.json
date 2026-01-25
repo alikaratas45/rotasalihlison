@@ -53,6 +53,7 @@
     "places": {
         "title": "すべての場所を発見",
         "description": "サリフリが提供するすべての歴史的、自然的、文化的豊かさを探検してください。",
+        "mapSearchQuery": "トルコ、マニサ、サリフリ、観光名所",
         "notFoundTitle": "場所が見つかりません",
         "notFoundDescription": "お探しの場所は存在しません。"
     },
