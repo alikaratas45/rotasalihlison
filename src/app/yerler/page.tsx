@@ -79,16 +79,27 @@ function YerlerContent() {
 
   const currentInfo = category ? pageInfo[category] : null;
 
+  const mapQuery = useMemo(() => {
+    if (places && places.length > 0) {
+      // Creates a query like: "Sardes Antik Kenti" OR "Kurşunlu Kaplıcaları"
+      return places.map(p => `"${p.name[typedLanguage]}"`).join(' OR ');
+    }
+    // Fallback if places are not loaded yet or the category is empty
+    if (category && pageInfo[category]) {
+        return `${pageInfo[category].title}, Salihli`;
+    }
+    return t('places.mapSearchQuery');
+  }, [places, typedLanguage, t, category, pageInfo]);
+
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${language}&z=11&output=embed`;
+
   if (loading) {
       return <YerlerPageSkeleton />;
   }
 
   const filteredPlaces = places || [];
-  const showMapSection = !category && filteredPlaces.length > 0;
+  const showMapSection = filteredPlaces.length > 0;
   
-  const mapQuery = t('places.mapSearchQuery');
-  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=${language}&z=12&output=embed`;
-
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
         {currentInfo && (
