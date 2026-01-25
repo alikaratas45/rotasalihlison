@@ -5,6 +5,8 @@ import type { Place } from '@/lib/definitions';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
 import { Loader2 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface PlacesMapProps {
   places: Place[];
@@ -17,6 +19,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
   const typedLanguage = language as Language;
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [isApiLoadingError, setIsApiLoadingError] = useState(false);
 
   useEffect(() => {
     const checkApi = () => {
@@ -29,13 +32,24 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
 
     if (checkApi()) return;
 
+    // Set a timeout to detect if the API fails to load
+    const timeoutId = setTimeout(() => {
+      if (!checkApi()) {
+        setIsApiLoadingError(true);
+      }
+    }, 5000); // 5 seconds timeout
+
     const interval = setInterval(() => {
       if (checkApi()) {
         clearInterval(interval);
+        clearTimeout(timeoutId);
       }
     }, 200);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   useEffect(() => {
@@ -53,11 +67,14 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
   }, [isApiLoaded, map]);
 
   useEffect(() => {
-    if (!map || !places || places.length === 0) return;
+    if (!map || !places) return;
 
+    const markers: google.maps.Marker[] = [];
     const infoWindow = new window.google.maps.InfoWindow();
 
-    const markers = places.map(place => {
+    places.forEach(place => {
+        if(!place.coordinates) return;
+        
       const marker = new window.google.maps.Marker({
         position: place.coordinates,
         map: map,
@@ -78,19 +95,20 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
         infoWindow.open(map, marker);
       });
       
-      return marker;
+      markers.push(marker);
     });
     
-    // Adjust map bounds to include all markers
-    if (places.length > 1) {
+    if (places.length > 0) {
         const bounds = new window.google.maps.LatLngBounds();
         places.forEach(place => {
-            bounds.extend(place.coordinates);
+             if(place.coordinates) bounds.extend(place.coordinates);
         });
         map.fitBounds(bounds);
-    } else if (places.length === 1) {
-        map.setCenter(places[0].coordinates);
-        map.setZoom(14);
+
+        // if there's only one place, fitBounds might zoom in too much
+        if(places.length === 1){
+            map.setZoom(14);
+        }
     }
 
 
@@ -100,6 +118,18 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
 
   }, [map, places, typedLanguage, t]);
   
+  if (isApiLoadingError) {
+      return (
+        <Alert variant="destructive" className={className}>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Google Haritalar Yüklenemedi</AlertTitle>
+          <AlertDescription>
+            Lütfen API anahtarınızın doğru olduğundan ve Google Cloud projenizde Maps JavaScript API'nin etkinleştirildiğinden emin olun.
+          </AlertDescription>
+        </Alert>
+      )
+  }
+
 
   return (
     <div className={className}>
@@ -109,7 +139,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
             <p className="ml-4 text-muted-foreground">Harita yükleniyor...</p>
          </div>
       )}
-      <div ref={mapRef} className="w-full h-full" style={{ display: isApiLoaded ? 'block' : 'none' }} />
+      <div ref={mapRef} className="w-full h-full rounded-lg overflow-hidden" style={{ display: isApiLoaded ? 'block' : 'none' }} />
     </div>
   );
 };

@@ -28,7 +28,6 @@ export function Header() {
     { href: '/hikayeler', label: t('header.stories') },
     { href: '/lezzetler', label: t('header.cuisine') },
     { href: '/brosurler', label: t('header.brochures') },
-    { href: '/yakindakiler', label: t('header.nearby') },
   ];
 
   return (
