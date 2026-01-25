@@ -13,7 +13,6 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlacesMap } from '@/components/places-map';
 
 function YerlerPageSkeleton() {
     return (
@@ -62,6 +61,17 @@ function YerlerContent() {
   }, [firestore, category]);
 
   const { data: places, loading } = useCollection<Place>(placesQuery);
+  const filteredPlaces = places || [];
+
+  const mapQuery = useMemo(() => {
+    if (filteredPlaces.length === 0) {
+      return t('places.mapSearchQuery');
+    }
+    // Create a search query with the names of the places to show multiple pins
+    return filteredPlaces.map(p => `"${p.name[typedLanguage]}"`).join(' OR ');
+  }, [filteredPlaces, typedLanguage, t]);
+
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=11&ie=UTF8&iwloc=&output=embed&hl=${language}`;
 
   const pageInfo: { [key: string]: { title: string, description: string } } = {
     history: {
@@ -84,7 +94,6 @@ function YerlerContent() {
       return <YerlerPageSkeleton />;
   }
 
-  const filteredPlaces = places || [];
   const showMapSection = filteredPlaces.length > 0;
   
   return (
@@ -105,8 +114,17 @@ function YerlerContent() {
 
       {/* MAP SECTION */}
       {showMapSection && (
-        <div className="mb-12">
-            <PlacesMap places={filteredPlaces} className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg border" />
+        <div className="mb-12 h-[60vh] w-full rounded-lg overflow-hidden shadow-lg border">
+          <iframe
+            src={embedUrl}
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen={true}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title={t('places.title')}
+          ></iframe>
         </div>
       )}
 
