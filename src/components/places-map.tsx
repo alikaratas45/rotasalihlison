@@ -20,6 +20,20 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [isApiLoadingError, setIsApiLoadingError] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleAuthError = () => {
+        const currentUrl = window.location.origin;
+        setAuthError(`Google Haritalar API anahtarınız bu web sitesi (${currentUrl}) için yetkilendirilmemiş. Lütfen Google Cloud Console'da API anahtarı ayarlarınızı kontrol edip bu adresi izin verilenler listesine ekleyin (örn: ${window.location.hostname}/*).`);
+    };
+
+    window.addEventListener('gm-auth-failure', handleAuthError);
+
+    return () => {
+      window.removeEventListener('gm-auth-failure', handleAuthError);
+    };
+  }, []);
 
   useEffect(() => {
     const checkApi = () => {
@@ -117,6 +131,26 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
     };
 
   }, [map, places, typedLanguage, t]);
+  
+  if (authError) {
+      return (
+        <Alert variant="destructive" className={className}>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Google Haritalar Yüklenemedi (Yetki Hatası)</AlertTitle>
+          <AlertDescription>
+            {authError}
+            <a 
+              href="https://developers.google.com/maps/documentation/javascript/error-messages#referer-not-allowed-map-error" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="underline font-bold ml-1"
+            >
+              Daha fazla bilgi...
+            </a>
+          </AlertDescription>
+        </Alert>
+      )
+  }
   
   if (isApiLoadingError) {
       return (
