@@ -3,13 +3,13 @@
     {
       "id": "hero-main",
       "description": "Hero image for the main page, showing the Sardes ancient city.",
-      "imageUrl": "https://i.imgur.com/KHKrcb5.png",
+      "imageUrl": "https://i.imgur.com/2deYxHC.png",
       "imageHint": "ancient ruins"
     },
     {
       "id": "sardes-ancient-city",
       "description": "Image for Sardes Ancient City.",
-      "imageUrl": "https://i.imgur.com/KHKrcb5.png",
+      "imageUrl": "https://i.imgur.com/2deYxHC.png",
       "imageHint": "ancient ruins"
     },
     {
@@ -33,7 +33,7 @@
     {
       "id": "tabak-creek-giant-cauldrons",
       "description": "Image of Tabak Creek Giant Cauldrons.",
-      "imageUrl": "/tabak.jpg",
+      "imageUrl": "https://i.imgur.com/KHKrcb5.png",
       "imageHint": "river rocks"
     },
     {
