@@ -44,7 +44,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="flex flex-1 items-center justify-end gap-3">
           <AudioGuideToggle />
           <LanguageSwitcher />
           <ThemeToggle />
@@ -94,6 +94,7 @@ function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
+      className="rounded-full"
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -119,8 +120,8 @@ function LanguageSwitcher() {
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            {selectedLanguage && <selectedLanguage.flag className="h-5 w-5 rounded-sm" />}
+          <Button variant="ghost" size="icon" className="rounded-full overflow-hidden border border-transparent hover:border-muted-foreground/20">
+            {selectedLanguage && <selectedLanguage.flag className="h-5 w-5 rounded-sm object-cover" />}
             <span className="sr-only">Change language</span>
           </Button>
         </DropdownMenuTrigger>
@@ -145,12 +146,25 @@ function AudioGuideToggle() {
   
     return (
       <Button
-        variant="ghost"
+        variant={isAudioGuideEnabled ? "default" : "outline"}
+        size="sm"
         onClick={toggleAudioGuide}
         aria-label={t('header.audioGuide')}
-        className={cn("px-3 text-sm h-10", !isAudioGuideEnabled && "line-through text-muted-foreground")}
+        className={cn(
+          "rounded-full gap-2 px-3 transition-all duration-300 shadow-sm border-2",
+          isAudioGuideEnabled 
+            ? "bg-primary border-primary text-primary-foreground hover:bg-primary/90" 
+            : "text-muted-foreground border-muted-foreground/20 bg-transparent hover:bg-muted"
+        )}
       >
-        {t('header.audioGuide')}
+        {isAudioGuideEnabled ? (
+          <Volume2 className="h-4 w-4 animate-pulse" />
+        ) : (
+          <VolumeX className="h-4 w-4" />
+        )}
+        <span className="text-xs font-bold uppercase tracking-tight hidden sm:inline">
+          {t('header.audioGuide')}
+        </span>
       </Button>
     );
   }
