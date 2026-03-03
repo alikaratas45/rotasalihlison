@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -39,9 +40,11 @@
         "cleanliness": { "type": "number" },
         "accessibility": { "type": "number" },
         "satisfaction": { "type": "number" },
+        "withTour": { "type": "string", "enum": ["yes", "no"] },
+        "guided": { "type": "string", "enum": ["yes", "no"] },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["placeId", "cleanliness", "accessibility", "satisfaction"]
+      "required": ["placeId", "cleanliness", "accessibility", "satisfaction", "withTour", "guided"]
     },
     "Route": {
       "title": "Route",

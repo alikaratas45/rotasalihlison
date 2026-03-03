@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Home",
@@ -107,11 +108,15 @@
         "cleanliness": "Place Cleanliness and Order",
         "accessibility": "Ease of Accessibility",
         "satisfaction": "Overall Satisfaction Experience",
+        "withTour": "Did you come with a tour?",
+        "guided": "Did someone explain this place to you?",
+        "yes": "Yes",
+        "no": "No",
         "submitButton": "Send Feedback",
         "thankYouTitle": "Thank You!",
         "thankYouDescription": "Your feedback has been successfully received. Thanks for helping us improve Salihli.",
         "errorTitle": "Missing Information",
-        "errorDescription": "Please rate all criteria.",
+        "errorDescription": "Please fill in all criteria.",
         "successTitle": "Sent",
         "successDescription": "Thanks for your feedback!",
         "submitErrorTitle": "Error",

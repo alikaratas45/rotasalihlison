@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,6 +10,8 @@ import { cn } from '@/lib/utils';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 interface SurveyProps {
   placeId: string;
@@ -30,6 +33,10 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     accessibility: 0,
     satisfaction: 0,
   });
+  const [extraAnswers, setExtraAnswers] = useState<Record<string, string>>({
+    withTour: '',
+    guided: '',
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -37,8 +44,12 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     setRatings((prev) => ({ ...prev, [id]: rating }));
   };
 
+  const handleExtraChange = (id: string, value: string) => {
+    setExtraAnswers((prev) => ({ ...prev, [id]: value }));
+  };
+
   const handleSubmit = async () => {
-    if (Object.values(ratings).some((r) => r === 0)) {
+    if (Object.values(ratings).some((r) => r === 0) || !extraAnswers.withTour || !extraAnswers.guided) {
       toast({
         variant: 'destructive',
         title: t('survey.errorTitle'),
@@ -53,6 +64,7 @@ export function Survey({ placeId, placeName }: SurveyProps) {
         placeId,
         placeName,
         ...ratings,
+        ...extraAnswers,
         createdAt: serverTimestamp(),
       });
       setIsSubmitted(true);
@@ -90,32 +102,75 @@ export function Survey({ placeId, placeName }: SurveyProps) {
         <CardTitle className="font-headline text-2xl">{t('survey.title')}</CardTitle>
         <CardDescription>{t('survey.description')}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-8">
-        {CRITERIA.map((criterion) => (
-          <div key={criterion.id} className="space-y-4">
-            <p className="font-semibold text-base md:text-lg text-foreground">{t(criterion.labelKey)}</p>
-            <div className="flex gap-3">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => handleRatingChange(criterion.id, star)}
-                  className="transition-transform active:scale-90 hover:scale-110 focus:outline-none"
-                  aria-label={`${star} star`}
-                >
-                  <Star
-                    className={cn(
-                      "h-10 w-10 md:h-12 md:w-12 transition-all duration-200",
-                      ratings[criterion.id] >= star
-                        ? "fill-yellow-400 text-yellow-600 stroke-[2px]"
-                        : "fill-muted/20 text-muted-foreground/40 stroke-[1.5px] hover:text-yellow-300"
-                    )}
-                  />
-                </button>
-              ))}
+      <CardContent className="space-y-10">
+        {/* Star Rating Criteria */}
+        <div className="space-y-8">
+          {CRITERIA.map((criterion) => (
+            <div key={criterion.id} className="space-y-4">
+              <p className="font-semibold text-base md:text-lg text-foreground">{t(criterion.labelKey)}</p>
+              <div className="flex gap-3">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => handleRatingChange(criterion.id, star)}
+                    className="transition-transform active:scale-90 hover:scale-110 focus:outline-none"
+                    aria-label={`${star} star`}
+                  >
+                    <Star
+                      className={cn(
+                        "h-10 w-10 md:h-12 md:w-12 transition-all duration-200",
+                        ratings[criterion.id] >= star
+                          ? "fill-yellow-400 text-yellow-600 stroke-[2px]"
+                          : "fill-muted/20 text-muted-foreground/40 stroke-[1.5px] hover:text-yellow-300"
+                      )}
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
+          ))}
+        </div>
+
+        {/* Yes/No Extra Questions */}
+        <div className="space-y-8 pt-4 border-t border-muted">
+          <div className="space-y-4">
+            <p className="font-semibold text-base md:text-lg text-foreground">{t('survey.withTour')}</p>
+            <RadioGroup 
+              onValueChange={(val) => handleExtraChange('withTour', val)} 
+              className="flex gap-6"
+              value={extraAnswers.withTour}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="tour-yes" />
+                <Label htmlFor="tour-yes" className="cursor-pointer text-base">{t('survey.yes')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="tour-no" />
+                <Label htmlFor="tour-no" className="cursor-pointer text-base">{t('survey.no')}</Label>
+              </div>
+            </RadioGroup>
           </div>
-        ))}
+
+          <div className="space-y-4">
+            <p className="font-semibold text-base md:text-lg text-foreground">{t('survey.guided')}</p>
+            <RadioGroup 
+              onValueChange={(val) => handleExtraChange('guided', val)} 
+              className="flex gap-6"
+              value={extraAnswers.guided}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="guided-yes" />
+                <Label htmlFor="guided-yes" className="cursor-pointer text-base">{t('survey.yes')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="guided-no" />
+                <Label htmlFor="guided-no" className="cursor-pointer text-base">{t('survey.no')}</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </div>
+
         <Button 
           onClick={handleSubmit} 
           disabled={isSubmitting} 

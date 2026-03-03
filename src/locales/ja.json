@@ -100,5 +100,25 @@
     "bicycleRoutes": {
         "title": "自転車ルート",
         "description": "サリフリとその周辺の自転車コースや小道を発見してください。ペダルをこぎ始めましょう！"
+    },
+    "survey": {
+        "title": "体験を評価する",
+        "description": "この場所の近くにいらっしゃるので、フィードバックをお願いします。あなたの意見は私たちにとって貴重です。",
+        "cleanliness": "場所の清潔さと秩序",
+        "accessibility": "アクセスのしやすさ",
+        "satisfaction": "総合的な満足度",
+        "withTour": "ツアーで来られましたか？",
+        "guided": "誰かにこの場所について説明を受けましたか？",
+        "yes": "はい",
+        "no": "いいえ",
+        "submitButton": "フィードバックを送信",
+        "thankYouTitle": "ありがとうございました！",
+        "thankYouDescription": "フィードバックを正常に受け取りました。サリフリの改善にご協力いただきありがとうございます。",
+        "errorTitle": "情報不足",
+        "errorDescription": "すべての項目に入力してください。",
+        "successTitle": "送信済み",
+        "successDescription": "フィードバックありがとうございます！",
+        "submitErrorTitle": "エラー",
+        "submitErrorDescription": "フィードバックの送信中に問題が発生しました。"
     }
 }

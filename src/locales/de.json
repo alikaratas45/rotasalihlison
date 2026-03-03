@@ -100,5 +100,25 @@
     "bicycleRoutes": {
         "title": "Fahrradrouten",
         "description": "Entdecken Sie Fahrradwege und Pfade in und um Salihli. Treten Sie in die Pedale!"
+    },
+    "survey": {
+        "title": "Bewerten Sie Ihr Erlebnis",
+        "description": "Da Sie sich in der Nähe dieses Ortes befinden, können Sie uns Ihr Feedback geben. Ihre Meinung ist uns wichtig.",
+        "cleanliness": "Sauberkeit und Ordnung am Ort",
+        "accessibility": "Erreichbarkeit",
+        "satisfaction": "Gesamtzufriedenheit",
+        "withTour": "Sind Sie mit einer Reisegruppe gekommen?",
+        "guided": "Hat Ihnen jemand diesen Ort erklärt?",
+        "yes": "Ja",
+        "no": "Nein",
+        "submitButton": "Feedback senden",
+        "thankYouTitle": "Danke!",
+        "thankYouDescription": "Ihr Feedback wurde erfolgreich empfangen. Danke, dass Sie uns helfen, Salihli zu verbessern.",
+        "errorTitle": "Fehlende Informationen",
+        "errorDescription": "Bitte füllen Sie alle Kriterien aus.",
+        "successTitle": "Gesendet",
+        "successDescription": "Vielen Dank für Ihr Feedback!",
+        "submitErrorTitle": "Fehler",
+        "submitErrorDescription": "Beim Senden des Feedbacks ist ein Problem aufgetreten."
     }
 }

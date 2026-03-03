@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Ana Sayfa",
@@ -99,7 +100,7 @@
     },
     "bicycleRoutes": {
         "title": "Bisiklet Rotaları",
-        "description": "Salihli ve çevresindeki bisiklet parkurlarını ve yollarını keşfedin. Pedal çevirmeye başlayın!"
+        "description": "Salihli ve çevresindeki bir dizi bisiklet parkurunu ve yollarını keşfedin. Pedal çevirmeye başlayın!"
     },
     "survey": {
         "title": "Deneyiminizi Puanlayın",
@@ -107,11 +108,15 @@
         "cleanliness": "Mekan Temizliği ve Düzeni",
         "accessibility": "Ulaşım Kolaylığı",
         "satisfaction": "Genel Memnuniyet Deneyimi",
+        "withTour": "Bir tur ile mi geldiniz?",
+        "guided": "Size burayı anlatan oldu mu?",
+        "yes": "Evet",
+        "no": "Hayır",
         "submitButton": "Geri Bildirimi Gönder",
         "thankYouTitle": "Teşekkür Ederiz!",
         "thankYouDescription": "Geri bildiriminiz başarıyla alındı. Salihli'yi geliştirmemize yardımcı olduğunuz için teşekkürler.",
         "errorTitle": "Eksik Bilgi",
-        "errorDescription": "Lütfen tüm kriterleri puanlayın.",
+        "errorDescription": "Lütfen tüm kriterleri doldurun.",
         "successTitle": "Gönderildi",
         "successDescription": "Geri bildiriminiz için teşekkürler!",
         "submitErrorTitle": "Hata",
