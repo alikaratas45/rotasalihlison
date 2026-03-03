@@ -7,6 +7,8 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query } from 'firebase/firestore';
+import { format } from 'date-fns';
+import { tr as trLocale } from 'date-fns/locale';
 
 // Services
 import { addPlace, updatePlace, deletePlace } from '@/firebase/firestore/places-service';
@@ -24,7 +26,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle, Star, Users, MapPin, CheckCircle2, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -33,7 +35,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Definitions
-import type { Place, Route, ExperienceItem } from '@/lib/definitions';
+import type { Place, Route, ExperienceItem, Feedback } from '@/lib/definitions';
 
 
 // --- ZOD Schemas ---
@@ -100,6 +102,15 @@ const LocalizedFormFields = ({ form, fieldNames }: { form: any, fieldNames: Arra
     </Accordion>
 );
 
+const RatingBadge = ({ rating }: { rating: number }) => {
+    return (
+        <div className="flex items-center gap-1">
+            <span className="font-bold">{rating.toFixed(1)}</span>
+            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+        </div>
+    );
+};
+
 
 export default function AdminPage() {
     const firestore = useFirestore();
@@ -128,7 +139,23 @@ export default function AdminPage() {
     const experienceItemsQuery = useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]);
     const { data: experienceItems, loading: experienceItemsLoading } = useCollection<ExperienceItem>(experienceItemsQuery);
 
+    const feedbacksQuery = useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]);
+    const { data: feedbacks, loading: feedbacksLoading } = useCollection<Feedback>(feedbacksQuery);
+
     const sortedPlaces = useMemo(() => places?.slice().sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr')) || [], [places]);
+
+    // --- Summary Statistics ---
+    const stats = useMemo(() => {
+        if (!feedbacks || feedbacks.length === 0) return null;
+        const total = feedbacks.length;
+        const avgCleanliness = feedbacks.reduce((acc, f) => acc + f.cleanliness, 0) / total;
+        const avgAccessibility = feedbacks.reduce((acc, f) => acc + f.accessibility, 0) / total;
+        const avgSatisfaction = feedbacks.reduce((acc, f) => acc + f.satisfaction, 0) / total;
+        const tourCount = feedbacks.filter(f => f.withTour === 'yes').length;
+        const guidedCount = feedbacks.filter(f => f.guided === 'yes').length;
+
+        return { total, avgCleanliness, avgAccessibility, avgSatisfaction, tourCount, guidedCount };
+    }, [feedbacks]);
 
     // --- Form Definitions ---
     const defaultPlaceValues: PlaceFormData = { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, imageUrl: '', imageHint: '' };
@@ -238,6 +265,7 @@ export default function AdminPage() {
                         <TabsTrigger value="places">Yerler</TabsTrigger>
                         <TabsTrigger value="routes">Rotalar</TabsTrigger>
                         <TabsTrigger value="experiences">Deneyim Menüsü</TabsTrigger>
+                        <TabsTrigger value="feedbacks">Anketler</TabsTrigger>
                         <TabsTrigger value="database">Veritabanı</TabsTrigger>
                     </TabsList>
                 </div>
@@ -411,6 +439,113 @@ export default function AdminPage() {
                             </div>
                         </CardContent>
                     </Card>
+                </TabsContent>
+
+                {/* FEEDBACKS TAB */}
+                <TabsContent value="feedbacks">
+                    {feedbacksLoading ? (
+                        <div className="flex flex-col gap-8">
+                            <Skeleton className="h-32 w-full" />
+                            <Skeleton className="h-[400px] w-full" />
+                        </div>
+                    ) : feedbacks && feedbacks.length > 0 ? (
+                        <div className="space-y-8">
+                            {/* Stats Summary */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                                <Card className="bg-primary/5 border-primary/10">
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Toplam Katılım</CardDescription>
+                                        <CardTitle className="text-2xl flex items-center gap-2"><Users className="h-5 w-5 text-primary" />{stats?.total}</CardTitle>
+                                    </CardHeader>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Temizlik Ort.</CardDescription>
+                                        <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgCleanliness || 0} /></CardTitle>
+                                    </CardHeader>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Erişim Ort.</CardDescription>
+                                        <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgAccessibility || 0} /></CardTitle>
+                                    </CardHeader>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Memnuniyet Ort.</CardDescription>
+                                        <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgSatisfaction || 0} /></CardTitle>
+                                    </CardHeader>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Turla Gelen</CardDescription>
+                                        <CardTitle className="text-2xl">{stats?.tourCount}</CardTitle>
+                                    </CardHeader>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Rehberli</CardDescription>
+                                        <CardTitle className="text-2xl">{stats?.guidedCount}</CardTitle>
+                                    </CardHeader>
+                                </Card>
+                            </div>
+
+                            {/* Feedbacks Table */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Anket Yanıtları</CardTitle>
+                                    <CardDescription>Ziyaretçilerden gelen tüm geri bildirimler.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="rounded-md border">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Mekan</TableHead>
+                                                    <TableHead>Temizlik</TableHead>
+                                                    <TableHead>Erişim</TableHead>
+                                                    <TableHead>Memnuniyet</TableHead>
+                                                    <TableHead className="text-center">Tur</TableHead>
+                                                    <TableHead className="text-center">Rehber</TableHead>
+                                                    <TableHead className="text-right">Tarih</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {feedbacks.map((f) => (
+                                                    <TableRow key={f.id}>
+                                                        <TableCell className="font-medium flex items-center gap-2">
+                                                            <MapPin className="h-3 w-3 text-muted-foreground" />
+                                                            {f.placeName}
+                                                        </TableCell>
+                                                        <TableCell><RatingBadge rating={f.cleanliness} /></TableCell>
+                                                        <TableCell><RatingBadge rating={f.accessibility} /></TableCell>
+                                                        <TableCell><RatingBadge rating={f.satisfaction} /></TableCell>
+                                                        <TableCell className="text-center">
+                                                            {f.withTour === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
+                                                        </TableCell>
+                                                        <TableCell className="text-center">
+                                                            {f.guided === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
+                                                        </TableCell>
+                                                        <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
+                                                            {f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ) : (
+                        <Card>
+                            <CardContent className="p-12 text-center flex flex-col items-center">
+                                <Star className="h-12 w-12 text-muted-foreground/20 mb-4" />
+                                <CardTitle className="text-muted-foreground">Henüz anket verisi yok.</CardTitle>
+                                <CardDescription>Ziyaretçiler anket doldurduğunda burada görünecektir.</CardDescription>
+                            </CardContent>
+                        </Card>
+                    )}
                 </TabsContent>
                 
                 {/* DATABASE TAB */}

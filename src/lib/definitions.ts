@@ -75,3 +75,15 @@ export interface UserProfile {
   photoURL: string | null;
   isAdmin?: boolean;
 }
+
+export type Feedback = {
+    id: string;
+    placeId: string;
+    placeName: string;
+    cleanliness: number;
+    accessibility: number;
+    satisfaction: number;
+    withTour: 'yes' | 'no';
+    guided: 'yes' | 'no';
+    createdAt: any;
+};
