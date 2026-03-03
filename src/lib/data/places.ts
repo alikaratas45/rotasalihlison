@@ -47,51 +47,54 @@ export const places: Place[] = [
             ja: 'クルシュンル温泉'
         },
         description: { 
-            tr: `KURŞUNLU KAPLICALARI
+            tr: `KURŞUNLU KAPLICALARI 
 
-- Suyun Özellikleri: Toplam 2172 mg/lt mineralizasyonu olan, bikarbonatlı, flörürlü niteliktedir. Şifalı sular, sıcaklığı 43 ila 91 derece arasında değişen kaynaklardan sağlanıyor. Kaplıca suyunun romatizmaya, cilt ve kadın hastalıklarına, solunum yolu hastalıklarına, sinirsel rahatsızlıkları ve kireçlenmelerin tamamlayıcı tedavisine olumlu etkileri görüldüğü belirtiliyor.
+- Suyun Özellikleri: Toplam 2172 mg/lt mineralizasyonu olan, bikarbonatlı, flörürlü niteliktedir. Şifalı sular, sıcaklığı 43 ila 91 derece arasında değişen kaynaklardan sağlanıyor. Kaplıca suyunun romatizmaya, cilt ve kadın hastalıklarına, solunum yolu hastalıklarına, sinirsel rahatsızlıkları ve kireçlenmelerin tamamlayıcı tedavisine olumlu etkileri görüldüğü belirtiliyor. 
 
-- Kaplıcadaki Yatak Kapasitesi: 86 Apart ve 270 yatak kapasiteli bir tesis olan Kurşunlu Kaplıcaları’nda, sadece Salihli halkına değil, çevre ilçeler ile tüm Türkiye’den gelen konuklara Ege’nin misafirperverliği sunuluyor. Salihli merkeze 5 kilometre mesafede bulunan tesiste 47 personel ile üst düzey hizmet verilmektedir.
+- Kaplıcadaki Yatak Kapasitesi: 86 Apart ve 270 yatak kapasiteli bir tesis olan Kurşunlu Kaplıcaları’nda, sadece Salihli halkına değil, çevre ilçeler ile tüm Türkiye’den gelen konuklara Ege’nin misafirperverliği, samimi ve güler yüzlü personel tarafından sunuluyor. Salihli merkeze 5 kilometre, İzmir-Ankara ana yoluna ise 3 kilometre uzaklıkta bulunan Kurşunlu Kaplıcaları’nda Bahçıvandan Servis elemanına, Resepsiyonistten Sağlık Memuruna, Fizyoterapistten Güvenlik Görevlisine kadar 47 personel ile konaklayan misafirlere üst düzeyde bir hizmet veriliyor. 
 
-- Kurşunlu İsmi Nereden Geliyor? Efsaneye göre güzelliği ile ünlü kralın kızı Kursun, ağır bir deri hastalığına yakalanır ve çirkinleştiği için dışlanınca şehirden uzaklaşıp Kurşunlu vadisine sığınır. Isınmak için doğal sıcak su kaynağında uyuyan Kursun, 15 gün içinde tamamen iyileşerek eski güzelliğine kavuşur. Halk bu şifayı duyunca yüzyıllardır bu sudan faydalanmaya başlar.
+- Kurşunlu ismi nereden geliyor? Bir zamanlar güzelliği ile dillere destan olan kralın kızı Kursun önemli bir deri hastalığı geçirir. Bu deri hastalığı sebebi ile vücudunda yaralar çıkar ve çirkinleşir. Çirkinleşen Kursun dalga geçilmekten ve dışlanmaktan yorulur ve şehirden uzaklaşır. Kurşunlu vadisi etrafında yaşamaya başlar. Akşamları da sıcak tuttuğu için doğal kaynak olan kurşunlu çayının içerisinde uyur. Zamanla vücudundaki yaraların iyileştiğini gören Kursun, yaklaşık 15 gün sonra tamamen eski güzelliğine kavuşur ve şehre yeniden döner. İyileşmesinin kaynağını öğrenen halk belirli aralıklarla bu sıcak su kaynağına gelip 10 – 15 günlük dönemlerde bu sudan faydalanırlar. 
 
-Bölgedeki Jeositler: Kurşunlu Kaplıcaları, Kurşunlu Şelalesi ve Aktüel Traverten Oluşumu, Kurşunlu Vadisi.`,
+Bu Bölgedeki Kula – Salihli Jeoparkı Jeositleri:
+- Kurşunlu Kaplıcaları
+- Kurşunlu Şelalesi ve Aktüel Traverten Oluşumu
+- Kurşunlu Vadisi`,
             en: `KURŞUNLU THERMAL SPRINGS
 
-- Water Properties: With 2172 mg/lt mineralization, the water is bicarbonate and fluoride-rich. Healing waters are sourced from springs between 43-91°C. It is effective in treating rheumatism, skin and gynecological diseases, respiratory tract disorders, nervous conditions, and calcification.
+- Water Properties: Total mineralization of 2172 mg/lt, bicarbonate and fluoride-rich. Healing waters are sourced from springs between 43-91°C. Effective for rheumatism, skin and gynecological diseases, respiratory disorders, nervous conditions, and calcification.
 
-- Capacity: The facility features 86 apartments and 270 beds, offering Aegean hospitality to guests from all over Turkey. Located 5 km from Salihli center, 47 professional staff provide high-level service.
+- Capacity: Featuring 86 apartments and 270 beds, Kurşunlu offers Aegean hospitality to guests from across Turkey. Located 5 km from Salihli and 3 km from the Izmir-Ankara highway, 47 specialized staff (physiotherapists, health officers, etc.) provide high-level service.
 
-- Origin of the Name: According to legend, the king's beautiful daughter, Kursun, suffered from a severe skin disease. Exiled due to her condition, she sought refuge in the Kurşunlu Valley. By sleeping in the warm thermal stream, she was completely healed within 15 days. Hearing this, the public began using these healing waters for centuries.
+- Origin of the Name: Legend says the king's beautiful daughter, Kursun, suffered from a severe skin disease that disfigured her. Exiled, she took refuge in the Kurşunlu valley. She slept in the naturally warm Kurşunlu stream to stay warm. Within 15 days, her wounds healed, and she regained her legendary beauty. Hearing this, the public began using these healing waters.
 
-Geosites in the Area: Kurşunlu Thermal Springs, Kurşunlu Waterfall and Active Travertine Formation, Kurşunlu Valley.`,
+Geosites in the Area: Kurşunlu Thermal Springs, Kurşunlu Waterfall, and Kurşunlu Valley.`,
             fr: `SOURCES THERMALES DE KURŞUNLU
 
-- Propriétés de l'eau : Avec une minéralisation de 2172 mg/lt, l'eau est riche en bicarbonate et en fluorure. Les eaux curatives proviennent de sources situées entre 43 et 91°C. Elles sont efficaces pour traiter les rhumatismes, les maladies de la peau et gynécologiques, les troubles respiratoires, les états nerveux et les calcifications.
+- Propriétés de l'eau : Minéralisation totale de 2172 mg/lt, riche en bicarbonate et fluorure. Eaux curatives entre 43 et 91°C. Efficace pour les rhumatismes, les maladies de peau, les troubles respiratoires et nerveux.
 
-- Capacité : L'établissement dispose de 86 appartements et 270 lits, offrant l'hospitalité égéenne. Situé à 5 km du centre de Salihli, 47 employés assurent un service de haut niveau.
+- Capacité : Avec 86 appartements et 270 lits, l'établissement offre l'hospitalité égéenne. Situé à 5 km de Salihli, 47 employés spécialisés assurent un service de haut niveau.
 
-- Origine du nom : Selon la légende, la belle fille du roi, Kursun, souffrait d'une grave maladie de peau. Exilée, elle se réfugia dans la vallée de Kurşunlu. En dormant dans le courant thermal chaud, elle guérit complètement en 15 jours. En apprenant cela, le public commença à utiliser ces eaux curatives pendant des siècles.
+- Origine du nom : La légende raconte que Kursun, la fille du roi à la beauté légendaire, fut défigurée par une maladie de peau. Exilée, elle se réfugia dans la vallée de Kurşunlu et dormit dans les eaux chaudes du ruisseau. En 15 jours, elle fut guérie et retrouva sa beauté. Depuis, le public utilise ces eaux sacrées.
 
-Géosites de la région : Sources thermales de Kurşunlu, Cascade de Kurşunlu et formation de travertins, Vallée de Kurşunlu.`,
+Géosites : Sources de Kurşunlu, Cascade de Kurşunlu et Vallée de Kurşunlu.`,
             de: `THERMALQUELLEN VON KURŞUNLU
 
-- Wasserqualität: Mit 2172 mg/l Mineralisierung ist das Wasser bikarbonat- und fluoridhaltig. Die Heilwässer stammen aus Quellen zwischen 43 und 91°C. Sie sind wirksam bei Rheuma, Haut- und Frauenkrankheiten, Atemwegserkrankungen, nervösen Leiden und Verkalkungen.
+- Wasserqualität: 2172 mg/l Mineralisierung, bikarbonat- und fluoridhaltig. Wassertemperaturen zwischen 43 und 91°C. Hilft bei Rheuma, Haut- und Frauenkrankheiten sowie Atemwegserkrankungen.
 
-- Kapazität: Die Anlage verfügt über 86 Apartments und 270 Betten und bietet ägäische Gastfreundschaft. 5 km vom Zentrum von Salihli entfernt sorgen 47 Mitarbeiter für erstklassigen Service.
+- Kapazität: 86 Apartments und 270 Betten. 5 km von Salihli entfernt sorgen 47 Mitarbeiter für erstklassigen Service.
 
-- Namensherkunft: Der Legende nach litt die schöne Königstochter Kursun an einer schweren Hautkrankheit. Verstoßen suchte sie Zuflucht im Kurşunlu-Tal. Durch das Baden im warmen Thermalbach wurde sie innerhalb von 15 Tagen vollständig geheilt. Als das Volk davon hörte, nutzte es diese Heilquellen über Jahrhunderte hinweg.
+- Namensherkunft: Die schöne Königstochter Kursun litt an einer entstellenden Hautkrankheit. Verstoßen suchte sie Zuflucht im Kurşunlu-Tal und badete im warmen Bach. Nach 15 Tagen war sie geheilt. Das Volk erfuhr davon und nutzt seitdem die heilenden Quellen.
 
-Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und aktive Travertinformierung, Kurşunlu Tal.`,
+Geosites: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und Kurşunlu Tal.`,
             ja: `クルシュンル温泉
 
-- 水質の特性：総鉱物含有量2172 mg/ltで、重炭酸塩とフッ化物を豊富に含みます。源泉温度は43度から91度の間で、リウマチ、皮膚病、婦人病、呼吸器疾患、神経痛、石灰化の補助療法に効果があると言われています。
+- 水質の特性：総鉱物含有量2172 mg/ltで、重炭酸塩とフッ化物を豊富に含みます。源泉温度は43度から91度です。リウマチ、皮膚病、婦人病、呼吸器疾患、神経痛に効果があります。
 
-- 施設の規模：86のアパートメントと270のベッドを備え、トルコ全土からの観光客にエーゲ海地方の温かいおもてなしを提供しています。サリフリ中心部から5kmに位置し、47名の専門スタッフが質の高いサービスを提供しています。
+- 施設の規模：86のアパートメントと270のベッドを備えています。サリフリから5kmに位置し、47名の専門スタッフが質の高いサービスを提供しています。
 
-- 名前の由来：伝説によると、絶世の美女だった王女クルスンが重い皮膚病にかかり、街を追われてクルシュンル渓谷に身を寄せました。温かい温泉の川で15日間眠り続けたところ、病は完治し、元の美しさを取り戻しました。これを聞いた人々が、何世紀にもわたってこの癒しの水を利用するようになりました。
+- 名前の由来：絶世の美女だった王女クルスンが重い皮膚病にかかり、街を追われてクルシュンル渓谷に身を寄せました。温かい川で眠り続けたところ、15日間で完治し、元の美しさを取り戻しました。これを聞いた人々が、この癒しの水を利用するようになりました。
 
-地域のジオサイト：クルシュンル温泉、クルシュンル滝と石灰華形成、クルシュンル渓谷。`
+地域のジオサイト：クルシュンル温泉、クルシュンル滝、クルシュンル渓谷。`
         },
         category: 'nature',
         coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 },
@@ -171,11 +174,11 @@ Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und akt
             ja: 'タバッククリークの巨大な大釜'
         },
         description: { 
-            tr: 'Efsaneye göre, Kral Midas\'ın her dokunduğunu altına çevirme lanetinden kurtulduğu yer olan Paktalos (Sart) Çayı\'nın bir kolu olan Tabak Deresi, ilginç jeolojik oluşumlara ev sahipliği yapar. "Dev Kazanları" olarak bilinen bu çukurlar, suyun kayaları binlerce yılda aşındırmasıyla oluşmuş doğal havuzlardır.',
-            en: 'According to legend, Tabak Creek, a branch of the Pactolus (Sart) River where King Midas was freed from the curse of turning everything he touched into gold, is home to interesting geological formations.',
-            fr: 'Selon la légende, le ruisseau Tabak, une branche de la rivière Pactole (Sart) où le roi Midas fut libéré de la malédiction de transformer tout ce qu\'il touchait en or.',
-            de: 'Der Legende nach ist der Tabak-Bach, ein Nebenarm des Flusses Paktolos (Sart), an dem König Midas vom Fluch befreit wurde, alles, was er berührte, in Gold zu verwandeln, die Heimat interessanter geologischer Formationen.',
-            ja: '伝説によると、ミダス王が触れるものすべてを金に変える呪いから解放されたパクトロス川の支流であるタバッククリークは、興味深い地質学的形成物の本拠地です。'
+            tr: `Efsaneye göre, Frigya Kralı Midas, tanrı Dionysos'un yoldaşı bir satiri konuk eder ve onu ağırlar. Bu iyiliğinden etkilenen Dionysos, krala bir dilek hakkı sunar. Gözü zenginlikte olan Midas, dokunduğu her şeyin altına dönüşmesini diler. Başlangıçta bu yeni gücüyle büyülenen Midas, yediği yemeğin, içtiği suyun, hatta sevgiyle sarıldığı kızının bile altına dönüştüğünü görünce dehşete kapılır. Tanrı Dionysos'a yalvararak bu laneti geri almasını ister. Tanrı, krala kurtuluş yolunu gösterir: Lidya topraklarındaki Paktolos (Sart) nehrinde yıkanması gerekmektedir. Kral Midas, Salihli'ye gelir ve kendini nehrin sularına bırakır. Yıkanırken, altın dokunuşu ondan ayrılır ve nehrin kumlarına karışır. Midas'ın bu lanetten kurtulduğu yerlerden biri olarak kabul edilen Tabak Deresi'ndeki "Dev Kazanları", bu efsanenin canlı bir anıtıdır.`,
+            en: `According to legend, King Midas of Phrygia wished that everything he touched would turn to gold. He soon realized his mistake when his food and even his daughter turned to gold. He begged Dionysus to lift the curse. The god instructed him to wash in the Pactolus River (Sart Creek) in Lydia. Midas came to Salihli and bathed in the river, transferring the golden touch to the sands. The "Giant Cauldrons" in Tabak Creek are a living monument where Midas was freed from this curse.`,
+            fr: `Selon la légende, le roi Midas souhaitait que tout ce qu'il touchait se transforme en or. Réalisant son erreur, il supplia Dionysos de rompre le sort. Le dieu lui dit de se laver dans le Pactole (Sart) en Lydie. Midas vint à Salihli, et son toucher d'or se mélangea au sable de la rivière. Les "Chaudrons Géants" sont le lieu sacré de sa délivrance.`,
+            de: `König Midas wünschte sich die goldene Berührung, bereute dies jedoch schnell. Dionysos wies ihn an, im Fluss Paktolos (Sart) in Lydien zu baden. Midas kam nach Salihli, und die goldene Kraft ging auf den Flusssand über. Die „Riesenkessel“ am Tabak-Bach zeugen noch heute von dieser Legende.`,
+            ja: `ミダス王は触れるものすべてを金に変える力を望みましたが、食べ物まで金に変わるのを見て後悔しました。ディオニュソス神の教えに従い、リディアのパクトロス川で身を清めたところ、その力は川の砂へと移りました。タバッククリークの「巨大な大釜」はこの伝説の舞台です。`
         },
         category: 'nature',
         coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 },
@@ -200,10 +203,10 @@ Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und akt
         },
         description: {
             tr: "Jeoparkın üçüncü evre volkanlarından Kula, Sandal ve Kaplan Divitleri Kuzeybatı–Güneydoğu istikametinde uzanan bir kırık hattı boyunca yaklaşık 9 km aralıklarla dizilirler. Şist sırtları ile ardalanmış alüvyon düzlükleri üzerinde yükselen bu ufak yanardağların çevresindeki parazit koniler ve çatlaklardan 12 bin yıl öncelerde püsküren çok sıcak ve çok akışkan bazalt lavları (leçeler) vadiler ve akarsu yataklarını doldurup kilometrelerce yayılarak araziyi kaplamıştır. Adala (Hermos) Kanyonunun oluşum öyküsü işte bu dönemde Kaplan Divliti ve önündeki küçük koniden fışkırarak bir ateş seli gibi yayılan erimiş kayaç ve minerallerle başladı. Lavlar Gediz'e bağlanan bir vadi boyunca 12,5 km akıp Gediz Vadisini de 4 km kadar doldurarak ırmağın akıntısını kesintiye uğrattıktan sonra vadinin üst kesimindeki ovanın yüzeyine kadar yayıldılar. Bu lav setinin arkasında biriken Gediz ırmağı, sert bazalt kitlelerini yarıp geçemedi ama onların hemen yanındaki metamorfik ve tortul kayaçları oyup kendisine giderek derinleşen yeni bir yatak açarak Adala Kanyonu'nu oluşturdu.",
-            en: "Kula, Sandal, and Kaplan Divitler, third-stage volcanoes of the Geopark, are lined up at intervals of approximately 9 km along a fault line extending in a Northwest-Southeast direction. Very hot and fluid basalt lavas erupted from parasite cones and fissures around these small volcanoes rising on alluvial plains alternated with schist ridges about 12,000 years ago, filling valleys and stream beds and spreading for kilometers. The formation story of the Adala (Hermos) Canyon began in this period with molten rocks and minerals spreading like a flood of fire, gushing from the Kaplan Divliti. The lavas flowed 12.5 km along a valley connected to the Gediz and filled the Gediz Valley by about 4 km, interrupting the river's flow and spreading to the surface of the plain in the upper part of the valley. The Gediz River, accumulating behind this lava barrier, could not breach the hard basalt masses but carved out the metamorphic and sedimentary rocks right next to them, opening a new bed that gradually deepened, thus forming the Adala Canyon.",
-            fr: "Les volcans de la troisième phase du Géoparc, Kula, Sandal et Kaplan Divitler, sont alignés à environ 9 km d'intervalle le long d'une ligne de faille s'étendant du nord-ouest au sud-est. Des laves basaltiques très chaudes et fluides ont jailli des cônes parasites il y a environ 12 000 ans, remplissant les vallées et les lits des rivières. L'histoire de la formation du canyon d'Adala (Hermos) a commencé à cette époque avec des roches et des minéraux en fusion jaillissant du Kaplan Divliti. Les laves ont coulé sur 12,5 km, remplissant la vallée du Gediz sur 4 km et interrompant le cours de la rivière. Le fleuve Gediz, s'accumulant derrière ce barrage de lave, a creusé les roches métamorphiques et sédimentaires adjacentes, ouvrant un nouveau lit qui s'est progressivement approfondi, formant ainsi le canyon d'Adala.",
-            de: "Kula, Sandal und Kaplan Divitler, Vulkane der dritten Phase des Geoparks, sind in Abständen von etwa 9 km entlang einer Verwerfungslinie aufgereiht. Sehr heiße und flüssige Basaltlaven brachen vor etwa 12.000 Jahren aus Parasitärkegeln und Spalten aus und füllten Täler und Flussbetten. Die Entstehungsgeschichte des Adala (Hermos) Canyons begann in dieser Zeit mit geschmolzenem Gestein, das aus dem Kaplan Divliti hervorbrach. Die Laven flossen 12,5 km weit und füllten das Gediz-Tal auf einer Länge von 4 km aus, wodurch der Flusslauf unterbrochen wurde. Der Gediz-Fluss staute sich hinter dieser Lavabarriere an und grub sich in das angrenzende metamorphe und sedimentäre Gestein ein, wodurch ein neues, tieferes Bett entstand, das heute den Adala-Canyon bildet.",
-            ja: "ジオパークの第3段階の火山であるクラ、サンダル、カプラン・ディヴィトレルは、北西から南東に延びる断層線に沿って約9kmの間隔で並んでいます。約1万2千年前、玄武岩溶岩が、谷や河床を埋め尽くし、数キロメートルにわたって広がりました。アダラ（ヘルメス）渓谷の形成物語は、この時期にカプラン・ディヴィティから噴き出した溶岩の流れから始まりました。溶岩はゲディズ川につながる谷に沿って12.5km流れ、ゲディズ渓谷を4kmほど埋めて川の流れを遮断しました。この溶岩堤の背後に蓄積したゲディズ川は、硬い玄武岩の塊を突き抜けることはできませんでしたが、そのすぐ隣の変成岩や堆積岩を削り取り、徐々に深くなる新しい川床を開き、アダラ渓谷を形成しました。"
+            en: "The Hermos (Adala) Canyon was formed 12,000 years ago during the eruption of volcanoes like Kaplan Divliti. Molten basalt lavas flowed for 12.5 km, filling the Gediz Valley and blocking the river. The Gediz River, unable to breach the hard basalt, carved a new path through the adjacent metamorphic and sedimentary rocks, creating the deep and majestic Adala Canyon we see today.",
+            fr: "L'histoire du canyon d'Adala (Hermos) a commencé il y a 12 000 ans avec les laves basaltiques du volcan Kaplan Divliti. Ces laves ont parcouru 12,5 km, remplissant la vallée du Gediz. Le fleuve Gediz, bloqué par cette barrière de lave, a creusé les roches sédimentaires voisines, créant ainsi le canyon d'Adala.",
+            de: "Der Adala (Hermos) Canyon entstand vor 12.000 Jahren durch Basaltlaven des Vulkans Kaplan Divliti. Die Laven füllten das Gediz-Tal auf einer Länge von 12,5 km aus. Der Fluss Gediz grub sich daraufhin ein neues Bett durch das umliegende Gestein und formte so die heutige Schlucht.",
+            ja: "アダラ渓谷の歴史は、約1万2千年前のカプラン・ディヴィティ火山の噴火から始まりました。流出した溶岩がゲディズ川を塞ぎましたが、川は玄武岩の隣の堆積岩を削り取り、新しい川床を作ったことで、現在のアダラ渓谷が形成されました。"
         },
         category: 'nature',
         coordinates: { lat: 38.581712325205984, lng: 28.271791613037774 },
@@ -256,10 +259,10 @@ Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und akt
         },
         description: {
             tr: `Kız Köprüsü'nün altından akan suyu her iki kıyısından batıya doğru 2 Km. kadar takip ettiğinizde bir doğa harikası olan Su Uçtu Şelalesi'ne ulaşırsınız. "Su Uçtu" aslında suları yüksekten dökülen tüm şelaleler için kullanılan bir deyim ama zengin bir çeşitliliğe sahip ağaç ve bitki örtüsü ile kaplı dar bir boğazdan 25 metre aşağıdaki Adala Kanyonu'na dökülen şelale bu deyimi özel bir ad olarak taşımayı fazlası ile hak ediyor. Şelale'nin diğer bir özelliği de jeoparkın diğer pek çok arazi şekli gibi volkanizmanın lavları ile önü kapanan Gediz'in araziyi aşındırıp oyarak akıntısına yatak açmasının bir sonucu olması. Bir zamanların coşkun akışlı ırmağı Demirköprü Barajı'nın bendi ile dizginlendikten sonra Şelale'nin debisi azalıp gücü zayıfladı ancak uğultulu bir çağıltı ile dökülen sularından sıçrayan zerreciklerin yarattığı nemli serinlikte Adala Kanyonu'na yüksekten baktığınızda, onun bir zamanlar ki gücünü kavrayabilirsiniz.`,
-            en: `Following the water flowing under the Maiden's Bridge about 2 km westward, you reach Suuçtu Waterfall. "Su Uçtu" (Water Flew) is a common term for high waterfalls, but this 25-meter drop into Adala Canyon through lush vegetation truly deserves the name. Formed by the Gediz River carving its path after being blocked by volcanic lava, its flow decreased after the Demirköprü Dam, but its historical power is still palpable in its misty breeze over the canyon.`,
-            fr: `En suivant l'eau qui coule sous le Pont des Demoiselles sur environ 2 km vers l'ouest, vous atteignez la cascade de Suuçtu. "Su Uçtu" est un terme général pour les chutes d'eau, mais celle-ci, tombant de 25 mètres dans le canyon d'Adala à travers une végétation luxuriante, mérite amplement son nom. Formée par l'érosion du Gediz après un blocage par la lave, son débit a diminué avec le barrage de Demirköprü, mais sa force passée reste perceptible dans sa fraîcheur humide.`,
-            de: `Wenn man dem Wasser, das unter der Jungfrauenbrücke fließt, etwa 2 km nach Westen folgt, erreicht man den Suuçtu-Wasserfall. "Su Uçtu" ist ein Begriff für hohe Wasserfälle, aber dieser, der aus 25 Metern Höhe durch dichte Vegetation in den Adala-Canyon stürzt, verdient den Namen als Eigennamen. Er entstand, als der durch Lava blockierte Gediz sich ein neues Bett grub. Nach dem Bau der Demirköprü-Talsperre nahm die Wassermenge ab, doch die einstige Kraft ist in der feuchten Kühle noch immer spürbar.`,
-            ja: `乙女の橋（クズ・キョプリュス）の下を流れる水を西に約2kmたどると、自然の驚異であるスーチュ滝に到着します。「スーチュ」とは高い場所から流れ落ちる滝を指す言葉ですが、緑豊かな植物に覆われた狭い峡谷から25メートル下のアダラ渓谷に流れ落ちるこの滝は、その名を冠するにふさわしい場所です。溶岩によって遮られたゲディズ川が土地を浸食して形成されました。流量は減りましたが、かつての力強さを感じることができます。`
+            en: `Following the water flowing under the Maiden's Bridge about 2 km westward leads to the Suuçtu Waterfall. This 25-meter drop through lush vegetation into the Adala Canyon was formed by the Gediz River carving its path after being blocked by volcanic lava. While the Demirköprü Dam has reduced its flow, the misty breeze over the canyon still reveals its former majestic power.`,
+            fr: `En suivant l'eau qui coule sous le Pont des Demoiselles sur environ 2 km vers l'ouest, vous atteignez la cascade de Suuçtu. Tombant de 25 mètres dans le canyon d'Adala à travers une végétation luxuriante, cette cascade a été formée par l'érosion du Gediz après un blocage par la lave volcanique. Sa force passée reste perceptible dans sa fraîcheur humide.`,
+            de: `Etwa 2 km westlich der Jungfrauenbrücke stürzt der Suuçtu-Wasserfall 25 Meter tief in den Adala-Canyon. Er entstand, als der durch Lava blockierte Fluss Gediz sich ein neues Bett grub. Trotz des verringerten Durchflusses durch die Demirköprü-Talsperre ist die einstige Kraft in der kühlen Gischt noch immer spürbar.`,
+            ja: `乙女の橋の下を流れる水を西に約2kmたどると、自然の驚異であるスーチュ滝に到着します。溶岩によって遮られたゲディズ川が土地を浸食して形成された、高さ25メートルの滝です。ダム建設により流量は減りましたが、今でもかつての力強さを感じることができます。`
         },
         category: 'nature',
         coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 },
@@ -283,11 +286,11 @@ Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und akt
             ja: 'クズ・キョプリュス（乙女の橋）'
         },
         description: {
-            tr: `Adala – Demirköprü Barajı Arasındaki yolun 3. Kilometresinde inşa edilen 97.5 metre uzunluktaki bu büyük ve zarif taş köprü, tasarımındaki mükemmellikler nedeniyle günümüze sapasağlam gelebilmiştir. Yuvarlak kemerli altı ayak üzerinde yükselen köprü, Osmanlı'nın ilk dönemlerine tarihlenmektedir. Rivayete göre Lidyalılar döneminde Krezüs'ün kızına ait olduğu için bu adı almıştır. Yüzyıllarca kervan yollarının kavşak noktası olmuştur.`,
-            en: `Located near the Demirköprü Dam, this elegant 97.5-meter stone bridge spans the narrowest point of the Gediz Valley. Built on solid rock, its architectural perfection has kept it intact. It features six rounded arches. While legends link it to the daughter of King Croesus, experts date it to the early Ottoman period. It was a vital crossroads for centuries.`,
-            fr: `Situé près du barrage de Demirköprü, cet élégant pont en pierre de 97,5 mètres enjambe le point le plus étroit de la vallée du Gediz. Construit sur du rocher solide, sa perfection architecturale l'a préservé. Il possède six arches circulaires. Si la légende le lie à la fille du roi Crésus, les experts le datent du début de la période ottomane.`,
-            de: `Diese elegante, 97,5 Meter lange Steinbrücke liegt in der Nähe der Demirköprü-Talsperre am engsten Punkt des Gediz-Tals. Dank ihrer soliden Bauweise auf Felsgrund ist sie bis heute gut erhalten. Sie hat sechs Rundbögen. Während Legenden sie mit der Tochter von König Krösus verbinden, datieren Experten sie in die frühe osmanische Zeit.`,
-            ja: `デミルキョプリュダムの近くに位置する、全長97.5メートルの優雅な石橋です。強固な岩盤の上に建てられたこの橋は、その建築的な完璧さゆえに今日まで無傷で残っています。6つの円形アーチがあり、伝説ではリディアのクロイソス王の娘にちなんで「乙女の橋」と呼ばれていますが、専門家はオスマン帝国初期のものと考えています。`
+            tr: `Adala – Demirköprü Barajı Arasındaki yolun 3. Kilometresinde inşa edilen 97.5 metre uzunluktaki bu büyük ve zarif taş köprü, tasarımındaki mükemmellikler nedeniyle günümüze sapasağlam gelebilmiştir. Yuvarlak kemerli altı ayak üzerinde yükselen köprü, Osmanlı'nın ilk dönemlerine tarihlenmektedir. Rivayete göre Lidyalılar döneminde Krezüs'ün kızına ait olduğu için bu adı almıştır. Yüzyıllarca kervan yollarının kavşak noktası olmuştur. II. Abdülhamid döneminde Northeast'inde "Demir Köprü" inşa edilene kadar bölgenin tek geçiş noktasıydı. 1954'te baraj inşaatı için Demir Köprü yıkılmış, ancak Kız Köprüsü doğanın sessizliğinde bir ata yadigârı olarak ayakta kalmıştır.`,
+            en: `This 97.5-meter elegant stone bridge near the Demirköprü Dam is an architectural marvel that has survived intact. Dating to the early Ottoman period, legends say it belonged to King Croesus' daughter. It served as a vital junction for caravan routes for centuries until the construction of the modern "Demir Köprü" during the reign of Sultan Abdülhamid II.`,
+            fr: `Ce pont en pierre de 97,5 mètres est une merveille architecturale qui a survécu intacte. Datant du début de la période ottomane, la légende dit qu'il appartenait à la fille du roi Crésus. Il a servi de carrefour vital pour les caravanes pendant des siècles.`,
+            de: `Diese 97,5 Meter lange Steinbrücke ist ein architektonisches Meisterwerk, das bis heute erhalten geblieben ist. Sie stammt aus der frühen osmanischen Zeit und war über Jahrhunderte ein wichtiger Knotenpunkt für Karawanenwege.`,
+            ja: `全長97.5メートルの優雅な石橋で、オスマン帝国初期のものと考えられています。伝説ではクロイソス王の娘にちなんで「乙女の橋」と呼ばれています。何世紀にもわたってキャラバンルートの重要な交差点でした。`
         },
         category: 'history',
         coordinates: { lat: 38.610014244679405, lng: 28.298125541176937 },
@@ -311,11 +314,11 @@ Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und akt
             ja: 'ビンテペレル・リディアの墳丘墓'
         },
         description: {
-            tr: `Salihli-Akhisar yolu üzerinde Bintepe adıyla tanınan kral mezarları yer almaktadır. Antik Sardes Kenti ile Marmara Gölü arasında yer alan bölgeye yayılmış, sayıları 119 olan bu tümülüs mezarlar Lidyalı soylulara aittir. En büyük üç tanesinin Lydia’nın ünlü krallarından Giges, Alyettes ve Kral Ardys’e ait olduğu söylenmektedir. Bintepeler Unesco Geçici Dünya Mirasları listesinde yer almaktadır. Giza'daki Büyük Piramit Keops ile kıyaslanacak büyüklükteki Karnıyarık Tepe gibi anıtsal yapılar, bölgeye mistik bir hava katar.`,
-            en: `Bintepeler: Royal tombs known as Bintepe are located on the Salihli-Akhisar road. These 119 tumulus tombs belong to Lydian nobles. The three largest are said to belong to famous kings: Gyges, Alyattes, and King Ardys. Herodotus compared the largest, belonging to Alyattes, to the Egyptian pyramids. Bintepeler is on the UNESCO Tentative World Heritage list. Like the pyramids at Giza, Karnıyarık Tepe is nearly the same size as Cheops.`,
-            fr: `Bintepeler : Les tombes royales connues sous le nom de Bintepe se trouvent sur la route Salihli-Akhisar. Ces 119 tombes appartiennent à la noblesse lydienne. Les trois plus grandes appartiendraient aux célèbres rois : Gyès, Alyattès et Ardys. Bintepeler est inscrit sur la liste indicative de l'UNESCO. Karnıyarık Tepe couvre presque la même surface que la pyramide de Khéops.`,
-            de: `Bintepeler: An der Straße Salihli-Akhisar befinden sich die als Bintepe bekannten Königsgräber. Diese 119 Hügelgräber gehören dem lydischen Adel. Die drei größten sollen den Königen Gyges, Alyattes und Ardys gehören. Bintepeler steht auf der UNESCO-Tentativliste. Der Karnıyarık Tepe hat fast die gleiche Grundfläche wie die Cheops-Pyramide.`,
-            ja: `ビンテペレル：サリフリとアキサールの間の道路沿いには、ビンテペとして知られる王家の墓があります。これら119のテュムルス（墳丘墓）はリディアの貴族のものです。最大のものはアリュアッテス王のもので、ヘロドトスはエジプトのピラミッドに例えました。ユネスコの世界遺産暫定リストに含まれています。ギザのクフ王のピラミッドとほぼ同じ規模のカルヌヤルク・テペなどがあります。`
+            tr: `Salihli-Akhisar yolu üzerinde Bintepe adıyla tanınan kral mezarları yer almaktadır. Sayıları 119 olan bu tümülüs (dolgu toprak) mezarlar Lidyalı soylulara aittir. Herodot’un Mısır piramitlerine benzettiği tümülüsün en büyüğünün Kral Alyattes'e ait olduğu bilinmektedir. Bintepeler Unesco Geçici Dünya Mirasları listesinde yer almaktadır. 230 metrelik çapıyla Karnıyarık Tepe, Giza'nın Büyük Piramidi Keops ile hemen hemen aynı çaptadır. 1962'de başlayan Amerikan Hafriyat Heyeti çalışmaları yarım kilometreden fazla tünel açmasına rağmen mezar odasına ulaşamamıştır. Yeni teoriler, M.Ö. 600 yılına tarihlenen bu devasa yapıların kral mezarı değilse bile, ana tanrıça kültünün güçlü olduğu Anadolu'da bir kraliçe için yapılmış olabileceğini önermektedir.`,
+            en: `Bintepeler features 119 royal tumulus tombs compared by Herodotus to the Egyptian pyramids. The largest belongs to King Alyattes. Karnıyarık Tepe, with its 230-meter diameter, is nearly the same size as the Great Pyramid of Cheops. Despite extensive tunneling by US missions since 1962, the central burial chamber remains hidden. Modern theories suggest some might belong to Lydian queens, reflecting Anatolia's strong mother-goddess culture.`,
+            fr: `Bintepeler comprend 119 tombes royales comparées par Hérodote aux pyramides d'Égypte. Karnıyarık Tepe a presque le même diamètre que la Grande Pyramide de Khéops. Malgré les recherches américaines depuis 1962, la chambre funéraire reste un mystère.`,
+            de: `Bintepeler umfasst 119 Hügelgräber, die Herodot mit den ägyptischen Pyramiden verglich. Der Karnıyarık Tepe hat fast den gleichen Durchmesser wie die Cheops-Pyramide. Trotz umfangreicher Tunnelgrabungen seit 1962 wurde die Grabkammer noch nicht gefunden.`,
+            ja: `ビンテペレルには119のリディア貴族の墳丘墓があり、ヘロドトスはエジプトのピラミッドに例えました。最大のカルヌヤルク・テペはギザのクフ王のピラミッドとほぼ同じ規模です。1962年からの調査でも、未だに埋葬室は見つかっていません。`
         },
         category: 'history',
         coordinates: { lat: 38.579235811237744, lng: 28.007434965748573 },
@@ -339,16 +342,27 @@ Geosites in der Umgebung: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und akt
             ja: 'ギムナジウム'
         },
         description: {
-            tr: `Gymnasium Roma dönemine aittir ve yaklaşık 2000 yıl önce bir deprem sonrası inşa edilmiştir. Septimius Severus bu yapıyı ailesine adamıştır. 25 dönüm üzerine kurulu bu kompleks; eğitim, spor ve alışveriş merkezidir.
+            tr: `Gymnasium Lidya döneminden kalma olarak bilinir fakat Roma dönemine aittir. Burada Lidya dönemine ait herhangi bir kalıntı yoktur. Yaklaşık 2000 yıl önce geçirdiği depremin ardından model olarak yapılmıştır. Septimius Severus bu yapıyı oğulları Geta ve Caracalla’ya bir de eşi Julia Domna’ya adamıştır. 25 dönüm üzerine kurulu bu kompleks; eğitim, spor ve alışveriş merkezidir. Hamamlardan çıkan soylular yukarıdaki balkonlarda meyvelerini yerken sporcuları izlerlerdi. Toplamda 34 adet Bizans dükkânı mevcuttur.
 
-Hamam: Soyluların ve sporcuların kullandığı hamam, aynı zamanda tedavi amaçlıydı. Su seviyeli basamaklar yaralanma bölgelerine göre tasarlanmıştı.
-Latrin (Tuvaletler): Döneminin mühendislik harikası olan umumi tuvaletlerde memleket meseleleri konuşulurdu.
-Dükkanlar: 34 adet Bizans dükkanı lokanta, boyahane ve cam dükkanı olarak hizmet verirdi.
-Sinagog (Havra): Bin kişi kapasitesiyle antik dünyanın en büyük havralarından biridir. Ön avlusundaki mermer çeşmede ayin öncesi eller yıkanırdı.`,
-            en: `The Gymnasium at Sardis belongs to the Roman period, built after an earthquake 2000 years ago. It was a massive complex for education, sports, and shopping. The Bath was used for social gathering and physical therapy. The Latrines were sophisticated public toilets where social and political issues were discussed. The site also includes 34 Byzantine shops and one of the largest ancient Synagogues ever discovered, serving as a major religious center for the Jewish community.`,
-            fr: `Le Gymnase de Sardes date de l'époque romaine, construit après un séisme il y a 2000 ans. C'était un vaste complexe dédié à l'éducation, aux sports et au commerce. Il comprend des thermes pour l'hygiène et la thérapie, des latrines publiques sophistiquées pour les rencontres sociales, 34 boutiques byzantines et l'une des plus grandes synagogues antiques connues.`,
-            de: `Das Gymnasium von Sardes stammt aus der römischen Epoche und wurde nach einem Erdbeben vor 2000 Jahren errichtet. Es war ein riesiger Komplex für Bildung, Sport und Handel. Es umfasst Thermen für Hygiene und Therapie, hochentwickelte öffentliche Latrinen für soziale Kontakte, 34 byzantinische Läden und eine der größten antiken Synagogen, die je entdeckt wurden.`,
-            ja: `サリフリのギムナジウムはローマ時代のもので、2000年前の地震の後に建設されました。教育、スポーツ、ショッピングのための巨大な複合施設でした。浴場、社交の場でもあった洗練された公衆トイレ、34のビザンチン様式の店舗、そして古代世界最大級のシナゴーグ（会堂）が含まれています。`
+Hamam: Türk hamam geleneğiyle bağlantılı olan bu alan, aynı zamanda bir tedavi merkeziydi. Ayaklarını incitenlerin en üst basamağa, tüm vücudunda ağrı olanların ise başları dışarıda kalacak şekilde derin suya girdiği bir düzeneğe sahipti.
+Tuvaletler (Latrin): İki düzine ziyaretçiyi ağırlayabilen, sürekli su akışının olduğu sosyal bir alandı. Önemli görüşmeler sırasında sesin dışarı çıkmaması için dışarıdan bando takımı çağırılırdı.
+Sinagog (Havra): Bin kişi kapasiteli dini merkezdir. Ön avlusundaki çeşmede, evlenmeden önce günahlarından arınmak isteyen genç kızların yıkandığı inanılırdı. Duvarlardaki Yunanca isimler, panoları hediye eden hayırseverleri simgeler.`,
+            en: `The Gymnasium belongs to the Roman period, built after an earthquake 2000 years ago and dedicated by Septimius Severus to his family. It was a 25-acre complex for education and shopping. 
+- Baths: A social and medical hub where water levels were adjusted for specific physical therapies.
+- Latrines: A social space for 24 visitors with continuous running water. Brass bands were often called to play outside to ensure privacy during political discussions.
+- Synagogue: One of the largest in the ancient world, it features a purification fountain used by young women before marriage.`,
+            fr: `Le Gymnase date de l'époque romaine, dédié par Septime Sévère à sa famille. C'était un complexe de 25 acres dédié à l'éducation et au commerce.
+- Thermes : Utilisés pour la thérapie, avec des bassins de profondeurs variées.
+- Latrines : Espace social pour 24 personnes. Des fanfares jouaient parfois à l'extérieur pour garantir la confidentialité des discussions politiques.
+- Synagogue : Centre religieux pour 1000 personnes avec une fontaine de purification.`,
+            de: `Das Gymnasium stammt aus der römischen Zeit und wurde von Septimius Severus seiner Familie gewidmet. Ein 25 Hektar großer Komplex für Bildung und Handel.
+- Thermen: Ein Heilzentrum mit verschiedenen Wasserstufen für Therapien.
+- Latrinen: Ein sozialer Raum für 24 Personen. Kapellen spielten oft draußen, um politische Gespräche zu übertönen.
+- Synagoge: Eine der größten der Antike, mit einem Reinigungsbrunnen.`,
+            ja: `ギムナジウムは2000年前のローマ時代のもので、セプティミウス・セウェルス帝が家族に捧げた25エーカーの複合施設です。
+- 浴場：怪我の部位に合わせて水位を調整できる治療センターでもありました。
+- 公衆トイレ：24人収容の社交の場で、重要な政治の話をする際は、声が漏れないように外で軍楽隊が演奏していました。
+- シナゴーグ：1000人収容可能で、結婚前の浄化に使われた大理石の噴水があります。`
         },
         category: 'history',
         coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
@@ -372,13 +386,18 @@ Sinagog (Havra): Bin kişi kapasitesiyle antik dünyanın en büyük havraların
             ja: 'アルテミス神殿'
         },
         description: {
-            tr: `Artemis (Diana); avcılık, vahşi doğa ve ay tanrıçasıdır. Tapınak dünyanın en büyük tapınaklarından biridir. Helenistik ve Roma dönemlerinde gelişen yapı, Hristiyanlık döneminde içine küçük bir kilise eklenmesiyle "7 Kilise"den biri olmuştur.
+            tr: `Artemis, Zeus ile Leto'nun kızı, Apollon'un ikiz kardeşi ve ay tanrıçasıdır. Artemis, Poseidon’un oğlu Orion’a aşık olur ancak kardeşi Apollon’un oyunuyla sevgilisini okuyla vurur. Kahrolan Artemis, Orion’u gümüşten yapılmış ay arabasıyla gökyüzünün en karanlık noktasına, en parlak yıldız olması için taşır. 
 
-İncil'de (Vahiy Bölümü) Sardes kilisesi 5. sırada yer alır. Sunak kısmı en eski bölümüdür (MÖ 500). Tapınaktaki büyük mermer bloklardaki yazılar, tarihteki ilk bankacılık faaliyetlerine (borç ve teminat) dair kanıtlar sunar. 17,5 metrelik devasa sütunları ve zengin süslemeleriyle antik dünyanın mimarlık harikasıdır.`,
-            en: `The Temple of Artemis at Sardis is one of the largest in the world. Dedicated to the goddess of the wild and the moon, it spans Hellenistic and Roman periods. It features a 5th-century church, marking Sardis as one of the "Seven Churches of Revelation." Historical artifacts like the "Credit Stone" show early banking activities, and its massive 17.5-meter columns are architectural wonders.`,
-            fr: `Le temple d'Artémis à Sardes est l'un des plus grands au monde. Dédié à la déesse de la chasse et de la lune, il traverse les périodes hellénistique et romaine. Il abrite une église du Ve siècle, faisant de Sardes l'une des "Sept Églises de l'Apocalypse". Des inscriptions témoignent d'activités bancaires précoces.`,
-            de: `Der Artemis-Tempel in Sardes ist einer der größten der Welt. Er ist der Göttin der Jagd und des Mondes geweiht und stammt aus hellenistischer und römischer Zeit. Er enthält eine Kirche aus dem 5. Jh., da Sardes eine der "Sieben Gemeinden der Offenbarung" ist. Funde wie der "Schuldstein" belegen frühe Bankgeschäfte.`,
-            ja: `サルディスのアルテミス神殿は世界最大級の規模を誇ります。狩猟と月の女神に捧げられたこの神殿は、ヘレニズム期からローマ期にかけて建設されました。5世紀の教会も併設されており、サルディスは「ヨハネの黙示録の7つの教会」の1つです。初期の銀行業務を示す碑文や、高さ17.5メートルの巨大な柱が特徴です。`
+Tapınak dünyanın en büyüklerinden biridir. Helenistik dönemde Zeus ve Artemis’e, Roma döneminde ise Antoninus Pius ve Faustina’ya adanmıştır. M.S. 5. YY’da içine inşa edilen küçük kilise ile Sardes, İncil'in Vahiy bölümünde adı geçen "7 Kilise"den (5. kilise) biri olmuştur. Vahiyde Sart kilisesine "Uyan! Beyazlar içinde benimle yürüyecekler" mesajı verilir.
+
+Sunak: Lydia Kralı Kroisos tarafından M.Ö. 500'de başlatılmıştır.
+Senet Taşı: Tapınaktaki büyük mermer blok üzerindeki yazılar, bir rahibeden borç alan kişinin teminatlarını içerir ki bu, tarihteki ilk bankacılık faaliyetlerinden biridir.
+Sütunlar: 17,5 metre yüksekliğindeki sütunların her parçası 4 tondur. "Baş Sütun" üzerindeki yılan figürü, açılış kurdelesini temsil eder.`,
+            en: `Artemis, the goddess of the moon, accidentally killed her lover Orion due to a trick by her twin brother Apollo. In her grief, she placed Orion in the darkest part of the sky to be the brightest star. 
+The Temple is one of the world's largest. It became the 5th of the "7 Churches of Revelation" in the Bible. Artifacts like the "Credit Stone" show that banking activities occurred here anciently. Its massive 17.5-meter columns are architectural wonders, with the "Leader Column" featuring a unique snake figure.`,
+            fr: `Artémis, déesse de la lune, a tué accidentellement son amant Orion. Affligée, elle l'a placé dans le ciel pour devenir l'étoile la plus brillante. Le temple est l'une des "7 Églises de l'Apocalypse". Des inscriptions prouvent des activités bancaires précoces. Ses colonnes de 17,5 mètres sont des chefs-d'œuvre.`,
+            de: `Artemis, die Mondgöttin, tötete versehentlich ihren Geliebten Orion. Sie setzte ihn als hellsten Stern an den Himmel. Der Tempel ist eine der „7 Gemeinden der Offenbarung“. Inschriften belegen frühe Bankgeschäfte. Die 17,5 Meter hohen Säulen sind architektonische Weltwunder.`,
+            ja: `月の女神アルテミスは、双子の兄アポロンの罠で恋人オリオンを射抜いてしまいました。悲しみのあまり、彼を天で最も輝く星にしました。この寺院は「ヨハネの黙示録の7つの教会」の5番目です。初期の銀行業務の証拠となる碑文や、高さ17.5メートルの巨大な柱が見どころです。`
         },
         category: 'history',
         coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 },
@@ -430,11 +449,11 @@ Sinagog (Havra): Bin kişi kapasitesiyle antik dünyanın en büyük havraların
             ja: 'ギョケユップ陶器'
         },
         description: {
-            tr: 'İnsanlığın yerleşik düzene geçtiği Neolitik Çağ\'ın devrimsel buluşlarından biri olan çömlekçilik, Gökeyüp\'te 6500 yıldır kadınlar tarafından sürdürülmektedir. Çömlekçi çarkı kullanılmadan elle şekillendirilen kaplar, açık ateşte pişirilmektedir. Bu ilkel yöntem, 12-13. yy\'da Türk boyları tarafından Horasan\'dan Anadolu\'ya taşınmıştır. Gökeyüp, bu kadim sanatın yaşayan en önemli merkezlerinden biridir.',
-            en: 'Pottery, one of the revolutionary inventions of the Neolithic Age, has been practiced by women in Gökeyüp for 6,500 years. Pots are shaped by hand without a wheel and fired in open pits. This primitive technique was brought to Anatolia from Khorasan by Turkish tribes in the 12th-13th centuries. Gökeyüp is a unique living archaeological center for this ancient art.',
-            fr: 'La poterie, l\'une des inventions révolutionnaires de l\'âge néolithique, est pratiquée par les femmes de Gökeyüp depuis 6 500 ans. Les pots sont façonnés à la main sans tour et cuits à l\'air libre. Cette technique primitive a été apportée du Khorasan par les tribus turques aux XIIe-XIIIe siècles. Gökeyüp est un centre archéologique vivant unique de cet art ancien.',
-            de: 'Die Töpferei, eine der revolutionären Erfindungen der Jungsteinzeit, wird in Gökeyüp seit 6.500 Jahren von Frauen betrieben. Die Gefäße werden ohne Töpferscheibe von Hand geformt und im offenen Feuer gebrannt. Diese primitive Technik wurde im 12.-13. Jahrhundert von türkischen Stämmen aus Chorasan nach Anatolien gebracht. Gökeyüp ist ein einzigartiges lebendiges Denkmal dieser antiken Kunst.',
-            ja: '新石器時代の革命的な発明の1つである陶器製作は、ギョケユップの女性たちによって6,500年間守られてきました。ろくろを使わずに手作業で形を作り、野焼きで仕上げます。この原始的な技法は、12〜13世紀にトルコ系部族によってホラサンからアナトリアに持ち込まれました。古代の芸術を示す貴重な生きた考古学的拠点です。'
+            tr: 'İnsanlığın yerleşik düzene geçtiği Neolitik Çağ\'ın devrimsel buluşlarından biri olan çömlekçilik, Gökeyüp\'te 6500 yıldır kadınlar tarafından sürdürülmektedir. Çömlekçi çarkı kullanılmadan basit bir tabla üzerinde elle şekillendirilip güneşte kurutularak açık ateşte pişirilmektedir. Bu ilkel teknoloji, Türk boylarının Anadolu\'ya girmeye başladığı 12-13. yy\'da Horasan\'dan bu yörelere taşınmıştır. Gökeyüp, bu kadim sanatın yaşayan en önemli merkezlerinden biridir.',
+            en: 'Pottery has been practiced by women in Gökeyüp for 6,500 years using Neolithic techniques. Pots are shaped by hand without a wheel and fired in open pits. This primitive technology was brought to Anatolia from Khorasan by Turkish tribes in the 12th-13th centuries. Gökeyüp remains a unique living archaeological center for this ancient art.',
+            fr: 'La poterie est pratiquée par les femmes de Gökeyüp depuis 6 500 ans selon des techniques néolithiques. Façonnés à la main sans tour, les pots sont cuits à l\'air libre. Cette technique primitive a été apportée du Khorasan par les tribus turques aux XIIe-XIIIe siècles.',
+            de: 'In Gökeyüp wird seit 6.500 Jahren Töpferei nach neolithischen Methoden betrieben. Die Gefäße werden ohne Töpferscheibe von Hand geformt und im offenen Feuer gebrannt. Diese Technik brachten türkische Stämme im 12. Jahrhundert aus Chorasan mit.',
+            ja: 'ギョケユップの女性たちは6,500年前の新石器時代の技法で陶器を作り続けています。ろくろを使わず手作業で成形し、野焼きで仕上げます。12〜13世紀にホラサンから伝わった古代の芸術です。'
         },
         category: 'shopping',
         coordinates: { lat: 38.6918318507784, lng: 28.281361601505868 },

@@ -1,3 +1,4 @@
+
 'use client';
 import { collection, doc, getDoc, setDoc, deleteDoc, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -9,10 +10,6 @@ import { experienceItems as staticExperienceItems } from '@/lib/data/experience-
 
 import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 
-/**
- * Belirli bir koleksiyonu statik verilerle besler.
- * Verileri silmez, mevcut verilerin kritik alanlarını koruyarak güncelleme yapar.
- */
 async function seedCollection<T extends {id: string}>(
     firestore: Firestore,
     collectionName: string,
@@ -29,7 +26,6 @@ async function seedCollection<T extends {id: string}>(
             const existingData = docSnap.exists() ? docSnap.data() : undefined;
             const processedData = dataProcessor(item, existingData);
             
-            // Mevcut veriye zarar vermeden sadece koddaki güncellemeleri yazar
             await setDoc(docRef, processedData, { merge: true });
             
             if (docSnap.exists()) {
@@ -51,28 +47,22 @@ async function seedCollection<T extends {id: string}>(
     return { added, updated, errors };
 }
 
-
 export async function seedDatabase(firestore: Firestore): Promise<{
     places: { added: number, updated: number },
     routes: { added: number, updated: number },
     experienceItems: { added: number, updated: number }
 }> {
   
-  // Önce kaldırılması istenen özel kayıtları sil (Atatürk Anıtı - id: '4')
   try {
       const ataturkAnitiRef = doc(firestore, 'places', '4');
       await deleteDoc(ataturkAnitiRef);
   } catch (e) {
-      console.warn("Atatürk Anıtı silinirken bir sorun oluştu (zaten silinmiş olabilir).");
+      console.warn("Atatürk Anıtı silinirken bir sorun oluştu.");
   }
 
-  // Yerleri güvenli şekilde güncelle
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // --- GÖRSEL KORUMA MANTIĞI ---
-    // Eğer veritabanında kaliteli bir link (imgur, unsplash vb.) varsa ve koddaki veri bir yer tutucu ise DB'dekini koru.
-    // Ancak kod tarafında yeni ve kaliteli bir Imgur linki tanımlanmışsa (id 11 için olduğu gibi) onu bas.
     const isCodeImageHighQuality = place.imageUrl && (
         place.imageUrl.includes('imgur.com') || 
         place.imageUrl.includes('images.unsplash.com') ||
@@ -86,26 +76,19 @@ export async function seedDatabase(firestore: Firestore): Promise<{
         (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
     );
 
-    // Sadece koddaki veri kalitesiz (picsum) ve DB'deki kaliteli ise DB'yi koru.
-    // Aksi halde (koddaki veri yeni bir Imgur linki ise) koddakini uygula.
     if (!isCodeImageHighQuality && isDbImageHighQuality) {
         data.imageUrl = existingData.imageUrl;
     }
 
-    // Koordinatları her zaman koddaki kesin değerlerle güncelle
     data.coordinates = place.coordinates;
-
     return data;
   });
 
-  // Rotaları güncelle
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);
-  
-  // Deneyim menüsü öğelerini güncelle
   const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})));
   
   if (placesResult.errors > 0 || routesResult.errors > 0 || experienceResult.errors > 0) {
-      throw new Error("Veritabanı beslenirken bir veya daha fazla hata oluştu. Detaylar için konsolu kontrol edin.");
+      throw new Error("Veritabanı beslenirken bir veya daha fazla hata oluştu.");
   }
 
   return {
