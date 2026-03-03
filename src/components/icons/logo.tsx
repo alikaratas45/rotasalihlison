@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 // The new logo is a colorful image, not a single-color SVG.
-// We accept a className to allow for sizing, but other SVG-specific props are not applicable.
+// We apply mixBlendMode: 'multiply' to hide the white background if the image itself is not transparent.
 export function Logo({ className }: { className?: string }) {
   const logoUrl = '/logos.png';
 
@@ -11,7 +11,7 @@ export function Logo({ className }: { className?: string }) {
         src={logoUrl}
         alt="Rota Salihli Logo"
         fill
-        style={{ objectFit: 'contain' }}
+        style={{ objectFit: 'contain', mixBlendMode: 'multiply' }}
         sizes="(max-width: 768px) 10vw, 5vw"
       />
     </div>

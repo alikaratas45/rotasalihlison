@@ -162,7 +162,7 @@ function AudioGuideToggle() {
         ) : (
           <VolumeX className="h-4 w-4" />
         )}
-        <span className="text-xs font-bold uppercase tracking-tight hidden sm:inline">
+        <span className="text-xs font-bold uppercase tracking-tight">
           {t('header.audioGuide')}
         </span>
       </Button>
