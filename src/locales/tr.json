@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Ana Sayfa",
@@ -48,6 +47,7 @@
         "viewAllStories": "Tüm Hikayeleri Gör",
         "readMore": "Devamını Oku →",
         "backToStories": "Hikayelere Geri Dön",
+        "backToPlaces": "Yerlere Geri Dön",
         "discoverPlace": "Mekanı Keşfet"
     },
     "places": {
@@ -100,5 +100,21 @@
     "bicycleRoutes": {
         "title": "Bisiklet Rotaları",
         "description": "Salihli ve çevresindeki bisiklet parkurlarını ve yollarını keşfedin. Pedal çevirmeye başlayın!"
+    },
+    "survey": {
+        "title": "Deneyiminizi Puanlayın",
+        "description": "Mekana yakın olduğunuz için geri bildirim verebilirsiniz. Görüşleriniz bizim için değerlidir.",
+        "cleanliness": "Mekan Temizliği ve Düzeni",
+        "accessibility": "Ulaşım Kolaylığı",
+        "satisfaction": "Genel Memnuniyet Deneyimi",
+        "submitButton": "Geri Bildirimi Gönder",
+        "thankYouTitle": "Teşekkür Ederiz!",
+        "thankYouDescription": "Geri bildiriminiz başarıyla alındı. Salihli'yi geliştirmemize yardımcı olduğunuz için teşekkürler.",
+        "errorTitle": "Eksik Bilgi",
+        "errorDescription": "Lütfen tüm kriterleri puanlayın.",
+        "successTitle": "Gönderildi",
+        "successDescription": "Geri bildiriminiz için teşekkürler!",
+        "submitErrorTitle": "Hata",
+        "submitErrorDescription": "Geri bildirim gönderilirken bir sorun oluştu."
     }
 }

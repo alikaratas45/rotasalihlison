@@ -4,41 +4,37 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
-      // Allow if the user's email is the admin email
       return request.auth != null && request.auth.token.email == 'alikarataskula@gmail.com';
     }
 
-    // AUTHENTICATION
-    // ---
-    // Logged in users can read and create their own user profile.
-    // They can only update their own profile.
     match /users/{userId} {
       allow read, create: if request.auth != null;
       allow update: if request.auth.uid == userId;
-      allow delete: if false; // Profiles cannot be deleted
+      allow delete: if false;
     }
 
-    // CONTENT
-    // ---
-    // All users can read public content.
-    // Only admins can write, update, or delete content.
+    match /feedbacks/{feedbackId} {
+      allow create: if true; // Allow anonymous feedback submission
+      allow read: if isAdmin();
+    }
+
     match /places/{placeId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
-     match /routes/{routeId} {
+    match /routes/{routeId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
-     match /stories/{storyId} {
+    match /stories/{storyId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
-     match /brochures/{brochureId} {
+    match /brochures/{brochureId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
-     match /menu-items/{menuItemId} {
+    match /menu-items/{menuItemId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }

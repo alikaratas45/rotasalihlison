@@ -29,6 +29,20 @@
       },
       "required": ["id", "slug", "name", "description", "category", "coordinates"]
     },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "User feedback for a specific place.",
+      "type": "object",
+      "properties": {
+        "placeId": { "type": "string" },
+        "placeName": { "type": "string" },
+        "cleanliness": { "type": "number" },
+        "accessibility": { "type": "number" },
+        "satisfaction": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["placeId", "cleanliness", "accessibility", "satisfaction"]
+    },
     "Route": {
       "title": "Route",
       "description": "A thematic route with multiple stops.",
@@ -141,6 +155,10 @@
     "/places": {
       "schema": { "$ref": "#/backend/entities/Place" },
       "description": "Collection of all places of interest."
+    },
+    "/feedbacks": {
+      "schema": { "$ref": "#/backend/entities/Feedback" },
+      "description": "Collection of user feedbacks for places."
     },
     "/routes": {
       "schema": { "$ref": "#/backend/entities/Route" },

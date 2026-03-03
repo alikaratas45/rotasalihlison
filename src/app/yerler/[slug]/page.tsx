@@ -6,13 +6,14 @@ import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Volume2, Pause, Loader2 } from 'lucide-react';
+import { MapPin, Volume2, Pause, Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query } from 'firebase/firestore';
 import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Survey } from '@/components/survey';
 
 function PlaceDetailSkeleton() {
     return (
@@ -38,6 +39,17 @@ function PlaceDetailSkeleton() {
     );
 }
 
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371000; // Earth radius in meters
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
 
 export default function PlaceDetailPage() {
   const params = useParams();
@@ -46,7 +58,7 @@ export default function PlaceDetailPage() {
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
   const typedLanguage = language as Language;
 
@@ -58,37 +70,60 @@ export default function PlaceDetailPage() {
     if (!places) return null;
     return places.find(p => Object.values(p.slug).includes(slug as string));
   }, [places, slug]);
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => console.error("Error getting location:", error),
+        { enableHighAccuracy: true }
+      );
+    }
+  }, []);
+
+  const isNear = useMemo(() => {
+    if (!userLocation || !place) return false;
+    const distance = calculateDistance(
+      userLocation.lat,
+      userLocation.lng,
+      place.coordinates.lat,
+      place.coordinates.lng
+    );
+    return distance <= 500;
+  }, [userLocation, place]);
   
   const name = place ? place.name[typedLanguage] : '';
   const description = place ? place.description[typedLanguage] : '';
 
   const stopAudio = useCallback(() => {
-    if (speechSynthesis.speaking) {
-      speechSynthesis.cancel();
+    if (typeof window !== 'undefined' && window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
     }
     setIsPlaying(false);
   }, []);
 
   useEffect(() => {
-    // When the audio guide is disabled from the header, stop audio
     if (!isAudioGuideEnabled) {
       stopAudio();
     }
-    // Cleanup on component unmount
     return () => {
       stopAudio();
     };
   }, [isAudioGuideEnabled, stopAudio]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    
     const trySpeak = () => {
       setIsGenerating(true);
-      const voices = speechSynthesis.getVoices();
+      const voices = window.speechSynthesis.getVoices();
 
       if (voices.length === 0) {
-        speechSynthesis.resume(); // Try to wake up the speech engine
-        speechSynthesis.addEventListener('voiceschanged', trySpeak, { once: true });
+        window.speechSynthesis.resume();
+        window.speechSynthesis.addEventListener('voiceschanged', trySpeak, { once: true });
         return;
       }
       setIsGenerating(false);
@@ -124,12 +159,12 @@ export default function PlaceDetailPage() {
 
       utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = (event) => {
+      utterance.onerror = () => {
         setIsPlaying(false);
         setIsGenerating(false);
       };
       
-      speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(utterance);
     }
     trySpeak();
   }, []);
@@ -137,7 +172,7 @@ export default function PlaceDetailPage() {
   const handlePlayPause = async () => {
     if (!isAudioGuideEnabled || isGenerating) return;
 
-    if (speechSynthesis.speaking) {
+    if (window.speechSynthesis.speaking) {
         stopAudio();
     } else {
       speak(description, typedLanguage);
@@ -164,8 +199,16 @@ export default function PlaceDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
+      <div className="mb-6">
+        <Button asChild variant="ghost" size="sm">
+          <Link href="/yerler" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            {t('actions.backToPlaces')}
+          </Link>
+        </Button>
+      </div>
       <div className="grid md:grid-cols-5 gap-8 lg:gap-12">
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 space-y-8">
           <Card className="overflow-hidden shadow-lg">
             <div className="relative h-[300px] md:h-[450px] w-full">
               <Image
@@ -178,25 +221,32 @@ export default function PlaceDetailPage() {
               />
             </div>
           </Card>
+          
+          {/* Survey section only appears if user is near */}
+          {isNear && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <Survey placeId={place.id} placeName={name} />
+            </div>
+          )}
         </div>
         <div className="md:col-span-2">
           <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">{name}</h1>
-          <p className="text-lg text-muted-foreground mb-6 whitespace-pre-line">{description}</p>
+          <p className="text-lg text-muted-foreground mb-6 whitespace-pre-line leading-relaxed">{description}</p>
           <div className="flex flex-col sm:flex-row gap-4">
-             <Button size="lg" asChild>
+             <Button size="lg" asChild className="flex-1">
                 <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
-                    <MapPin className="mr-2" />
+                    <MapPin className="mr-2 h-5 w-5" />
                     {t('actions.showOnMap')}
                 </a>
             </Button>
             {isAudioGuideEnabled && (
-                <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating}>
+                <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1">
                     {isGenerating ? (
-                        <Loader2 className="mr-2 animate-spin" />
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     ) : isPlaying ? (
-                        <Pause className="mr-2" />
+                        <Pause className="mr-2 h-5 w-5" />
                     ) : (
-                        <Volume2 className="mr-2" />
+                        <Volume2 className="mr-2 h-5 w-5" />
                     )}
                     {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
                 </Button>
