@@ -1,7 +1,7 @@
+
 import Image from 'next/image';
 
-// The new logo is a colorful image, not a single-color SVG.
-// We apply mixBlendMode: 'multiply' to hide the white background if the image itself is not transparent.
+// The logo background is made transparent using CSS mixBlendMode.
 export function Logo({ className }: { className?: string }) {
   const logoUrl = '/logos.png';
 

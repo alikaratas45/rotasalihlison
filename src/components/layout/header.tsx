@@ -4,11 +4,11 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Volume2, VolumeX, BookOpen, User, Lock } from 'lucide-react';
+import { Menu, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 import { Logo } from '@/components/icons/logo';
 import { TurkishFlagIcon, UKFlagIcon, FrenchFlagIcon, GermanFlagIcon, JapaneseFlagIcon } from '@/components/icons/flags';
@@ -20,7 +20,6 @@ import React from 'react';
 export function Header() {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
 
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
@@ -151,7 +150,7 @@ function AudioGuideToggle() {
         onClick={toggleAudioGuide}
         aria-label={t('header.audioGuide')}
         className={cn(
-          "rounded-full gap-2 px-3 transition-all duration-300 shadow-sm border-2",
+          "rounded-full gap-2 px-3 transition-all duration-300 shadow-sm border-2 h-10 md:h-9",
           isAudioGuideEnabled 
             ? "bg-primary border-primary text-primary-foreground hover:bg-primary/90" 
             : "text-muted-foreground border-muted-foreground/20 bg-transparent hover:bg-muted"
