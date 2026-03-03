@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Map, Route as RouteIcon, X } from 'lucide-react';
+import { Loader2, Map, Route as RouteIcon, X, Navigation } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Language } from '@/context/language-context';
 import { cn } from '@/lib/utils';
@@ -19,24 +19,71 @@ import { PlacesMap } from '@/components/places-map';
 
 const MAX_STOPS = 10;
 
+// Helper to calculate distance between two coordinates
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Earth radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
 export default function RotaOlusturPage() {
     const { t, language } = useLanguage();
     const typedLanguage = language as Language;
     const firestore = useFirestore();
     const { toast } = useToast();
 
-    const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([]);
+    const [selectedPlaceIds, setSelectedPlaceIds] = useState<string[]>([]);
+    const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(false);
 
-    const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
-    const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
-    const sortedPlaces = useMemo(() => places?.slice().sort((a, b) => a.name[typedLanguage].localeCompare(b.name[typedLanguage], language)) || [], [places, language, typedLanguage]);
+    // Get user location on mount
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => console.warn("Location access denied or unavailable", error),
+                { enableHighAccuracy: true }
+            );
+        }
+    }, []);
 
-    const handlePlaceSelection = useCallback((place: Place) => {
-        setSelectedPlaces(prev => {
-            const isSelected = prev.find(p => p.id === place.id);
+    const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+    const { data: allPlaces, loading: placesLoading } = useCollection<Place>(placesQuery);
+    
+    const sortedPlacesForList = useMemo(() => 
+        allPlaces?.slice().sort((a, b) => a.name[typedLanguage].localeCompare(b.name[typedLanguage], language)) || []
+    , [allPlaces, language, typedLanguage]);
+
+    // This is the core logic: Sort selected places by distance from user (nearest to farthest)
+    const orderedSelectedPlaces = useMemo(() => {
+        if (!allPlaces) return [];
+        const selected = allPlaces.filter(p => selectedPlaceIds.includes(p.id));
+        
+        if (!userLocation) return selected;
+
+        return [...selected].sort((a, b) => {
+            const distA = calculateDistance(userLocation.lat, userLocation.lng, a.coordinates.lat, a.coordinates.lng);
+            const distB = calculateDistance(userLocation.lat, userLocation.lng, b.coordinates.lat, b.coordinates.lng);
+            return distA - distB;
+        });
+    }, [allPlaces, selectedPlaceIds, userLocation]);
+
+    const handlePlaceToggle = useCallback((placeId: string) => {
+        setSelectedPlaceIds(prev => {
+            const isSelected = prev.includes(placeId);
             if (isSelected) {
-                return prev.filter(p => p.id !== place.id);
+                return prev.filter(id => id !== placeId);
             } else {
                 if (prev.length >= MAX_STOPS) {
                     toast({
@@ -46,13 +93,13 @@ export default function RotaOlusturPage() {
                     });
                     return prev;
                 }
-                return [...prev, place];
+                return [...prev, placeId];
             }
         });
     }, [toast, t]);
     
     const handleOpenInMaps = useCallback(() => {
-        if (selectedPlaces.length === 0) {
+        if (orderedSelectedPlaces.length === 0) {
             toast({
                 variant: 'destructive',
                 title: 'Rota Boş',
@@ -62,50 +109,66 @@ export default function RotaOlusturPage() {
         }
         setIsMapLoading(true);
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                const origin = `${latitude},${longitude}`;
-                
-                let mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}`;
-                
-                if (selectedPlaces.length === 1) {
-                    const destination = `${selectedPlaces[0].coordinates.lat},${selectedPlaces[0].coordinates.lng}`;
-                    mapsUrl += `&destination=${destination}`;
-                } else {
-                    const destination = selectedPlaces[selectedPlaces.length - 1];
-                    const destinationCoords = `${destination.coordinates.lat},${destination.coordinates.lng}`;
-                    const waypoints = selectedPlaces.slice(0, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
-                    mapsUrl += `&destination=${destinationCoords}&waypoints=${waypoints}`;
-                }
+        const triggerMaps = (lat: number, lng: number) => {
+            const origin = `${lat},${lng}`;
+            let mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}`;
+            
+            if (orderedSelectedPlaces.length === 1) {
+                const destination = `${orderedSelectedPlaces[0].coordinates.lat},${orderedSelectedPlaces[0].coordinates.lng}`;
+                mapsUrl += `&destination=${destination}`;
+            } else {
+                const destination = orderedSelectedPlaces[orderedSelectedPlaces.length - 1];
+                const destinationCoords = `${destination.coordinates.lat},${destination.coordinates.lng}`;
+                const waypoints = orderedSelectedPlaces.slice(0, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
+                mapsUrl += `&destination=${destinationCoords}&waypoints=${waypoints}`;
+            }
 
-                window.open(mapsUrl, '_blank');
-                setIsMapLoading(false);
-            },
-            () => {
-                toast({
-                    variant: 'destructive',
-                    title: 'Konum Alınamadı',
-                    description: 'Rota oluşturmak için konum izninize ihtiyacımız var.',
-                });
-                setIsMapLoading(false);
-            },
-            { enableHighAccuracy: true }
-        );
-    }, [selectedPlaces, toast]);
+            window.open(mapsUrl, '_blank');
+            setIsMapLoading(false);
+        };
+
+        if (userLocation) {
+            triggerMaps(userLocation.lat, userLocation.lng);
+        } else {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation({ lat: latitude, lng: longitude });
+                    triggerMaps(latitude, longitude);
+                },
+                () => {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Konum Alınamadı',
+                        description: 'Rota oluşturmak için konum izninize ihtiyacımız var.',
+                    });
+                    setIsMapLoading(false);
+                },
+                { enableHighAccuracy: true }
+            );
+        }
+    }, [orderedSelectedPlaces, userLocation, toast]);
 
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold font-headline mb-4">{t('routePlanner.title')}</h1>
                 <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{t('routePlanner.description')}</p>
+                {userLocation ? (
+                    <Badge variant="outline" className="mt-4 gap-1 py-1 px-3 border-primary/30 text-primary">
+                        <Navigation className="h-3 w-3 fill-primary/20" />
+                        Konumunuz aktif: Rota size en yakın yerden başlayacak şekilde sıralanır.
+                    </Badge>
+                ) : (
+                    <p className="text-xs text-muted-foreground mt-2 italic">Konum erişimine izin verirseniz rota size en yakın noktadan başlayacak şekilde optimize edilir.</p>
+                )}
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 <Card className="lg:col-span-1 h-fit">
                      <CardHeader>
                         <CardTitle>{t('routePlanner.selectPlaces')}</CardTitle>
-                        <CardDescription>{selectedPlaces.length} / {MAX_STOPS} {t('home.stops_plural')}</CardDescription>
+                        <CardDescription>{selectedPlaceIds.length} / {MAX_STOPS} {t('home.stops_plural')}</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                         {placesLoading ? (
@@ -115,9 +178,9 @@ export default function RotaOlusturPage() {
                         ) : (
                             <ScrollArea className="h-[70vh] p-4 lg:p-6">
                                 <div className="space-y-4">
-                                    {sortedPlaces.map(place => {
-                                        const isSelected = selectedPlaces.some(p => p.id === place.id);
-                                        const isDisabled = !isSelected && selectedPlaces.length >= MAX_STOPS;
+                                    {sortedPlacesForList.map(place => {
+                                        const isSelected = selectedPlaceIds.includes(place.id);
+                                        const isDisabled = !isSelected && selectedPlaceIds.length >= MAX_STOPS;
                                         return (
                                             <label
                                                 key={place.id}
@@ -145,7 +208,7 @@ export default function RotaOlusturPage() {
                                                 <Checkbox
                                                     id={place.id}
                                                     checked={isSelected}
-                                                    onCheckedChange={() => { if(!isDisabled) handlePlaceSelection(place) }}
+                                                    onCheckedChange={() => { if(!isDisabled) handlePlaceToggle(place.id) }}
                                                     disabled={isDisabled}
                                                     className="ml-auto h-5 w-5"
                                                 />
@@ -163,12 +226,12 @@ export default function RotaOlusturPage() {
                             <CardTitle>{t('routePlanner.routeMap')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {selectedPlaces.length > 0 ? (
+                            {orderedSelectedPlaces.length > 0 ? (
                                 <div className="aspect-video w-full rounded-lg overflow-hidden border">
                                     <PlacesMap 
-                                        places={selectedPlaces} 
+                                        places={orderedSelectedPlaces} 
                                         className="w-full h-full" 
-                                        isRoute={selectedPlaces.length > 1}
+                                        isRoute={orderedSelectedPlaces.length > 1}
                                     />
                                 </div>
                             ) : (
@@ -177,7 +240,7 @@ export default function RotaOlusturPage() {
                                     <p className="text-muted-foreground text-center">{t('routePlanner.noSelection')}</p>
                                 </div>
                             )}
-                            {selectedPlaces.length > 0 && (
+                            {orderedSelectedPlaces.length > 0 && (
                                 <Button onClick={handleOpenInMaps} disabled={isMapLoading} className="mt-4 w-full" size="lg">
                                     {isMapLoading ? <Loader2 className="mr-2 animate-spin" /> : <Map className="mr-2"/>}
                                     {t('routePlanner.openInMaps')}
@@ -188,14 +251,16 @@ export default function RotaOlusturPage() {
                    <Card>
                         <CardHeader>
                             <CardTitle>{t('routePlanner.selectedPlaces')}</CardTitle>
+                            <CardDescription>Size en yakından en uzağa doğru sıralanmıştır.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            {selectedPlaces.length > 0 ? (
+                            {orderedSelectedPlaces.length > 0 ? (
                                 <div className="flex flex-wrap gap-2">
-                                    {selectedPlaces.map((place, index) => (
+                                    {orderedSelectedPlaces.map((place, index) => (
                                          <Badge key={place.id} variant="secondary" className="flex items-center gap-2 text-base py-1 px-3">
-                                            <span>{index + 1}. {place.name[typedLanguage]}</span>
-                                            <button onClick={() => handlePlaceSelection(place)} className="rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                            <span className="font-bold text-primary mr-1">{index + 1}.</span>
+                                            <span>{place.name[typedLanguage]}</span>
+                                            <button onClick={() => handlePlaceToggle(place.id)} className="rounded-full hover:bg-muted-foreground/20 p-0.5 ml-1">
                                                 <X className="h-3 w-3"/>
                                             </button>
                                         </Badge>
