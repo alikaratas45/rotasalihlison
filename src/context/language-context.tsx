@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
@@ -24,28 +25,35 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
 
-  // This effect runs only on the client, after the initial render, to sync with browser settings.
+  // Bu effect, istemci tarafında ilk render'dan sonra çalışarak dil ve sesli rehber tercihlerini geri yükler.
   useEffect(() => {
-    // Set language from browser settings
-    const browserLang = navigator.language.split('-')[0] as Language;
-    if (languages.some(l => l.code === browserLang)) {
-      setLanguageState(browserLang);
+    // 1. Önce localStorage'da kayıtlı dil var mı kontrol et
+    const savedLang = localStorage.getItem('language') as Language;
+    if (savedLang && languages.some(l => l.code === savedLang)) {
+      setLanguageState(savedLang);
+    } else {
+      // 2. Yoksa tarayıcı ayarlarına bak
+      const browserLang = navigator.language.split('-')[0] as Language;
+      if (languages.some(l => l.code === browserLang)) {
+        setLanguageState(browserLang);
+      }
     }
 
-    // Set audio guide preference from localStorage
+    // Sesli rehber tercihini geri yükle
     const savedAudioPreference = localStorage.getItem('audioGuideEnabled');
     if (savedAudioPreference !== null) {
       setIsAudioGuideEnabled(JSON.parse(savedAudioPreference));
     }
-  }, []); // Empty dependency array ensures it runs only once on the client mount.
+  }, []);
 
-  // This effect synchronizes the document's lang attribute whenever the language state changes.
+  // Dil değiştiğinde HTML lang niteliğini güncelle
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
+    localStorage.setItem('language', lang); // Seçimi kaydet
   }, []);
 
   const toggleAudioGuide = useCallback(() => {
@@ -65,7 +73,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     for (const k of keys) {
       result = result?.[k];
       if (result === undefined) {
-        // Fallback to English if translation is missing
+        // Çeviri eksikse İngilizceye düş
         let fallbackResult = translations['en'];
         for (const fk of keys) {
             fallbackResult = fallbackResult?.[fk];
@@ -78,7 +86,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     if (typeof result === 'string' && args.length > 0 && args[0].count !== undefined) {
        if (language === 'tr') {
-         // No pluralization for Turkish
          return result;
        }
        const count = args[0].count;
