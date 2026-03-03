@@ -1,7 +1,8 @@
+
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useParams } from 'next/navigation';
+import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
@@ -51,9 +52,11 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
     return R * c;
 }
 
-export default function PlaceDetailPage() {
+function PlaceDetailContent() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug;
+  const autoplay = searchParams.get('autoplay') === 'true';
   const { t, language, isAudioGuideEnabled } = useLanguage();
   
   const [isPlaying, setIsPlaying] = useState(false);
@@ -172,7 +175,7 @@ export default function PlaceDetailPage() {
     trySpeak();
   }, []);
 
-  const handlePlayPause = async () => {
+  const handlePlayPause = useCallback(async () => {
     if (!isAudioGuideEnabled || isGenerating) return;
 
     if (window.speechSynthesis.speaking) {
@@ -180,7 +183,17 @@ export default function PlaceDetailPage() {
     } else {
       speak(description, typedLanguage);
     }
-  };
+  }, [isAudioGuideEnabled, isGenerating, description, typedLanguage, speak, stopAudio]);
+
+  // Handle autoplay if coming from proximity alert
+  useEffect(() => {
+    if (autoplay && place && !placesLoading && !isPlaying && isAudioGuideEnabled) {
+      const timer = setTimeout(() => {
+        handlePlayPause();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoplay, place, placesLoading, isAudioGuideEnabled, handlePlayPause, isPlaying]);
   
   if (placesLoading) {
       return <PlaceDetailSkeleton />;
@@ -259,4 +272,12 @@ export default function PlaceDetailPage() {
       </div>
     </div>
   );
+}
+
+export default function PlaceDetailPage() {
+    return (
+        <Suspense fallback={<PlaceDetailSkeleton />}>
+            <PlaceDetailContent />
+        </Suspense>
+    )
 }

@@ -125,5 +125,10 @@
         "successDescription": "Thanks for your feedback!",
         "submitErrorTitle": "Error",
         "submitErrorDescription": "There was a problem sending the feedback."
+    },
+    "proximity": {
+        "alert": "You are currently at {0}. Would you like me to tell you about it?",
+        "yes": "Yes, Listen",
+        "no": "No, Thanks"
     }
 }

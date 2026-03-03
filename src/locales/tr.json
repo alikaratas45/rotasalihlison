@@ -125,5 +125,10 @@
         "successDescription": "Geri bildiriminiz için teşekkürler!",
         "submitErrorTitle": "Hata",
         "submitErrorDescription": "Geri bildirim gönderilirken bir sorun oluştu."
+    },
+    "proximity": {
+        "alert": "Şu anda {0} konumundasınız. Size burayı anlatmamı ister misiniz?",
+        "yes": "Evet, Dinle",
+        "no": "Hayır, Teşekkürler"
     }
 }
