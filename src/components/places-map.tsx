@@ -101,8 +101,19 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
             });
           }
         },
-        (error) => console.error("Geolocation tracking error:", error),
-        { enableHighAccuracy: true }
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              break;
+            case error.POSITION_UNAVAILABLE:
+              break;
+            case error.TIMEOUT:
+              break;
+            default:
+              console.warn("Geolocation warning:", error.message);
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
       );
     }
 
@@ -188,6 +199,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
               const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
               map?.panTo(coords);
               map?.setZoom(15);
+          }, (error) => {
+              console.warn("Manual center failed:", error.message);
           });
       }
   };

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -90,8 +89,23 @@ export function AudioProximityAlert() {
           }
         }
       },
-      (error) => console.error("Proximity tracking error:", error),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (error) => {
+        // Handle geolocation errors gracefully
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            // User denied location, we should stop trying or at least not log error
+            break;
+          case error.POSITION_UNAVAILABLE:
+            // Position unavailable, might be temporary
+            break;
+          case error.TIMEOUT:
+            // Request timed out, happens often in dev environments
+            break;
+          default:
+            console.warn("Geolocation warning:", error.message);
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
@@ -122,7 +136,7 @@ export function AudioProximityAlert() {
             <Volume2 className="h-6 w-6" />
             {t('header.audioGuide')}
           </DialogTitle>
-          <DialogDescription className="text-lg py-4 leading-relaxed font-medium">
+          <DialogDescription className="text-lg py-4 leading-relaxed font-medium text-foreground">
             {t('proximity.alert', activeAlertPlace.name[language as keyof typeof activeAlertPlace.name] || activeAlertPlace.name.tr)}
           </DialogDescription>
         </DialogHeader>
