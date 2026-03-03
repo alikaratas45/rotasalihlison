@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -36,6 +35,7 @@ export function Survey({ placeId, placeName }: SurveyProps) {
   const [extraAnswers, setExtraAnswers] = useState<Record<string, string>>({
     withTour: '',
     guided: '',
+    infoBoards: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -49,7 +49,12 @@ export function Survey({ placeId, placeName }: SurveyProps) {
   };
 
   const handleSubmit = async () => {
-    if (Object.values(ratings).some((r) => r === 0) || !extraAnswers.withTour || !extraAnswers.guided) {
+    const isComplete = Object.values(ratings).every(r => r > 0) && 
+                       extraAnswers.withTour !== '' && 
+                       extraAnswers.guided !== '' && 
+                       extraAnswers.infoBoards !== '';
+
+    if (!isComplete) {
       toast({
         variant: 'destructive',
         title: t('survey.errorTitle'),
@@ -166,6 +171,24 @@ export function Survey({ placeId, placeName }: SurveyProps) {
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="guided-no" />
                 <Label htmlFor="guided-no" className="cursor-pointer text-base">{t('survey.no')}</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-4">
+            <p className="font-semibold text-base md:text-lg text-foreground">{t('survey.infoBoards')}</p>
+            <RadioGroup 
+              onValueChange={(val) => handleExtraChange('infoBoards', val)} 
+              className="flex gap-6"
+              value={extraAnswers.infoBoards}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="info-yes" />
+                <Label htmlFor="info-yes" className="cursor-pointer text-base">{t('survey.yes')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="info-no" />
+                <Label htmlFor="info-no" className="cursor-pointer text-base">{t('survey.no')}</Label>
               </div>
             </RadioGroup>
           </div>

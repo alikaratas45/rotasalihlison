@@ -85,5 +85,6 @@ export type Feedback = {
     satisfaction: number;
     withTour: 'yes' | 'no';
     guided: 'yes' | 'no';
+    infoBoards: 'yes' | 'no';
     createdAt: any;
 };

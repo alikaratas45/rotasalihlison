@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Startseite",
@@ -109,6 +108,7 @@
         "satisfaction": "Gesamtzufriedenheit",
         "withTour": "Sind Sie mit einer Reisegruppe gekommen?",
         "guided": "Hat Ihnen jemand diesen Ort erklärt?",
+        "infoBoards": "Gibt es ausreichend Informationstafeln in der Umgebung?",
         "yes": "Ja",
         "no": "Nein",
         "submitButton": "Feedback senden",

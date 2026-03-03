@@ -26,7 +26,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle, Star, Users, MapPin, CheckCircle2, XCircle, Download, Filter } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle, Star, Users, MapPin, CheckCircle2, XCircle, Download, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -162,14 +162,15 @@ export default function AdminPage() {
         const avgSatisfaction = filteredFeedbacks.reduce((acc, f) => acc + f.satisfaction, 0) / total;
         const tourCount = filteredFeedbacks.filter(f => f.withTour === 'yes').length;
         const guidedCount = filteredFeedbacks.filter(f => f.guided === 'yes').length;
+        const infoBoardsCount = filteredFeedbacks.filter(f => f.infoBoards === 'yes').length;
 
-        return { total, avgCleanliness, avgAccessibility, avgSatisfaction, tourCount, guidedCount };
+        return { total, avgCleanliness, avgAccessibility, avgSatisfaction, tourCount, guidedCount, infoBoardsCount };
     }, [filteredFeedbacks]);
 
     const handleDownloadReport = useCallback(() => {
         if (!filteredFeedbacks || filteredFeedbacks.length === 0) return;
 
-        const headers = ["Mekan", "Temizlik", "Erişim", "Memnuniyet", "Turla Gelis", "Rehberlik", "Tarih"];
+        const headers = ["Mekan", "Temizlik", "Erişim", "Memnuniyet", "Turla Gelis", "Rehberlik", "Bilgi Panolari", "Tarih"];
         const rows = filteredFeedbacks.map(f => [
             f.placeName,
             f.cleanliness,
@@ -177,6 +178,7 @@ export default function AdminPage() {
             f.satisfaction,
             f.withTour === 'yes' ? 'Evet' : 'Hayir',
             f.guided === 'yes' ? 'Evet' : 'Hayir',
+            f.infoBoards === 'yes' ? 'Evet' : 'Hayir',
             f.createdAt?.toDate ? format(f.createdAt.toDate(), 'yyyy-MM-dd HH:mm') : ''
         ]);
 
@@ -510,7 +512,7 @@ export default function AdminPage() {
                     ) : filteredFeedbacks && filteredFeedbacks.length > 0 ? (
                         <div className="space-y-8">
                             {/* Stats Summary */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
                                 <Card className="bg-primary/5 border-primary/10">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Toplam Katılım</CardDescription>
@@ -547,6 +549,12 @@ export default function AdminPage() {
                                         <CardTitle className="text-2xl">{stats?.guidedCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
+                                <Card>
+                                    <CardHeader className="p-4 pb-2">
+                                        <CardDescription className="text-xs uppercase tracking-wider">Yeterli Bilgi Panosu</CardDescription>
+                                        <CardTitle className="text-2xl">{stats?.infoBoardsCount}</CardTitle>
+                                    </CardHeader>
+                                </Card>
                             </div>
 
                             {/* Feedbacks Table */}
@@ -566,6 +574,7 @@ export default function AdminPage() {
                                                     <TableHead>Memnuniyet</TableHead>
                                                     <TableHead className="text-center">Tur</TableHead>
                                                     <TableHead className="text-center">Rehber</TableHead>
+                                                    <TableHead className="text-center">Pano</TableHead>
                                                     <TableHead className="text-right">Tarih</TableHead>
                                                 </TableRow>
                                             </TableHeader>
@@ -584,6 +593,9 @@ export default function AdminPage() {
                                                         </TableCell>
                                                         <TableCell className="text-center">
                                                             {f.guided === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
+                                                        </TableCell>
+                                                        <TableCell className="text-center">
+                                                            {f.infoBoards === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
                                                         </TableCell>
                                                         <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
                                                             {f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}

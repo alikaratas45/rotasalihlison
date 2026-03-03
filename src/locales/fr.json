@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Accueil",
@@ -109,6 +108,7 @@
         "satisfaction": "Expérience globale de satisfaction",
         "withTour": "Êtes-vous venu avec un groupe de touristes ?",
         "guided": "Quelqu'un vous a-t-il expliqué cet endroit ?",
+        "infoBoards": "Y a-t-il suffisamment de panneaux d'information dans la zone ?",
         "yes": "Oui",
         "no": "Non",
         "submitButton": "Envoyer les commentaires",
