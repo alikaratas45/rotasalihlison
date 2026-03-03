@@ -13,7 +13,7 @@ import { googleMapsApiKey } from '@/lib/config';
 interface PlacesMapProps {
   places: Place[];
   className?: string;
-  isRoute?: boolean; // Rota olarak mı çizilsin (noktalar arası çizgi)
+  isRoute?: boolean; // Rota olarak mı çizilsin (Google Directions API)
 }
 
 export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false }) => {
@@ -27,7 +27,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
   
   const userMarkerRef = useRef<google.maps.Marker | null>(null);
   const watchIdRef = useRef<number | null>(null);
-  const polylineRef = useRef<google.maps.Polyline | null>(null);
+  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+  const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
 
   useEffect(() => {
     const handleAuthError = () => {
@@ -67,6 +68,18 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         zoomControl: true,
       });
       setMap(newMap);
+
+      // Initialize Directions Service
+      directionsServiceRef.current = new google.maps.DirectionsService();
+      directionsRendererRef.current = new google.maps.DirectionsRenderer({
+        map: newMap,
+        suppressMarkers: true, // We will use our own custom markers
+        polylineOptions: {
+          strokeColor: '#4285F4',
+          strokeWeight: 5,
+          strokeOpacity: 0.7
+        }
+      });
     }
   }, [isApiLoaded, map, authFailed]);
 
@@ -124,30 +137,37 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     };
   }, [map, isApiLoaded]);
 
-  // Handle Route Polyline
+  // Handle Real Road Route using Directions API
   useEffect(() => {
-    if (!map || !places || !isRoute || authFailed) {
-      if (polylineRef.current) {
-        polylineRef.current.setMap(null);
-        polylineRef.current = null;
-      }
+    if (!map || !places || !isRoute || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) {
+      directionsRendererRef.current?.setDirections({ routes: [] });
       return;
     }
 
-    const path = places.map(p => p.coordinates).filter(Boolean);
-    
-    if (polylineRef.current) {
-      polylineRef.current.setPath(path);
-    } else {
-      polylineRef.current = new window.google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: 'hsl(140, 56%, 36%)',
-        strokeOpacity: 0.8,
-        strokeWeight: 4,
-        map: map
-      });
+    if (places.length < 2) {
+      directionsRendererRef.current.setDirections({ routes: [] });
+      return;
     }
+
+    const origin = places[0].coordinates;
+    const destination = places[places.length - 1].coordinates;
+    const waypoints = places.slice(1, -1).map(p => ({
+      location: p.coordinates,
+      stopover: true
+    }));
+
+    directionsServiceRef.current.route({
+      origin,
+      destination,
+      waypoints,
+      travelMode: google.maps.TravelMode.DRIVING,
+    }, (result, status) => {
+      if (status === google.maps.DirectionsStatus.OK && result) {
+        directionsRendererRef.current?.setDirections(result);
+      } else {
+        console.warn("Directions request failed due to " + status);
+      }
+    });
   }, [map, places, isRoute, authFailed]);
 
   // Handle Place Markers
@@ -191,7 +211,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       markers.push(marker);
     });
 
-    if (places.length > 0) {
+    if (places.length > 0 && !isRoute) { // Only auto-fit bounds if it's not a route (Directions API handles its own bounds)
       const bounds = new window.google.maps.LatLngBounds();
       places.forEach(place => {
         if (place.coordinates) bounds.extend(place.coordinates);
@@ -206,7 +226,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     return () => {
       markers.forEach(marker => marker.setMap(null));
     };
-  }, [map, places, typedLanguage, t, authFailed]);
+  }, [map, places, typedLanguage, t, authFailed, isRoute]);
 
   const handleCenterOnUser = () => {
       if (userMarkerRef.current && map) {
