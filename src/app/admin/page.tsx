@@ -511,8 +511,8 @@ export default function AdminPage() {
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {feedbacks.map((f) => (
-                                                    <TableRow key={f.id}>
+                                                {feedbacks.map((f, index) => (
+                                                    <TableRow key={f.id || `feedback-${index}`}>
                                                         <TableCell className="font-medium flex items-center gap-2">
                                                             <MapPin className="h-3 w-3 text-muted-foreground" />
                                                             {f.placeName}
