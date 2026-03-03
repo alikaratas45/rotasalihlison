@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "ホーム",
@@ -112,8 +113,11 @@
         "yes": "はい",
         "no": "いいえ",
         "submitButton": "フィードバックを送信",
+        "updateButton": "フィードバックを更新",
         "thankYouTitle": "ありがとうございました！",
         "thankYouDescription": "フィードバックを正常に受け取りました。サリフリの改善にご協力いただきありがとうございます。",
+        "alreadySubmitted": "この場所についてはすでにフィードバックをいただいています。",
+        "editButton": "フィードバックを編集する",
         "errorTitle": "情報不足",
         "errorDescription": "すべての項目に入力してください。",
         "successTitle": "送信済み",

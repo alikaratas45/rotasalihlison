@@ -1,12 +1,13 @@
+
 'use client';
 
-import { useState } from 'react';
-import { Star, Loader2, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Star, Loader2, CheckCircle2, FileEdit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -27,6 +28,8 @@ export function Survey({ placeId, placeName }: SurveyProps) {
   const { t } = useLanguage();
   const firestore = useFirestore();
   const { toast } = useToast();
+  
+  // States
   const [ratings, setRatings] = useState<Record<string, number>>({
     cleanliness: 0,
     accessibility: 0,
@@ -37,8 +40,20 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     guided: '',
     infoBoards: '',
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false); // Just submitted in current session
+  const [existingDocId, setExistingDocId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoadingPrevious, setIsLoadingPrevious] = useState(false);
+
+  // Check for previous submission on this device
+  useEffect(() => {
+    const savedSubmission = localStorage.getItem(`survey_v1_${placeId}`);
+    if (savedSubmission) {
+      setExistingDocId(savedSubmission);
+    }
+  }, [placeId]);
 
   const handleRatingChange = (id: string, rating: number) => {
     setRatings((prev) => ({ ...prev, [id]: rating }));
@@ -46,6 +61,45 @@ export function Survey({ placeId, placeName }: SurveyProps) {
 
   const handleExtraChange = (id: string, value: string) => {
     setExtraAnswers((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleEditClick = async () => {
+    if (!existingDocId) return;
+    
+    setIsLoadingPrevious(true);
+    try {
+      const docRef = doc(firestore, 'feedbacks', existingDocId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setRatings({
+          cleanliness: data.cleanliness || 0,
+          accessibility: data.accessibility || 0,
+          satisfaction: data.satisfaction || 0,
+        });
+        setExtraAnswers({
+          withTour: data.withTour || '',
+          guided: data.guided || '',
+          infoBoards: data.infoBoards || '',
+        });
+        setIsEditing(true);
+      } else {
+        // Doc might have been deleted from server
+        localStorage.removeItem(`survey_v1_${placeId}`);
+        setExistingDocId(null);
+        setIsEditing(true); // Allow fresh start
+      }
+    } catch (error) {
+      console.error("Error fetching previous survey:", error);
+      toast({
+        variant: 'destructive',
+        title: t('survey.submitErrorTitle'),
+        description: "Önceki veriler yüklenemedi.",
+      });
+    } finally {
+      setIsLoadingPrevious(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -65,14 +119,31 @@ export function Survey({ placeId, placeName }: SurveyProps) {
 
     setIsSubmitting(true);
     try {
-      await addDoc(collection(firestore, 'feedbacks'), {
+      const payload = {
         placeId,
         placeName,
         ...ratings,
         ...extraAnswers,
-        createdAt: serverTimestamp(),
-      });
+        updatedAt: serverTimestamp(),
+      };
+
+      if (existingDocId) {
+        // Update existing
+        await updateDoc(doc(firestore, 'feedbacks', existingDocId), payload);
+      } else {
+        // Create new
+        const docRef = await addDoc(collection(firestore, 'feedbacks'), {
+          ...payload,
+          createdAt: serverTimestamp(),
+        });
+        // Save to local storage
+        localStorage.setItem(`survey_v1_${placeId}`, docRef.id);
+        setExistingDocId(docRef.id);
+      }
+
       setIsSubmitted(true);
+      setIsEditing(false);
+      
       toast({
         title: t('survey.successTitle'),
         description: t('survey.successDescription'),
@@ -89,6 +160,7 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     }
   };
 
+  // 1. Show "Thank You" right after submission
   if (isSubmitted) {
     return (
       <Card className="mt-8 border-primary/20 bg-primary/5">
@@ -96,15 +168,44 @@ export function Survey({ placeId, placeName }: SurveyProps) {
           <CheckCircle2 className="mb-4 h-12 w-12 text-primary" />
           <h3 className="text-xl font-bold font-headline">{t('survey.thankYouTitle')}</h3>
           <p className="text-muted-foreground mt-2">{t('survey.thankYouDescription')}</p>
+          <Button variant="outline" className="mt-6" onClick={() => setIsSubmitted(false)}>
+            <FileEdit className="mr-2 h-4 w-4" />
+            {t('survey.editButton')}
+          </Button>
         </CardContent>
       </Card>
     );
   }
 
+  // 2. Show "Already Submitted" message if they have a saved ID but aren't editing
+  if (existingDocId && !isEditing) {
+    return (
+      <Card className="mt-8 border-primary/10 bg-secondary/5">
+        <CardContent className="flex flex-col items-center justify-center py-10 text-center">
+          <CheckCircle2 className="mb-4 h-12 w-12 text-muted-foreground/50" />
+          <h3 className="text-xl font-bold font-headline">{t('survey.alreadySubmitted')}</h3>
+          <p className="text-muted-foreground mt-2">{t('survey.description')}</p>
+          <Button 
+            variant="default" 
+            className="mt-6" 
+            onClick={handleEditClick}
+            disabled={isLoadingPrevious}
+          >
+            {isLoadingPrevious ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileEdit className="mr-2 h-4 w-4" />}
+            {t('survey.editButton')}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // 3. Show the Form (New or Editing)
   return (
     <Card className="mt-8 shadow-md border-primary/10">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">{t('survey.title')}</CardTitle>
+        <CardTitle className="font-headline text-2xl">
+          {isEditing ? t('survey.editButton') : t('survey.title')}
+        </CardTitle>
         <CardDescription>{t('survey.description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-10">
@@ -194,14 +295,25 @@ export function Survey({ placeId, placeName }: SurveyProps) {
           </div>
         </div>
 
-        <Button 
-          onClick={handleSubmit} 
-          disabled={isSubmitting} 
-          className="w-full mt-6 h-14 text-xl font-bold shadow-lg"
-        >
-          {isSubmitting && <Loader2 className="mr-2 h-6 w-6 animate-spin" />}
-          {t('survey.submitButton')}
-        </Button>
+        <div className="flex gap-4">
+          {isEditing && (
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditing(false)} 
+              className="flex-1 h-14 text-xl"
+            >
+              İptal
+            </Button>
+          )}
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting} 
+            className="flex-[2] h-14 text-xl font-bold shadow-lg"
+          >
+            {isSubmitting && <Loader2 className="mr-2 h-6 w-6 animate-spin" />}
+            {isEditing ? t('survey.updateButton') : t('survey.submitButton')}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

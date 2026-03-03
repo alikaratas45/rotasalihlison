@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Home",
@@ -113,8 +114,11 @@
         "yes": "Yes",
         "no": "No",
         "submitButton": "Send Feedback",
+        "updateButton": "Update Feedback",
         "thankYouTitle": "Thank You!",
         "thankYouDescription": "Your feedback has been successfully received. Thanks for helping us improve Salihli.",
+        "alreadySubmitted": "You have already provided feedback for this place.",
+        "editButton": "Edit My Feedback",
         "errorTitle": "Missing Information",
         "errorDescription": "Please fill in all criteria.",
         "successTitle": "Sent",

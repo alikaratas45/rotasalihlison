@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Startseite",
@@ -112,8 +113,11 @@
         "yes": "Ja",
         "no": "Nein",
         "submitButton": "Feedback senden",
+        "updateButton": "Feedback aktualisieren",
         "thankYouTitle": "Danke!",
         "thankYouDescription": "Ihr Feedback wurde erfolgreich empfangen. Danke, dass Sie uns helfen, Salihli zu verbessern.",
+        "alreadySubmitted": "Sie haben für diesen Ort bereits Feedback gegeben.",
+        "editButton": "Mein Feedback bearbeiten",
         "errorTitle": "Fehlende Informationen",
         "errorDescription": "Bitte füllen Sie alle Kriterien aus.",
         "successTitle": "Gesendet",

@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Accueil",
@@ -112,8 +113,11 @@
         "yes": "Oui",
         "no": "Non",
         "submitButton": "Envoyer les commentaires",
+        "updateButton": "Mettre à jour les commentaires",
         "thankYouTitle": "Merci !",
         "thankYouDescription": "Vos commentaires ont été reçus avec succès. Merci de nous aider à améliorer Salihli.",
+        "alreadySubmitted": "Vous avez déjà donné votre avis pour ce lieu.",
+        "editButton": "Modifier mes commentaires",
         "errorTitle": "Informations manquantes",
         "errorDescription": "Veuillez remplir tous les critères.",
         "successTitle": "Envoyé",

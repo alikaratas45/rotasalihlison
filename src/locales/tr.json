@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Ana Sayfa",
@@ -31,7 +32,7 @@
         "shopping": "Alışveriş",
         "thematicRoutesTitle": "Tematik Rotalar",
         "thematicRoutesSubtitle": "Salihli'nin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
-        "allRoutes": "Tüm Rotaları Gör",
+        "allRoutes": " Tüm Rotaları Gör",
         "stops": "Durak",
         "stops_plural": "Durak"
     },
@@ -113,8 +114,11 @@
         "yes": "Evet",
         "no": "Hayır",
         "submitButton": "Geri Bildirimi Gönder",
+        "updateButton": "Geri Bildirimi Güncelle",
         "thankYouTitle": "Teşekkür Ederiz!",
         "thankYouDescription": "Geri bildiriminiz başarıyla alındı. Salihli'yi geliştirmemize yardımcı olduğunuz için teşekkürler.",
+        "alreadySubmitted": "Bu mekan için daha önce geri bildirimde bulundunuz.",
+        "editButton": "Geri Bildirimi Düzenle",
         "errorTitle": "Eksik Bilgi",
         "errorDescription": "Lütfen tüm kriterleri doldurun.",
         "successTitle": "Gönderildi",
