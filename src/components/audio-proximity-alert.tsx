@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -42,8 +43,16 @@ export function AudioProximityAlert() {
     if (typeof window === 'undefined') return;
     window.speechSynthesis.cancel();
     
-    // Pronunciation fix for Gymnasium
-    const fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+    // Pronunciation fix for Gymnasium and M.Ö.
+    let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+    if (language === 'tr') {
+      fixedText = fixedText
+        .replace(/M\.Ö\./g, 'milattan önce')
+        .replace(/M\.Ö/g, 'milattan önce')
+        .replace(/MÖ/g, 'milattan önce')
+        .replace(/İ\. Ö\./g, 'milattan önce')
+        .replace(/İ\.Ö\./g, 'milattan önce');
+    }
     
     const utterance = new SpeechSynthesisUtterance(fixedText);
     
@@ -66,14 +75,12 @@ export function AudioProximityAlert() {
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        // GERÇEK KONUM MODU: Hardcoded koordinatlar kaldırıldı
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
         for (const place of places) {
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
           
-          // 30 meters threshold for proximity alert
           if (dist <= 30 && !notifiedPlaceIds.has(place.id)) {
             setActiveAlertPlace(place);
             setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
@@ -82,11 +89,9 @@ export function AudioProximityAlert() {
             const placeName = place.name[typedLanguage] || place.name.tr;
             const promptText = t('proximity.alert', placeName);
             
-            // Short delay to ensure browser handles audio context
             setTimeout(() => speakPrompt(promptText), 500);
             break; 
           } else if (dist > 150 && notifiedPlaceIds.has(place.id)) {
-            // Allow re-notifying if user moves significantly away and comes back
             setNotifiedPlaceIds(prev => {
               const next = new Set(prev);
               next.delete(place.id);

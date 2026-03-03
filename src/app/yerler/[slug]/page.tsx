@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -128,7 +129,16 @@ function PlaceDetailContent() {
       }
       setIsGenerating(false);
       
-      const fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+      // Pronunciation and expansion fixes
+      let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+      if (lang === 'tr') {
+        fixedText = fixedText
+          .replace(/M\.Ö\./g, 'milattan önce')
+          .replace(/M\.Ö/g, 'milattan önce')
+          .replace(/MÖ/g, 'milattan önce')
+          .replace(/İ\. Ö\./g, 'milattan önce')
+          .replace(/İ\.Ö\./g, 'milattan önce');
+      }
       
       const utterance = new SpeechSynthesisUtterance(fixedText);
       
