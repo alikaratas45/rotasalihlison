@@ -386,7 +386,7 @@ export const places: Place[] = [
             en: 'This quarry, where the marbles used in the magnificent structures of the Ancient City of Sardis were extracted, offers important clues about ancient stonemasonry and engineering. Unfinished columns and blocks can be seen.',
             fr: 'Cette carrière, d\'où étaient extraits les marbres utilisés dans les magnifiques structures de la cité antique de Sardes, offre des indices importants sur la taille de pierre et l\'ingénierie antiques. On peut y voir des colonnes et des blocs inachevés.',
             de: 'Dieser Steinbruch, in dem die für die prächtigen Bauten der antiken Stadt Sardes verwendeten Marmore abgebaut wurden, bietet wichtige Hinweise auf antike Steinmetzkunst und Ingenieurskunst. Unfertige Säulen und Blöcke sind zu sehen.',
-            ja: 'サルディス古代都市の壮大な建造物に使用された大理石が採掘されたこの採石場は、古代の石工 ve 工学に関する重要な手がかりを提供します。未完成の柱やブロックが見られます。'
+            ja: 'サルディス古代都市の壮大な建造物に使用された大理石が採掘されたこの採石場は、古代の石工 ve 工学に関する重要な手がかりを提供します。未完成의柱やブロックが見られます。'
         },
         category: 'history',
         coordinates: { lat: 38.45680901086971, lng: 28.016172179836534 },

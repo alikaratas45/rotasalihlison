@@ -62,26 +62,24 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // ÖZEL KORUMA MANTIĞI:
-    // 1. Eğer kodda (places.ts) bir görsel linki TANIMLIYSA (Imgur vb.), bunu kullan (Restorasyon için).
-    // 2. Eğer kodda görsel linki YOKSA veya standart picsum ise ama veritabanında (Firestore) ÖZEL bir link (Imgur vb.) VARSA, veritabanındakini koru.
+    // KRİTİK GÖRSEL KORUMA MANTIĞI:
+    // 1. Eğer veritabanında (Firestore) zaten bir görsel VARSA ve bu görsel kaliteli bir linkse (Imgur veya Unsplash)
+    // 2. Koddaki varsayılan linki (picsum gibi) ASLA onun üzerine yazma.
     
-    const hasStaticSpecialImage = place.imageUrl && (place.imageUrl.includes('imgur.com') || place.imageUrl.includes('images.unsplash.com'));
-    const hasExistingSpecialImage = existingData?.imageUrl && (existingData.imageUrl.includes('imgur.com') || existingData.imageUrl.includes('images.unsplash.com'));
+    const hasExistingSpecialImage = existingData?.imageUrl && (
+        existingData.imageUrl.includes('imgur.com') || 
+        existingData.imageUrl.includes('images.unsplash.com') ||
+        existingData.imageUrl.includes('i.imgur.com')
+    );
 
-    // Eğer koddaki link generic ise ve veritabanında zaten özel bir link varsa, veritabanındakini koru
-    if (!hasStaticSpecialImage && hasExistingSpecialImage) {
+    // Eğer veritabanında sizin girdiğiniz özel bir link varsa, onu KORU.
+    if (hasExistingSpecialImage) {
         data.imageUrl = existingData.imageUrl;
     }
 
-    // Her iki durumda da veri yoksa fallback kullan
-    if (!data.imageUrl) {
-        data.imageUrl = `https://picsum.photos/seed/${place.id}/600/400`;
-    }
-    
-    if (!data.imageHint) {
-        data.imageHint = 'landmark';
-    }
+    // Koordinatları her zaman koddaki en güncel (sizin verdiğiniz kesin değerlerle) güncelle
+    // Bu sayede görseller korunurken yanlış konumlar düzelir.
+    data.coordinates = place.coordinates;
 
     return data;
   });
