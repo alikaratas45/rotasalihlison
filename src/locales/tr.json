@@ -24,6 +24,7 @@
         "heroTitle": "Salihli'yi Keşfet",
         "heroSubtitle": "Sardes'in mirası, paranın merkezi",
         "getStarted": "Tüm Gezilecek Yerler",
+        "aboutSalihli": "Salihli Hakkında",
         "experienceTitle": "Salihli'de Bir Gün",
         "experienceSubtitle": "Farklı deneyimler arasından seçimini yap, Salihli maceranı kişiselleştir.",
         "historyTrip": "Tarihe Yolculuk",
@@ -35,6 +36,10 @@
         "allRoutes": " Tüm Rotaları Gör",
         "stops": "Durak",
         "stops_plural": "Durak"
+    },
+    "about": {
+        "title": "Salihli'nin Tarihçesi",
+        "content": "Salihli´nin tarihini anlatmaya Antik Sardes (SART) kenti ile başlamak gerekmektedir. Sardes/Sart Gediz havzasında, Sart Çayı kıyısında ve Bozdağ´ın batısındaki tepelerin kuzey yamaçları üzerinde Meles adlı bir kral tarafından kurulmuştur. M.Ö.1750-1200 yıllarında Hititler döneminde Sardes´in de içinde bulunduğu bölge ASSUWA olarak anılmaktadır. Sardes´in bu dönemde köy mü kasaba mı yoksa saraya bağlı bir şehir mi olduğu bilinmemektedir. M.Ö.1200-1000 yılları arasında önemli bir yerleşim merkezi olmakla birlikte özellikle M.Ö.7-6 yüzyıllarında büyük gelişme göstermiş, Lidya devletinin başkenti olmuş ve büyük önem kazanmıştır. Endüstriyel buluşlar, para, ülkeler arası hicret, lirik şiir-müzik felsefe-astronomi-coğrafya ve heykelcilik M.Ö.6 ve 7. Yüzyıllarda Sardesle başladı ve gelişti diyebiliriz. Sardes Lidya Devleti sona erdikten sonra da önemini korumuş, Persler döneminde Satraplık merkezi, Romalılar zamanında eyalet merkezi, Bizans döneminde ise Theme merkezi olmuştur. Dünya ticaret yollarının değişmesi sonucunda Bizans imparatorluğunun son zamanlarında önemini yitirmiştir.\n\n1075 yıllarında Selçuklu Türkleri Sardes´i aldılar. O günden sonra da Sart diye anılmaya başlanıldı. Sart 1098 yılında Haçlıların desteği ile Bizans´ın eline geçti ise de 1313 yılında Germiyanoğulları´nın komutanı Aydın Bey tarafından kesin olarak Türk egemenliği altına alındı. Salihli´nin güneyindeki Bozdağ eteklerindeki tepelerde ve Çakallar deresinde eski devirlerden kalma mezarlar bulunmaktadır. Son olarakta M.Ö.6. Yüzyıla ait olduğu anlaşılan bir tümülüs mezar bulunmaktadır. Mezarlar genellikle yerleşim merkezleri çevresinde bulunduğuna göre bugünkü Salihli´nin güneyinde antik bir yerleşim merkezi bulunduğu kesindir. Bugünkü Salihli İlçesine ait ilk kayıt 1518 yılına aittir ve Veled-i Salih/Salihoğlu köyü olarak anılmakta ve Sart kazasına bağlıdır. 1535 tarihli ve Aydın Livasına bağlı İzmir-Çeşme-Atasluğ- Tire-Birge-Güzel-hisar- Sultanhisar- Kestel- Bozdoğan- Arpaz- Yenişehir- Alaşehir- Sart kazaları kurasının tımarlarını havi mufassal defter kayıtlarında da Veled-i Salih/Salihoğlu adlı bir köyün varlığını teyid etmiştir."
     },
     "actions": {
         "seeDetails": "Detayları Gör →",
@@ -49,7 +54,8 @@
         "readMore": "Devamını Oku →",
         "backToStories": "Hikayelere Geri Dön",
         "backToPlaces": "Yerlere Geri Dön",
-        "discoverPlace": "Mekanı Keşfet"
+        "discoverPlace": "Mekanı Keşfet",
+        "close": "Kapat"
     },
     "places": {
         "title": "Tüm Yerleri Keşfet",

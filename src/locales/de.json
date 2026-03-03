@@ -24,6 +24,7 @@
         "heroTitle": "Entdecken Sie Salihli",
         "heroSubtitle": "Erbe von Sardes, Zentrum des Geldes",
         "getStarted": "Alle Orte ansehen",
+        "aboutSalihli": "Über Salihli",
         "experienceTitle": "Ein Tag in Salihli",
         "experienceSubtitle": "Wählen Sie aus verschiedenen Erlebnissen und personalisieren Sie Ihr Salihli-Abenteuer.",
         "historyTrip": "Reise in die Geschichte",
@@ -35,6 +36,10 @@
         "allRoutes": "Alle Routen ansehen",
         "stops": "Stopp",
         "stops_plural": "Stopps"
+    },
+    "about": {
+        "title": "Geschichte von Salihli",
+        "content": "Um die Geschichte von Salihli zu erzählen, muss man mit der antiken Stadt Sardes (SART) beginnen. Sardes/Sart wurde von einem König namens Meles im Gediz-Becken am Ufer des Sart-Bachs und an den Nordhängen der Hügel westlich von Bozdağ gegründet. In der Zeit der Hethiter (1750-1200 v. Chr.) wurde die Region, zu der auch Sardes gehörte, als ASSUWA bezeichnet. Es ist nicht bekannt, ob Sardes in dieser Zeit ein Dorf, eine Kleinstadt oder eine dem Palast unterstellte Stadt war. Obwohl es zwischen 1200 und 1000 v. Chr. ein wichtiges Siedlungszentrum war, entwickelte es sich besonders im 7. bis 6. Jahrhundert v. Chr. stark, wurde zur Hauptstadt des lydischen Staates und gewann große Bedeutung. Man kann sagen, dass industrielle Erfindungen, Geld, Migration zwischen Ländern, lyrische Poesie und Musik, Philosophie, Astronomie, Geographie und Bildhauerei im 6. und 7. Jahrhundert v. Chr. mit Sardes begannen und sich entwickelten. Sardes behielt seine Bedeutung auch nach dem Ende des lydischen Staates bei und war während der persischen Zeit ein Satrapienzentrum, während der römischen Zeit ein Provinzialzentrum und während der byzantinischen Zeit ein Theme-Zentrum. Infolge der Veränderung der Welthandelswege verlor es in den letzten Tagen des Byzantinischen Reiches an Bedeutung.\n\nIm Jahr 1075 eroberten die seldschukischen Türken Sardes. Von diesem Tag an wurde es Sart genannt. Obwohl Sart 1098 mit Unterstützung der Kreuzritter in die Hände von Byzanz fiel, wurde es 1313 von Aydın Bey, dem Kommandanten der Germiyaniden, endgültig unter türkische Herrschaft gestellt. In den Hügeln am Fuße des Bozdağ südlich von Salihli und im Bach Çakallar befinden sich Gräber aus alten Zeiten. Schließlich gibt es ein Tumulusgrab, das aus dem 6. Jahrhundert v. Chr. stammt. Da sich Gräber in der Regel in der Nähe von Siedlungszentren befinden, ist es sicher, dass sich südlich des heutigen Salihli ein antikes Siedlungszentrum befand. Die erste Aufzeichnung über den heutigen Bezirk Salihli stammt aus dem Jahr 1518 und wird als Dorf Veled-i Salih/Salihoğlu bezeichnet, das dem Bezirk Sart unterstellt ist. Ausführliche Katasterregister aus dem Jahr 1535 bestätigten ebenfalls die Existenz eines Dorfes namens Veled-i Salih/Salihoğlu."
     },
     "actions": {
         "seeDetails": "Details ansehen →",
@@ -48,7 +53,8 @@
         "viewAllStories": "Alle Geschichten ansehen",
         "readMore": "Weiterlesen →",
         "backToStories": "Zurück zu den Geschichten",
-        "discoverPlace": "Ort entdecken"
+        "discoverPlace": "Ort entdecken",
+        "close": "Schließen"
     },
     "places": {
         "title": "Alle Orte entdecken",
@@ -59,7 +65,7 @@
     },
     "history": {
         "title": "Reise in die Geschichte",
-        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geld erfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum bei. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
+        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geld emirfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum bei. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
     },
     "nature": {
         "title": "Natur und Frieden",

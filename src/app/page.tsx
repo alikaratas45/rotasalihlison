@@ -4,8 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
@@ -16,7 +15,15 @@ import { Placeholders } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LucideIcon } from '@/components/icons/lucide-icon';
 import { experienceItems as staticExperienceItems } from '@/lib/data/experience-menu';
-
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Info } from 'lucide-react';
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -30,10 +37,8 @@ export default function Home() {
 
   const displayExperienceItems = useMemo(() => {
     if (experienceItems && experienceItems.length > 0) {
-      // Sort items by order, as Firestore might not guarantee it in all edge cases
       return [...experienceItems].sort((a, b) => a.order - b.order);
     }
-    // Sort static items as well
     return [...staticExperienceItems].sort((a,b) => a.order - b.order).map((item, index) => ({...item, id: `static-exp-${index}`}));
   }, [experienceItems]);
   
@@ -52,15 +57,44 @@ export default function Home() {
           />
         )}
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center p-4">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline drop-shadow-lg">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline drop-shadow-lg animate-in fade-in slide-in-from-top-4 duration-1000">
             {t('home.heroTitle')}
           </h1>
-          <p className="mt-4 text-lg md:text-2xl drop-shadow-md">
+          <p className="mt-4 text-lg md:text-2xl drop-shadow-md animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {t('home.heroSubtitle')}
           </p>
-          <Button asChild className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link href="/yerler">{t('home.getStarted')}</Link>
-          </Button>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+              <Link href="/yerler">{t('home.getStarted')}</Link>
+            </Button>
+            
+            {/* About Salihli Dialog */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white/20">
+                  <Info className="mr-2 h-5 w-5" />
+                  {t('home.aboutSalihli')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-headline font-bold text-primary">
+                    {t('about.title')}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="py-4 space-y-4">
+                  <p className="text-foreground leading-relaxed whitespace-pre-line text-lg">
+                    {t('about.content')}
+                  </p>
+                </div>
+                <DialogFooter>
+                  <Button variant="secondary" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>
+                    {t('actions.close')}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </section>
 
@@ -76,7 +110,7 @@ export default function Home() {
                 </Card>
             )) : displayExperienceItems.map((item) => (
               <Link href={item.link} key={item.id} className="group h-full">
-                <Card className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 hover:bg-secondary transition-colors duration-300 h-full">
+                <Card className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 hover:bg-secondary transition-all duration-300 h-full transform hover:scale-105 hover:shadow-md border-primary/10">
                   <LucideIcon name={item.icon} className="w-12 h-12 text-primary mb-4" />
                   <h3 className="font-semibold text-center">{item.name[typedLanguage]}</h3>
                 </Card>
@@ -85,7 +119,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

@@ -24,6 +24,7 @@
         "heroTitle": "Découvrez Salihli",
         "heroSubtitle": "Héritage de Sardes, centre de la monnaie",
         "getStarted": "Voir tous les lieux",
+        "aboutSalihli": "À propos de Salihli",
         "experienceTitle": "Une journée à Salihli",
         "experienceSubtitle": "Choisissez parmi différentes expériences, personnalisez votre aventure à Salihli.",
         "historyTrip": "Voyage dans l'Histoire",
@@ -35,6 +36,10 @@
         "allRoutes": "Voir tous les itinéraires",
         "stops": "Arrêt",
         "stops_plural": "Arrêts"
+    },
+    "about": {
+        "title": "Histoire de Salihli",
+        "content": "Pour raconter l'histoire de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes/Sart a été fondée par un roi nommé Meles dans le bassin du Gediz, sur les rives du ruisseau Sart et sur les pentes nord des collines à l'ouest de Bozdağ. Pendant la période hittite, entre 1750 et 1200 av. J.-C., la région comprenant Sardes était connue sous le nom d'ASSUWA. On ignore si Sardes était un village, un bourg ou une ville rattachée au palais à cette époque. Bien qu'elle ait été un centre de peuplement important entre 1200 et 1000 av. J.-C., elle a connu un grand développement surtout aux VIIe et VIe siècles av. J.-C., devenant la capitale de l'État lydien et acquérant une grande importance. On peut dire que les inventions industrielles, la monnaie, les migrations internationales, la poésie lyrique, la musique, la philosophie, l'astronomie, la géographie et la sculpture ont commencé et se sont développées avec Sardes aux VIe et VIIe siècles av. J.-C. Sardes a conservé son importance après la fin de l'État lydien, devenant un centre de satrapie pendant la période perse, un centre provincial à l'époque romaine et un centre de thème à l'époque byzantine. Suite au changement des routes commerciales mondiales, elle a perdu de son importance dans les derniers jours de l'Empire byzantin.\n\nEn 1075, les Turcs Seldjoukides s'emparèrent de Sardes. Dès ce jour, on commença à l'appeler Sart. Bien que Sart soit tombée aux mains des Byzantins avec le soutien des Croisés en 1098, elle fut définitivement placée sous domination turque en 1313 par Aydın Bey, commandant des Germiyanides. On trouve des tombes datant de l'Antiquité dans les collines au pied du Bozdağ, au sud de Salihli, et dans le ruisseau Çakallar. Enfin, il existe une tombe de type tumulus datant du VIe siècle av. J.-C. Comme les tombes se trouvent généralement autour des centres de peuplement, il est certain qu'un ancien centre de peuplement se trouvait au sud de l'actuelle Salihli. Le premier registre concernant l'actuel district de Salihli date de 1518 et mentionne le village de Veled-i Salih/Salihoğlu, rattaché au district de Sart. Des registres détaillés de 1535 confirment également l'existence d'un village nommé Veled-i Salih/Salihoğlu."
     },
     "actions": {
         "seeDetails": "Voir les détails →",
@@ -48,7 +53,8 @@
         "viewAllStories": "Voir toutes les histoires",
         "readMore": "Lire la suite →",
         "backToStories": "Retour aux histoires",
-        "discoverPlace": "Découvrir le lieu"
+        "discoverPlace": "Découvrir le lieu",
+        "close": "Fermer"
     },
     "places": {
         "title": "Découvrez tous les lieux",
