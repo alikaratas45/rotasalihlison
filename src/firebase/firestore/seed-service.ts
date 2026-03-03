@@ -1,5 +1,5 @@
 'use client';
-import { collection, doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc, deleteDoc, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -58,13 +58,21 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     experienceItems: { added: number, updated: number }
 }> {
   
+  // Önce kaldırılması istenen özel kayıtları sil (Atatürk Anıtı - id: '4')
+  try {
+      const ataturkAnitiRef = doc(firestore, 'places', '4');
+      await deleteDoc(ataturkAnitiRef);
+  } catch (e) {
+      console.warn("Atatürk Anıtı silinirken bir sorun oluştu (zaten silinmiş olabilir).");
+  }
+
   // Yerleri güvenli şekilde güncelle
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // --- GÖRSEL KORUMA MANTIĞI (İYİLEŞTİRİLMİŞ) ---
-    // Eğer koddaki link "picsum" DEĞİLSE (yani kaliteli bir Imgur/Unsplash linki ise), kodtakini kullan.
-    // Eğer koddaki link "picsum" ise ve veritabanında özel bir link (Imgur vb.) varsa, veritabanındakini koru.
+    // --- GÖRSEL KORUMA MANTIĞI ---
+    // Eğer koddaki link Imgur/Unsplash gibi kaliteli bir linkse onu bas.
+    // Eğer kodda rastgele yer tutucu (picsum) varsa ama DB'de kaliteli link varsa DB'dekini koru.
     const isCodeImageHighQuality = place.imageUrl && (
         place.imageUrl.includes('imgur.com') || 
         place.imageUrl.includes('images.unsplash.com') ||
@@ -78,13 +86,11 @@ export async function seedDatabase(firestore: Firestore): Promise<{
         (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
     );
 
-    // Öncelik: Kod tarafında özel bir link varsa onu bas. 
-    // Yoksa (yani kodda picsum varsa) ama DB'de özel bir link varsa, DB'dekini tut.
     if (!isCodeImageHighQuality && isDbImageHighQuality) {
         data.imageUrl = existingData.imageUrl;
     }
 
-    // Koordinatları her zaman koddaki en güncel (sizin verdiğiniz kesin değerlerle) güncelle
+    // Koordinatları her zaman koddaki kesin değerlerle güncelle
     data.coordinates = place.coordinates;
 
     return data;

@@ -86,34 +86,6 @@ export const places: Place[] = [
         imageHint: 'grilled meatballs'
     },
     {
-        id: '4',
-        slug: { 
-            tr: 'ataturk-aniti', 
-            en: 'ataturk-monument',
-            fr: 'monument-ataturk',
-            de: 'ataturk-denkmal',
-            ja: 'ataturk-monument-ja'
-        },
-        name: { 
-            tr: 'Atatürk Anıtı', 
-            en: 'Atatürk Monument',
-            fr: 'Monument Atatürk',
-            de: 'Atatürk-Denkmal',
-            ja: 'アタテュルク記念碑'
-        },
-        description: { 
-            tr: 'Salihli\'nin kalbinde, Kent Meydanı\'nda gururla yükselen Atatürk Anıtı, modern Türkiye\'nin kurucusu ve ulu önder Mustafa Kemal Atatürk\'e olan saygının bir ifadesidir. Şehrin en önemli buluşma noktalarından biri olan bu anıt, milli bayramlarda ve anma günlerinde törenlerin merkezi olur. Anıt, sadece bir heykel değil, aynı zamanda Salihli halkının bağımsızlık ve çağdaşlık değerlerine olan bağlılığının bir sembolüdür.',
-            en: 'The Atatürk Monument, rising proudly in the heart of Salihli in the City Square, is an expression of respect for Mustafa Kemal Atatürk, the founder and great leader of modern Turkey. As one of the most important meeting points of the city, this monument becomes the center of ceremonies on national holidays and commemoration days. The monument is not just a statue, but also a symbol of the commitment of the people of Salihli to the values of independence and modernity.',
-            fr: 'Le monument Atatürk, qui se dresse fièrement au cœur de Salihli sur la place de la ville, est une expression de respect pour Mustafa Kemal Atatürk, le fondateur et grand leader de la Turquie moderne. En tant que l\'un des points de rencontre les plus importants de la ville, ce monument devient le centre des cérémonies lors des fêtes nationales et des jours de commémoration. Le monument n\'est pas seulement une statue, maar aussi un symbole de l\'engagement du peuple de Salihli envers les valeurs d\'indépendance et de modernité.',
-            de: 'Das Atatürk-Denkmal, das stolz im Herzen von Salihli auf dem Stadtplatz emporragt, ist ein Ausdruck des Respekts für Mustafa Kemal Atatürk, den Gründer und großen Führer der modernen Türkei. Als einer der wichtigsten Treffpunkte der Stadt wird dieses Denkmal zum Zentrum der Zeremonien an Nationalfeiertagen und Gedenktagen. Das Denkmal ist nicht nur eine Statue, sondern auch bir Symbol für das Bekenntnis der Menschen von Salihli zu den Werten der Unabhängigkeit und Modernität.',
-            ja: 'シティスクエアのサリフリの中心部に誇らしげにそびえ立つアタテュルク記念碑は、近代トルコの創設者であり偉大な指導者であるムスタファ・ケマル・アタテュルクへの敬意の表れです。市内で最も重要な待ち合わせ場所の1つとして、この記念碑は祝日や記念日の式典の中心となります。記念碑は単なる像ではなく、サリフリの人々の独立 ve 近代性の価値観へのコミットメントの象徴 death もあります。'
-        },
-        category: 'poi',
-        coordinates: { lat: 38.4830, lng: 28.1400 },
-        imageUrl: 'https://images.unsplash.com/photo-1684863935495-7b04dc83e5f9?q=80&w=1080',
-        imageHint: 'statue monument'
-    },
-    {
         id: '5',
         slug: { 
             tr: 'salihli-kent-muzesi', 
@@ -194,7 +166,7 @@ export const places: Place[] = [
         },
         category: 'nature',
         coordinates: { lat: 38.581712325205984, lng: 28.271791613037774 },
-        imageUrl: 'https://i.imgur.com/B2DiIdP.jpeg',
+        imageUrl: 'https://i.imgur.com/I6L6rHm.jpeg',
         imageHint: 'volcanic canyon'
     },
     {
@@ -362,7 +334,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 },
-        imageUrl: 'https://images.unsplash.com/photo-1650343301290-e22780fe2609?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/d2RoArI.jpeg',
         imageHint: 'ancient temple'
     },
     {
@@ -442,7 +414,7 @@ export const places: Place[] = [
             en: 'The Kemer neighborhood of Salihli is home to historic stone bridges and unique views of the Gediz River. The Maiden\'s Bridge (Kız Köprüsü), thought to be from the Roman period, is in this area. It is known for its calm atmosphere and natural beauty.',
             fr: 'Le quartier de Kemer à Salihli abrite des ponts de pierre historiques et des vues uniques sur la rivière Gediz. Le Pont des Demoiselles (Kız Köprüsü), qui daterait de l\'époque romaine, se trouve dans cette zone. Il est connu pour son atmosphère calme et sa beauté naturelle.',
             de: 'Das Viertel Kemer von Salihli beheimatet historische Steinbrücken und einzigartige Ausblicke auf den Fluss Gediz. Die Jungfrauenbrücke (Kız Köprüsü), die vermutlich aus der Römerzeit stammt, befindet sich in diesem Gebiet. Es ist bekannt für seine ruhige Atmosphäre und natürliche Schönheit.',
-            ja: 'サリフリのケメル地区には、歴史的な石橋 ve ゲディズ川のユニークな景色があります。ローマ時代からあると考えられている乙女の橋（クズ・キョプリュス）もこの地域にあります。穏やかな雰囲気と自然の美しさで知られています。'
+            ja: 'サリフリのケメル地区には、歴史的な石橋 ve ゲディズ川のユニークな景色があります。ローマ時代からあると考えられている乙女の橋（クズ・キョプリュス）もこの地域にあります。穏やかな雰囲気 ve 自然の美しさで知られています。'
         },
         category: 'history',
         coordinates: { lat: 38.68798840823775, lng: 28.14369833471573 },

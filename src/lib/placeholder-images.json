@@ -9,13 +9,13 @@
     {
       "id": "sardes-ancient-city",
       "description": "Image for Sardes Ancient City.",
-      "imageUrl": "https://images.unsplash.com/photo-1573540374799-d527e9ee392b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhbmNpZW50JTIwcnVpbnN8ZW58MHx8fHwxNzYzNDY4MDUwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/KHKrcb5.png",
       "imageHint": "ancient ruins"
     },
     {
       "id": "kursunlu-thermal-springs",
       "description": "Image for Kursunlu Thermal Springs.",
-      "imageUrl": "https://images.unsplash.com/photo-1582490841511-81e1363fb48c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxob3QlMjBzcHJpbmdzfGVufDB8fHx8MTc2MzQ2ODA1MHww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/n7fioom.jpeg",
       "imageHint": "hot springs"
     },
     {
@@ -25,15 +25,9 @@
       "imageHint": "grilled meatballs"
     },
     {
-      "id": "ataturk-monument",
-      "description": "Image of the Atatürk Monument in Salihli.",
-      "imageUrl": "https://images.unsplash.com/photo-1684863935495-7b04dc83e5f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdGF0dWUlMjBtb251bWVudHxlbnwwfHx8fDE3NjM0NjgwNTB8MA&ixlib.rb-4.1.0&q=80&w=1080",
-      "imageHint": "statue monument"
-    },
-    {
       "id": "salihli-city-museum",
       "description": "Image of the Salihli City Museum.",
-      "imageUrl": "https://images.unsplash.com/photo-1715633869797-b36b1f1ac8e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjaXR5JTIwbXVzZXVtfGVufDB8fHx8MTc2MzM4NDcxMHww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/IauiziR.jpeg",
       "imageHint": "city museum"
     },
     {
@@ -45,37 +39,37 @@
     {
       "id": "story-generic",
       "description": "A generic image for stories.",
-      "imageUrl": "https://images.unsplash.com/photo-1712407209533-c1b7e6fff485?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxteXRob2xvZ3klMjBzY3JvbGx8ZW58MHx8fHwxNzYzNDY5OTIxfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1712407209533-c1b7e6fff485?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxteXRob2xvZ3klMjBzY3JvbGx8ZW58MHx8fHwxNzYzNDY5OTIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "mythology scroll"
     },
     {
       "id": "adala-volcanic-canyon",
       "description": "Image for Adala Volcanic Canyon.",
-      "imageUrl": "https://i.imgur.com/B2DiIdP.jpeg",
+      "imageUrl": "https://i.imgur.com/I6L6rHm.jpeg",
       "imageHint": "volcanic canyon"
     },
     {
       "id": "adala-ataturk-house",
       "description": "Image for Adala Atatürk House.",
-      "imageUrl": "https://images.unsplash.com/photo-1662020954789-32940334ef4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoaXN0b3JpYyUyMGhvdXNlfGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/vfBy0dj.jpeg",
       "imageHint": "historic house"
     },
     {
       "id": "suuctu-waterfall",
       "description": "Image for Suuçtu Waterfall.",
-      "imageUrl": "https://images.unsplash.com/photo-1628344253777-f73a64d8f983?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXRlcmZhbGwlMjBuYXR1cmV8ZW58MHx8fHwxNzYzNDI5ODk1fDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/B2DiIdP.jpeg",
       "imageHint": "waterfall nature"
     },
     {
       "id": "kiz-koprusu-maidens-bridge",
       "description": "Image for Kız Köprüsü (Maiden's Bridge).",
-      "imageUrl": "https://images.unsplash.com/photo-1548706421-21eac6677a07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RvbmUlMjBicmlkZ2V8ZW58MHx8fHwxNzYzNDYyMTQzfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/PKqOBtx.jpeg",
       "imageHint": "stone bridge"
     },
     {
       "id": "bintepeler-lydian-tumuli",
       "description": "Image for Bintepeler Lydian Tumuli.",
-      "imageUrl": "https://images.unsplash.com/photo-1717514608857-15bbab3985d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhbmNpZW50JTIwaGlsbHN8ZW58MHx8fHwxNzYzNDcxMDgyfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/2zhSlFd.jpeg",
       "imageHint": "ancient hills"
     },
     {
@@ -87,25 +81,19 @@
     {
       "id": "temple-of-artemis",
       "description": "Image for the Temple of Artemis at Sardis.",
-      "imageUrl": "https://images.unsplash.com/photo-1650343301290-e22780fe2609?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhbmNpZW50JTIwdGVtcGxlfGVufDB8fHx8MTc2MzQ2NjA1MXww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/d2RoArI.jpeg",
       "imageHint": "ancient temple"
-    },
-    {
-      "id": "mudire-hanim-mansion",
-      "description": "Image for Müdire Hanım Mansion.",
-      "imageUrl": "https://images.unsplash.com/photo-1656944522457-f12db58d57b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxvdHRvbWFuJTIwbWFuc2lvbnxlbnwwfHx8fDE3NjM0NzEwODJ8MA&ixlib.rb-4.1.0&q=80&w=1080",
-      "imageHint": "ottoman mansion"
     },
     {
       "id": "ancient-marble-quarry",
       "description": "Image for the Ancient Marble Quarry.",
-      "imageUrl": "https://images.unsplash.com/photo-1573156667501-0a20e838aa13?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bWFyYmxlJTIwcXVhcnJ5fGVufDB8fHx8MTc2MzQ3MTA4Mnww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/NNREyvf.jpeg",
       "imageHint": "marble quarry"
     },
     {
       "id": "gokeyup-pottery",
       "description": "Image for Gökeyüp Pottery.",
-      "imageUrl": "https://images.unsplash.com/photo-1559190282-d46a48f43a2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwb3R0ZXJ5fGVufDB8fHx8MTc2MzkxOTcyN3ww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://i.imgur.com/OwqFeZh.jpeg",
       "imageHint": "pottery workshop"
     }
   ]
