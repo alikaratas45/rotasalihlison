@@ -62,17 +62,18 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // --- GÖRSEL KORUMA MANTIĞI ---
-    // Eğer veritabanında zaten bir görsel varsa ve bu görsel "picsum" gibi geçici bir link değilse
-    // (Örn: Imgur, Unsplash veya sizin girdiğiniz herhangi bir özel link), onu KORU.
-    const isCustomImage = existingData?.imageUrl && (
+    // --- GÖRSEL KORUMA MANTIĞI (GELİŞMİŞ) ---
+    // Eğer veritabanında zaten bir görsel varsa ve bu görsel "picsum" (rastgele servis) değilse,
+    // yani Imgur, Unsplash veya kullanıcının girdiği herhangi bir özel linkse onu KORU.
+    const isCustomImageInDb = existingData?.imageUrl && (
         existingData.imageUrl.includes('imgur.com') || 
         existingData.imageUrl.includes('images.unsplash.com') ||
         existingData.imageUrl.includes('i.imgur.com') ||
         (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
     );
 
-    if (isCustomImage) {
+    // Eğer veritabanında özel bir görsel varsa, koddaki ne olursa olsun veritabanındakini kullan.
+    if (isCustomImageInDb) {
         data.imageUrl = existingData.imageUrl;
     }
 
