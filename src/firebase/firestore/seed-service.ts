@@ -1,5 +1,5 @@
 'use client';
-import { collection, doc, getDoc, setDoc, writeBatch, type Firestore } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -9,7 +9,10 @@ import { experienceItems as staticExperienceItems } from '@/lib/data/experience-
 
 import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 
-
+/**
+ * Belirli bir koleksiyonu statik verilerle besler.
+ * Verileri silmez, akıllı güncelleme (merge) yapar.
+ */
 async function seedCollection<T extends {id: string}>(
     firestore: Firestore,
     collectionName: string,
@@ -25,7 +28,9 @@ async function seedCollection<T extends {id: string}>(
             const docSnap = await getDoc(docRef);
             const processedData = dataProcessor(item);
             
-            // Eğer doküman zaten varsa güncelle (merge), yoksa yeni oluştur
+            // DİKKAT: setDoc with { merge: true } kullanımı mevcut veriyi silmez.
+            // Sadece çakışan alanları (id, name, coordinates vb.) günceller.
+            // Veritabanında elle eklediğiniz ekstra alanlar varsa korunur.
             await setDoc(docRef, processedData, { merge: true });
             
             if (docSnap.exists()) {
@@ -54,18 +59,21 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     experienceItems: { added: number, updated: number }
 }> {
   
+  // Yerleri güncelle (Kemer ve Gökeyüp koordinatlarını buradaki statik veriden alır)
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place) => ({
     ...place,
     imageUrl: place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`,
     imageHint: place.imageHint || 'landmark'
   }));
 
+  // Rotaları güncelle
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);
   
+  // Deneyim menüsü öğelerini güncelle
   const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})));
   
   if (placesResult.errors > 0 || routesResult.errors > 0 || experienceResult.errors > 0) {
-      throw new Error("One or more errors occurred during database seeding. Check console for details.");
+      throw new Error("Veritabanı beslenirken bir veya daha fazla hata oluştu. Detaylar için konsolu kontrol edin.");
   }
 
   return {
