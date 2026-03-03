@@ -64,16 +64,17 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     
     // ÖZEL KORUMA MANTIĞI:
     // 1. Eğer kodda (places.ts) bir görsel linki TANIMLIYSA (Imgur vb.), bunu kullan (Restorasyon için).
-    // 2. Eğer kodda görsel linki YOKSA ama veritabanında (Firestore) VARSA, veritabanındakini koru (Kullanıcı editi için).
-    // 3. Her iki durumda da veri yoksa picsum fallback kullan.
+    // 2. Eğer kodda görsel linki YOKSA veya standart picsum ise ama veritabanında (Firestore) ÖZEL bir link (Imgur vb.) VARSA, veritabanındakini koru.
     
-    const hasStaticImage = place.imageUrl && !place.imageUrl.includes('picsum.photos');
-    const hasExistingImage = existingData?.imageUrl;
+    const hasStaticSpecialImage = place.imageUrl && (place.imageUrl.includes('imgur.com') || place.imageUrl.includes('images.unsplash.com'));
+    const hasExistingSpecialImage = existingData?.imageUrl && (existingData.imageUrl.includes('imgur.com') || existingData.imageUrl.includes('images.unsplash.com'));
 
-    if (!hasStaticImage && hasExistingImage) {
+    // Eğer koddaki link generic ise ve veritabanında zaten özel bir link varsa, veritabanındakini koru
+    if (!hasStaticSpecialImage && hasExistingSpecialImage) {
         data.imageUrl = existingData.imageUrl;
     }
 
+    // Her iki durumda da veri yoksa fallback kullan
     if (!data.imageUrl) {
         data.imageUrl = `https://picsum.photos/seed/${place.id}/600/400`;
     }

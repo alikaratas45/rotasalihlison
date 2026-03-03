@@ -358,7 +358,7 @@ export const places: Place[] = [
             en: 'It is the fourth largest Ionic order temple in the ancient world. Its construction began in the Lydian period and it was used until the Roman period. Its remaining giant columns reveal the magnificence of the structure.',
             fr: 'C\'est le quatrième plus grand temple d\'ordre ionique du monde antique. Sa construction a commencé à l\'époque lydienne et il a été utilisé jusqu\'à l\'époque romaine. Ses colonnes géantes restantes révèlent la magnificence de la structure.',
             de: 'Es ist der vierte größte ionische Tempel der antiken Welt. Sein Bau begann in der lydischen Zeit und er wurde bis in die römische Zeit genutzt. Seine verbliebenen riesigen Säulen zeigen die Pracht des Bauwerks.',
-            ja: '古代世界で4番目に大きいイオニア式の寺院です。その建設はリディア時代に始まり、ローマ時代まで使用されていました。残っている巨大な柱は、構造の壮大さを明らかにしています。'
+            ja: '古代世界で4番目に大きいイオニア式の寺院です。その建設はリディア時代に始まり、ローマ時代まで使用されていました。残っている巨大な柱は、構造의壮大さを明らかにしています。'
         },
         category: 'history',
         coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 },
