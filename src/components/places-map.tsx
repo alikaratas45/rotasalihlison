@@ -14,9 +14,10 @@ interface PlacesMapProps {
   places: Place[];
   className?: string;
   isRoute?: boolean; // Rota olarak mı çizilsin (Google Directions API)
+  startLocation?: { lat: number; lng: number }; // Rotanın başlangıç noktası (Opsiyonel: Kullanıcı Konumu)
 }
 
-export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false }) => {
+export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false, startLocation }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { language, t } = useLanguage();
   const typedLanguage = language as Language;
@@ -144,17 +145,40 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       return;
     }
 
-    if (places.length < 2) {
-      directionsRendererRef.current.setDirections({ routes: [] });
-      return;
+    // Determine origin
+    const origin = startLocation || (places.length >= 2 ? places[0].coordinates : null);
+    if (!origin) {
+        directionsRendererRef.current.setDirections({ routes: [] });
+        return;
     }
 
-    const origin = places[0].coordinates;
-    const destination = places[places.length - 1].coordinates;
-    const waypoints = places.slice(1, -1).map(p => ({
-      location: p.coordinates,
-      stopover: true
-    }));
+    // Determine destination and waypoints
+    let destination;
+    let waypoints: google.maps.DirectionsWaypoint[] = [];
+
+    if (startLocation) {
+        // Route: User -> Place 1 -> Place 2 -> ... -> Last Place
+        if (places.length === 0) {
+            directionsRendererRef.current.setDirections({ routes: [] });
+            return;
+        };
+        destination = places[places.length - 1].coordinates;
+        waypoints = places.slice(0, -1).map(p => ({
+            location: p.coordinates,
+            stopover: true
+        }));
+    } else {
+        // Route: Place 1 -> Place 2 -> ... -> Last Place
+        if (places.length < 2) {
+            directionsRendererRef.current.setDirections({ routes: [] });
+            return;
+        }
+        destination = places[places.length - 1].coordinates;
+        waypoints = places.slice(1, -1).map(p => ({
+            location: p.coordinates,
+            stopover: true
+        }));
+    }
 
     directionsServiceRef.current.route({
       origin,
@@ -168,7 +192,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         console.warn("Directions request failed due to " + status);
       }
     });
-  }, [map, places, isRoute, authFailed]);
+  }, [map, places, isRoute, authFailed, startLocation]);
 
   // Handle Place Markers
   useEffect(() => {
@@ -216,9 +240,14 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       places.forEach(place => {
         if (place.coordinates) bounds.extend(place.coordinates);
       });
+      
+      if (startLocation) {
+          bounds.extend(startLocation);
+      }
+
       map.fitBounds(bounds);
 
-      if (places.length === 1) {
+      if (places.length === 1 && !startLocation) {
         map.setZoom(14);
       }
     }
@@ -226,7 +255,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     return () => {
       markers.forEach(marker => marker.setMap(null));
     };
-  }, [map, places, typedLanguage, t, authFailed, isRoute]);
+  }, [map, places, typedLanguage, t, authFailed, isRoute, startLocation]);
 
   const handleCenterOnUser = () => {
       if (userMarkerRef.current && map) {

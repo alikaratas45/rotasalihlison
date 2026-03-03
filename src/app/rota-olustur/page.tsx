@@ -65,7 +65,7 @@ export default function RotaOlusturPage() {
         allPlaces?.slice().sort((a, b) => a.name[typedLanguage].localeCompare(b.name[typedLanguage], language)) || []
     , [allPlaces, language, typedLanguage]);
 
-    // This is the core logic: Sort selected places by distance from user (nearest to farthest)
+    // Core Logic: Sort selected places by distance from user location
     const orderedSelectedPlaces = useMemo(() => {
         if (!allPlaces) return [];
         const selected = allPlaces.filter(p => selectedPlaceIds.includes(p.id));
@@ -114,8 +114,8 @@ export default function RotaOlusturPage() {
             let mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}`;
             
             if (orderedSelectedPlaces.length === 1) {
-                const destination = `${orderedSelectedPlaces[0].coordinates.lat},${orderedSelectedPlaces[0].coordinates.lng}`;
-                mapsUrl += `&destination=${destination}`;
+                const destinationCoords = `${orderedSelectedPlaces[0].coordinates.lat},${orderedSelectedPlaces[0].coordinates.lng}`;
+                mapsUrl += `&destination=${destinationCoords}`;
             } else {
                 const destination = orderedSelectedPlaces[orderedSelectedPlaces.length - 1];
                 const destinationCoords = `${destination.coordinates.lat},${destination.coordinates.lng}`;
@@ -231,7 +231,8 @@ export default function RotaOlusturPage() {
                                     <PlacesMap 
                                         places={orderedSelectedPlaces} 
                                         className="w-full h-full" 
-                                        isRoute={orderedSelectedPlaces.length > 1}
+                                        isRoute={true}
+                                        startLocation={userLocation || undefined}
                                     />
                                 </div>
                             ) : (
@@ -263,7 +264,7 @@ export default function RotaOlusturPage() {
                                             <button onClick={() => handlePlaceToggle(place.id)} className="rounded-full hover:bg-muted-foreground/20 p-0.5 ml-1">
                                                 <X className="h-3 w-3"/>
                                             </button>
-                                        </Badge>
+                                         </Badge>
                                     ))}
                                 </div>
                             ) : <p className="text-muted-foreground text-sm">{t('routePlanner.startPlanning')}</p>}
