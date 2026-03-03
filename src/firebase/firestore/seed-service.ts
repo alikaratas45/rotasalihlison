@@ -71,8 +71,8 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     const data = { ...place };
     
     // --- GÖRSEL KORUMA MANTIĞI ---
-    // Eğer koddaki link Imgur/Unsplash gibi kaliteli bir linkse onu bas.
-    // Eğer kodda rastgele yer tutucu (picsum) varsa ama DB'de kaliteli link varsa DB'dekini koru.
+    // Eğer veritabanında kaliteli bir link (imgur, unsplash vb.) varsa ve koddaki veri bir yer tutucu ise DB'dekini koru.
+    // Ancak kod tarafında yeni ve kaliteli bir Imgur linki tanımlanmışsa (id 11 için olduğu gibi) onu bas.
     const isCodeImageHighQuality = place.imageUrl && (
         place.imageUrl.includes('imgur.com') || 
         place.imageUrl.includes('images.unsplash.com') ||
@@ -86,6 +86,8 @@ export async function seedDatabase(firestore: Firestore): Promise<{
         (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
     );
 
+    // Sadece koddaki veri kalitesiz (picsum) ve DB'deki kaliteli ise DB'yi koru.
+    // Aksi halde (koddaki veri yeni bir Imgur linki ise) koddakini uygula.
     if (!isCodeImageHighQuality && isDbImageHighQuality) {
         data.imageUrl = existingData.imageUrl;
     }
