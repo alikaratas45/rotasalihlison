@@ -13,9 +13,10 @@ import { googleMapsApiKey } from '@/lib/config';
 interface PlacesMapProps {
   places: Place[];
   className?: string;
+  isRoute?: boolean; // Rota olarak mı çizilsin (noktalar arası çizgi)
 }
 
-export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
+export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { language, t } = useLanguage();
   const typedLanguage = language as Language;
@@ -26,6 +27,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
   
   const userMarkerRef = useRef<google.maps.Marker | null>(null);
   const watchIdRef = useRef<number | null>(null);
+  const polylineRef = useRef<google.maps.Polyline | null>(null);
 
   useEffect(() => {
     const handleAuthError = () => {
@@ -34,7 +36,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
 
     window.addEventListener('gm-auth-failure', handleAuthError);
 
-    // Check if the script is already loaded
     if (window.google && window.google.maps) {
       setIsApiLoaded(true);
     } else if (!googleMapsApiKey) {
@@ -84,7 +85,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
           if (userMarkerRef.current) {
             userMarkerRef.current.setPosition(userPos);
           } else {
-            // Create user location blue dot
             userMarkerRef.current = new window.google.maps.Marker({
               position: userPos,
               map: map,
@@ -97,17 +97,13 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
                 strokeWeight: 2,
                 scale: 8,
               },
-              zIndex: 1000 // Ensure user is always on top
+              zIndex: 1000
             });
           }
         },
         (error) => {
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              break;
-            case error.POSITION_UNAVAILABLE:
-              break;
-            case error.TIMEOUT:
               break;
             default:
               console.warn("Geolocation warning:", error.message);
@@ -128,6 +124,32 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
     };
   }, [map, isApiLoaded]);
 
+  // Handle Route Polyline
+  useEffect(() => {
+    if (!map || !places || !isRoute || authFailed) {
+      if (polylineRef.current) {
+        polylineRef.current.setMap(null);
+        polylineRef.current = null;
+      }
+      return;
+    }
+
+    const path = places.map(p => p.coordinates).filter(Boolean);
+    
+    if (polylineRef.current) {
+      polylineRef.current.setPath(path);
+    } else {
+      polylineRef.current = new window.google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: 'hsl(140, 56%, 36%)',
+        strokeOpacity: 0.8,
+        strokeWeight: 4,
+        map: map
+      });
+    }
+  }, [map, places, isRoute, authFailed]);
+
   // Handle Place Markers
   useEffect(() => {
     if (!map || !places || authFailed) return;
@@ -144,7 +166,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
         title: place.name[typedLanguage],
         icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: 'hsl(140, 56%, 36%)', // primary color
+            fillColor: 'hsl(140, 56%, 36%)',
             fillOpacity: 0.9,
             strokeColor: 'white',
             strokeWeight: 2,
@@ -194,7 +216,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
               map.setZoom(15);
           }
       } else {
-          // Request position if not already tracking
           navigator.geolocation.getCurrentPosition((pos) => {
               const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
               map?.panTo(coords);

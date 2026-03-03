@@ -1,15 +1,20 @@
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import { useMemo } from 'react';
+import type { Place } from '@/lib/definitions';
+import { PlacesMap } from '@/components/places-map';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function BisikletRotalariPage() {
   const { t } = useLanguage();
+  const firestore = useFirestore();
 
-  const mapQuery = "bisiklet parkuru"; // 'bicycle track' için arama yap
-  const salihliCoords = "38.48,28.14"; // Salihli'nin merkezi
-  const zoomLevel = 13; 
-
-  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&ll=${salihliCoords}&z=${zoomLevel}&output=embed&hl=${t('header.routes') === 'Routen' ? 'de' : t('header.routes') === 'Itinéraires' ? 'fr' : t('header.routes') === 'ルート' ? 'ja' : t('header.routes') === 'Routes' ? 'en' : 'tr'}`;
+  // Bisiklet rotaları için doğa ve parkur mekanlarını gösterelim
+  const natureQuery = useMemo(() => query(collection(firestore, 'places'), where('category', '==', 'nature')), [firestore]);
+  const { data: places, loading } = useCollection<Place>(natureQuery);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -19,16 +24,11 @@ export default function BisikletRotalariPage() {
       </div>
 
       <div className="w-full h-[60vh] md:h-[70vh] rounded-lg overflow-hidden shadow-lg border">
-        <iframe
-          src={embedUrl}
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen={true}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title={t('bicycleRoutes.title')}
-        ></iframe>
+        {loading ? (
+            <Skeleton className="w-full h-full" />
+        ) : (
+            <PlacesMap places={places || []} className="w-full h-full" />
+        )}
       </div>
     </div>
   );

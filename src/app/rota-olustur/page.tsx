@@ -15,6 +15,7 @@ import { Loader2, Map, Route as RouteIcon, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Language } from '@/context/language-context';
 import { cn } from '@/lib/utils';
+import { PlacesMap } from '@/components/places-map';
 
 const MAX_STOPS = 10;
 
@@ -25,7 +26,6 @@ export default function RotaOlusturPage() {
     const { toast } = useToast();
 
     const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([]);
-    const [mapUrl, setMapUrl] = useState<string>('');
     const [isMapLoading, setIsMapLoading] = useState(false);
 
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
@@ -50,18 +50,6 @@ export default function RotaOlusturPage() {
             }
         });
     }, [toast, t]);
-
-    useEffect(() => {
-        if (selectedPlaces.length < 2) {
-            setMapUrl('');
-            return;
-        }
-
-        const saddr = `${selectedPlaces[0].coordinates.lat},${selectedPlaces[0].coordinates.lng}`;
-        const daddr = selectedPlaces.slice(1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('+to:');
-        const finalEmbedUrl = `https://maps.google.com/maps?saddr=${saddr}&daddr=${daddr}&output=embed&z=10&hl=${language}`;
-        setMapUrl(finalEmbedUrl);
-    }, [selectedPlaces, language]);
     
     const handleOpenInMaps = useCallback(() => {
         if (selectedPlaces.length === 0) {
@@ -175,18 +163,13 @@ export default function RotaOlusturPage() {
                             <CardTitle>{t('routePlanner.routeMap')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {mapUrl ? (
+                            {selectedPlaces.length > 0 ? (
                                 <div className="aspect-video w-full rounded-lg overflow-hidden border">
-                                    <iframe
-                                        src={mapUrl}
-                                        width="100%"
-                                        height="100%"
-                                        style={{ border: 0 }}
-                                        allowFullScreen={true}
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer-when-downgrade"
-                                        title={t('routePlanner.routeMap')}
-                                    ></iframe>
+                                    <PlacesMap 
+                                        places={selectedPlaces} 
+                                        className="w-full h-full" 
+                                        isRoute={selectedPlaces.length > 1}
+                                    />
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center h-full aspect-video bg-muted/50 rounded-lg">
