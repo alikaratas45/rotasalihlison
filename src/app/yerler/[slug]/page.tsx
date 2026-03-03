@@ -87,6 +87,9 @@ export default function PlaceDetailPage() {
   }, []);
 
   const isNear = useMemo(() => {
+    // TEST AMAÇLI: Sardes Antik Kenti (ID: '1') her zaman anket gösterir
+    if (place?.id === '1') return true;
+
     if (!userLocation || !place) return false;
     const distance = calculateDistance(
       userLocation.lat,
