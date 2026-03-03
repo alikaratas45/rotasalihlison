@@ -145,7 +145,7 @@ export const places: Place[] = [
         id: '7',
         slug: {
             tr: 'adala-volkanik-kanyonu',
-            en: 'adala-volcanic-canyon',
+            en: 'adala-volcanic-anyoon',
             fr: 'canyon-volcanique-adala',
             de: 'vulkanischer-canyon-adala',
             ja: 'adala-volcanic-canyon-ja'
@@ -242,7 +242,7 @@ export const places: Place[] = [
             ja: 'クズ・キョプリュス（乙女 sweating host 橋）'
         },
         description: {
-            tr: 'Adala\'da Gediz Nehri üzerinde bulunan bu tarihi köprü, Roma dönemine aittir. Efsaneye göre, köprünün yapımı için halktan toplanan paralara bir kızın da çeyizini bağışlaması nedeniyle bu adı almıştır. Taş işçiliğinin güzel bir örneğidir.',
+            tr: 'Located on the Gediz River in Adala, this historical bridge dates back to the Roman period. According to legend, it was named after a girl who donated her dowry to the money collected from the public for the construction of the bridge. It is a fine example of stonemasonry.',
             en: 'Located on the Gediz River in Adala, this historical bridge dates back to the Roman period. According to legend, it was named after a girl who donated her dowry to the money collected from the public for the construction of the bridge. It is a fine example of stonemasonry.',
             fr: 'Situé sur la rivière Gediz à Adala, ce pont historique remonte à la période romaine. Selon la légende, il a été nommé ainsi d\'après une jeune fille qui a fait don de sa dot à l\'argent collecté auprès du public pour la construction du pont. C\'est un bel exemple de maçonnerie en pierre.',
             de: 'Diese historische Brücke über den Fluss Gediz in Adala stammt aus der Römerzeit. Der Legende nach wurde sie nach einem Mädchen benannt, das ihre Mitgift dem für den Bau der Brücke von der Öffentlichkeit gesammelten Geld spendete. Sie ist bir schönes Beispiel für Steinmetzarbeiten.',
@@ -298,11 +298,71 @@ export const places: Place[] = [
             ja: 'ギムナジウム'
         },
         description: {
-            tr: 'Sardes Antik Kenti\'nin en etkileyici yapılarından biridir. Roma döneminde hem spor okulu hem de sosyalleşme alanı olarak kullanılmıştır. Büyüklüğü ve iyi korunmuş mermer avlusuyla dikkat çeker.',
-            en: 'One of the most impressive structures in the Ancient City of Sardis. It was used as both a sports school and a socialization area during the Roman period. It attracts attention with its size and well-preserved marble courtyard.',
-            fr: 'L\'une des structures les plus impressionnantes de la cité antique de Sardes. Il était utilisé à la fois comme école de sport et comme lieu de socialisation à l\'époque romaine. Il attire l\'attention par sa taille et sa cour en marbre bien conservée.',
-            de: 'Eines der beeindruckendsten Bauwerke in der antiken Stadt Sardes. Es wurde während der Römerzeit sowohl als Sportschule als auch als Sozialisationsbereich genutzt. Es fällt durch seine Größe und seinen gut erhaltenen Marmorhof auf.',
-            ja: 'サルディス古代都市で最も印象的な建造物の1つ。ローマ時代にはスポーツ学校と社会化エリアの両方として使用されていました。その大きさと保存状態の良い大理石の中庭で注目を集めています。'
+            tr: `Gymnasium Lidya döneminden kalma olarak bilinir fakat Roma dönemine aittir. Burada Lidya dönemine ait herhangi bir kalıntı yoktur. Bundan yaklaşık 2000 yıl önce geçirdiği depremin ardından model olarak yapılmıştır. Septimius Severus bu yapıyı oğulları Geta ve Caracalla’ya bir de eşi Julia Domna’ya adamıştır. (Septimius’tan sonra oğlu Caracalla ve Geta beraber imparator olmuşlar fakat daha sonra Caracella Geta’yı bir suikastle öldürtmüştür). Gymnasium yaklaşık 25 dönüm üzerine kurulmuş bir alış veriş merkezi ve eğitim sahasıdır. Hamamlardan çıkan soyluların yukarıdaki balkonlarda oturup meyvelerini yerken sporcuları izliyorlardı. Bu alanın bir kısmı kapalı idi. Burada restoranlar, ibadet yerleri, dükkânlar ve tuvaletler vardır. Toplamda 34 adet dükkân mevcuttur.
+
+Hamam:
+Yıkanmak, Roma İmparatorluğu’nun tamamına yayılmış̧ olan bir sosyal gelenektir. Bu gelenek, ılık, sıcak ve soğuk su ile keyifle yıkanarak, sohbet ederek, egzersiz yaparak ve kültürel uygulamalarda bulunarak serbest zamanların değerlendirildiği faaliyetleri içermektedir. Hem soyluların hem de spor yapanların spordan sonra kullandıkları bu hamam ayrıca spor sırasında kendini inciten sporcular tedavi amaçlı kullanmışlardır. Ayaklarını incitenlerin en üst kısımda oturup sadece ayaklarını soktukları, bacaklarını incitenlerin 2. Basamağa oturarak yarı beline kadar suya gömüldükleri, tüm vücudunda ağrı olanlar başları dışarıda kalacak şekilde suya girdikleri bir hamamdı.
+
+Tuvaletler (Latrin):
+Umumi tuvaletlerin küçük olması ve kuzey ve doğu yönlerindeki kapılar, bu alanın hem Hamam ziyaretçileri hem de mermer yolu kullanan halk tarafından kullanılmış olacağı fikrini akıllara getirmektedir. İki adet birbirine benzer şekilde düzenlenmiş uzun dikdörtgen biçimli odalar, erkekler ve kadınlar için ayrı ayrı hizmet vermek için yapıldıklarını düşündürür. Burada uzun uzun sohbet edilir ve memleket meseleleri konuşulurdu. Hatta önemli görüşmeler olduğu esnada dışarıdan bando takımı çağırılır ve onların gürültülerinden dolayı ses dışarıya gitmezdi.
+
+Dükkanlar:
+Son halleriyle dikdörtgen şekilli 34 adet küçük Bizans dükkânı mevcuttu. Kazılarda ortaya çıkarılan eserler dükkânların değişken kimlikleri ile ilgili bilgi vermektedir: birkaç küçük ünite taverna ya da lokanta olarak hizmet verirken, bazıları boya hazırlama, diğerleri ise cam eşyaların ve hırdavatların satımına odaklanmışlardı.
+
+Sinagog (Havra):
+Abidevi havra, Geç Roma döneminde, Musevi toplumunun dini merkezi olarak kullanılmaktaydı. Bin kişiyi barındırabilecek büyüklükte ve uzunluğu 50 metreyi aşkın ana toplantı salonu yer almaktadır. Ön avlunun ortasındaki çeşme, ayinlerden önce cemaatin ellerini yıkadığı bir yerdi. Çeyiz hazırlamak için hayat kadınlığı yapan genç kızlar evlenmeden önce bu havuzda yıkanarak günahlarından arınırlardı.`,
+            en: `The Gymnasium is often thought to be from the Lydian period, but it actually belongs to the Roman period. There are no Lydian remains here. It was built as a model after an earthquake about 2000 years ago. Septimius Severus dedicated this structure to his sons Geta and Caracalla, and his wife Julia Domna. (After Septimius, his sons Caracalla and Geta became co-emperors, but Caracalla later had Geta assassinated). The Gymnasium is a shopping center and education area built on approximately 25 acres. Nobles emerging from the baths would sit on the balconies above, eating fruit while watching the athletes. There are restaurants, places of worship, shops, and toilets here. In total, there are 34 shops.
+
+Bath:
+Bathing was a social tradition spread throughout the Roman Empire. This tradition included washing with warm, hot, and cold water, chatting, and exercising. Used by both nobles and athletes, this bath was also used for treatment. Those with foot injuries sat at the top; those with leg injuries sat on the second step to be immersed up to the waist; and those with full-body pain submerged themselves leaving only their heads out.
+
+Toilets (Latrine):
+The public toilets suggest they were used by both bath visitors and the public. Two similar long rectangular rooms likely served men and women separately. People held long conversations here about state matters. During important meetings, a band was called outside so the noise would prevent voices from being heard outside.
+
+Shops:
+In their final form, there were 34 small Byzantine shops. Excavations show their varied identities: some served as taverns or restaurants, some specialized in dyes, and others in glassware or hardware sales.
+
+Synagogue:
+This monumental synagogue was the religious center of the Jewish community in the Late Roman period. The main hall is over 50 meters long and could hold a thousand people. The fountain in the front courtyard was for ritual hand washing. It is said that young girls who worked as prostitutes to prepare a dowry would wash in this pool before marriage to be purified from their sins.`,
+            fr: `Le Gymnase est souvent considéré comme datant de l'époque lydienne, mais il appartient en réalité à l'époque romaine. Il n'y a aucun vestige lydien ici. Il a été construit comme modèle après un tremblement de terre il y a environ 2000 ans. Septime Sévère a dédié cette structure à ses fils Geta et Caracalla, ainsi qu'à son épouse Julia Domna. Le Gymnase est un centre commercial et un espace éducatif s'étendant sur environ 25 décares. Les nobles sortant des thermes s'asseyaient sur les balcons pour manger des fruits tout en regardant les athlètes. On y trouvait des restaurants, des lieux de culte, des boutiques et des toilettes. Au total, il y a 34 boutiques.
+
+Thermes :
+Se baigner était une tradition sociale dans tout l'Empire romain. Utilisés par les nobles et les sportifs, ces thermes servaient aussi de lieu de traitement. Ceux qui étaient blessés aux pieds ne trempaient que les pieds ; ceux blessés aux jambes étaient immergés jusqu'à la taille ; et ceux souffrant de douleurs sur tout le corps s'immergeaient totalement en ne laissant que la tête dépasser.
+
+Toilettes (Latrines) :
+Les toilettes publiques étaient utilisées par les visiteurs des thermes et le public. On y discutait longuement des affaires du pays. Lors de réunions importantes, une fanfare était appelée à l'extérieur pour que le bruit empêche les voix d'être entendues au-dehors.
+
+Boutiques :
+Il y avait 34 petites boutiques byzantines. Les fouilles révèlent leurs diverses activités : tavernes, restaurants, ateliers de teinture ou vente de verrerie et de quincaillerie.
+
+Synagogue :
+Cette synagogue monumentale était le centre religieux de la communauté juive à l'époque romaine tardive. La salle principale mesure plus de 50 mètres et peut accueillir mille personnes. La fontaine de la cour servait au lavage rituel des mains. On raconte que les jeunes filles qui se prostituaient pour préparer leur dot se lavaient dans ce bassin avant le mariage pour être purifiées de leurs péchés.`,
+            de: `Das Gymnasium wird oft der lydischen Zeit zugeschrieben, gehört aber tatsächlich zur römischen Epoche. Es gibt hier keine lydischen Überreste. Es wurde vor etwa 2000 Jahren nach einem Erdbeben als Modell errichtet. Septimius Severus widmete dieses Bauwerk seinen Söhnen Geta und Caracalla sowie seiner Frau Julia Domna. Das Gymnasium ist ein Einkaufszentrum und Bildungsbereich auf etwa 25 Dekar. Adlige, die aus den Bädern kamen, saßen auf den Balkonen, aßen Früchte und beobachteten die Athleten. Es gab Restaurants, Gebetsstätten, Geschäfte und Toiletten. Insgesamt gibt es 34 Geschäfte.
+
+Bad (Thermen):
+Das Baden war eine soziale Tradition im gesamten Römischen Reich. Sowohl Adlige als auch Sportler nutzten die Bäder, auch zu Heilzwecken. Wer Fußverletzungen hatte, tauchte nur die Füße ein; wer Beinverletzungen hatte, tauchte bis zur Taille ein; und wer Schmerzen am ganzen Körper hatte, tauchte bis zum Kopf unter.
+
+Toiletten (Latrinen):
+Die öffentlichen Toiletten wurden von Badbesuchern und der Öffentlichkeit genutzt. Hier wurden lange Gespräche über Staatsangelegenheiten geführt. Bei wichtigen Treffen wurde draußen eine Musikkapelle gerufen, damit der Lärm verhinderte, dass Stimmen nach außen drangen.
+
+Geschäfte:
+Es gab 34 kleine byzantinische Geschäfte. Ausgrabungen zeigen ihre vielfältige Nutzung: Tavernen, Restaurants, Färbereien oder der Verkauf von Glas- und Eisenwaren.
+
+Synagoge:
+Diese monumentale Synagoge war das religiöse Zentrum der jüdischen Gemeinde in der Spätromantik. Die Haupthalle ist über 50 Meter lang und bietet Platz für tausend Personen. Der Brunnen im Vorhof diente der rituellen Handwaschung. Es heißt, dass junge Mädchen, die als Prostituierte arbeiteten, um ihre Mitgift vorzubereiten, sich vor der Hochzeit in diesem Becken wuschen, um von ihren Sünden gereinigt zu werden.`,
+            ja: `ギムナジウムはリディア時代のものと思われがちですが、実際にはローマ時代のものです。ここにはリディア時代の遺構はありません。約2000年前の地震の後、モデルとして建設されました。セプティミウス・セウェルスは、この建物を息子のゲタとカラカラ、そして妻のユリア・ドムナに捧げました。ギムナジウムは約25デカールの敷地に建てられたショッピングセンター兼教育の場です。浴場から出てきた貴族たちは、バルコニーに座って果物を食べながらアスリートたちを眺めていました。ここにはレストラン、礼拝所、売店、トイレがあり、合計34の店舗が存在しました。
+
+浴場：
+入浴はローマ帝国全土に広まった社会的習慣でした。貴族もアスリートも利用し、怪我の治療にも使われました。足を痛めた人は足だけを浸し、脚を痛めた人は腰まで浸かり、全身が痛む人は頭だけを出して全身を沈めて入浴しました。
+
+トイレ（ラトリン）：
+公衆トイレは浴場の利用者と一般市民の両方に使われていました。ここでは国政などの長い会話が行われました。重要な話し合いの最中には、外に楽団を呼び、その騒音で声が外に漏れないようにしました。
+
+売店：
+最終的には34の小さなビザンチン様式の店がありました。調査により、居酒屋、レストラン、染料店、ガラス細工や金物店など、多様な活動が行われていたことが分かっています。
+
+シナゴーグ（会堂）：
+この記念碑的な会堂は、後期ローマ時代のユダヤ人コミュニティの宗教的中心地でした。長さ50メートルを超え、1000人を収容できました。中庭の噴水は儀式の前に手を洗う場所でした。持参金を用意するために売春をしていた少女たちが、結婚前にこのプールで身を清め、罪を洗ったと言い伝えられています。`
         },
         category: 'history',
         coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
