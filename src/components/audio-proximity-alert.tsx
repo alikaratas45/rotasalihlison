@@ -41,7 +41,11 @@ export function AudioProximityAlert() {
   const speakPrompt = useCallback((text: string) => {
     if (typeof window === 'undefined') return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Pronunciation fix for Gymnasium
+    const fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+    
+    const utterance = new SpeechSynthesisUtterance(fixedText);
     
     const langMap: Record<string, string> = {
       'tr': 'tr-TR',
@@ -62,15 +66,14 @@ export function AudioProximityAlert() {
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        // TEST MODU: Gerçek konum yerine Gymnasium koordinatlarını kullanıyoruz
-        // Gymnasium: 38.48848035921838, 28.040289089766958
-        const latitude = 38.48848035921838;
-        const longitude = 28.040289089766958;
+        // GERÇEK KONUM MODU: Hardcoded koordinatlar kaldırıldı
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
 
         for (const place of places) {
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
           
-          // 30 meters threshold
+          // 30 meters threshold for proximity alert
           if (dist <= 30 && !notifiedPlaceIds.has(place.id)) {
             setActiveAlertPlace(place);
             setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
@@ -93,20 +96,7 @@ export function AudioProximityAlert() {
         }
       },
       (error) => {
-        // Test modunda hata almamak için Gymnasium simülasyonunu burada da çalıştırabiliriz
-        const latitude = 38.48848035921838;
-        const longitude = 28.040289089766958;
-        
-        for (const place of places) {
-          const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
-          if (dist <= 30 && !notifiedPlaceIds.has(place.id)) {
-            setActiveAlertPlace(place);
-            setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
-            const placeName = place.name[language as keyof typeof place.name] || place.name.tr;
-            setTimeout(() => speakPrompt(t('proximity.alert', placeName)), 500);
-            break;
-          }
-        }
+        console.warn("Geolocation watch error:", error.message);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );

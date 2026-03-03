@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -76,7 +75,7 @@ function PlaceDetailContent() {
 
   useEffect(() => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
           setUserLocation({
             lat: position.coords.latitude,
@@ -86,13 +85,12 @@ function PlaceDetailContent() {
         (error) => console.error("Error getting location:", error),
         { enableHighAccuracy: true }
       );
+      return () => navigator.geolocation.clearWatch(watchId);
     }
   }, []);
 
   const isNear = useMemo(() => {
-    // TEST AMAÇLI: Sardes Antik Kenti (ID: '1') her zaman anket gösterir
-    if (place?.id === '1') return true;
-
+    // TEST MODU KAPATILDI: Artık sadece gerçek yakınlıkta anket gösterilir.
     if (!userLocation || !place) return false;
     const distance = calculateDistance(
       userLocation.lat,
@@ -100,7 +98,7 @@ function PlaceDetailContent() {
       place.coordinates.lat,
       place.coordinates.lng
     );
-    return distance <= 500;
+    return distance <= 500; // 500 metre sınırı
   }, [userLocation, place]);
   
   const name = place ? place.name[typedLanguage] : '';
@@ -134,7 +132,10 @@ function PlaceDetailContent() {
       }
       setIsGenerating(false);
       
-      const utterance = new SpeechSynthesisUtterance(text);
+      // Pronunciation fix for Gymnasium -> Cimnazyum
+      const fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+      
+      const utterance = new SpeechSynthesisUtterance(fixedText);
       
       const langMap: Record<Language, string[]> = {
         'tr': ['tr-TR'],
