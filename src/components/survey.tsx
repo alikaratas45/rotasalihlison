@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 import { cn } from '@/lib/utils';
-import { addDoc, collection, serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, serverTimestamp, doc, updateDoc, getDoc, setDoc, Firestore } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 interface SurveyProps {
   placeId: string;
@@ -42,7 +44,7 @@ export function Survey({ placeId, placeName }: SurveyProps) {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false); // Just submitted in current session
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [existingDocId, setExistingDocId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoadingPrevious, setIsLoadingPrevious] = useState(false);
@@ -63,46 +65,45 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     setExtraAnswers((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleEditClick = async () => {
-    if (!existingDocId) return;
+  const handleEditClick = () => {
+    if (!existingDocId || !firestore) return;
     
     setIsLoadingPrevious(true);
-    try {
-      const docRef = doc(firestore, 'feedbacks', existingDocId);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setRatings({
-          cleanliness: data.cleanliness || 0,
-          accessibility: data.accessibility || 0,
-          satisfaction: data.satisfaction || 0,
-        });
-        setExtraAnswers({
-          withTour: data.withTour || '',
-          guided: data.guided || '',
-          infoBoards: data.infoBoards || '',
-        });
-        setIsEditing(true);
-      } else {
-        // Doc might have been deleted from server
-        localStorage.removeItem(`survey_v1_${placeId}`);
-        setExistingDocId(null);
-        setIsEditing(true); // Allow fresh start
-      }
-    } catch (error) {
-      console.error("Error fetching previous survey:", error);
-      toast({
-        variant: 'destructive',
-        title: t('survey.submitErrorTitle'),
-        description: "Önceki veriler yüklenemedi.",
+    const docRef = doc(firestore, 'feedbacks', existingDocId);
+    
+    getDoc(docRef)
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setRatings({
+            cleanliness: data.cleanliness || 0,
+            accessibility: data.accessibility || 0,
+            satisfaction: data.satisfaction || 0,
+          });
+          setExtraAnswers({
+            withTour: data.withTour || '',
+            guided: data.guided || '',
+            infoBoards: data.infoBoards || '',
+          });
+          setIsEditing(true);
+        } else {
+          localStorage.removeItem(`survey_v1_${placeId}`);
+          setExistingDocId(null);
+          setIsEditing(true);
+        }
+        setIsLoadingPrevious(false);
+      })
+      .catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: docRef.path,
+          operation: 'get',
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
+        setIsLoadingPrevious(false);
       });
-    } finally {
-      setIsLoadingPrevious(false);
-    }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const isComplete = Object.values(ratings).every(r => r > 0) && 
                        extraAnswers.withTour !== '' && 
                        extraAnswers.guided !== '' && 
@@ -118,49 +119,68 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     }
 
     setIsSubmitting(true);
-    try {
-      const payload = {
-        placeId,
-        placeName,
-        ...ratings,
-        ...extraAnswers,
-        updatedAt: serverTimestamp(),
+    const payload = {
+      placeId,
+      placeName,
+      ...ratings,
+      ...extraAnswers,
+      updatedAt: serverTimestamp(),
+    };
+
+    if (existingDocId) {
+      const docRef = doc(firestore, 'feedbacks', existingDocId);
+      updateDoc(docRef, payload)
+        .then(() => {
+          setIsSubmitted(true);
+          setIsEditing(false);
+          setIsSubmitting(false);
+          toast({
+            title: t('survey.successTitle'),
+            description: t('survey.successDescription'),
+          });
+        })
+        .catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: docRef.path,
+            operation: 'update',
+            requestResourceData: payload,
+          } satisfies SecurityRuleContext);
+          errorEmitter.emit('permission-error', permissionError);
+          setIsSubmitting(false);
+        });
+    } else {
+      const feedbacksCol = collection(firestore, 'feedbacks');
+      const newDocRef = doc(feedbacksCol);
+      const newId = newDocRef.id;
+      const createPayload = {
+        ...payload,
+        createdAt: serverTimestamp(),
       };
 
-      if (existingDocId) {
-        // Update existing
-        await updateDoc(doc(firestore, 'feedbacks', existingDocId), payload);
-      } else {
-        // Create new
-        const docRef = await addDoc(collection(firestore, 'feedbacks'), {
-          ...payload,
-          createdAt: serverTimestamp(),
+      setDoc(newDocRef, createPayload)
+        .then(() => {
+          localStorage.setItem(`survey_v1_${placeId}`, newId);
+          setExistingDocId(newId);
+          setIsSubmitted(true);
+          setIsEditing(false);
+          setIsSubmitting(false);
+          toast({
+            title: t('survey.successTitle'),
+            description: t('survey.successDescription'),
+          });
+        })
+        .catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: newDocRef.path,
+            operation: 'create',
+            requestResourceData: createPayload,
+          } satisfies SecurityRuleContext);
+          errorEmitter.emit('permission-error', permissionError);
+          setIsSubmitting(false);
         });
-        // Save to local storage
-        localStorage.setItem(`survey_v1_${placeId}`, docRef.id);
-        setExistingDocId(docRef.id);
-      }
-
-      setIsSubmitted(true);
-      setIsEditing(false);
-      
-      toast({
-        title: t('survey.successTitle'),
-        description: t('survey.successDescription'),
-      });
-    } catch (error: any) {
-      console.error('Error submitting feedback:', error);
-      toast({
-        variant: 'destructive',
-        title: t('survey.submitErrorTitle'),
-        description: error.message || t('survey.submitErrorDescription'),
-      });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  // 1. Show "Thank You" right after submission
   if (isSubmitted) {
     return (
       <Card className="mt-8 border-primary/20 bg-primary/5">
@@ -177,7 +197,6 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     );
   }
 
-  // 2. Show "Already Submitted" message if they have a saved ID but aren't editing
   if (existingDocId && !isEditing) {
     return (
       <Card className="mt-8 border-primary/10 bg-secondary/5">
@@ -199,7 +218,6 @@ export function Survey({ placeId, placeName }: SurveyProps) {
     );
   }
 
-  // 3. Show the Form (New or Editing)
   return (
     <Card className="mt-8 shadow-md border-primary/10">
       <CardHeader>
@@ -209,7 +227,6 @@ export function Survey({ placeId, placeName }: SurveyProps) {
         <CardDescription>{t('survey.description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-10">
-        {/* Star Rating Criteria */}
         <div className="space-y-8">
           {CRITERIA.map((criterion) => (
             <div key={criterion.id} className="space-y-4">
@@ -238,7 +255,6 @@ export function Survey({ placeId, placeName }: SurveyProps) {
           ))}
         </div>
 
-        {/* Yes/No Extra Questions */}
         <div className="space-y-8 pt-4 border-t border-muted">
           <div className="space-y-4">
             <p className="font-semibold text-base md:text-lg text-foreground">{t('survey.withTour')}</p>
