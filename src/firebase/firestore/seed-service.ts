@@ -62,18 +62,25 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // --- GÖRSEL KORUMA MANTIĞI (GELİŞMİŞ) ---
-    // Eğer veritabanında zaten bir görsel varsa ve bu görsel "picsum" (rastgele servis) değilse,
-    // yani Imgur, Unsplash veya kullanıcının girdiği herhangi bir özel linkse onu KORU.
-    const isCustomImageInDb = existingData?.imageUrl && (
+    // --- GÖRSEL KORUMA MANTIĞI (İYİLEŞTİRİLMİŞ) ---
+    // Eğer koddaki link "picsum" DEĞİLSE (yani kaliteli bir Imgur/Unsplash linki ise), kodtakini kullan.
+    // Eğer koddaki link "picsum" ise ve veritabanında özel bir link (Imgur vb.) varsa, veritabanındakini koru.
+    const isCodeImageHighQuality = place.imageUrl && (
+        place.imageUrl.includes('imgur.com') || 
+        place.imageUrl.includes('images.unsplash.com') ||
+        place.imageUrl.includes('i.imgur.com')
+    );
+
+    const isDbImageHighQuality = existingData?.imageUrl && (
         existingData.imageUrl.includes('imgur.com') || 
         existingData.imageUrl.includes('images.unsplash.com') ||
         existingData.imageUrl.includes('i.imgur.com') ||
         (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
     );
 
-    // Eğer veritabanında özel bir görsel varsa, koddaki ne olursa olsun veritabanındakini kullan.
-    if (isCustomImageInDb) {
+    // Öncelik: Kod tarafında özel bir link varsa onu bas. 
+    // Yoksa (yani kodda picsum varsa) ama DB'de özel bir link varsa, DB'dekini tut.
+    if (!isCodeImageHighQuality && isDbImageHighQuality) {
         data.imageUrl = existingData.imageUrl;
     }
 

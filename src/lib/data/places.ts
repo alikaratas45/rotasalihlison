@@ -54,7 +54,7 @@ export const places: Place[] = [
         },
         category: 'nature',
         coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 },
-        imageUrl: 'https://images.unsplash.com/photo-1582490841511-81e1363fb48c?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/n7fioom.jpeg',
         imageHint: 'hot springs'
     },
     {
@@ -138,7 +138,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 },
-        imageUrl: 'https://images.unsplash.com/photo-1715633869797-b36b1f1ac8e5?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/IauiziR.jpeg',
         imageHint: 'city museum'
     },
     {
@@ -222,7 +222,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.57849271604208, lng: 28.270398205456143 },
-        imageUrl: 'https://images.unsplash.com/photo-1662020954789-32940334ef4f?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/vfBy0dj.jpeg',
         imageHint: 'historic house'
     },
     {
@@ -250,7 +250,7 @@ export const places: Place[] = [
         },
         category: 'nature',
         coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 },
-        imageUrl: 'https://images.unsplash.com/photo-1628344253777-f73a64d8f983?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/B2DiIdP.jpeg',
         imageHint: 'waterfall nature'
     },
     {
@@ -278,7 +278,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.610014244679405, lng: 28.298125541176937 },
-        imageUrl: 'https://images.unsplash.com/photo-1548706421-21eac6677a07?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/PKqOBtx.jpeg',
         imageHint: 'stone bridge'
     },
     {
@@ -306,7 +306,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.579235811237744, lng: 28.007434965748573 },
-        imageUrl: 'https://images.unsplash.com/photo-1717514608857-15bbab3985d1?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/2zhSlFd.jpeg',
         imageHint: 'ancient hills'
     },
     {
@@ -390,7 +390,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.45680901086971, lng: 28.016172179836534 },
-        imageUrl: 'https://images.unsplash.com/photo-1573156667501-0a20e838aa13?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/NNREyvf.jpeg',
         imageHint: 'marble quarry'
     },
     {
@@ -418,7 +418,7 @@ export const places: Place[] = [
         },
         category: 'shopping',
         coordinates: { lat: 38.6918318507784, lng: 28.281361601505868 },
-        imageUrl: 'https://images.unsplash.com/photo-1559190282-d46a48f43a2f?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/OwqFeZh.jpeg',
         imageHint: 'pottery workshop'
     },
     {
@@ -446,7 +446,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.68798840823775, lng: 28.14369833471573 },
-        imageUrl: 'https://images.unsplash.com/photo-1548706421-21eac6677a07?q=80&w=1080',
+        imageUrl: 'https://i.imgur.com/NmkLLQV.jpeg',
         imageHint: 'stone bridge'
     }
 ];
