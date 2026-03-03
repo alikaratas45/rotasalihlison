@@ -11,13 +11,13 @@ import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 
 /**
  * Belirli bir koleksiyonu statik verilerle besler.
- * Verileri silmez, akıllı güncelleme (merge) yapar.
+ * Verileri silmez, mevcut verilerin kritik alanlarını koruyarak (imageUrl vb.) güncelleme yapar.
  */
 async function seedCollection<T extends {id: string}>(
     firestore: Firestore,
     collectionName: string,
     staticData: T[],
-    dataProcessor: (item: T) => any = (item) => item
+    dataProcessor: (item: T, existingData?: any) => any = (item) => item
 ): Promise<{ added: number, updated: number, errors: number }> {
     let added = 0, updated = 0, errors = 0;
     const collectionRef = collection(firestore, collectionName);
@@ -26,11 +26,10 @@ async function seedCollection<T extends {id: string}>(
         const docRef = doc(collectionRef, item.id);
         try {
             const docSnap = await getDoc(docRef);
-            const processedData = dataProcessor(item);
+            const existingData = docSnap.exists() ? docSnap.data() : undefined;
+            const processedData = dataProcessor(item, existingData);
             
-            // DİKKAT: setDoc with { merge: true } kullanımı mevcut veriyi silmez.
-            // Sadece çakışan alanları (id, name, coordinates vb.) günceller.
-            // Veritabanında elle eklediğiniz ekstra alanlar varsa korunur.
+            // Mevcut veriye zarar vermeden sadece koddaki güncellemeleri yazar
             await setDoc(docRef, processedData, { merge: true });
             
             if (docSnap.exists()) {
@@ -59,12 +58,29 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     experienceItems: { added: number, updated: number }
 }> {
   
-  // Yerleri güncelle (Kemer ve Gökeyüp koordinatlarını buradaki statik veriden alır)
-  const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place) => ({
-    ...place,
-    imageUrl: place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`,
-    imageHint: place.imageHint || 'landmark'
-  }));
+  // Yerleri güvenli şekilde güncelle
+  const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
+    const data = { ...place };
+    
+    // EĞER veritabanında hali hazırda bir görsel veya ipucu varsa ve statik listede bunlar tanımlı değilse,
+    // veritabanındakini koru. Böylece kullanıcının yüklediği resimler silinmez.
+    if (existingData?.imageUrl && !place.imageUrl) {
+        data.imageUrl = existingData.imageUrl;
+    }
+    if (existingData?.imageHint && !place.imageHint) {
+        data.imageHint = existingData.imageHint;
+    }
+
+    // Hiçbir yerde yoksa fallback kullan
+    if (!data.imageUrl) {
+        data.imageUrl = `https://picsum.photos/seed/${place.id}/600/400`;
+    }
+    if (!data.imageHint) {
+        data.imageHint = 'landmark';
+    }
+
+    return data;
+  });
 
   // Rotaları güncelle
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);

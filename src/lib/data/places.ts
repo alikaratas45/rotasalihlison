@@ -25,7 +25,9 @@ export const places: Place[] = [
             ja: 'リディア王国の壮大な首都サルディスは、歴史の流れを変えた多くの史上初の出来事を主催しました。紀元前7世紀に初めて貨幣が鋳造された場所として知られるこの古代都市は、その富と力で古代世界で最も重要な大都市の1つでした。この都市は、巨大なアルテミス神殿、印象的に修復されたシナゴーグ、ギムナジウム、ローマ時代の店々で訪問者に時間の旅を提供します。パクトロス（サルト）川が金を運んだと信じられていたこれらの土地を散策すると、リディアの豊かな遺産 ve ローマの素晴らしさを一緒に感じることができます。'
         },
         category: 'history',
-        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 }
+        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
+        imageUrl: 'https://images.unsplash.com/photo-1573540374799-d527e9ee392b?q=80&w=1080',
+        imageHint: 'ancient ruins'
     },
     {
         id: '2',
@@ -51,7 +53,9 @@ export const places: Place[] = [
             ja: 'サリフリの自然の楽園の1つであるクルシュンル温泉は、何世紀にもわたって治癒を提供してきた癒しの温泉水で有名です。松林に囲まれた穏やかで平和な雰囲気の中に位置するこれらの温泉は、リウマチ性疾患から皮膚の状態まで多くの病気を治すと信じられているミネラル豊富な水で知られています。近代的な施設、宿泊施設のオプション、自然의美しさを備えたクルシュンルは、身体的および精神的に若返りたい人々にとってユニークな逃避先です。'
         },
         category: 'nature',
-        coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 }
+        coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 },
+        imageUrl: 'https://images.unsplash.com/photo-1582490841511-81e1363fb48c?q=80&w=1080',
+        imageHint: 'hot springs'
     },
     {
         id: '3',
@@ -74,10 +78,12 @@ export const places: Place[] = [
             en: 'The famous wood meatballs, the first flavor that comes to mind when Salihli is mentioned, is not just a dish, but also a cultural heritage. This meatball, cooked slowly over oak wood fire, is prepared with a perfect harmony of a special spice mix and high-quality meat. Complemented by roasted tomatoes, peppers, and sumac onions served alongside, the wood meatballs offer a gastronomic experience that will make your visit to Salihli unforgettable.',
             fr: 'Les célèbres boulettes de viande au feu de bois, la première saveur qui vient à l\'esprit quand on mentionne Salihli, ne sont pas seulement un plat, maar aussi un héritage culturel. Ces boulettes, cuites lentement sur un feu de bois de chêne, sont préparées avec une harmonie parfaite d\'un mélange d\'épices spécial et de viande de haute qualité. Complétées par des tomates rôties, des poivrons et des oignons au sumac servis à côté, les boulettes de viande au feu de bois offrent une expérience gastronomique qui rendra votre visite à Salihli inoubliable.',
             de: 'Die berühmten Holz-Fleischbällchen, der erste Geschmack, der einem bei der Erwähnung von Salihli in den Sinn kommt, sind nicht nur ein Gericht, sondern auch ein Kulturerbe. Diese langsam über Eichenholzfeuer gegarten Fleischbällchen werden mit einer perfekten Harmonie aus einer speziellen Gewürzmischung und hochwertigem Fleisch zubereitet. Ergänzt durch geröstete Tomaten, Paprika und Sumach-Zwiebeln, die daneben serviert werden, bieten die Holz-Fleischbällchen ein gastronomisches Erlebnis, das Ihren Besuch in Salihli unvergesslich machen wird.',
-            ja: 'サリフリといえば最初に思い浮かぶ有名なウッドミートボールは、単なる料理ではなく、文化遺産でもあります。オーク材 host 火でゆっくりと調理されたこのミートボールは、特別なスパイスミックスと高品質の肉の完璧な調和で調理されます。ローストしたトマト、ピーマン、スマックオニオンを添えて提供されるウッドミートボールは、サリフリへの訪問を忘れられないものにする美食体験を提供します。'
+            ja: 'サリフリといえば最初に思い浮かぶ有名なウッドミートボールは、単なる料理ではなく、文化遺産でもあります。オーク材 host 火でゆっくりと調理されたこのミートボールは、特別なスパイスミックスと高品質の肉의完璧な調和で調理されます。ローストしたトマト、ピーマン、スマックオニオンを添えて提供されるウッドミートボールは、サリフリへの訪問を忘れられないものにする美食体験を提供します。'
         },
         category: 'food',
-        coordinates: { lat: 38.4833, lng: 28.1333 }
+        coordinates: { lat: 38.4833, lng: 28.1333 },
+        imageUrl: 'https://i.imgur.com/IT6VuDV.jpeg',
+        imageHint: 'grilled meatballs'
     },
     {
         id: '4',
@@ -103,7 +109,9 @@ export const places: Place[] = [
             ja: 'シティスクエアのサリフリの中心部に誇らしげにそびえ立つアタテュルク記念碑は、近代トルコの創設者であり偉大な指導者であるムスタファ・ケマル・アタテュルクへの敬意の表れです。市内で最も重要な待ち合わせ場所の1つとして、この記念碑は祝日や記念日の式典の中心となります。記念碑は単なる像ではなく、サリフリの人々の独立 ve 近代性の価値観へのコミットメントの象徴 death もあります。'
         },
         category: 'poi',
-        coordinates: { lat: 38.4830, lng: 28.1400 }
+        coordinates: { lat: 38.4830, lng: 28.1400 },
+        imageUrl: 'https://images.unsplash.com/photo-1684863935495-7b04dc83e5f9?q=80&w=1080',
+        imageHint: 'statue monument'
     },
     {
         id: '5',
@@ -129,7 +137,9 @@ export const places: Place[] = [
             ja: '歴史的な邸宅で提供されるサリフリ市立博物館は、市の豊かな社会的、文化的、経済的な過去に光を当てます。博物館には、伝統的な生活様式を反映した民族誌的遺物、農具、古い写真、文書が展示されています。訪問者は、独立戦争におけるサリフリの役割から、農業の発展、文化的な構造まで、多くの主題について学ぶことができます。この博物館は、サリフリの精神とアイデンティティを理解するために必見の場所です。'
         },
         category: 'history',
-        coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 }
+        coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 },
+        imageUrl: 'https://images.unsplash.com/photo-1715633869797-b36b1f1ac8e5?q=80&w=1080',
+        imageHint: 'city museum'
     },
     {
         id: '6',
@@ -155,7 +165,9 @@ export const places: Place[] = [
             ja: '伝説によると、ミダス王が触れるものすべてを金に変える呪いから解放されたパクトロス川（サルト川）の支流であるタバッククリークは、興味深い地質学的形成物の本拠地です。 「巨大な大釜」として知られるこれらの穴は、何千年にもわたって水が岩を侵食して形成された自然のプールです。ミダスの黄金のタッチがこれらの水で終わったという信念は、この地域に神秘的な雰囲気を加えています。冷たい水 ve 印象的な景色を備えた巨大な大釜は、自然の驚異であり、古代の伝説の生った証人でもあります。'
         },
         category: 'nature',
-        coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 }
+        coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 },
+        imageUrl: '/tabak.jpg',
+        imageHint: 'river rocks'
     },
     {
         id: '7',
@@ -181,7 +193,9 @@ export const places: Place[] = [
             ja: '何千年にもわたってゲディズ川が玄武岩を侵食して形成されたこの渓谷は、印象的な景色を眺めることができます。ハイキングや写真撮影に最適なこの地域は、クラ・サリフリジオパークの重要な部分です。'
         },
         category: 'nature',
-        coordinates: { lat: 38.581712325205984, lng: 28.271791613037774 }
+        coordinates: { lat: 38.581712325205984, lng: 28.271791613037774 },
+        imageUrl: 'https://i.imgur.com/B2DiIdP.jpeg',
+        imageHint: 'volcanic canyon'
     },
     {
         id: '8',
@@ -207,7 +221,9 @@ export const places: Place[] = [
             ja: '独立戦争中にムスタファ・ケマル・アタテュルクがしばらく滞在したこの家は、修復されて博物館になりました。その時代のアイテムや文書で歴史的な旅に出かけましょう。'
         },
         category: 'history',
-        coordinates: { lat: 38.57849271604208, lng: 28.270398205456143 }
+        coordinates: { lat: 38.57849271604208, lng: 28.270398205456143 },
+        imageUrl: 'https://images.unsplash.com/photo-1662020954789-32940334ef4f?q=80&w=1080',
+        imageHint: 'historic house'
     },
     {
         id: '9',
@@ -230,10 +246,12 @@ export const places: Place[] = [
             en: 'In the midst of lush nature, Suuçtu Waterfall, with its waters pouring from about 30 meters, takes on a fascinating beauty, especially in the spring. It is a popular spot for cooling off and picnicking.',
             fr: 'Au milieu d\'une nature luxuriante, la cascade de Suuçtu, avec ses eaux tombant d\'environ 30 mètres, revêt une beauté fascinante, surtout au printemps. C\'est un endroit populaire pour se rafraîchir et pique-niquer.',
             de: 'Inmitten üppiger Natur entfaltet der Suuçtu-Wasserfall, dessen Wasser aus etwa 30 Metern Höhe herabstürzt, besonders im Frühling eine faszinierende Schönheit. Er ist bir beliebter Ort zum Abkühlen und Picknicken.',
-            ja: '緑豊かな自然の真っ只中にあるスーチュ滝は、約30メートルから流れ落ちる水で、特に春には魅力的な美しさを帯びます。涼んだりピクニックをしたりするのに人気のスポットです。'
+            ja: '緑豊かな自然の真っ東京にあるスーチュ滝は、約30メートルから流れ落ちる水で、特に春には魅力的な美しさを帯びます。涼んだりピクニックをしたりするのに人気のスポットです。'
         },
         category: 'nature',
-        coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 }
+        coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 },
+        imageUrl: 'https://images.unsplash.com/photo-1628344253777-f73a64d8f983?q=80&w=1080',
+        imageHint: 'waterfall nature'
     },
     {
         id: '10',
@@ -259,7 +277,9 @@ export const places: Place[] = [
             ja: 'アダラのゲディズ川に架かるこの歴史的な橋は、ローマ時代にまでさかのぼります。伝説によると、橋の建設のために一般から集められたお金に持参金を寄付した少女にちなんで名付けられました。石造りの良い例です。'
         },
         category: 'history',
-        coordinates: { lat: 38.610014244679405, lng: 28.298125541176937 }
+        coordinates: { lat: 38.610014244679405, lng: 28.298125541176937 },
+        imageUrl: 'https://images.unsplash.com/photo-1548706421-21eac6677a07?q=80&w=1080',
+        imageHint: 'stone bridge'
     },
     {
         id: '11',
@@ -285,7 +305,9 @@ export const places: Place[] = [
             ja: 'これらはリディアの王や貴族のために建てられた記念碑的な墓です。アナトリアで最大の墳丘墓があるこの地域は、「アナトリアのピラミッド」として知られています。クロイソスやアリュアッテスのような有名な王の墓がここにあります。'
         },
         category: 'history',
-        coordinates: { lat: 38.579235811237744, lng: 28.007434965748573 }
+        coordinates: { lat: 38.579235811237744, lng: 28.007434965748573 },
+        imageUrl: 'https://images.unsplash.com/photo-1717514608857-15bbab3985d1?q=80&w=1080',
+        imageHint: 'ancient hills'
     },
     {
         id: '12',
@@ -311,7 +333,9 @@ export const places: Place[] = [
             ja: 'サルディス古代都市で最も印象的な建造物の1つ。ローマ時代にはスポーツ学校と社会化エリアの両方として使用されていました。その大きさと保存状態の良い大理石の中庭で注目を集めています。'
         },
         category: 'history',
-        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 }
+        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
+        imageUrl: 'https://i.imgur.com/l2YJCmK.jpeg',
+        imageHint: 'ancient gymnasium'
     },
     {
         id: '13',
@@ -337,7 +361,9 @@ export const places: Place[] = [
             ja: '古代世界で4番目に大きいイオニア式の寺院です。その建設はリディア時代に始まり、ローマ時代まで使用されていました。残っている巨大な柱は、構造の壮大さを明らかにしています。'
         },
         category: 'history',
-        coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 }
+        coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 },
+        imageUrl: 'https://images.unsplash.com/photo-1650343301290-e22780fe2609?q=80&w=1080',
+        imageHint: 'ancient temple'
     },
     {
         id: '15',
@@ -363,7 +389,9 @@ export const places: Place[] = [
             ja: 'サルディス古代都市の壮大な建造物に使用された大理石が採掘されたこの採石場は、古代の石工と工学に関する重要な手がかりを提供します。未完成の柱やブロックが見られます。'
         },
         category: 'history',
-        coordinates: { lat: 38.45680901086971, lng: 28.016172179836534 }
+        coordinates: { lat: 38.45680901086971, lng: 28.016172179836534 },
+        imageUrl: 'https://images.unsplash.com/photo-1573156667501-0a20e838aa13?q=80&w=1080',
+        imageHint: 'marble quarry'
     },
     {
         id: '16',
@@ -389,7 +417,9 @@ export const places: Place[] = [
             ja: 'サリフリのギョケユップ地区で何世紀にもわたって続いている伝統的な陶芸。土が芸術に変わるこの村では、ワークショップを訪れたり、手作りの製品を購入したりできます。'
         },
         category: 'shopping',
-        coordinates: { lat: 38.6918318507784, lng: 28.281361601505868 }
+        coordinates: { lat: 38.6918318507784, lng: 28.281361601505868 },
+        imageUrl: 'https://images.unsplash.com/photo-1559190282-d46a48f43a2f?q=80&w=1080',
+        imageHint: 'pottery workshop'
     },
     {
         id: '17',
@@ -415,6 +445,8 @@ export const places: Place[] = [
             ja: 'サリフリのケメル地区には、歴史的な石橋とゲディズ川のユニークな景色があります。ローマ時代からあると考えられている乙女の橋（クズ・キョプリュス）もこの地域にあります。穏やかな雰囲気と自然の美しさで知られています。'
         },
         category: 'history',
-        coordinates: { lat: 38.68798840823775, lng: 28.14369833471573 }
+        coordinates: { lat: 38.68798840823775, lng: 28.14369833471573 },
+        imageUrl: 'https://images.unsplash.com/photo-1548706421-21eac6677a07?q=80&w=1080',
+        imageHint: 'stone bridge'
     }
 ];
