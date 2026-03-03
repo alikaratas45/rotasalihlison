@@ -26,13 +26,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle, Star, Users, MapPin, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle, Star, Users, MapPin, CheckCircle2, XCircle, Download, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Definitions
 import type { Place, Route, ExperienceItem, Feedback } from '@/lib/definitions';
@@ -119,6 +120,7 @@ export default function AdminPage() {
     // --- State Management ---
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSeeding, setIsSeeding] = useState(false);
+    const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState<string>('all');
 
     const [editingPlace, setEditingPlace] = useState<Place | null>(null);
     const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
@@ -144,18 +146,53 @@ export default function AdminPage() {
 
     const sortedPlaces = useMemo(() => places?.slice().sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr')) || [], [places]);
 
-    // --- Summary Statistics ---
+    // --- Feedback Filtering & Export ---
+    const filteredFeedbacks = useMemo(() => {
+        if (!feedbacks) return [];
+        if (feedbackPlaceFilter === 'all') return feedbacks;
+        return feedbacks.filter(f => f.placeId === feedbackPlaceFilter);
+    }, [feedbacks, feedbackPlaceFilter]);
+
     const stats = useMemo(() => {
-        if (!feedbacks || feedbacks.length === 0) return null;
-        const total = feedbacks.length;
-        const avgCleanliness = feedbacks.reduce((acc, f) => acc + f.cleanliness, 0) / total;
-        const avgAccessibility = feedbacks.reduce((acc, f) => acc + f.accessibility, 0) / total;
-        const avgSatisfaction = feedbacks.reduce((acc, f) => acc + f.satisfaction, 0) / total;
-        const tourCount = feedbacks.filter(f => f.withTour === 'yes').length;
-        const guidedCount = feedbacks.filter(f => f.guided === 'yes').length;
+        if (!filteredFeedbacks || filteredFeedbacks.length === 0) return null;
+        const total = filteredFeedbacks.length;
+        const avgCleanliness = filteredFeedbacks.reduce((acc, f) => acc + f.cleanliness, 0) / total;
+        const avgAccessibility = filteredFeedbacks.reduce((acc, f) => acc + f.accessibility, 0) / total;
+        const avgSatisfaction = filteredFeedbacks.reduce((acc, f) => acc + f.satisfaction, 0) / total;
+        const tourCount = filteredFeedbacks.filter(f => f.withTour === 'yes').length;
+        const guidedCount = filteredFeedbacks.filter(f => f.guided === 'yes').length;
 
         return { total, avgCleanliness, avgAccessibility, avgSatisfaction, tourCount, guidedCount };
-    }, [feedbacks]);
+    }, [filteredFeedbacks]);
+
+    const handleDownloadReport = useCallback(() => {
+        if (!filteredFeedbacks || filteredFeedbacks.length === 0) return;
+
+        const headers = ["Mekan", "Temizlik", "Erişim", "Memnuniyet", "Turla Gelis", "Rehberlik", "Tarih"];
+        const rows = filteredFeedbacks.map(f => [
+            f.placeName,
+            f.cleanliness,
+            f.accessibility,
+            f.satisfaction,
+            f.withTour === 'yes' ? 'Evet' : 'Hayir',
+            f.guided === 'yes' ? 'Evet' : 'Hayir',
+            f.createdAt?.toDate ? format(f.createdAt.toDate(), 'yyyy-MM-dd HH:mm') : ''
+        ]);
+
+        const csvContent = [
+            headers.join(","),
+            ...rows.map(row => row.join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `rota-salihli-anket-raporu-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }, [filteredFeedbacks]);
 
     // --- Form Definitions ---
     const defaultPlaceValues: PlaceFormData = { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, imageUrl: '', imageHint: '' };
@@ -443,12 +480,33 @@ export default function AdminPage() {
 
                 {/* FEEDBACKS TAB */}
                 <TabsContent value="feedbacks">
+                    <div className="flex flex-col md:flex-row gap-4 mb-6 items-end">
+                        <div className="w-full md:w-64">
+                            <FormLabel className="mb-2 block">Mekan Filtresi</FormLabel>
+                            <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Tüm Mekanlar" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Tüm Mekanlar</SelectItem>
+                                    {sortedPlaces.map(place => (
+                                        <SelectItem key={place.id} value={place.id}>{place.name.tr}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Button variant="outline" onClick={handleDownloadReport} className="gap-2">
+                            <Download className="h-4 w-4" />
+                            Raporu İndir (CSV)
+                        </Button>
+                    </div>
+
                     {feedbacksLoading ? (
                         <div className="flex flex-col gap-8">
                             <Skeleton className="h-32 w-full" />
                             <Skeleton className="h-[400px] w-full" />
                         </div>
-                    ) : feedbacks && feedbacks.length > 0 ? (
+                    ) : filteredFeedbacks && filteredFeedbacks.length > 0 ? (
                         <div className="space-y-8">
                             {/* Stats Summary */}
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -493,7 +551,7 @@ export default function AdminPage() {
                             {/* Feedbacks Table */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Anket Yanıtları</CardTitle>
+                                    <CardTitle>Anket Yanıtları ({filteredFeedbacks.length})</CardTitle>
                                     <CardDescription>Ziyaretçilerden gelen tüm geri bildirimler.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -511,7 +569,7 @@ export default function AdminPage() {
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {feedbacks.map((f, index) => (
+                                                {filteredFeedbacks.map((f, index) => (
                                                     <TableRow key={f.id || `feedback-${index}`}>
                                                         <TableCell className="font-medium flex items-center gap-2">
                                                             <MapPin className="h-3 w-3 text-muted-foreground" />
@@ -541,8 +599,8 @@ export default function AdminPage() {
                         <Card>
                             <CardContent className="p-12 text-center flex flex-col items-center">
                                 <Star className="h-12 w-12 text-muted-foreground/20 mb-4" />
-                                <CardTitle className="text-muted-foreground">Henüz anket verisi yok.</CardTitle>
-                                <CardDescription>Ziyaretçiler anket doldurduğunda burada görünecektir.</CardDescription>
+                                <CardTitle className="text-muted-foreground">Gösterilecek veri yok.</CardTitle>
+                                <CardDescription>Seçili filtreye uygun anket verisi bulunamadı.</CardDescription>
                             </CardContent>
                         </Card>
                     )}
