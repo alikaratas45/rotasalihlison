@@ -34,6 +34,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 // Definitions
 import type { Place, Route, ExperienceItem, Feedback } from '@/lib/definitions';
@@ -482,7 +483,7 @@ export default function AdminPage() {
                 <TabsContent value="feedbacks">
                     <div className="flex flex-col md:flex-row gap-4 mb-6 items-end">
                         <div className="w-full md:w-64">
-                            <FormLabel className="mb-2 block">Mekan Filtresi</FormLabel>
+                            <Label className="mb-2 block">Mekan Filtresi</Label>
                             <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Tüm Mekanlar" />
