@@ -124,5 +124,10 @@
         "successDescription": "Merci pour vos commentaires !",
         "submitErrorTitle": "Erreur",
         "submitErrorDescription": "Un problème est survenu lors de l'envoi des commentaires."
+    },
+    "proximity": {
+        "alert": "Vous êtes actuellement à {0}. Voulez-vous que je vous en parle ?",
+        "yes": "Oui, écouter",
+        "no": "Non, merci"
     }
 }

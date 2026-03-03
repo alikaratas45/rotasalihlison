@@ -124,5 +124,10 @@
         "successDescription": "フィードバックありがとうございます！",
         "submitErrorTitle": "エラー",
         "submitErrorDescription": "フィードバックの送信中に問題が発生しました。"
+    },
+    "proximity": {
+        "alert": "現在、{0}にいます。それについてお話ししましょうか？",
+        "yes": "はい、聞く",
+        "no": "いいえ、結構です"
     }
 }

@@ -124,5 +124,10 @@
         "successDescription": "Vielen Dank für Ihr Feedback!",
         "submitErrorTitle": "Fehler",
         "submitErrorDescription": "Beim Senden des Feedbacks ist ein Problem aufgetreten."
+    },
+    "proximity": {
+        "alert": "Sie befinden sich derzeit in {0}. Möchten Sie, dass ich Ihnen davon erzähle?",
+        "yes": "Ja, zuhören",
+        "no": "Nein, danke"
     }
 }
