@@ -102,8 +102,8 @@ export default function StoryDetailPage() {
           </Card>
         )}
 
-        <article className="prose prose-lg dark:prose-invert max-w-none mx-auto bg-card p-6 md:p-8 rounded-lg">
-          <div className="whitespace-pre-line text-card-foreground">
+        <article className="prose prose-lg dark:prose-invert max-w-none mx-auto bg-card p-6 md:p-8 rounded-lg shadow-sm border border-primary/5">
+          <div className="whitespace-pre-line text-card-foreground text-justify leading-relaxed">
             {content}
           </div>
         </article>

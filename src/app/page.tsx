@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -83,7 +82,7 @@ export default function Home() {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="py-4 space-y-4">
-                  <p className="text-foreground leading-relaxed whitespace-pre-line text-lg">
+                  <p className="text-foreground leading-relaxed whitespace-pre-line text-lg text-justify">
                     {t('about.content')}
                   </p>
                 </div>

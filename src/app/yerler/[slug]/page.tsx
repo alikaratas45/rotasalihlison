@@ -18,20 +18,17 @@ import { Survey } from '@/components/survey';
 function PlaceDetailSkeleton() {
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
-            <div className="grid md:grid-cols-5 gap-8 lg:gap-12">
-                <div className="md:col-span-3">
-                    <Card className="overflow-hidden shadow-lg">
-                        <Skeleton className="h-[300px] md:h-[450px] w-full" />
-                    </Card>
-                </div>
-                <div className="md:col-span-2">
-                    <Skeleton className="h-10 w-3/4 mb-4" />
-                    <Skeleton className="h-5 w-full mb-2" />
-                    <Skeleton className="h-5 w-full mb-2" />
-                    <Skeleton className="h-5 w-2/3 mb-6" />
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <Skeleton className="h-12 w-40" />
-                        <Skeleton className="h-12 w-40" />
+            <div className="max-w-6xl mx-auto">
+                <Skeleton className="h-12 w-3/4 mb-8" />
+                <div className="block">
+                    <div className="md:float-left md:w-1/2 md:mr-10 md:mb-8 mb-8 w-full">
+                        <Skeleton className="h-[300px] md:h-[500px] w-full rounded-lg" />
+                    </div>
+                    <div className="space-y-4">
+                        <Skeleton className="h-6 w-full" />
+                        <Skeleton className="h-6 w-full" />
+                        <Skeleton className="h-6 w-full" />
+                        <Skeleton className="h-6 w-3/4" />
                     </div>
                 </div>
             </div>
@@ -90,7 +87,6 @@ function PlaceDetailContent() {
   }, []);
 
   const isNear = useMemo(() => {
-    // TEST MODU KAPATILDI: Artık sadece gerçek yakınlıkta anket gösterilir.
     if (!userLocation || !place) return false;
     const distance = calculateDistance(
       userLocation.lat,
@@ -98,7 +94,7 @@ function PlaceDetailContent() {
       place.coordinates.lat,
       place.coordinates.lng
     );
-    return distance <= 500; // 500 metre sınırı
+    return distance <= 500;
   }, [userLocation, place]);
   
   const name = place ? place.name[typedLanguage] : '';
@@ -132,7 +128,6 @@ function PlaceDetailContent() {
       }
       setIsGenerating(false);
       
-      // Pronunciation fix for Gymnasium -> Cimnazyum
       const fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
       
       const utterance = new SpeechSynthesisUtterance(fixedText);
@@ -186,7 +181,6 @@ function PlaceDetailContent() {
     }
   }, [isAudioGuideEnabled, isGenerating, description, typedLanguage, speak, stopAudio]);
 
-  // Handle autoplay if coming from proximity alert
   useEffect(() => {
     if (autoplay && place && !placesLoading && !isPlaying && isAudioGuideEnabled) {
       const timer = setTimeout(() => {
@@ -224,40 +218,42 @@ function PlaceDetailContent() {
           </Link>
         </Button>
       </div>
-      <div className="grid md:grid-cols-5 gap-8 lg:gap-12">
-        <div className="md:col-span-3 space-y-8">
-          <Card className="overflow-hidden shadow-lg">
-            <div className="relative h-[300px] md:h-[450px] w-full">
-              <Image
-                src={place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`}
-                alt={name}
-                data-ai-hint={place.imageHint || 'landmark'}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </Card>
-          
-          {/* Survey section only appears if user is near */}
-          {isNear && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <Survey placeId={place.id} placeName={name} />
-            </div>
-          )}
-        </div>
-        <div className="md:col-span-2">
-          <h1 className="text-3xl md:text-4xl font-bold font-headline mb-4">{name}</h1>
-          <p className="text-lg text-muted-foreground mb-6 whitespace-pre-line leading-relaxed">{description}</p>
-          <div className="flex flex-col sm:flex-row gap-4">
-             <Button size="lg" asChild className="flex-1">
+      
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl md:text-5xl font-bold font-headline mb-8 text-primary">{name}</h1>
+        
+        <div className="relative block">
+          {/* Image Floated Left */}
+          <div className="md:float-left md:w-1/2 lg:w-3/5 md:mr-10 md:mb-8 mb-8 w-full">
+            <Card className="overflow-hidden shadow-2xl border-none">
+              <div className="relative h-[300px] md:h-[500px] w-full">
+                <Image
+                  src={place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`}
+                  alt={name}
+                  data-ai-hint={place.imageHint || 'landmark'}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </Card>
+          </div>
+
+          {/* Description Text - Justified and wrapping around the image */}
+          <div className="text-lg md:text-xl text-muted-foreground whitespace-pre-line leading-relaxed text-justify">
+            {description}
+          </div>
+
+          {/* Buttons - Clears float or stays next to it based on length */}
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 clear-both md:clear-none pt-4">
+             <Button size="lg" asChild className="flex-1 md:flex-none md:min-w-[200px]">
                 <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
                     <MapPin className="mr-2 h-5 w-5" />
                     {t('actions.showOnMap')}
                 </a>
             </Button>
             {isAudioGuideEnabled && (
-                <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1">
+                <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
                     {isGenerating ? (
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     ) : isPlaying ? (
@@ -269,6 +265,13 @@ function PlaceDetailContent() {
                 </Button>
             )}
           </div>
+
+          {/* Survey section appears at bottom, clearing any floats */}
+          {isNear && (
+            <div className="clear-both pt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <Survey placeId={place.id} placeName={name} />
+            </div>
+          )}
         </div>
       </div>
     </div>
