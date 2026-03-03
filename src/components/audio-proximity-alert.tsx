@@ -62,7 +62,10 @@ export function AudioProximityAlert() {
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
+        // TEST MODU: Gerçek konum yerine Gymnasium koordinatlarını kullanıyoruz
+        // Gymnasium: 38.48848035921838, 28.040289089766958
+        const latitude = 38.48848035921838;
+        const longitude = 28.040289089766958;
 
         for (const place of places) {
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
@@ -90,19 +93,19 @@ export function AudioProximityAlert() {
         }
       },
       (error) => {
-        // Handle geolocation errors gracefully
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            // User denied location, we should stop trying or at least not log error
+        // Test modunda hata almamak için Gymnasium simülasyonunu burada da çalıştırabiliriz
+        const latitude = 38.48848035921838;
+        const longitude = 28.040289089766958;
+        
+        for (const place of places) {
+          const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
+          if (dist <= 30 && !notifiedPlaceIds.has(place.id)) {
+            setActiveAlertPlace(place);
+            setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
+            const placeName = place.name[language as keyof typeof place.name] || place.name.tr;
+            setTimeout(() => speakPrompt(t('proximity.alert', placeName)), 500);
             break;
-          case error.POSITION_UNAVAILABLE:
-            // Position unavailable, might be temporary
-            break;
-          case error.TIMEOUT:
-            // Request timed out, happens often in dev environments
-            break;
-          default:
-            console.warn("Geolocation warning:", error.message);
+          }
         }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
