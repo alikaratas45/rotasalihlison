@@ -15,20 +15,23 @@ async function seedCollection<T extends {id: string}>(
     collectionName: string,
     staticData: T[],
     dataProcessor: (item: T) => any = (item) => item
-): Promise<{ added: number, skipped: number, errors: number }> {
-    let added = 0, skipped = 0, errors = 0;
+): Promise<{ added: number, updated: number, errors: number }> {
+    let added = 0, updated = 0, errors = 0;
     const collectionRef = collection(firestore, collectionName);
 
     for (const item of staticData) {
         const docRef = doc(collectionRef, item.id);
         try {
             const docSnap = await getDoc(docRef);
-            if (!docSnap.exists()) {
-                const processedData = dataProcessor(item);
-                await setDoc(docRef, processedData);
-                added++;
+            const processedData = dataProcessor(item);
+            
+            // Eğer doküman zaten varsa güncelle (merge), yoksa yeni oluştur
+            await setDoc(docRef, processedData, { merge: true });
+            
+            if (docSnap.exists()) {
+                updated++;
             } else {
-                skipped++;
+                added++;
             }
         } catch (serverError) {
             console.error(`Error seeding document ${item.id} in ${collectionName}: `, serverError);
@@ -41,14 +44,14 @@ async function seedCollection<T extends {id: string}>(
             errors++;
         }
     }
-    return { added, skipped, errors };
+    return { added, updated, errors };
 }
 
 
 export async function seedDatabase(firestore: Firestore): Promise<{
-    places: { added: number, skipped: number },
-    routes: { added: number, skipped: number },
-    experienceItems: { added: number, skipped: number }
+    places: { added: number, updated: number },
+    routes: { added: number, updated: number },
+    experienceItems: { added: number, updated: number }
 }> {
   
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place) => ({
@@ -66,8 +69,8 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   }
 
   return {
-    places: { added: placesResult.added, skipped: placesResult.skipped },
-    routes: { added: routesResult.added, skipped: routesResult.skipped },
-    experienceItems: { added: experienceResult.added, skipped: experienceResult.skipped },
+    places: { added: placesResult.added, updated: placesResult.updated },
+    routes: { added: routesResult.added, updated: routesResult.updated },
+    experienceItems: { added: experienceResult.added, updated: experienceResult.updated },
   };
 }
