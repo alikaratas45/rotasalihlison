@@ -11,7 +11,7 @@ import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 
 /**
  * Belirli bir koleksiyonu statik verilerle besler.
- * Verileri silmez, mevcut verilerin kritik alanlarını koruyarak (imageUrl vb.) güncelleme yapar.
+ * Verileri silmez, mevcut verilerin kritik alanlarını koruyarak güncelleme yapar.
  */
 async function seedCollection<T extends {id: string}>(
     firestore: Firestore,
@@ -62,19 +62,22 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // EĞER veritabanında hali hazırda bir görsel veya ipucu varsa ve statik listede bunlar tanımlı değilse,
-    // veritabanındakini koru. Böylece kullanıcının yüklediği resimler silinmez.
-    if (existingData?.imageUrl && !place.imageUrl) {
+    // ÖZEL KORUMA MANTIĞI:
+    // 1. Eğer kodda (places.ts) bir görsel linki TANIMLIYSA (Imgur vb.), bunu kullan (Restorasyon için).
+    // 2. Eğer kodda görsel linki YOKSA ama veritabanında (Firestore) VARSA, veritabanındakini koru (Kullanıcı editi için).
+    // 3. Her iki durumda da veri yoksa picsum fallback kullan.
+    
+    const hasStaticImage = place.imageUrl && !place.imageUrl.includes('picsum.photos');
+    const hasExistingImage = existingData?.imageUrl;
+
+    if (!hasStaticImage && hasExistingImage) {
         data.imageUrl = existingData.imageUrl;
     }
-    if (existingData?.imageHint && !place.imageHint) {
-        data.imageHint = existingData.imageHint;
-    }
 
-    // Hiçbir yerde yoksa fallback kullan
     if (!data.imageUrl) {
         data.imageUrl = `https://picsum.photos/seed/${place.id}/600/400`;
     }
+    
     if (!data.imageHint) {
         data.imageHint = 'landmark';
     }
