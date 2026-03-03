@@ -62,23 +62,21 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    // KRİTİK GÖRSEL KORUMA MANTIĞI:
-    // 1. Eğer veritabanında (Firestore) zaten bir görsel VARSA ve bu görsel kaliteli bir linkse (Imgur veya Unsplash)
-    // 2. Koddaki varsayılan linki (picsum gibi) ASLA onun üzerine yazma.
-    
-    const hasExistingSpecialImage = existingData?.imageUrl && (
+    // --- GÖRSEL KORUMA MANTIĞI ---
+    // Eğer veritabanında zaten bir görsel varsa ve bu görsel "picsum" gibi geçici bir link değilse
+    // (Örn: Imgur, Unsplash veya sizin girdiğiniz herhangi bir özel link), onu KORU.
+    const isCustomImage = existingData?.imageUrl && (
         existingData.imageUrl.includes('imgur.com') || 
         existingData.imageUrl.includes('images.unsplash.com') ||
-        existingData.imageUrl.includes('i.imgur.com')
+        existingData.imageUrl.includes('i.imgur.com') ||
+        (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
     );
 
-    // Eğer veritabanında sizin girdiğiniz özel bir link varsa, onu KORU.
-    if (hasExistingSpecialImage) {
+    if (isCustomImage) {
         data.imageUrl = existingData.imageUrl;
     }
 
     // Koordinatları her zaman koddaki en güncel (sizin verdiğiniz kesin değerlerle) güncelle
-    // Bu sayede görseller korunurken yanlış konumlar düzelir.
     data.coordinates = place.coordinates;
 
     return data;

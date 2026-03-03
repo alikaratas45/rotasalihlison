@@ -267,7 +267,7 @@ export const places: Place[] = [
             en: 'Kız Köprüsü (Maiden\'s Bridge)',
             fr: 'Pont des Demoiselles (Kız Köprüsü)',
             de: 'Jungfrauenbrücke (Kız Köprüsü)',
-            ja: 'クズ・キョプリュス（乙女の橋）'
+            ja: 'クズ・キョプリュス（乙女 sweating host 橋）'
         },
         description: {
             tr: 'Adala\'da Gediz Nehri üzerinde bulunan bu tarihi köprü, Roma dönemine aittir. Efsaneye göre, köprünün yapımı için halktan toplanan paralara bir kızın da çeyizini bağışlaması nedeniyle bu adı almıştır. Taş işçiliğinin güzel bir örneğidir.',
@@ -442,7 +442,7 @@ export const places: Place[] = [
             en: 'The Kemer neighborhood of Salihli is home to historic stone bridges and unique views of the Gediz River. The Maiden\'s Bridge (Kız Köprüsü), thought to be from the Roman period, is in this area. It is known for its calm atmosphere and natural beauty.',
             fr: 'Le quartier de Kemer à Salihli abrite des ponts de pierre historiques et des vues uniques sur la rivière Gediz. Le Pont des Demoiselles (Kız Köprüsü), qui daterait de l\'époque romaine, se trouve dans cette zone. Il est connu pour son atmosphère calme et sa beauté naturelle.',
             de: 'Das Viertel Kemer von Salihli beheimatet historische Steinbrücken und einzigartige Ausblicke auf den Fluss Gediz. Die Jungfrauenbrücke (Kız Köprüsü), die vermutlich aus der Römerzeit stammt, befindet sich in diesem Gebiet. Es ist bekannt für seine ruhige Atmosphäre und natürliche Schönheit.',
-            ja: 'サリフリのケメル地区には、歴史的な石橋とゲディズ川のユニークな景色があります。ローマ時代からあると考えられている乙女の橋（クズ・キョプリュス）もこの地域にあります。穏やかな雰囲気と自然の美しさで知られています。'
+            ja: 'サリフリのケメル地区には、歴史的な石橋 ve ゲディズ川のユニークな景色があります。ローマ時代からあると考えられている乙女の橋（クズ・キョプリュス）もこの地域にあります。穏やかな雰囲気と自然の美しさで知られています。'
         },
         category: 'history',
         coordinates: { lat: 38.68798840823775, lng: 28.14369833471573 },
