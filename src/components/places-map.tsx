@@ -4,8 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { Place } from '@/lib/definitions';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Navigation } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { googleMapsApiKey } from '@/lib/config';
 
@@ -22,6 +23,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
   const [authFailed, setAuthFailed] = useState(false);
+  
+  const userMarkerRef = useRef<google.maps.Marker | null>(null);
+  const watchIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleAuthError = () => {
@@ -33,46 +37,24 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
     // Check if the script is already loaded
     if (window.google && window.google.maps) {
       setIsApiLoaded(true);
-      return;
+    } else if (!googleMapsApiKey) {
+        setApiError(`Google Haritalar API anahtarı eksik.`);
+    } else {
+        const interval = setInterval(() => {
+            if (window.google && window.google.maps && window.google.maps.Map) {
+                setIsApiLoaded(true);
+                clearInterval(interval);
+            }
+        }, 200);
+        return () => clearInterval(interval);
     }
-    
-    // Check if API key is missing
-    if (!googleMapsApiKey) {
-        setApiError(`Google Haritalar API anahtarı (.env dosyasındaki NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) eksik. Lütfen bir anahtar ekleyin.`);
-        return;
-    }
-
-    const checkApi = () => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
-            setIsApiLoaded(true);
-            return true;
-        }
-        return false;
-    };
-    
-    if (checkApi()) return;
-
-    // Fallback timer in case the script fails to load for other reasons
-    const timeoutId = setTimeout(() => {
-        if (!checkApi()) {
-           setApiError("Google Haritalar betiği yüklenemedi. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.");
-        }
-    }, 7000);
-
-    const interval = setInterval(() => {
-        if (checkApi()) {
-            clearInterval(interval);
-            clearTimeout(timeoutId);
-        }
-    }, 200);
 
     return () => {
       window.removeEventListener('gm-auth-failure', handleAuthError);
-      clearInterval(interval);
-      clearTimeout(timeoutId);
     };
   }, []);
 
+  // Initialize Map
   useEffect(() => {
     if (isApiLoaded && mapRef.current && !map && !authFailed) {
       const salihliCenter = { lat: 38.48, lng: 28.14 };
@@ -87,6 +69,55 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
     }
   }, [isApiLoaded, map, authFailed]);
 
+  // Continuous Location Tracking
+  useEffect(() => {
+    if (!map || !isApiLoaded) return;
+
+    if ("geolocation" in navigator) {
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        (position) => {
+          const userPos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          if (userMarkerRef.current) {
+            userMarkerRef.current.setPosition(userPos);
+          } else {
+            // Create user location blue dot
+            userMarkerRef.current = new window.google.maps.Marker({
+              position: userPos,
+              map: map,
+              title: "Konumunuz",
+              icon: {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                fillColor: '#4285F4',
+                fillOpacity: 1,
+                strokeColor: 'white',
+                strokeWeight: 2,
+                scale: 8,
+              },
+              zIndex: 1000 // Ensure user is always on top
+            });
+          }
+        },
+        (error) => console.error("Geolocation tracking error:", error),
+        { enableHighAccuracy: true }
+      );
+    }
+
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+      if (userMarkerRef.current) {
+        userMarkerRef.current.setMap(null);
+        userMarkerRef.current = null;
+      }
+    };
+  }, [map, isApiLoaded]);
+
+  // Handle Place Markers
   useEffect(() => {
     if (!map || !places || authFailed) return;
 
@@ -100,13 +131,21 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
         position: place.coordinates,
         map: map,
         title: place.name[typedLanguage],
+        icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: 'hsl(140, 56%, 36%)', // primary color
+            fillOpacity: 0.9,
+            strokeColor: 'white',
+            strokeWeight: 2,
+            scale: 10,
+        }
       });
 
       const contentString = `
-        <div style="color: black; max-width: 250px; font-family: 'PT Sans', sans-serif;">
-          <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 4px;">${place.name[typedLanguage]}</h3>
-          <p style="font-size: 0.9rem; margin: 0 0 8px 0; line-height: 1.4;">${place.description[typedLanguage].substring(0, 100)}...</p>
-          <a href="/yerler/${place.slug[typedLanguage]}" style="color: hsl(var(--primary)); text-decoration: none; font-weight: bold;">${t('actions.seeDetails')}</a>
+        <div style="color: black; max-width: 250px; font-family: 'PT Sans', sans-serif; padding: 4px;">
+          <h3 style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;">${place.name[typedLanguage]}</h3>
+          <p style="font-size: 0.85rem; margin: 0 0 8px 0; line-height: 1.4;">${place.description[typedLanguage].substring(0, 80)}...</p>
+          <a href="/yerler/${place.slug[typedLanguage]}" style="color: hsl(140, 56%, 36%); text-decoration: none; font-weight: bold; font-size: 0.85rem;">${t('actions.seeDetails')}</a>
         </div>
       `;
 
@@ -136,6 +175,23 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
     };
   }, [map, places, typedLanguage, t, authFailed]);
 
+  const handleCenterOnUser = () => {
+      if (userMarkerRef.current && map) {
+          const pos = userMarkerRef.current.getPosition();
+          if (pos) {
+              map.panTo(pos);
+              map.setZoom(15);
+          }
+      } else {
+          // Request position if not already tracking
+          navigator.geolocation.getCurrentPosition((pos) => {
+              const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+              map?.panTo(coords);
+              map?.setZoom(15);
+          });
+      }
+  };
+
   if (authFailed) {
       const searchQuery = places.map(p => p.name[typedLanguage] + ", Salihli").join(' | ');
       const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(searchQuery)}&output=embed&hl=${language}`;
@@ -144,9 +200,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
           <div className={className}>
               <Alert variant="destructive" className="mb-4">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Google Haritalar Yüklenemedi (Yetki Hatası)</AlertTitle>
+                  <AlertTitle>Harita Yüklenemedi</AlertTitle>
                   <AlertDescription>
-                    Google API anahtarınız bu web sitesi için yetkilendirilmemiş. <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="underline font-bold">Google Cloud Console</a>'da API anahtarı ayarlarınızı kontrol edin. Şimdilik daha basit bir harita gösteriliyor.
+                    Alternatif harita görünümü kullanılıyor.
                   </AlertDescription>
               </Alert>
               <iframe
@@ -167,10 +223,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
       return (
         <Alert variant="destructive" className={className}>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Google Haritalar Yüklenemedi</AlertTitle>
-          <AlertDescription>
-            {apiError}
-          </AlertDescription>
+          <AlertTitle>Hata</AlertTitle>
+          <AlertDescription>{apiError}</AlertDescription>
         </Alert>
       )
   }
@@ -184,6 +238,18 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className }) => {
          </div>
       )}
       <div ref={mapRef} className={cn("w-full h-full rounded-lg overflow-hidden", { 'invisible': !isApiLoaded })} />
+      
+      {isApiLoaded && (
+          <Button 
+            variant="secondary" 
+            size="icon" 
+            className="absolute bottom-6 right-4 z-20 shadow-lg bg-background/90 backdrop-blur hover:bg-background border-2 border-primary/20 h-12 w-12 rounded-full"
+            onClick={handleCenterOnUser}
+            title="Konumuma Odaklan"
+          >
+            <Navigation className="h-6 w-6 text-primary fill-primary/20" />
+          </Button>
+      )}
     </div>
   );
 };
