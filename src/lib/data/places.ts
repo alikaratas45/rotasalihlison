@@ -139,7 +139,7 @@ export const places: Place[] = [
         },
         category: 'nature',
         coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 },
-        imageUrl: '/tabak.jpg',
+        imageUrl: 'https://i.imgur.com/KHKrcb5.png', // Note: User said id 6 used this link in history
         imageHint: 'river rocks'
     },
     {
@@ -215,11 +215,11 @@ export const places: Place[] = [
             ja: 'スーチュ滝'
         },
         description: {
-            tr: 'Yemyeşil bir doğanın ortasında, yaklaşık 30 metreden dökülen sularıyla Suuçtu Şelalesi, özellikle bahar aylarında büyüleyici bir güzelliğe bürünür. Serinlemek ve piknik yapmak için popüler bir noktadır.',
-            en: 'In the midst of lush nature, Suuçtu Waterfall, with its waters pouring from about 30 meters, takes on a fascinating beauty, especially in the spring.',
-            fr: 'Au milieu d\'une nature luxuriante, la cascade de Suuçtu, avec ses eaux tombant d\'environ 30 mètres.',
-            de: 'Inmitten üppiger Natur entfaltet der Suuçtu-Wasserfall, dessen Wasser aus etwa 30 Metern Höhe herabstürzt, besonders im Frühling eine faszinierende Schönheit.',
-            ja: '緑豊かな自然の真っ東京にあるスーチュ滝は、約30メートルから流れ落ちる水で、特に春には魅力的な美しさを帯びます。'
+            tr: 'Kız Köprüsü\'nün altından akan suyu her iki kıyısından batıya doğru 2 Km. kadar takip ettiğinizde bir doğa harikası olan Su Uçtu Şelalesi\'ne ulaşırsınız. "Su Uçtu" aslında suları yüksekten dökülen tüm şelaleler için kullanılan bir deyim ama zengin bir çeşitliliğe sahip ağaç ve bitki örtüsü ile kaplı dar bir boğazdan 25 metre aşağıdaki Adala Kanyonu\'na dökülen şelale bu deyimi özel bir ad olarak taşımayı fazlası ile hak ediyor. Şelale\'nin diğer bir özelliği de jeoparkın diğer pek çok arazi şekli gibi volkanizmanın lavları ile önü kapanan Gediz\'in araziyi aşındırıp oyarak akıntısına yatak açmasının bir sonucu olması. Bir zamanların coşkun akışlı ırmağı Demirköprü Barajı\'nın bendi ile dizginlendikten sonra Şelale\'nin debisi azalıp gücü zayıfladı ancak uğultulu bir çağıltı ile dökülen sularından sıçrayan zerreciklerin yarattığı nemli serinlikte Adala Kanyonu\'na yüksekten baktığınızda, onun bir zamanlar ki gücünü kavrayabilirsiniz.',
+            en: 'Following the water flowing under the Maiden\'s Bridge about 2 km westward, you reach Suuçtu Waterfall. "Su Uçtu" (Water Flew) is a term used for waterfalls pouring from high, but this 25-meter drop into Adala Canyon through lush vegetation truly deserves the name. Formed by the Gediz River carving its path after being blocked by lava, its flow decreased after the Demirköprü Dam, but its historical power is still palpable in its misty breeze.',
+            fr: 'En suivant l\'eau qui coule sous le Pont des Demoiselles sur environ 2 km vers l\'ouest, vous atteignez la cascade de Suuçtu. "Su Uçtu" est un terme pour les chutes d\'eau, mais celle-ci, tombant de 25 mètres dans le canyon d\'Adala à travers une végétation luxuriante, mérite amplement son nom. Formée par l\'érosion du Gediz après un blocage par la lave, son débit a diminué avec le barrage de Demirköprü, mais sa force passée reste perceptible dans sa fraîcheur humide.',
+            de: 'Wenn man dem Wasser, das unter der Jungfrauenbrücke fließt, etwa 2 km nach Westen folgt, erreicht man den Suuçtu-Wasserfall. "Su Uçtu" ist ein Begriff für hohe Wasserfälle, aber dieser, der aus 25 Metern Höhe durch dichte Vegetation in den Adala-Canyon stürzt, verdient den Namen als Eigennamen. Er entstand, als der durch Lava blockierte Gediz sich ein neues Bett grub. Nach dem Bau der Demirköprü-Talsperre nahm die Wassermenge ab, doch die einstige Kraft ist in der feuchten Kühle noch immer spürbar.',
+            ja: '乙女の橋（クズ・キョプリュス）の下を流れる水を西に約2kmたどると、自然の驚異であるスーチュ滝に到着します。「スーチュ」とは高い場所から流れ落ちる滝を指す言葉ですが、緑豊かな植物に覆われた狭い峡谷から25メートル下のアダラ渓谷に流れ落ちるこの滝は、その名を冠するにふsわしい場所です。溶岩によって遮られたゲディズ川が土地を浸食して形成されました。流量は減りましたが、かつての力強さを感じることができます。'
         },
         category: 'nature',
         coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 },
@@ -243,11 +243,11 @@ export const places: Place[] = [
             ja: 'クズ・キョプリュス（乙女の橋）'
         },
         description: {
-            tr: 'Adala\'da Gediz Nehri üzerinde yer alan bu tarihi köprü, Roma döneminden kalmadır. Efsaneye göre, köprünün yapımı için halktan toplanan paraya çeyizini bağışlayan bir kızın adını almıştır.',
-            en: 'Located on the Gediz River in Adala, this historical bridge dates back to the Roman period. Named after a girl who donated her dowry for its construction.',
-            fr: 'Situé sur la rivière Gediz à Adala, ce pont historique remonte à la période romaine. Selon la légende, il a été nommé ainsi d\'après une jeune fille qui a fait don de sa dot.',
-            de: 'Diese historische Brücke über den Fluss Gediz in Adala stammt aus der Römerzeit. Der Legende nach wurde sie nach einem Mädchen benannt, das ihre Mitgift spendete.',
-            ja: 'アダラのゲディズ川に架かるこの歴史的な橋は、ローマ時代にまでさかのぼります。'
+            tr: 'Adala – Demirköprü Barajı Arasındaki yolun 3. Kilometresinde inşa edilen 97.5 metre uzunluktaki bu büyük ve zarif taş köprü, tasarımındaki mükemmellikler nedeniyle günümüze sapasağlam gelebilmiştir. Yuvarlak kemerli altı ayak üzerinde yükselen köprü, Osmanlı\'nın ilk dönemlerine tarihlenmektedir. Rivayete göre Lidyalılar döneminde Krezüs\'ün kızına ait olduğu için bu adı almıştır. Yüzyıllarca kervan yollarının kavşak noktası olmuştur.',
+            en: 'Located near the Demirköprü Dam, this elegant 97.5-meter stone bridge spans the narrowest point of the Gediz Valley. Built on solid rock, its architectural perfection has kept it intact. It features six rounded arches. While legends link it to the daughter of King Croesus, experts date it to the early Ottoman period. It was a vital crossroads for centuries.',
+            fr: 'Situé près du barrage de Demirköprü, cet élégant pont en pierre de 97,5 mètres enjambe le point le plus étroit de la vallée du Gediz. Construit sur du rocher solide, sa perfection architecturale l\'a préservé. Il possède six arches circulaires. Si la légende le lie à la fille du roi Crésus, les experts le datent du début de la période ottomane.',
+            de: 'Diese elegante, 97,5 Meter lange Steinbrücke liegt in der Nähe der Demirköprü-Talsperre am engsten Punkt des Gediz-Tals. Dank ihrer soliden Bauweise auf Felsgrund ist sie bis heute gut erhalten. Sie hat sechs Rundbögen. Während Legenden sie mit der Tochter von König Krösus verbinden, datieren Experten sie in die frühe osmanische Zeit.',
+            ja: 'デミルキョプリュダムの近くに位置する、全長97.5メートルの優雅な石橋です。強固な岩盤の上に建てられたこの橋は、その建築的な完璧さゆえに今日まで無傷で残っています。6つの円形アーチがあり、伝説ではリディアのクロイソス王の娘にちなんで「乙女の橋」と呼ばれていますが、専門家はオスマン帝国初期のものと考えています。'
         },
         category: 'history',
         coordinates: { lat: 38.610014244679405, lng: 28.298125541176937 },
@@ -405,11 +405,11 @@ Sütunlar:
             ja: 'ギョケユップ陶器'
         },
         description: {
-            tr: 'Salihli\'ye bağlı Gökeyüp mahallesinde yüzyıllardır devam eden geleneksel çömlekçilik sanatı.',
-            en: 'The traditional art of pottery that has been going on for centuries in the Gökeyüp neighborhood of Salihli.',
-            fr: 'L\'art traditionnel de la poterie qui se perpétue depuis des siècles dans le quartier de Gökeyüp à Salihli.',
-            de: 'Die traditionelle Töpferkunst, die seit Jahrhunderten im Stadtteil Gökeyüp von Salihli fortbesteht.',
-            ja: 'サリフリのギョケユップ地区で何世紀にもわたって続いている伝統的な陶芸。'
+            tr: 'İnsanlığın yerleşik düzene geçtiği Neolitik Çağ\'ın devrimsel buluşlarından biri olan çömlekçilik, Gökeyüp\'te 6500 yıldır kadınlar tarafından sürdürülmektedir. Çömlekçi çarkı kullanılmadan elle şekillendirilen kaplar, açık ateşte pişirilmektedir. Bu ilkel yöntem, 12-13. yy\'da Türk boyları tarafından Horasan\'dan Anadolu\'ya taşınmıştır. Gökeyüp, bu kadim sanatın yaşayan en önemli merkezlerinden biridir.',
+            en: 'Pottery, one of the revolutionary inventions of the Neolithic Age, has been practiced by women in Gökeyüp for 6,500 years. Pots are shaped by hand without a wheel and fired in open pits. This primitive technique was brought to Anatolia from Khorasan by Turkish tribes in the 12th-13th centuries. Gökeyüp is a unique living archaeological center for this ancient art.',
+            fr: 'La poterie, l\'une des inventions révolutionnaires de l\'âge néolithique, est pratiquée par les femmes de Gökeyüp depuis 6 500 ans. Les pots sont façonnés à la main sans tour et cuits à l\'air libre. Cette technique primitive a été apportée du Khorasan par les tribus turques aux XIIe-XIIIe siècles. Gökeyüp est un centre archéologique vivant unique de cet art ancien.',
+            de: 'Die Töpferei, eine der revolutionären Erfindungen der Jungsteinzeit, wird in Gökeyüp seit 6.500 Jahren von Frauen betrieben. Die Gefäße werden ohne Töpferscheibe von Hand geformt und im offenen Feuer gebrannt. Diese primitive Technik wurde im 12.-13. Jahrhundert von türkischen Stämmen aus Chorasan nach Anatolien gebracht. Gökeyüp ist ein einzigartiges lebendiges Denkmal dieser antiken Kunst.',
+            ja: '新石器時代の革命的な発明の1つである陶器製作は、ギョケユップの女性たちによって6,500年間守られてきました。ろくろを使わずに手作業で形を作り、野焼きで仕上げます。この原始的な技法は、12〜13世紀にトルコ系部族によってホラサンからアナトリアに持ち込まれました。古代の芸術を示す貴重な生きた考古学的拠点です。'
         },
         category: 'shopping',
         coordinates: { lat: 38.6918318507784, lng: 28.281361601505868 },
