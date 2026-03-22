@@ -41,31 +41,41 @@ export function AudioProximityAlert() {
 
   const speakPrompt = useCallback((text: string) => {
     if (typeof window === 'undefined') return;
-    window.speechSynthesis.cancel();
     
-    // Pronunciation fix for Gymnasium and M.Ö.
-    let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
-    if (language === 'tr') {
-      fixedText = fixedText
-        .replace(/M\.Ö\./g, 'milattan önce')
-        .replace(/M\.Ö/g, 'milattan önce')
-        .replace(/MÖ/g, 'milattan önce')
-        .replace(/İ\. Ö\./g, 'milattan önce')
-        .replace(/İ\.Ö\./g, 'milattan önce');
-    }
-    
-    const utterance = new SpeechSynthesisUtterance(fixedText);
-    
-    const langMap: Record<string, string> = {
-      'tr': 'tr-TR',
-      'en': 'en-US',
-      'fr': 'fr-FR',
-      'de': 'de-DE',
-      'ja': 'ja-JP',
+    const startSpeak = () => {
+      window.speechSynthesis.cancel();
+      
+      // Pronunciation fix for Gymnasium and M.Ö.
+      let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+      if (language === 'tr') {
+        fixedText = fixedText
+          .replace(/M\.Ö\./g, 'milattan önce')
+          .replace(/M\.Ö/g, 'milattan önce')
+          .replace(/MÖ/g, 'milattan önce')
+          .replace(/İ\. Ö\./g, 'milattan önce')
+          .replace(/İ\.Ö\./g, 'milattan önce');
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(fixedText);
+      
+      const langMap: Record<string, string> = {
+        'tr': 'tr-TR',
+        'en': 'en-US',
+        'fr': 'fr-FR',
+        'de': 'de-DE',
+        'ja': 'ja-JP',
+      };
+      
+      utterance.lang = langMap[language] || 'tr-TR';
+      window.speechSynthesis.speak(utterance);
     };
-    
-    utterance.lang = langMap[language] || 'tr-TR';
-    window.speechSynthesis.speak(utterance);
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.addEventListener('voiceschanged', startSpeak, { once: true });
+      setTimeout(startSpeak, 100);
+    } else {
+      startSpeak();
+    }
   }, [language]);
 
   useEffect(() => {

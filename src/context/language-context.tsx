@@ -25,43 +25,46 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
 
-  // Bu effect, istemci tarafında ilk render'dan sonra çalışarak dil ve sesli rehber tercihlerini geri yükler.
   useEffect(() => {
-    // 1. Önce localStorage'da kayıtlı dil var mı kontrol et
     const savedLang = localStorage.getItem('language') as Language;
     if (savedLang && languages.some(l => l.code === savedLang)) {
       setLanguageState(savedLang);
     } else {
-      // 2. Yoksa tarayıcı ayarlarına bak
       const browserLang = navigator.language.split('-')[0] as Language;
       if (languages.some(l => l.code === browserLang)) {
         setLanguageState(browserLang);
       }
     }
 
-    // Sesli rehber tercihini geri yükle
     const savedAudioPreference = localStorage.getItem('audioGuideEnabled');
     if (savedAudioPreference !== null) {
       setIsAudioGuideEnabled(JSON.parse(savedAudioPreference));
     }
   }, []);
 
-  // Dil değiştiğinde HTML lang niteliğini güncelle
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('language', lang); // Seçimi kaydet
+    localStorage.setItem('language', lang);
   }, []);
 
   const toggleAudioGuide = useCallback(() => {
     setIsAudioGuideEnabled(prev => {
         const newState = !prev;
         localStorage.setItem('audioGuideEnabled', JSON.stringify(newState));
+        
         if (!newState) {
             window.speechSynthesis.cancel();
+        } else {
+            // Unlock Web Speech API on user interaction
+            if (typeof window !== 'undefined') {
+                const utterance = new SpeechSynthesisUtterance('');
+                utterance.volume = 0;
+                window.speechSynthesis.speak(utterance);
+            }
         }
         return newState;
     });
@@ -73,7 +76,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     for (const k of keys) {
       result = result?.[k];
       if (result === undefined) {
-        // Çeviri eksikse İngilizceye düş
         let fallbackResult = translations['en'];
         for (const fk of keys) {
             fallbackResult = fallbackResult?.[fk];

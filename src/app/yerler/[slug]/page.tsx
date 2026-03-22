@@ -102,10 +102,11 @@ function PlaceDetailContent() {
   const description = place ? place.description[typedLanguage] : '';
 
   const stopAudio = useCallback(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis.speaking) {
+    if (typeof window !== 'undefined') {
       window.speechSynthesis.cancel();
     }
     setIsPlaying(false);
+    setIsGenerating(false);
   }, []);
 
   useEffect(() => {
@@ -118,16 +119,13 @@ function PlaceDetailContent() {
   }, [isAudioGuideEnabled, stopAudio]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    const trySpeak = () => {
-      setIsGenerating(true);
-      const voices = window.speechSynthesis.getVoices();
+    if (typeof window === 'undefined') return;
 
-      if (voices.length === 0) {
-        window.speechSynthesis.resume();
-        window.speechSynthesis.addEventListener('voiceschanged', trySpeak, { once: true });
-        return;
-      }
-      setIsGenerating(false);
+    const startUtterance = () => {
+      window.speechSynthesis.cancel();
+      setIsGenerating(true);
+
+      const voices = window.speechSynthesis.getVoices();
       
       // Pronunciation and expansion fixes
       let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
@@ -150,46 +148,54 @@ function PlaceDetailContent() {
         'ja': ['ja-JP'],
       };
       
-      const voiceLang = lang;
-      const voicePreferences = langMap[voiceLang];
-
-      let selectedVoice;
-      if (voicePreferences && voicePreferences.length > 0) {
-        selectedVoice = voices.find(voice => voice.lang.replace('_', '-') === voicePreferences[0]);
-      }
+      const voicePreferences = langMap[lang];
+      let selectedVoice = voices.find(voice => voicePreferences?.some(pref => voice.lang.replace('_', '-') === pref));
       
       if (!selectedVoice) {
-         selectedVoice = voices.find(voice => voice.lang.startsWith(voiceLang));
+         selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
       }
       
       if (selectedVoice) {
         utterance.voice = selectedVoice;
         utterance.lang = selectedVoice.lang;
       } else {
-        utterance.lang = (voicePreferences && voicePreferences.length > 0) ? voicePreferences[0] : 'en-US';
+        utterance.lang = voicePreferences?.[0] || 'en-US';
       }
 
-      utterance.onstart = () => setIsPlaying(true);
+      utterance.onstart = () => {
+        setIsPlaying(true);
+        setIsGenerating(false);
+      };
       utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => {
+      utterance.onerror = (event) => {
+        if (event.error !== 'interrupted' && event.error !== 'canceled') {
+          console.warn("SpeechSynthesis error:", event.error);
+        }
         setIsPlaying(false);
         setIsGenerating(false);
       };
       
       window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.addEventListener('voiceschanged', startUtterance, { once: true });
+      // Fallback for some browsers that don't fire voiceschanged properly
+      setTimeout(startUtterance, 100);
+    } else {
+      startUtterance();
     }
-    trySpeak();
   }, []);
 
   const handlePlayPause = useCallback(async () => {
     if (!isAudioGuideEnabled || isGenerating) return;
 
-    if (window.speechSynthesis.speaking) {
+    if (isPlaying) {
         stopAudio();
     } else {
       speak(description, typedLanguage);
     }
-  }, [isAudioGuideEnabled, isGenerating, description, typedLanguage, speak, stopAudio]);
+  }, [isAudioGuideEnabled, isGenerating, isPlaying, description, typedLanguage, speak, stopAudio]);
 
   useEffect(() => {
     if (autoplay && place && !placesLoading && !isPlaying && isAudioGuideEnabled) {
