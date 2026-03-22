@@ -102,7 +102,7 @@ function PlaceDetailContent() {
   const description = place ? place.description[typedLanguage] : '';
 
   const stopAudio = useCallback(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
     setIsPlaying(false);
@@ -119,69 +119,72 @@ function PlaceDetailContent() {
   }, [isAudioGuideEnabled, stopAudio]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
     const startUtterance = () => {
       window.speechSynthesis.cancel();
       setIsGenerating(true);
 
-      const voices = window.speechSynthesis.getVoices();
-      
-      // Pronunciation and expansion fixes
-      let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
-      if (lang === 'tr') {
-        fixedText = fixedText
-          .replace(/M\.Ö\./g, 'milattan önce')
-          .replace(/M\.Ö/g, 'milattan önce')
-          .replace(/MÖ/g, 'milattan önce')
-          .replace(/İ\. Ö\./g, 'milattan önce')
-          .replace(/İ\.Ö\./g, 'milattan önce');
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(fixedText);
-      
-      const langMap: Record<Language, string[]> = {
-        'tr': ['tr-TR'],
-        'en': ['en-US', 'en-GB'],
-        'fr': ['fr-FR'],
-        'de': ['de-DE'],
-        'ja': ['ja-JP'],
-      };
-      
-      const voicePreferences = langMap[lang];
-      let selectedVoice = voices.find(voice => voicePreferences?.some(pref => voice.lang.replace('_', '-') === pref));
-      
-      if (!selectedVoice) {
-         selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
-      }
-      
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        utterance.lang = selectedVoice.lang;
-      } else {
-        utterance.lang = voicePreferences?.[0] || 'en-US';
-      }
-
-      utterance.onstart = () => {
-        setIsPlaying(true);
-        setIsGenerating(false);
-      };
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = (event) => {
-        if (event.error !== 'interrupted' && event.error !== 'canceled') {
-          console.warn("SpeechSynthesis error:", event.error);
+      // Give the browser a moment to clean up previous utterances
+      setTimeout(() => {
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Pronunciation and expansion fixes
+        let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+        if (lang === 'tr') {
+          fixedText = fixedText
+            .replace(/M\.Ö\./g, 'milattan önce')
+            .replace(/M\.Ö/g, 'milattan önce')
+            .replace(/MÖ/g, 'milattan önce')
+            .replace(/İ\. Ö\./g, 'milattan önce')
+            .replace(/İ\.Ö\./g, 'milattan önce');
         }
-        setIsPlaying(false);
-        setIsGenerating(false);
-      };
-      
-      window.speechSynthesis.speak(utterance);
+        
+        const utterance = new SpeechSynthesisUtterance(fixedText);
+        
+        const langMap: Record<Language, string[]> = {
+          'tr': ['tr-TR'],
+          'en': ['en-US', 'en-GB'],
+          'fr': ['fr-FR'],
+          'de': ['de-DE'],
+          'ja': ['ja-JP'],
+        };
+        
+        const voicePreferences = langMap[lang];
+        let selectedVoice = voices.find(voice => voicePreferences?.some(pref => voice.lang.replace('_', '-') === pref));
+        
+        if (!selectedVoice) {
+           selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
+        }
+        
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+        } else {
+          utterance.lang = voicePreferences?.[0] || 'en-US';
+        }
+
+        utterance.onstart = () => {
+          setIsPlaying(true);
+          setIsGenerating(false);
+        };
+        utterance.onend = () => setIsPlaying(false);
+        utterance.onerror = (event) => {
+          // Do not log 'interrupted' as an error to prevent NextJS crash overlay
+          if (event.error !== 'interrupted' && event.error !== 'canceled') {
+            console.warn("SpeechSynthesis error:", event.error);
+          }
+          setIsPlaying(false);
+          setIsGenerating(false);
+        };
+        
+        window.speechSynthesis.speak(utterance);
+      }, 100);
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.addEventListener('voiceschanged', startUtterance, { once: true });
-      // Fallback for some browsers that don't fire voiceschanged properly
-      setTimeout(startUtterance, 100);
+      setTimeout(startUtterance, 200);
     } else {
       startUtterance();
     }

@@ -40,12 +40,12 @@ export function AudioProximityAlert() {
   const [notifiedPlaceIds, setNotifiedPlaceIds] = useState<Set<string>>(new Set());
 
   const speakPrompt = useCallback((text: string) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
     
     const startSpeak = () => {
       window.speechSynthesis.cancel();
       
-      // Pronunciation fix for Gymnasium and M.Ö.
+      // Pronunciation fixes for prompt
       let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
       if (language === 'tr') {
         fixedText = fixedText
@@ -72,7 +72,7 @@ export function AudioProximityAlert() {
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.addEventListener('voiceschanged', startSpeak, { once: true });
-      setTimeout(startSpeak, 100);
+      setTimeout(startSpeak, 200);
     } else {
       startSpeak();
     }
@@ -91,6 +91,7 @@ export function AudioProximityAlert() {
         for (const place of places) {
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
           
+          // Show alert if within 30 meters
           if (dist <= 30 && !notifiedPlaceIds.has(place.id)) {
             setActiveAlertPlace(place);
             setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
@@ -102,6 +103,7 @@ export function AudioProximityAlert() {
             setTimeout(() => speakPrompt(promptText), 500);
             break; 
           } else if (dist > 150 && notifiedPlaceIds.has(place.id)) {
+            // Reset notification if user leaves the area (more than 150m away)
             setNotifiedPlaceIds(prev => {
               const next = new Set(prev);
               next.delete(place.id);

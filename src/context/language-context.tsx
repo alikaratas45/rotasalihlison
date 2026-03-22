@@ -59,8 +59,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (!newState) {
             window.speechSynthesis.cancel();
         } else {
-            // Unlock Web Speech API on user interaction
-            if (typeof window !== 'undefined') {
+            // "Unlock" the Audio Context by speaking an empty string on user gesture.
+            // This allows the browser to permit speech later in the session.
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
                 const utterance = new SpeechSynthesisUtterance('');
                 utterance.volume = 0;
                 window.speechSynthesis.speak(utterance);
