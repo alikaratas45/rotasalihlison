@@ -6,12 +6,12 @@ export function Logo({ className }: { className?: string }) {
   const logoUrl = '/logos.png';
 
   return (
-    <div className={`relative ${className || 'h-8 w-8'}`}>
+    <div className={`relative ${className || 'h-8 w-8'}`} style={{ mixBlendMode: 'multiply' }}>
       <Image
         src={logoUrl}
         alt="Rota Salihli Logo"
         fill
-        style={{ objectFit: 'contain', mixBlendMode: 'multiply' }}
+        style={{ objectFit: 'contain' }}
         sizes="(max-width: 768px) 10vw, 5vw"
       />
     </div>

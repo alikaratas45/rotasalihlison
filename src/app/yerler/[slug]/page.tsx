@@ -131,6 +131,7 @@ function PlaceDetailContent() {
         
         // Pronunciation and expansion fixes
         let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+        
         if (lang === 'tr') {
           fixedText = fixedText
             .replace(/M\.Ö\./g, 'milattan önce')
@@ -138,6 +139,13 @@ function PlaceDetailContent() {
             .replace(/MÖ/g, 'milattan önce')
             .replace(/İ\. Ö\./g, 'milattan önce')
             .replace(/İ\.Ö\./g, 'milattan önce');
+        } else if (lang === 'en') {
+          fixedText = fixedText
+            .replace(/M\.Ö\./g, 'B.C.')
+            .replace(/M\.Ö/g, 'B.C.')
+            .replace(/MÖ/g, 'B.C.')
+            .replace(/BC/g, 'B.C.')
+            .replace(/B\.C\./g, 'Before Christ');
         }
         
         const utterance = new SpeechSynthesisUtterance(fixedText);
@@ -170,9 +178,9 @@ function PlaceDetailContent() {
         };
         utterance.onend = () => setIsPlaying(false);
         utterance.onerror = (event) => {
-          // Do not log 'interrupted' as an error to prevent NextJS crash overlay
+          // Do not treat 'interrupted' as a blocking error to avoid crash overlay
           if (event.error !== 'interrupted' && event.error !== 'canceled') {
-            console.warn("SpeechSynthesis error:", event.error);
+            console.warn("SpeechSynthesis error handled:", event.error);
           }
           setIsPlaying(false);
           setIsGenerating(false);
@@ -183,8 +191,9 @@ function PlaceDetailContent() {
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.addEventListener('voiceschanged', startUtterance, { once: true });
-      setTimeout(startUtterance, 200);
+      window.speechSynthesis.onvoiceschanged = startUtterance;
+      // Backup timeout if voiceschanged doesn't fire
+      setTimeout(startUtterance, 500);
     } else {
       startUtterance();
     }
