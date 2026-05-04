@@ -1,7 +1,6 @@
 
 import Image from 'next/image';
 
-// The logo background is made transparent using CSS mixBlendMode.
 export function Logo({ className }: { className?: string }) {
   const logoUrl = '/logos.png';
 

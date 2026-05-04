@@ -33,7 +33,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
         <Link href="/" className="mr-6 flex items-center gap-2">
-          <Logo className="h-8 w-8 text-primary" />
+          <Logo className="h-8 w-8" />
           <span className="hidden font-bold sm:inline-block font-headline">Rota Salihli</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -61,7 +61,7 @@ export function Header() {
               <div className="flex flex-col h-full">
                 <div className="border-b pb-4">
                     <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Logo className="h-8 w-8 text-primary" />
+                    <Logo className="h-8 w-8" />
                     <span className="font-bold font-headline">Rota Salihli</span>
                     </Link>
                 </div>
@@ -88,14 +88,8 @@ export function Header() {
 
 function ThemeToggle() {
   const { setTheme, theme } = useTheme();
-
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="rounded-full"
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-    >
+    <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Toggle theme</span>
@@ -113,9 +107,7 @@ const languages: { code: Language; name: string; flag: React.FC<any> }[] = [
 
 function LanguageSwitcher() {
     const { language, setLanguage } = useLanguage();
-    
     const selectedLanguage = languages.find(lang => lang.code === language);
-
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -126,11 +118,7 @@ function LanguageSwitcher() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {languages.map((lang) => (
-            <DropdownMenuItem
-                key={lang.code}
-                className={cn("gap-2", language === lang.code && 'bg-accent')}
-                onClick={() => setLanguage(lang.code)}
-            >
+            <DropdownMenuItem key={lang.code} className={cn("gap-2", language === lang.code && 'bg-accent')} onClick={() => setLanguage(lang.code)}>
                 <lang.flag className="h-4 w-4 rounded-sm" />
                 <span>{lang.name}</span>
             </DropdownMenuItem>
@@ -142,13 +130,11 @@ function LanguageSwitcher() {
 
 function AudioGuideToggle() {
     const { isAudioGuideEnabled, toggleAudioGuide, t } = useLanguage();
-  
     return (
       <Button
         variant={isAudioGuideEnabled ? "default" : "outline"}
         size="sm"
         onClick={toggleAudioGuide}
-        aria-label={t('header.audioGuide')}
         className={cn(
           "rounded-full gap-2 px-3 transition-all duration-300 shadow-sm border-2 h-10 md:h-9",
           isAudioGuideEnabled 
@@ -156,12 +142,8 @@ function AudioGuideToggle() {
             : "text-muted-foreground border-muted-foreground/20 bg-transparent hover:bg-muted"
         )}
       >
-        {isAudioGuideEnabled ? (
-          <Volume2 className="h-4 w-4 animate-pulse" />
-        ) : (
-          <VolumeX className="h-4 w-4" />
-        )}
-        <span className="text-xs font-bold uppercase tracking-tight">
+        {isAudioGuideEnabled ? <Volume2 className="h-4 w-4 animate-pulse" /> : <VolumeX className="h-4 w-4" />}
+        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-tight">
           {t('header.audioGuide')}
         </span>
       </Button>

@@ -57,10 +57,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         localStorage.setItem('audioGuideEnabled', JSON.stringify(newState));
         
         if (!newState) {
-            window.speechSynthesis.cancel();
+            if (typeof window !== 'undefined' && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
         } else {
-            // "Unlock" the Audio Context by speaking an empty string on user gesture.
-            // This allows the browser to permit speech later in the session.
+            // Audio Unlock Mechanism for Mobile Browsers
             if (typeof window !== 'undefined' && window.speechSynthesis) {
                 const utterance = new SpeechSynthesisUtterance('');
                 utterance.volume = 0;
@@ -88,9 +89,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
     
     if (typeof result === 'string' && args.length > 0 && args[0].count !== undefined) {
-       if (language === 'tr') {
-         return result;
-       }
+       if (language === 'tr') return result;
        const count = args[0].count;
        return count === 1 ? result : (translations[language][key + '_plural'] || `${result}s`);
     }
