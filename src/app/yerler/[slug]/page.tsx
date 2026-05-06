@@ -16,6 +16,19 @@ import type { Place } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Survey } from '@/components/survey';
 
+// Helper to calculate distance in meters
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371000; // Meters
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 function PlaceDetailSkeleton() {
     return (
         <div className="container mx-auto px-4 py-8 md:py-12">
@@ -46,6 +59,7 @@ function PlaceDetailContent() {
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isNearPlace, setIsNearPlace] = useState(false);
 
   const typedLanguage = language as Language;
 
@@ -57,6 +71,30 @@ function PlaceDetailContent() {
     if (!places) return null;
     return places.find(p => Object.values(p.slug).includes(slug as string));
   }, [places, slug]);
+
+  // Proximity check for survey
+  useEffect(() => {
+    if (!place) return;
+
+    if ("geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const dist = calculateDistance(
+            position.coords.latitude,
+            position.coords.longitude,
+            place.coordinates.lat,
+            place.coordinates.lng
+          );
+          // Only show survey if within 50 meters
+          setIsNearPlace(dist <= 50);
+        },
+        (err) => console.warn("Geolocation access denied for survey check", err),
+        { enableHighAccuracy: true }
+      );
+
+      return () => navigator.geolocation.clearWatch(watchId);
+    }
+  }, [place]);
 
   const stopAudio = useCallback(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -79,7 +117,6 @@ function PlaceDetailContent() {
       window.speechSynthesis.cancel();
       setIsGenerating(true);
 
-      // Give a tiny timeout for cancel to complete
       setTimeout(() => {
         const voices = window.speechSynthesis.getVoices();
         
@@ -92,7 +129,6 @@ function PlaceDetailContent() {
         
         const utterance = new SpeechSynthesisUtterance(fixedText);
         
-        // Dil eşleştirme haritası - daha kapsamlı varyasyonlar eklendi
         const langMap: Record<Language, string[]> = {
           'tr': ['tr-TR'],
           'en': ['en-US', 'en-GB', 'en-AU', 'en-IN'],
@@ -116,7 +152,6 @@ function PlaceDetailContent() {
           utterance.voice = selectedVoice;
           utterance.lang = selectedVoice.lang;
         } else {
-          // Fallback
           utterance.lang = voicePreferences?.[0] || (lang === 'en' ? 'en-US' : lang);
         }
 
@@ -126,7 +161,6 @@ function PlaceDetailContent() {
         };
         utterance.onend = () => setIsPlaying(false);
         utterance.onerror = (event) => {
-          // Kesinti veya iptal hatalarını yoksay
           if (event.error !== 'interrupted' && event.error !== 'canceled') {
             console.warn("Speech Synthesis Error:", event.error);
           }
@@ -140,18 +174,15 @@ function PlaceDetailContent() {
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = startUtterance;
-      // Bazı tarayıcılar için yedek zamanlayıcı
       setTimeout(() => {
-        if (window.speechSynthesis.getVoices().length > 0) {
-            // onvoiceschanged tetiklenmediyse ama sesler geldiyse başlat
-            if (isGenerating) return; 
+        if (window.speechSynthesis.getVoices().length > 0 && !isGenerating && !isPlaying) {
             startUtterance();
         }
       }, 500);
     } else {
       startUtterance();
     }
-  }, [isGenerating]);
+  }, [isGenerating, isPlaying]);
 
   const handlePlayPause = useCallback(async () => {
     if (!isAudioGuideEnabled || isGenerating || !place) return;
@@ -215,9 +246,12 @@ function PlaceDetailContent() {
           </div>
         </div>
 
-        <div className="mt-20 border-t pt-10">
-          <Survey placeId={place.id} placeName={place.name.tr} />
-        </div>
+        {/* Survey section - only visible if user is within 50 meters */}
+        {isNearPlace && (
+          <div className="mt-20 border-t pt-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Survey placeId={place.id} placeName={place.name.tr} />
+          </div>
+        )}
       </div>
     </div>
   );
