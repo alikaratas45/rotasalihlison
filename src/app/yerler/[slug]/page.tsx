@@ -173,11 +173,13 @@ function PlaceDetailContent() {
             {place.description[typedLanguage]}
           </div>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 clear-both pt-4">
-             <Button size="lg" asChild className="flex-1 md:flex-none md:min-w-[200px]">
-               <a href={`https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`} target="_blank" rel="noopener noreferrer">
-                 <MapPin className="mr-2 h-5 w-5" />{t('actions.showOnMap')}
-               </a>
-             </Button>
+             {place.id !== '3' && (
+               <Button size="lg" asChild className="flex-1 md:flex-none md:min-w-[200px]">
+                 <a href={`https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`} target="_blank" rel="noopener noreferrer">
+                   <MapPin className="mr-2 h-5 w-5" />{t('actions.showOnMap')}
+                 </a>
+               </Button>
+             )}
             {isAudioGuideEnabled && (
               <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
                 {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
