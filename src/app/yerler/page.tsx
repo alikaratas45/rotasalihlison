@@ -62,7 +62,11 @@ function YerlerContent() {
   }, [firestore, category]);
 
   const { data: places, loading } = useCollection<Place>(placesQuery);
-  const filteredPlaces = places || [];
+  
+  // Salihli Odun Köftesi'ni (ID: 3) bu listeden çıkarıyoruz çünkü artık Lezzetler sayfasında özel olarak yer alıyor.
+  const filteredPlaces = useMemo(() => {
+      return (places || []).filter(place => place.id !== '3');
+  }, [places]);
 
   const pageInfo: { [key: string]: { title: string, description: string } } = {
     history: {
@@ -125,7 +129,7 @@ function YerlerContent() {
                         fill
                         className="object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
                         <h3 className="text-2xl font-bold font-headline mb-2">{place.name[typedLanguage]}</h3>
