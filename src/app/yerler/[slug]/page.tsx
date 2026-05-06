@@ -51,13 +51,7 @@ function PlaceDetailContent() {
   const [isNearPlace, setIsNearPlace] = useState(false);
   
   const hasAutoplayedRef = useRef(false);
-  const synthRef = useRef<SpeechSynthesis | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-        synthRef.current = window.speechSynthesis;
-    }
-  }, []);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const typedLanguage = language as Language;
   const firestore = useFirestore();
@@ -66,8 +60,8 @@ function PlaceDetailContent() {
   const place = useMemo(() => places?.find(p => Object.values(p.slug).includes(slug as string)), [places, slug]);
 
   const stopAudio = useCallback(() => {
-    if (synthRef.current) {
-        synthRef.current.cancel();
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
     }
     setIsPlaying(false);
     setIsGenerating(false);
@@ -95,14 +89,13 @@ function PlaceDetailContent() {
   }, [place]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    const synth = synthRef.current;
-    if (!synth || !text) return;
+    if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+
+    const synth = window.speechSynthesis;
 
     const startUtterance = () => {
-      // 1. Önceki her şeyi temizle
       synth.cancel();
       
-      // 2. Metin temizliği
       let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
       if (lang === 'tr') {
         fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
@@ -116,37 +109,45 @@ function PlaceDetailContent() {
       }
 
       const utterance = new SpeechSynthesisUtterance(fixedText);
+      utteranceRef.current = utterance; // Keep reference to prevent GC
       
-      // 3. Dil Kodları (Mobil varyasyonları ile)
-      const langCodes: Record<Language, string> = {
-        'tr': 'tr-TR',
-        'en': 'en-US',
-        'fr': 'fr-FR',
-        'de': 'de-DE',
-        'ja': 'ja-JP',
+      const langCodes: Record<Language, string[]> = {
+        'tr': ['tr-TR', 'tr_TR', 'tr'],
+        'en': ['en-US', 'en-GB', 'en'],
+        'fr': ['fr-FR', 'fr'],
+        'de': ['de-DE', 'de'],
+        'ja': ['ja-JP', 'ja'],
       };
-      utterance.lang = langCodes[lang] || 'tr-TR';
 
-      // 4. Agresif Ses Seçimi
+      const preferredCodes = langCodes[lang] || ['tr-TR'];
+      utterance.lang = preferredCodes[0];
+
       const voices = synth.getVoices();
       const findVoice = () => {
-        // Tam eşleşme (tr-TR)
-        let v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === utterance.lang.toLowerCase());
-        // Kısmi eşleşme (tr ile başlayan)
-        if (!v) v = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
-        // İsimde dil geçen (Turkish)
-        if (!v) {
-          const search = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
-          if (search) v = voices.find(v => v.name.toLowerCase().includes(search));
+        // 1. Exact match with preferred codes
+        for (const code of preferredCodes) {
+            const v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === code.toLowerCase());
+            if (v) return v;
         }
-        return v;
+        // 2. Starts with lang code
+        const vPrefix = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+        if (vPrefix) return vPrefix;
+        // 3. Name includes language
+        const searchName = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
+        if (searchName) {
+            const vName = voices.find(v => v.name.toLowerCase().includes(searchName));
+            if (vName) return vName;
+        }
+        return null;
       };
 
       const voice = findVoice();
-      if (voice) utterance.voice = voice;
+      if (voice) {
+          utterance.voice = voice;
+          utterance.lang = voice.lang; // Use the actual voice's lang code
+      }
 
-      // 5. Mobil İnce Ayarlar
-      utterance.rate = 1.0;
+      utterance.rate = 0.95; // Slightly slower for better clarity on mobile
       utterance.pitch = 1.0;
 
       utterance.onstart = () => { 
@@ -155,32 +156,38 @@ function PlaceDetailContent() {
       };
       utterance.onend = () => {
         setIsPlaying(false);
+        utteranceRef.current = null;
       };
       utterance.onerror = (e) => {
+        // Suppress non-critical mobile synthesis errors
         const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
         if (!silentErrors.includes(e.error)) {
             console.warn("Speech Synthesis Warning:", e.error);
         }
         setIsPlaying(false);
         setIsGenerating(false);
+        utteranceRef.current = null;
       };
       
-      // 6. Mobil "Durdur-Başlat" senkronu için kısa gecikme
+      // Delay slightly for mobile hardware readiness
       setTimeout(() => {
           synth.speak(utterance);
-      }, 50);
+      }, 100);
     };
 
     setIsGenerating(true);
 
-    // Mobilde voices listesi asenkron yüklenir
+    // Initial silent kick for iOS
+    const priming = new SpeechSynthesisUtterance('');
+    priming.volume = 0;
+    synth.speak(priming);
+
     if (synth.getVoices().length === 0) {
       synth.onvoiceschanged = () => {
         startUtterance();
         synth.onvoiceschanged = null;
       };
-      // Fallback
-      setTimeout(startUtterance, 300);
+      setTimeout(startUtterance, 500);
     } else {
       startUtterance();
     }
@@ -196,13 +203,11 @@ function PlaceDetailContent() {
   }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
   useEffect(() => {
-    // Autoplay mobilde sadece kullanıcı daha önce sayfada bir yere dokunduysa çalışabilir
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
-      // Sayfa yüklenir yüklenmez değil, biraz bekleyip motoru deniyoruz
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 1000);
+      }, 1500); // Increased for mobile stability
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage]);
