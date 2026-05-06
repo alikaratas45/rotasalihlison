@@ -96,11 +96,25 @@ function PlaceDetailContent() {
     const startUtterance = () => {
       synth.cancel();
       
-      let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+      // Metin temizleme ve telaffuz düzeltmeleri
+      let fixedText = text
+        .replace(/Gymnasium/gi, 'Cimnazyum')
+        .replace(/Sardes/gi, 'Sardes')
+        .replace(/Bintepeler/gi, 'Bintepeler');
+
       if (lang === 'tr') {
-        fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
+        fixedText = fixedText
+            .replace(/M\.Ö\./g, 'milattan önce')
+            .replace(/MÖ/g, 'milattan önce')
+            .replace(/İ\.Ö\./g, 'milattan önce')
+            .replace(/MS/g, 'milattan sonra')
+            .replace(/M\.S\./g, 'milattan sonra');
       } else if (lang === 'en') {
-        fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ').replace(/B\.C\./g, 'Before Christ');
+        fixedText = fixedText
+            .replace(/M\.Ö\./g, 'Before Christ')
+            .replace(/BC/g, 'Before Christ')
+            .replace(/B\.C\./g, 'Before Christ')
+            .replace(/AD/g, 'Anno Domini');
       }
       
       if (!fixedText.trim()) {
@@ -109,7 +123,7 @@ function PlaceDetailContent() {
       }
 
       const utterance = new SpeechSynthesisUtterance(fixedText);
-      utteranceRef.current = utterance; // Keep reference to prevent GC
+      utteranceRef.current = utterance; // GC (Garbage Collection) koruması
       
       const langCodes: Record<Language, string[]> = {
         'tr': ['tr-TR', 'tr_TR', 'tr'],
@@ -124,15 +138,15 @@ function PlaceDetailContent() {
 
       const voices = synth.getVoices();
       const findVoice = () => {
-        // 1. Exact match with preferred codes
+        // 1. Tercih edilen kodlarla tam eşleşme
         for (const code of preferredCodes) {
             const v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === code.toLowerCase());
             if (v) return v;
         }
-        // 2. Starts with lang code
+        // 2. Dil kodu ile başlayanlar
         const vPrefix = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
         if (vPrefix) return vPrefix;
-        // 3. Name includes language
+        // 3. İsimde dil geçenler
         const searchName = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
         if (searchName) {
             const vName = voices.find(v => v.name.toLowerCase().includes(searchName));
@@ -144,10 +158,10 @@ function PlaceDetailContent() {
       const voice = findVoice();
       if (voice) {
           utterance.voice = voice;
-          utterance.lang = voice.lang; // Use the actual voice's lang code
+          utterance.lang = voice.lang;
       }
 
-      utterance.rate = 0.95; // Slightly slower for better clarity on mobile
+      utterance.rate = 0.95; 
       utterance.pitch = 1.0;
 
       utterance.onstart = () => { 
@@ -159,7 +173,6 @@ function PlaceDetailContent() {
         utteranceRef.current = null;
       };
       utterance.onerror = (e) => {
-        // Suppress non-critical mobile synthesis errors
         const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
         if (!silentErrors.includes(e.error)) {
             console.warn("Speech Synthesis Warning:", e.error);
@@ -169,25 +182,27 @@ function PlaceDetailContent() {
         utteranceRef.current = null;
       };
       
-      // Delay slightly for mobile hardware readiness
+      // Mobil cihazlarda donanım hazırlığı için kısa gecikme
       setTimeout(() => {
           synth.speak(utterance);
-      }, 100);
+      }, 150);
     };
 
     setIsGenerating(true);
 
-    // Initial silent kick for iOS
+    // iOS/Safari için sessiz tetikleme (Priming)
     const priming = new SpeechSynthesisUtterance('');
     priming.volume = 0;
     synth.speak(priming);
 
+    // Seslerin yüklenmesini bekle
     if (synth.getVoices().length === 0) {
       synth.onvoiceschanged = () => {
         startUtterance();
         synth.onvoiceschanged = null;
       };
-      setTimeout(startUtterance, 500);
+      // Fallback
+      setTimeout(startUtterance, 1000);
     } else {
       startUtterance();
     }
@@ -207,7 +222,7 @@ function PlaceDetailContent() {
       hasAutoplayedRef.current = true;
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 1500); // Increased for mobile stability
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage]);
