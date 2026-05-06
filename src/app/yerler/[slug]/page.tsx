@@ -87,26 +87,37 @@ function PlaceDetailContent() {
         if (lang === 'tr') {
           fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
         } else if (lang === 'en') {
-          fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ');
+          fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ').replace(/B\.C\./g, 'Before Christ');
         }
         
         const utterance = new SpeechSynthesisUtterance(fixedText);
+        
+        // Dil eşleştirme haritası - daha kapsamlı varyasyonlar eklendi
         const langMap: Record<Language, string[]> = {
-          'tr': ['tr-TR'], 'en': ['en-US', 'en-GB'], 'fr': ['fr-FR'], 'de': ['de-DE'], 'ja': ['ja-JP'],
+          'tr': ['tr-TR'],
+          'en': ['en-US', 'en-GB', 'en-AU', 'en-IN'],
+          'fr': ['fr-FR', 'fr-CA'],
+          'de': ['de-DE'],
+          'ja': ['ja-JP'],
         };
         
         const voicePreferences = langMap[lang];
-        let selectedVoice = voices.find(voice => voicePreferences?.some(pref => voice.lang.replace('_', '-') === pref));
+        let selectedVoice = voices.find(voice => 
+          voicePreferences?.some(pref => 
+            voice.lang.replace('_', '-').toLowerCase() === pref.toLowerCase()
+          )
+        );
         
         if (!selectedVoice) {
-          selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
+          selectedVoice = voices.find(voice => voice.lang.toLowerCase().startsWith(lang.toLowerCase()));
         }
         
         if (selectedVoice) {
           utterance.voice = selectedVoice;
           utterance.lang = selectedVoice.lang;
         } else {
-          utterance.lang = voicePreferences?.[0] || 'en-US';
+          // Fallback
+          utterance.lang = voicePreferences?.[0] || (lang === 'en' ? 'en-US' : lang);
         }
 
         utterance.onstart = () => { 
@@ -115,7 +126,7 @@ function PlaceDetailContent() {
         };
         utterance.onend = () => setIsPlaying(false);
         utterance.onerror = (event) => {
-          // Suppress interrupted or canceled errors to avoid NextJS error overlay
+          // Kesinti veya iptal hatalarını yoksay
           if (event.error !== 'interrupted' && event.error !== 'canceled') {
             console.warn("Speech Synthesis Error:", event.error);
           }
@@ -129,14 +140,18 @@ function PlaceDetailContent() {
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = startUtterance;
-      // Fallback for some browsers that don't trigger voiceschanged immediately
+      // Bazı tarayıcılar için yedek zamanlayıcı
       setTimeout(() => {
-        if (window.speechSynthesis.getVoices().length > 0) startUtterance();
+        if (window.speechSynthesis.getVoices().length > 0) {
+            // onvoiceschanged tetiklenmediyse ama sesler geldiyse başlat
+            if (isGenerating) return; 
+            startUtterance();
+        }
       }, 500);
     } else {
       startUtterance();
     }
-  }, []);
+  }, [isGenerating]);
 
   const handlePlayPause = useCallback(async () => {
     if (!isAudioGuideEnabled || isGenerating || !place) return;

@@ -47,7 +47,7 @@ export function AudioProximityAlert() {
       
       // Give a tiny timeout for cancel to complete
       setTimeout(() => {
-        // Pronunciation fixes for prompt
+        // Pronunciation fixes
         let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
         if (language === 'tr') {
           fixedText = fixedText
@@ -57,7 +57,10 @@ export function AudioProximityAlert() {
             .replace(/İ\. Ö\./g, 'milattan önce')
             .replace(/İ\.Ö\./g, 'milattan önce');
         } else if (language === 'en') {
-          fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ');
+          fixedText = fixedText
+            .replace(/M\.Ö\./g, 'Before Christ')
+            .replace(/BC/g, 'Before Christ')
+            .replace(/B\.C\./g, 'Before Christ');
         }
         
         const utterance = new SpeechSynthesisUtterance(fixedText);
@@ -70,7 +73,19 @@ export function AudioProximityAlert() {
           'ja': 'ja-JP',
         };
         
-        utterance.lang = langMap[language] || 'tr-TR';
+        // Find best matching voice
+        const voices = window.speechSynthesis.getVoices();
+        const targetLang = langMap[language] || (language === 'en' ? 'en-US' : 'tr-TR');
+        
+        const bestVoice = voices.find(v => v.lang.replace('_', '-').toLowerCase() === targetLang.toLowerCase()) || 
+                          voices.find(v => v.lang.toLowerCase().startsWith(language.toLowerCase()));
+        
+        if (bestVoice) {
+            utterance.voice = bestVoice;
+            utterance.lang = bestVoice.lang;
+        } else {
+            utterance.lang = targetLang;
+        }
         
         // Error suppression
         utterance.onerror = (e) => {
