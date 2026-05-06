@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -91,7 +90,7 @@ function PlaceDetailContent() {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
     const startUtterance = () => {
-      // Temizlik
+      // Temizlik - Her zaman yeni bir anlatıma başlamadan önce öncekini durdur
       window.speechSynthesis.cancel();
       
       const voices = window.speechSynthesis.getVoices();
@@ -133,8 +132,9 @@ function PlaceDetailContent() {
         setIsPlaying(false);
       };
       utterance.onerror = (e) => {
-        if (e.error !== 'interrupted' && e.error !== 'canceled') {
-            console.error("Speech Synthesis Error:", e);
+        // 'interrupted', 'canceled' veya 'not-allowed' (autoplay engeli) durumlarını hata olarak gösterme
+        if (!['interrupted', 'canceled', 'not-allowed'].includes(e.error)) {
+            console.error("Speech Synthesis Error:", e.error, e);
         }
         setIsPlaying(false);
         setIsGenerating(false);
@@ -154,9 +154,10 @@ function PlaceDetailContent() {
       // Fallback
       setTimeout(() => {
         if (window.speechSynthesis.getVoices().length > 0) startUtterance();
-      }, 300);
+        else setIsGenerating(false);
+      }, 500);
     } else {
-      // User gesture'ı korumak için hemen başlat (timeout'suz)
+      // User gesture'ı korumak için hemen başlat
       startUtterance();
     }
   }, []);
@@ -173,10 +174,10 @@ function PlaceDetailContent() {
   useEffect(() => {
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
-      // Autoplay için kısa bir gecikme (sayfa yüklendikten sonra)
+      // Autoplay için kısa bir gecikme (sayfa ve seslerin yüklenmesi için)
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage]);

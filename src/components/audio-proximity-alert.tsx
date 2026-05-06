@@ -76,6 +76,15 @@ export function AudioProximityAlert() {
 
   const handleConfirm = () => {
     if (!activeAlertPlace) return;
+
+    // "Priming": Kullanıcı etkileşimini korumak için sessiz bir ses parçası oynatıyoruz.
+    // Bu, yeni sayfadaki autoplay engellerini aşmamızı sağlar.
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        const primingUtterance = new SpeechSynthesisUtterance('');
+        primingUtterance.volume = 0;
+        window.speechSynthesis.speak(primingUtterance);
+    }
+
     const typedLanguage = language as keyof typeof activeAlertPlace.slug;
     const slug = activeAlertPlace.slug[typedLanguage] || activeAlertPlace.slug.tr;
     
