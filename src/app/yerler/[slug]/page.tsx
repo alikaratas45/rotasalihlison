@@ -91,11 +91,12 @@ function PlaceDetailContent() {
     if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
 
     const startUtterance = () => {
-      // Temizlik - Her zaman yeni bir anlatıma başlamadan önce öncekini durdur
+      // Önceki tüm anlatımları durdur
       window.speechSynthesis.cancel();
       
       const voices = window.speechSynthesis.getVoices();
       
+      // Metin temizliği ve özel kısaltmalar
       let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
       if (lang === 'tr') {
         fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
@@ -110,24 +111,42 @@ function PlaceDetailContent() {
 
       const utterance = new SpeechSynthesisUtterance(fixedText);
       
-      const langMap: Record<Language, string[]> = {
-        'tr': ['tr-TR', 'tr_TR', 'tr'],
-        'en': ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN'],
-        'fr': ['fr-FR', 'fr-CA'],
-        'de': ['de-DE'],
-        'ja': ['ja-JP'],
+      // Dil kodunu ayarla (Zorunlu)
+      const langCodes: Record<Language, string> = {
+        'tr': 'tr-TR',
+        'en': 'en-US',
+        'fr': 'fr-FR',
+        'de': 'de-DE',
+        'ja': 'ja-JP',
       };
+      utterance.lang = langCodes[lang] || 'tr-TR';
       
-      const voicePreferences = langMap[lang];
-      utterance.lang = voicePreferences[0]; // Default lang code
-      
-      // En iyi sesi seç
-      let selectedVoice = voices.find(v => voicePreferences?.some(pref => v.lang.replace('_', '-').toLowerCase() === pref.toLowerCase())) || 
-                          voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
-      
+      // Daha agresif ses seçimi
+      const findVoice = () => {
+        const availableVoices = window.speechSynthesis.getVoices();
+        
+        // 1. Tercih: Tam dil kodu eşleşmesi
+        let voice = availableVoices.find(v => v.lang.replace('_', '-').toLowerCase() === utterance.lang.toLowerCase());
+        
+        // 2. Tercih: Dil kodunun başlangıcı (örn: 'tr' ile başlayanlar)
+        if (!voice) {
+          voice = availableVoices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+        }
+        
+        // 3. Tercih: Ses adında dilin adı geçiyor mu? (Mobil tarayıcılar için kritik)
+        if (!voice) {
+           const langSearch = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
+           if (langSearch) {
+             voice = availableVoices.find(v => v.name.toLowerCase().includes(langSearch));
+           }
+        }
+        
+        return voice;
+      };
+
+      const selectedVoice = findVoice();
       if (selectedVoice) {
           utterance.voice = selectedVoice;
-          utterance.lang = selectedVoice.lang;
       }
 
       utterance.onstart = () => { 
@@ -138,31 +157,30 @@ function PlaceDetailContent() {
         setIsPlaying(false);
       };
       utterance.onerror = (e) => {
-        // 'interrupted', 'canceled', 'not-allowed' veya 'synthesis-failed' (flaky browser issue) durumlarını hata ekranı olarak gösterme
         const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
         if (!silentErrors.includes(e.error)) {
-            console.warn("Speech Synthesis Warning (Handled):", e.error, e);
+            console.warn("Speech Synthesis Warning:", e.error);
         }
         setIsPlaying(false);
         setIsGenerating(false);
       };
       
-      // Bazı tarayıcılarda cancel() sonrası hemen speak() sorun yaratabilir, çok kısa bir bekleme ekleyelim
+      // Mobil tarayıcı meşguliyetini önlemek için kısa gecikme
       setTimeout(() => {
           try {
             window.speechSynthesis.speak(utterance);
           } catch (err) {
-            console.warn("Speech Synthesis Execute Error:", err);
             setIsPlaying(false);
             setIsGenerating(false);
           }
-      }, 50);
+      }, 100);
     };
 
     setIsGenerating(true);
 
-    // Bazı tarayıcılar sesleri asenkron yükler
-    if (window.speechSynthesis.getVoices().length === 0) {
+    // Bazı tarayıcılarda (özellikle iOS Safari) getVoices boş dönebilir
+    const initialVoices = window.speechSynthesis.getVoices();
+    if (initialVoices.length === 0) {
       window.speechSynthesis.onvoiceschanged = () => {
         startUtterance();
         window.speechSynthesis.onvoiceschanged = null;
@@ -170,10 +188,12 @@ function PlaceDetailContent() {
       // Fallback
       setTimeout(() => {
         if (window.speechSynthesis.getVoices().length > 0) startUtterance();
-        else setIsGenerating(false);
+        else {
+            // Hiç ses yüklenmese bile default ile dene
+            startUtterance();
+        }
       }, 500);
     } else {
-      // User gesture'ı korumak için hemen başlat
       startUtterance();
     }
   }, []);
@@ -190,10 +210,9 @@ function PlaceDetailContent() {
   useEffect(() => {
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
-      // Autoplay için kısa bir gecikme (sayfa ve seslerin yüklenmesi için)
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 500);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage]);
