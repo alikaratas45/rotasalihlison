@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -7,7 +6,7 @@ import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation } from 'lucide-react';
+import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation, Utensils, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
@@ -209,6 +208,11 @@ function PlaceDetailContent() {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
   }, [place]);
 
+  const handleOpenRestaurants = useCallback(() => {
+    const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
+    window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
+  }, []);
+
   useEffect(() => {
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
@@ -244,10 +248,16 @@ function PlaceDetailContent() {
               {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
             </Button>
             
-            {place.id !== '3' && (
+            {place.id !== '3' ? (
               <Button size="lg" onClick={handleGetDirections} className="flex-1 md:flex-none md:min-w-[200px] gap-2">
                 <Navigation className="h-5 w-5" />
                 {t('actions.showOnMap')}
+              </Button>
+            ) : (
+              <Button size="lg" onClick={handleOpenRestaurants} className="flex-1 md:flex-none md:min-w-[200px] gap-2 bg-orange-600 hover:bg-orange-700 text-white border-none shadow-md">
+                <Utensils className="h-5 w-5" />
+                Haritada Tüm Restaurantlar
+                <ExternalLink className="h-4 w-4 opacity-70 ml-1" />
               </Button>
             )}
           </div>
