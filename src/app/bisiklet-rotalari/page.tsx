@@ -27,7 +27,11 @@ export default function BisikletRotalariPage() {
         {loading ? (
             <Skeleton className="w-full h-full" />
         ) : (
-            <PlacesMap places={places || []} className="w-full h-full" />
+            <PlacesMap 
+              places={places || []} 
+              className="w-full h-full" 
+              kmlUrl="/kursunlu.kml"
+            />
         )}
       </div>
     </div>

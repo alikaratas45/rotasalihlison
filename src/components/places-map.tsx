@@ -15,9 +15,10 @@ interface PlacesMapProps {
   className?: string;
   isRoute?: boolean;
   startLocation?: { lat: number; lng: number };
+  kmlUrl?: string;
 }
 
-export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false, startLocation }) => {
+export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false, startLocation, kmlUrl }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { language, t } = useLanguage();
   const typedLanguage = language as Language;
@@ -173,6 +174,27 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       }
     });
   }, [map, places, isRoute, authFailed, startLocation]);
+
+  // KML Layer support
+  useEffect(() => {
+    if (!map || !kmlUrl || authFailed) return;
+
+    // Note: KmlLayer requires a publicly accessible URL to work.
+    // Construct absolute URL for the KML file served from /public
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const fullUrl = kmlUrl.startsWith('http') ? kmlUrl : `${protocol}//${host}${kmlUrl}`;
+
+    const kmlLayer = new google.maps.KmlLayer({
+      url: fullUrl,
+      map: map,
+      preserveViewport: places.length > 0, // Preserve current view if markers exist
+    });
+
+    return () => {
+      kmlLayer.setMap(null);
+    };
+  }, [map, kmlUrl, authFailed, places.length]);
 
   // Place Markers
   useEffect(() => {
