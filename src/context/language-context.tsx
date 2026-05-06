@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
@@ -48,6 +49,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
+    // Reload the page to ensure speech synthesis and other localized assets are correctly re-initialized
+    window.location.reload();
   }, []);
 
   const toggleAudioGuide = useCallback(() => {

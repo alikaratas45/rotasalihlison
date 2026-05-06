@@ -164,7 +164,7 @@ Geosites: Kurşunlu Thermalquellen, Kurşunlu Wasserfall und Kurşunlu Tal.`,
         },
         category: 'nature',
         coordinates: { lat: 38.458250364806744, lng: 28.044546435772286 },
-        imageUrl: 'https://i.imgur.com/KHKrcb5.png',
+        imageUrl: 'https://i.imgur.com/aOjHCNC.jpeg',
         imageHint: 'river rocks'
     },
     {
