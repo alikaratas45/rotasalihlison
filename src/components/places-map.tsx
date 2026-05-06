@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -31,7 +32,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
   const watchIdRef = useRef<number | null>(null);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
-  const polylineRef = useRef<google.maps.Polyline | null>(null);
+  const polylinesRef = useRef<google.maps.Polyline[]>([]);
 
   useEffect(() => {
     const handleAuthError = () => {
@@ -174,15 +175,13 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     });
   }, [map, places, isRoute, authFailed, startLocation, kmlUrl]);
 
-  // Professional KML Processing (Fetch + DOMParser + Polyline)
+  // Professional KML Processing
   useEffect(() => {
-    if (!map || !kmlUrl || authFailed) {
-      if (polylineRef.current) {
-        polylineRef.current.setMap(null);
-        polylineRef.current = null;
-      }
-      return;
-    }
+    // Clear previous polylines
+    polylinesRef.current.forEach(p => p.setMap(null));
+    polylinesRef.current = [];
+
+    if (!map || !kmlUrl || authFailed) return;
 
     const processKml = async () => {
       try {
@@ -192,13 +191,15 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
         
         const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
-        const path: google.maps.LatLngLiteral[] = [];
         const bounds = new google.maps.LatLngBounds();
+        let hasPath = false;
 
         for (let i = 0; i < coordinatesElements.length; i++) {
           const coordString = coordinatesElements[i].textContent?.trim();
           if (coordString) {
+            const path: google.maps.LatLngLiteral[] = [];
             const points = coordString.split(/\s+/);
+            
             points.forEach(p => {
               const [lng, lat] = p.split(',').map(Number);
               if (!isNaN(lat) && !isNaN(lng)) {
@@ -207,26 +208,23 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
                 bounds.extend(coord);
               }
             });
+
+            if (path.length > 0) {
+              const polyline = new google.maps.Polyline({
+                path: path,
+                geodesic: true,
+                strokeColor: '#1A237E', // Dark Blue
+                strokeOpacity: 0.9,
+                strokeWeight: 8,
+                map: map,
+              });
+              polylinesRef.current.push(polyline);
+              hasPath = true;
+            }
           }
         }
 
-        if (path.length > 0) {
-          // Clear previous polyline
-          if (polylineRef.current) {
-            polylineRef.current.setMap(null);
-          }
-
-          // Draw new polyline
-          polylineRef.current = new google.maps.Polyline({
-            path: path,
-            geodesic: true,
-            strokeColor: '#1A237E', // Dark Blue
-            strokeOpacity: 0.9,
-            strokeWeight: 8, // Thick line
-            map: map,
-          });
-
-          // Fit map to show the whole route
+        if (hasPath) {
           map.fitBounds(bounds);
         }
       } catch (error) {
@@ -237,10 +235,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     processKml();
 
     return () => {
-      if (polylineRef.current) {
-        polylineRef.current.setMap(null);
-        polylineRef.current = null;
-      }
+      polylinesRef.current.forEach(p => p.setMap(null));
+      polylinesRef.current = [];
     };
   }, [map, kmlUrl, authFailed]);
 

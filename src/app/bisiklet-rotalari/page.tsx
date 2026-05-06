@@ -2,13 +2,9 @@
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
-import { useMemo, useState } from 'react';
-import type { Place } from '@/lib/definitions';
+import { useState } from 'react';
 import { PlacesMap } from '@/components/places-map';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Bike, Navigation, Info } from 'lucide-react';
+import { Bike, Navigation } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -23,10 +19,9 @@ interface BicycleRoute {
 
 export default function BisikletRotalariPage() {
   const { t } = useLanguage();
-  const firestore = useFirestore();
   
-  // Kurşunlu rotasını varsayılan olarak seçili ve gerçek ID ile başlatalım
-  const [selectedRouteId, setSelectedRouteId] = useState<string>('kursunlu-1');
+  // Sadece Kurşunlu rotası kalsın
+  const [selectedRouteId] = useState<string>('kursunlu-1');
 
   const routes: BicycleRoute[] = [
     {
@@ -35,23 +30,11 @@ export default function BisikletRotalariPage() {
       distance: '12,40 km',
       description: "Kurşunlu Kaplıcaları'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur.",
       kmlUrl: '/kursunlu.kml',
-      wikilocId: '149618956' // Paylaştığınız gerçek Wikiloc ID'si
-    },
-    {
-      id: 'adala-1',
-      name: 'Adala Kanyon Parkuru',
-      distance: '8,36 km',
-      description: "Volkanik kanyonun devasa kayaları arasında, Gediz Nehri'ne eşlik eden heyecan verici bir sürüş deneyimi.",
-      kmlUrl: '',
-      wikilocId: '21098432' // Örnek ID
+      wikilocId: '149618956'
     }
   ];
 
-  // Bisiklet rotaları için haritada doğa mekanlarını gösterelim
-  const natureQuery = useMemo(() => query(collection(firestore, 'places'), where('category', '==', 'nature')), [firestore]);
-  const { data: places, loading } = useCollection<Place>(natureQuery);
-
-  const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
+  const activeRoute = routes[0];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -75,25 +58,21 @@ export default function BisikletRotalariPage() {
             
             <div className="grid gap-6">
               {routes.map((route) => (
-                <button 
+                <div 
                   key={route.id} 
-                  onClick={() => setSelectedRouteId(route.id)}
-                  className="text-left focus:outline-none transition-transform active:scale-[0.98]"
+                  className="text-left"
                 >
                   <Card className={cn(
-                    "overflow-hidden border-none shadow-sm transition-all duration-300",
-                    selectedRouteId === route.id ? "ring-2 ring-primary bg-white shadow-md scale-[1.02]" : "hover:shadow-md bg-white/80"
+                    "overflow-hidden border-none shadow-md transition-all duration-300 ring-2 ring-primary bg-white scale-[1.02]"
                   )}>
                     <CardContent className="p-6 md:p-8">
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-2xl font-bold font-headline text-slate-900">
                             {route.name}
                         </h3>
-                        {selectedRouteId === route.id && (
-                            <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded uppercase tracking-wider">
-                                Aktif Rota
-                            </span>
-                        )}
+                        <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded uppercase tracking-wider">
+                            Aktif Rota
+                        </span>
                       </div>
                       <p className="text-slate-400 text-sm mb-4 font-medium">
                         Mesafe: {route.distance}
@@ -103,7 +82,7 @@ export default function BisikletRotalariPage() {
                       </p>
                     </CardContent>
                   </Card>
-                </button>
+                </div>
               ))}
             </div>
           </div>
@@ -115,25 +94,20 @@ export default function BisikletRotalariPage() {
               Rota Haritası
             </h2>
             <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
-              {loading ? (
-                  <Skeleton className="w-full h-full" />
-              ) : (
-                  <PlacesMap 
-                    places={places || []} 
+                <PlacesMap 
+                    places={[]} // Rota çizgisine odaklanmak için mekan markerlarını kaldırıyoruz
                     className="w-full h-full" 
                     kmlUrl={activeRoute.kmlUrl}
-                  />
-              )}
+                />
             </div>
             <p className="text-xs text-muted-foreground italic text-center">
-              * Harita üzerinde mavi çizgi ile gösterilen rota {activeRoute.name}'nı temsil eder.
+              * Harita üzerinde koyu mavi çizgi ile gösterilen rota {activeRoute.name}'nı temsil eder.
             </p>
           </div>
         </div>
 
         {/* Wikiloc Detail Section */}
-        {activeRoute && (
-          <div className="mt-16 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <div className="mt-16 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
              <div className="flex items-center gap-3 border-b pb-4">
                <h2 className="text-3xl font-bold font-headline text-slate-900">
                  Wikiloc Rota Detayı
@@ -142,26 +116,18 @@ export default function BisikletRotalariPage() {
 
              <Card className="overflow-hidden border-none shadow-2xl rounded-2xl bg-white border border-slate-100">
                 <div className="w-full min-h-[600px]">
-                  {activeRoute.wikilocId ? (
                     <iframe 
-                      src={`https://www.wikiloc.com/wikiloc/embed.do?id=${activeRoute.wikilocId}&tile_map=1&map_type=h`} 
-                      width="100%" 
-                      height="600" 
-                      frameBorder="0" 
-                      scrolling="no"
-                      title={`${activeRoute.name} Wikiloc Detayı`}
-                      className="w-full h-full"
+                        src={`https://www.wikiloc.com/wikiloc/embed.do?id=${activeRoute.wikilocId}&tile_map=1&map_type=h`} 
+                        width="100%" 
+                        height="600" 
+                        frameBorder="0" 
+                        scrolling="no"
+                        title={`${activeRoute.name} Wikiloc Detayı`}
+                        className="w-full h-full"
                     ></iframe>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full p-12 text-center text-muted-foreground bg-slate-50 min-h-[600px]">
-                       <Info className="h-12 w-12 mb-4 opacity-20" />
-                       <p className="text-lg italic">Bu rota için Wikiloc entegrasyonu henüz aktif edilmemiştir.</p>
-                    </div>
-                  )}
                 </div>
              </Card>
           </div>
-        )}
       </div>
     </div>
   );
