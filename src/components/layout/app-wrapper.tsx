@@ -17,11 +17,21 @@ export default function AppWrapper({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Açılış ekranının bu oturumda daha önce gösterilip gösterilmediğini kontrol et
+    const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
+    
+    if (splashShown) {
+      // Eğer daha önce gösterildiyse (örneğin dil değişimi için sayfa yenilendiyse) bekletme yapma
       setIsLoading(false);
-    }, 2000);
+    } else {
+      // İlk girişte 2 saniye göster ve flag'i set et
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        sessionStorage.setItem('rota_salihli_splash_shown', 'true');
+      }, 2000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
