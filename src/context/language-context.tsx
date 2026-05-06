@@ -14,6 +14,7 @@ interface LanguageContextType {
   t: (key: string, ...args: any[]) => string;
   isAudioGuideEnabled: boolean;
   toggleAudioGuide: () => void;
+  mounted: boolean;
 }
 
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -21,10 +22,14 @@ export const LanguageContext = createContext<LanguageContextType | undefined>(un
 const translations: Record<Language, any> = { en, tr, fr, de, ja };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // CRITICAL: Initialize language to 'tr' to match server-side default and prevent hydration mismatch
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    // Only after mount, detect preferred language
     const savedLang = localStorage.getItem('language') as Language;
     if (savedLang && languages.some(l => l.code === savedLang)) {
       setLanguageState(savedLang);
@@ -42,13 +47,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = language;
-  }, [language]);
+    if (mounted) {
+      document.documentElement.lang = language;
+    }
+  }, [language, mounted]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
-    // Reload the page to ensure speech synthesis and other localized assets are correctly re-initialized
     window.location.reload();
   }, []);
 
@@ -61,21 +67,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (typeof window !== 'undefined' && window.speechSynthesis) {
                 window.speechSynthesis.cancel();
             }
-        } else {
-            // Audio Unlock Mechanism: Stimulate the speech engine with a user-triggered gesture
-            if (typeof window !== 'undefined' && window.speechSynthesis) {
-                const utterance = new SpeechSynthesisUtterance('');
-                utterance.volume = 0;
-                window.speechSynthesis.speak(utterance);
-            }
         }
         return newState;
     });
   }, []);
 
   const t = useCallback((key: string, ...args: any[]): string => {
+    // FORCE 'tr' during initial hydration to match server-rendered output
+    const activeLanguage = mounted ? language : 'tr';
+    
     const keys = key.split('.');
-    let result = translations[language];
+    let result = translations[activeLanguage];
     for (const k of keys) {
       result = result?.[k];
       if (result === undefined) {
@@ -90,9 +92,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
     
     if (typeof result === 'string' && args.length > 0 && args[0].count !== undefined) {
-       if (language === 'tr') return result;
+       if (activeLanguage === 'tr') return result;
        const count = args[0].count;
-       return count === 1 ? result : (translations[language][key + '_plural'] || `${result}s`);
+       return count === 1 ? result : (translations[activeLanguage][key + '_plural'] || `${result}s`);
     }
 
     if (typeof result === 'string' && args.length > 0) {
@@ -102,10 +104,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
 
     return result || key;
-  }, [language]);
+  }, [language, mounted]);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isAudioGuideEnabled, toggleAudioGuide }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, isAudioGuideEnabled, toggleAudioGuide, mounted }}>
       {children}
     </LanguageContext.Provider>
   );

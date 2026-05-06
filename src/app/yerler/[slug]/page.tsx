@@ -43,7 +43,7 @@ function PlaceDetailContent() {
   const searchParams = useSearchParams();
   const slug = params.slug;
   const autoplay = searchParams.get('autoplay') === 'true';
-  const { t, language } = useLanguage();
+  const { t, language, mounted } = useLanguage();
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -97,9 +97,12 @@ function PlaceDetailContent() {
       synth.cancel();
       
       setTimeout(() => {
+        // PHONETIC FIXES for better Turkish narration on mobile
         let fixedText = text
             .replace(/Gymnasium/gi, 'Cimnazyum')
             .replace(/Sardes/gi, 'Sardes')
+            .replace(/Artemis/gi, 'Artemis')
+            .replace(/Lidya/gi, 'Lidya')
             .replace(/Bintepeler/gi, 'Bintepeler');
 
         if (lang === 'tr') {
@@ -117,32 +120,23 @@ function PlaceDetailContent() {
         }
 
         const utterance = new SpeechSynthesisUtterance(fixedText);
+        
+        // CRITICAL: Global reference to prevent GC from stopping the audio
         utteranceRef.current = utterance;
         (window as any)._lastUtterance = utterance; 
         
-        const langCodes: Record<Language, string[]> = {
-            'tr': ['tr-TR', 'tr_TR', 'tr'],
-            'en': ['en-US', 'en-GB', 'en'],
-            'fr': ['fr-FR', 'fr'],
-            'de': ['de-DE', 'de'],
-            'ja': ['ja-JP', 'ja'],
-        };
-        const preferredCodes = langCodes[lang] || ['tr-TR'];
-        utterance.lang = preferredCodes[0];
+        utterance.lang = lang === 'tr' ? 'tr-TR' : lang === 'en' ? 'en-US' : 'tr-TR';
 
         const voices = synth.getVoices();
         const findVoice = () => {
-            for (const code of preferredCodes) {
-                const v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === code.toLowerCase());
-                if (v) return v;
-            }
-            const vPrefix = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
-            if (vPrefix) return vPrefix;
-            const searchName = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
-            if (searchName) {
-                const vName = voices.find(v => v.name.toLowerCase().includes(searchName));
-                if (vName) return vName;
-            }
+            // Priority 1: Exact match for language code
+            let v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === utterance.lang.toLowerCase());
+            if (v) return v;
+            
+            // Priority 2: Fallback containing "Turkish" or "Türkçe" in the name (common on mobile)
+            v = voices.find(v => v.name.toLowerCase().includes('turkish') || v.name.toLowerCase().includes('türkçe'));
+            if (v) return v;
+
             return null;
         };
 
@@ -152,7 +146,7 @@ function PlaceDetailContent() {
             utterance.lang = voice.lang;
         }
 
-        utterance.rate = 0.92; 
+        utterance.rate = 0.95; 
         utterance.pitch = 1.0;
 
         utterance.onstart = () => { 
@@ -174,10 +168,11 @@ function PlaceDetailContent() {
         };
         
         synth.speak(utterance);
-      }, 100);
+      }, 150); // Small delay for mobile stability
     };
 
     setIsGenerating(true);
+    // "Priming": Stimulate the speech engine with a user-triggered gesture
     const priming = new SpeechSynthesisUtterance('');
     priming.volume = 0;
     synth.speak(priming);
@@ -187,7 +182,7 @@ function PlaceDetailContent() {
         startUtterance();
         synth.onvoiceschanged = null;
       };
-      setTimeout(startUtterance, 800);
+      setTimeout(startUtterance, 1000); // Aggressive fallback for mobile
     } else {
       startUtterance();
     }
@@ -214,16 +209,16 @@ function PlaceDetailContent() {
   }, []);
 
   useEffect(() => {
-    if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
+    if (autoplay && place && !placesLoading && !hasAutoplayedRef.current && mounted) {
       hasAutoplayedRef.current = true;
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 2000);
+      }, 800); // Shorter delay for faster response
       return () => clearTimeout(timer);
     }
-  }, [autoplay, place, placesLoading, speak, typedLanguage]);
+  }, [autoplay, place, placesLoading, speak, typedLanguage, mounted]);
   
-  if (placesLoading) return <PlaceDetailSkeleton />;
+  if (placesLoading || !mounted) return <PlaceDetailSkeleton />;
   if (!place) return <div className="container mx-auto px-4 py-12 text-center"><h1 className="text-4xl font-bold">{t('places.notFoundTitle')}</h1><Button asChild className="mt-8"><Link href="/yerler">{t('actions.viewAllPlaces')}</Link></Button></div>;
 
   return (
