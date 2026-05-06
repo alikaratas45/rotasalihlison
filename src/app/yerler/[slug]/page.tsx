@@ -50,7 +50,6 @@ function PlaceDetailContent() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isNearPlace, setIsNearPlace] = useState(false);
   
-  // Otomatik oynatmanın bu yüklemede zaten yapılıp yapılmadığını takip eder
   const hasAutoplayedRef = useRef(false);
 
   const typedLanguage = language as Language;
@@ -67,7 +66,6 @@ function PlaceDetailContent() {
     setIsGenerating(false);
   }, []);
 
-  // Stop audio when leaving the page (Component Unmount)
   useEffect(() => {
     return () => {
       stopAudio();
@@ -93,72 +91,89 @@ function PlaceDetailContent() {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
     const startUtterance = () => {
+      // Temizlik
       window.speechSynthesis.cancel();
-      setIsGenerating(true);
-
-      setTimeout(() => {
-        const voices = window.speechSynthesis.getVoices();
-        
-        let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
-        if (lang === 'tr') {
-          fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
-        } else if (lang === 'en') {
-          fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ').replace(/B\.C\./g, 'Before Christ');
-        }
-        
-        const utterance = new SpeechSynthesisUtterance(fixedText);
-        
-        const langMap: Record<Language, string[]> = {
-          'tr': ['tr-TR'],
-          'en': ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN'],
-          'fr': ['fr-FR', 'fr-CA'],
-          'de': ['de-DE'],
-          'ja': ['ja-JP'],
-        };
-        
-        const voicePreferences = langMap[lang];
-        let selectedVoice = voices.find(v => voicePreferences?.some(pref => v.lang.replace('_', '-').toLowerCase() === pref.toLowerCase())) || 
+      
+      const voices = window.speechSynthesis.getVoices();
+      
+      let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+      if (lang === 'tr') {
+        fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
+      } else if (lang === 'en') {
+        fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ').replace(/B\.C\./g, 'Before Christ');
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(fixedText);
+      
+      const langMap: Record<Language, string[]> = {
+        'tr': ['tr-TR', 'tr_TR', 'tr'],
+        'en': ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN'],
+        'fr': ['fr-FR', 'fr-CA'],
+        'de': ['de-DE'],
+        'ja': ['ja-JP'],
+      };
+      
+      const voicePreferences = langMap[lang];
+      utterance.lang = voicePreferences[0]; // Default lang code
+      
+      // En iyi sesi seç
+      let selectedVoice = voices.find(v => voicePreferences?.some(pref => v.lang.replace('_', '-').toLowerCase() === pref.toLowerCase())) || 
                           voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
-        
-        if (selectedVoice) {
-            utterance.voice = selectedVoice;
-            utterance.lang = selectedVoice.lang;
-        } else {
-            utterance.lang = voicePreferences?.[0] || 'en-US';
-        }
+      
+      if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+      }
 
-        utterance.onstart = () => { setIsPlaying(true); setIsGenerating(false); };
-        utterance.onend = () => setIsPlaying(false);
-        utterance.onerror = (e) => {
-          if (e.error !== 'interrupted' && e.error !== 'canceled') {
-              console.warn("Speech Synthesis Error:", e.error);
-          }
-          setIsPlaying(false);
-          setIsGenerating(false);
-        };
-        
-        window.speechSynthesis.speak(utterance);
-      }, 150);
+      utterance.onstart = () => { 
+        setIsPlaying(true); 
+        setIsGenerating(false); 
+      };
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
+      utterance.onerror = (e) => {
+        if (e.error !== 'interrupted' && e.error !== 'canceled') {
+            console.error("Speech Synthesis Error:", e);
+        }
+        setIsPlaying(false);
+        setIsGenerating(false);
+      };
+      
+      window.speechSynthesis.speak(utterance);
     };
 
+    setIsGenerating(true);
+
+    // Bazı tarayıcılar sesleri asenkron yükler
     if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = startUtterance;
-      setTimeout(() => { if (isGenerating) startUtterance(); }, 500);
+      window.speechSynthesis.onvoiceschanged = () => {
+        startUtterance();
+        window.speechSynthesis.onvoiceschanged = null;
+      };
+      // Fallback
+      setTimeout(() => {
+        if (window.speechSynthesis.getVoices().length > 0) startUtterance();
+      }, 300);
     } else {
+      // User gesture'ı korumak için hemen başlat (timeout'suz)
       startUtterance();
     }
-  }, [isGenerating]);
+  }, []);
 
   const handlePlayPause = useCallback(() => {
     if (isGenerating || !place) return;
-    if (isPlaying) stopAudio();
-    else speak(place.description[typedLanguage], typedLanguage);
+    if (isPlaying) {
+      stopAudio();
+    } else {
+      speak(place.description[typedLanguage], typedLanguage);
+    }
   }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
   useEffect(() => {
-    // Yakınlık uyarısından gelindiyse ve henüz otomatik oynatılmadıysa başlat
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
-      hasAutoplayedRef.current = true; // Sadece bir kez çalışmasını garanti eder
+      hasAutoplayedRef.current = true;
+      // Autoplay için kısa bir gecikme (sayfa yüklendikten sonra)
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
       }, 1000);
