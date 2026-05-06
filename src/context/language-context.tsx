@@ -31,8 +31,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLanguageState(savedLang);
     } else {
       const browserLang = navigator.language.split('-')[0] as Language;
-      if (languages.some(l => l.code === browserLang)) {
-        setLanguageState(browserLang);
+      if (languages.some(l => l.code === (browserLang as any))) {
+        setLanguageState(browserLang as Language);
       }
     }
 

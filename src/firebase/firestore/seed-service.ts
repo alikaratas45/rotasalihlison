@@ -63,20 +63,17 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
     const data = { ...place };
     
-    const isCodeImageHighQuality = place.imageUrl && (
+    // Basit ve kesin kural: Kod tarafındaki görsel bir 'imgur' veya 'unsplash' linki ise veritabanını güncelle.
+    // Sadece 'picsum.photos' gibi geçici/rastgele görseller varsa veritabanındaki veriyi koru.
+    const isCodeImageSpecific = place.imageUrl && (
         place.imageUrl.includes('imgur.com') || 
-        place.imageUrl.includes('images.unsplash.com') ||
-        place.imageUrl.includes('i.imgur.com')
+        place.imageUrl.includes('unsplash.com')
     );
 
-    const isDbImageHighQuality = existingData?.imageUrl && (
-        existingData.imageUrl.includes('imgur.com') || 
-        existingData.imageUrl.includes('images.unsplash.com') ||
-        existingData.imageUrl.includes('i.imgur.com') ||
-        (!existingData.imageUrl.includes('picsum.photos') && existingData.imageUrl.startsWith('http'))
-    );
+    const isDbImagePlaceholder = !existingData?.imageUrl || existingData.imageUrl.includes('picsum.photos');
 
-    if (!isCodeImageHighQuality && isDbImageHighQuality) {
+    // Eğer kod tarafındaki görsel spesifik bir link değilse ve DB'de zaten iyi bir görsel varsa DB'dekini tut.
+    if (!isCodeImageSpecific && !isDbImagePlaceholder) {
         data.imageUrl = existingData.imageUrl;
     }
 
