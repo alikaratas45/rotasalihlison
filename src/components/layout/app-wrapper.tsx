@@ -14,30 +14,45 @@ export default function AppWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
+  // Hydration hatalarını önlemek için 'mounted' kontrolü kullanıyoruz.
+  // Sunucunun her zaman layout render etmesini (SEO için), 
+  // istemcinin ise açılış ekranına karar vermesini sağlıyoruz.
+  const [mounted, setMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [isSplashLoading, setIsSplashLoading] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
     
-    if (splashShown) {
-      setIsLoading(false);
-    } else {
+    if (!splashShown) {
       setIsFirstVisit(true);
+      setIsSplashLoading(true);
+      
       const timer = setTimeout(() => {
-        setIsLoading(false);
+        setIsSplashLoading(false);
         sessionStorage.setItem('rota_salihli_splash_shown', 'true');
+        
+        // Geçiş efekti sonrası DOM'dan tamamen kaldır
+        setTimeout(() => setIsFirstVisit(false), 1000);
       }, 2000);
 
       return () => clearTimeout(timer);
     }
   }, []);
 
+  // Sunucu ve ilk istemci render'ı: Her zaman Layout (SEO dostu ve Hydration uyumlu)
+  const showSplash = mounted && isFirstVisit;
+
   return (
     <>
-      {isFirstVisit && <SplashScreen isLoading={isLoading} />}
-      {!isLoading && <AudioProximityAlert />}
-      <div className={cn("flex flex-col min-h-screen transition-opacity duration-700", isLoading && isFirstVisit ? 'opacity-0' : 'opacity-100')}>
+      {showSplash && <SplashScreen isLoading={isSplashLoading} />}
+      {mounted && !isSplashLoading && <AudioProximityAlert />}
+      
+      <div className={cn(
+        "flex flex-col min-h-screen transition-opacity duration-700",
+        showSplash && isSplashLoading ? 'opacity-0' : 'opacity-100'
+      )}>
           <Header />
           <main className="flex-grow">{children}</main>
           <Footer />

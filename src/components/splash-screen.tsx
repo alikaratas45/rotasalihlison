@@ -1,8 +1,10 @@
+
 "use client";
 
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/icons/logo';
 import { useLanguage } from '@/hooks/use-language';
+import { useState, useEffect } from 'react';
 
 interface SplashScreenProps {
   isLoading: boolean;
@@ -10,6 +12,14 @@ interface SplashScreenProps {
 
 export function SplashScreen({ isLoading }: SplashScreenProps) {
   const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Çevirilerin hydration hatasına yol açmaması için mount olana kadar bekliyoruz
+  if (!mounted) return null;
 
   return (
     <div
