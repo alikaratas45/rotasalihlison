@@ -31,6 +31,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
   const watchIdRef = useRef<number | null>(null);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
+  const polylineRef = useRef<google.maps.Polyline | null>(null);
 
   useEffect(() => {
     const handleAuthError = () => {
@@ -76,9 +77,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         map: newMap,
         suppressMarkers: true,
         polylineOptions: {
-          strokeColor: '#1A237E', // Koyu Mavi / Lacivert
-          strokeWeight: 8,       // Daha kalın çizgi
-          strokeOpacity: 0.9,     // Daha belirgin opaklık
+          strokeColor: '#1A237E', 
+          strokeWeight: 8,       
+          strokeOpacity: 0.9,     
         }
       });
     }
@@ -110,7 +111,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     };
 
     if ("geolocation" in navigator) {
-      // Initial Position
       navigator.geolocation.getCurrentPosition(
         (position) => {
             const coords = { lat: position.coords.latitude, lng: position.coords.longitude };
@@ -120,7 +120,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         { enableHighAccuracy: true }
       );
 
-      // Watch Position
       watchIdRef.current = navigator.geolocation.watchPosition(
         (position) => {
             const coords = { lat: position.coords.latitude, lng: position.coords.longitude };
@@ -140,9 +139,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     };
   }, [map, isApiLoaded]);
 
-  // Directions logic for routes
+  // Directions logic for routes (standard routing)
   useEffect(() => {
-    if (!map || !places || !isRoute || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) {
+    if (!map || !places || !isRoute || authFailed || !directionsServiceRef.current || !directionsRendererRef.current || kmlUrl) {
       directionsRendererRef.current?.setDirections({ routes: [] });
       return;
     }
@@ -173,27 +172,77 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         directionsRendererRef.current?.setDirections(result);
       }
     });
-  }, [map, places, isRoute, authFailed, startLocation]);
+  }, [map, places, isRoute, authFailed, startLocation, kmlUrl]);
 
-  // KML Layer support
+  // Professional KML Processing (Fetch + DOMParser + Polyline)
   useEffect(() => {
-    if (!map || !kmlUrl || authFailed) return;
+    if (!map || !kmlUrl || authFailed) {
+      if (polylineRef.current) {
+        polylineRef.current.setMap(null);
+        polylineRef.current = null;
+      }
+      return;
+    }
 
-    // Note: KmlLayer requires a publicly accessible URL to work.
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const fullUrl = kmlUrl.startsWith('http') ? kmlUrl : `${protocol}//${host}${kmlUrl}`;
+    const processKml = async () => {
+      try {
+        const response = await fetch(kmlUrl);
+        const kmlText = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
+        
+        const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
+        const path: google.maps.LatLngLiteral[] = [];
+        const bounds = new google.maps.LatLngBounds();
 
-    const kmlLayer = new google.maps.KmlLayer({
-      url: fullUrl,
-      map: map,
-      preserveViewport: places.length > 0, 
-    });
+        for (let i = 0; i < coordinatesElements.length; i++) {
+          const coordString = coordinatesElements[i].textContent?.trim();
+          if (coordString) {
+            const points = coordString.split(/\s+/);
+            points.forEach(p => {
+              const [lng, lat] = p.split(',').map(Number);
+              if (!isNaN(lat) && !isNaN(lng)) {
+                const coord = { lat, lng };
+                path.push(coord);
+                bounds.extend(coord);
+              }
+            });
+          }
+        }
+
+        if (path.length > 0) {
+          // Clear previous polyline
+          if (polylineRef.current) {
+            polylineRef.current.setMap(null);
+          }
+
+          // Draw new polyline
+          polylineRef.current = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#1A237E', // Dark Blue
+            strokeOpacity: 0.9,
+            strokeWeight: 8, // Thick line
+            map: map,
+          });
+
+          // Fit map to show the whole route
+          map.fitBounds(bounds);
+        }
+      } catch (error) {
+        console.error("KML loading error:", error);
+      }
+    };
+
+    processKml();
 
     return () => {
-      kmlLayer.setMap(null);
+      if (polylineRef.current) {
+        polylineRef.current.setMap(null);
+        polylineRef.current = null;
+      }
     };
-  }, [map, kmlUrl, authFailed, places.length]);
+  }, [map, kmlUrl, authFailed]);
 
   // Place Markers
   useEffect(() => {
@@ -234,7 +283,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       markers.push(marker);
     });
 
-    if (places.length > 0 && !isRoute) {
+    if (places.length > 0 && !isRoute && !kmlUrl) {
       const bounds = new window.google.maps.LatLngBounds();
       places.forEach(place => { if (place.coordinates) bounds.extend(place.coordinates); });
       if (userMarkerRef.current?.getPosition()) {
@@ -246,7 +295,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     }
 
     return () => markers.forEach(m => m.setMap(null));
-  }, [map, places, typedLanguage, t, authFailed, isRoute, startLocation]);
+  }, [map, places, typedLanguage, t, authFailed, isRoute, startLocation, kmlUrl]);
 
   const handleCenterOnUser = () => {
     navigator.geolocation.getCurrentPosition((pos) => {
