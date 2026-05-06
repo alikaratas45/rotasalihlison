@@ -49,6 +49,9 @@ function PlaceDetailContent() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isNearPlace, setIsNearPlace] = useState(false);
+  
+  // Otomatik oynatmanın bu yüklemede zaten yapılıp yapılmadığını takip eder
+  const hasAutoplayedRef = useRef(false);
 
   const typedLanguage = language as Language;
   const firestore = useFirestore();
@@ -153,12 +156,15 @@ function PlaceDetailContent() {
   }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
   useEffect(() => {
-    // Yakınlık uyarısından gelindiyse otomatik başlat
-    if (autoplay && place && !placesLoading && !isPlaying) {
-      const timer = setTimeout(handlePlayPause, 1000);
+    // Yakınlık uyarısından gelindiyse ve henüz otomatik oynatılmadıysa başlat
+    if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
+      hasAutoplayedRef.current = true; // Sadece bir kez çalışmasını garanti eder
+      const timer = setTimeout(() => {
+          speak(place.description[typedLanguage], typedLanguage);
+      }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [autoplay, place, placesLoading, handlePlayPause, isPlaying]);
+  }, [autoplay, place, placesLoading, speak, typedLanguage]);
   
   if (placesLoading) return <PlaceDetailSkeleton />;
   if (!place) return <div className="container mx-auto px-4 py-12 text-center"><h1 className="text-4xl font-bold">{t('places.notFoundTitle')}</h1><Button asChild className="mt-8"><Link href="/yerler">{t('actions.viewAllPlaces')}</Link></Button></div>;
