@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Volume2, Pause, Loader2, ArrowLeft } from 'lucide-react';
+import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
@@ -68,14 +68,12 @@ function PlaceDetailContent() {
     utteranceRef.current = null;
   }, []);
 
-  // Sayfadan çıkınca sesi durdur
   useEffect(() => {
     return () => {
       stopAudio();
     };
   }, [stopAudio]);
 
-  // Konum takibi (Anket için)
   useEffect(() => {
     if (!place) return;
     if ("geolocation" in navigator) {
@@ -97,12 +95,9 @@ function PlaceDetailContent() {
     const synth = window.speechSynthesis;
 
     const startUtterance = () => {
-      // Önceki her şeyi temizle
       synth.cancel();
       
-      // Mobil cihazlarda donanım çakışmasını önlemek için kısa bir bekleme
       setTimeout(() => {
-        // Metin temizleme ve telaffuz düzeltmeleri
         let fixedText = text
             .replace(/Gymnasium/gi, 'Cimnazyum')
             .replace(/Sardes/gi, 'Sardes')
@@ -123,12 +118,9 @@ function PlaceDetailContent() {
         }
 
         const utterance = new SpeechSynthesisUtterance(fixedText);
-        
-        // KRİTİK: Garbage Collection'ı önlemek için global referans ve window'a bağlama
         utteranceRef.current = utterance;
         (window as any)._lastUtterance = utterance; 
         
-        // Dil Kodu
         const langCodes: Record<Language, string[]> = {
             'tr': ['tr-TR', 'tr_TR', 'tr'],
             'en': ['en-US', 'en-GB', 'en'],
@@ -139,7 +131,6 @@ function PlaceDetailContent() {
         const preferredCodes = langCodes[lang] || ['tr-TR'];
         utterance.lang = preferredCodes[0];
 
-        // Ses Seçimi (Agresif Arama)
         const voices = synth.getVoices();
         const findVoice = () => {
             for (const code of preferredCodes) {
@@ -174,7 +165,6 @@ function PlaceDetailContent() {
             utteranceRef.current = null;
         };
         utterance.onerror = (e) => {
-            // Sessiz hataları loglama (mobil tarayıcılarda normaldir)
             const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
             if (!silentErrors.includes(e.error)) {
                 console.warn("Speech Synthesis Warning:", e.error);
@@ -189,13 +179,10 @@ function PlaceDetailContent() {
     };
 
     setIsGenerating(true);
-
-    // iOS/Safari için sessiz tetikleme (Priming)
     const priming = new SpeechSynthesisUtterance('');
     priming.volume = 0;
     synth.speak(priming);
 
-    // Seslerin yüklenmesini bekle
     if (synth.getVoices().length === 0) {
       synth.onvoiceschanged = () => {
         startUtterance();
@@ -216,11 +203,15 @@ function PlaceDetailContent() {
     }
   }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
-  // Otomatik Oynatma (Autoplay)
+  const handleGetDirections = useCallback(() => {
+    if (!place) return;
+    const { lat, lng } = place.coordinates;
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+  }, [place]);
+
   useEffect(() => {
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
-      // Mobil cihazlarda DOM'un tamamen hazır olması için güvenli bekleme
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
       }, 2000);
@@ -249,9 +240,16 @@ function PlaceDetailContent() {
           </div>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 clear-both pt-4">
             <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
-              {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
+              {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
               {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
             </Button>
+            
+            {place.id !== '3' && (
+              <Button size="lg" onClick={handleGetDirections} className="flex-1 md:flex-none md:min-w-[200px] gap-2">
+                <Navigation className="h-5 w-5" />
+                {t('actions.showOnMap')}
+              </Button>
+            )}
           </div>
         </div>
         {isNearPlace && (
