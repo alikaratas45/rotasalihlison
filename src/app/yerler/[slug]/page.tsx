@@ -51,6 +51,13 @@ function PlaceDetailContent() {
   const [isNearPlace, setIsNearPlace] = useState(false);
   
   const hasAutoplayedRef = useRef(false);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        synthRef.current = window.speechSynthesis;
+    }
+  }, []);
 
   const typedLanguage = language as Language;
   const firestore = useFirestore();
@@ -59,8 +66,8 @@ function PlaceDetailContent() {
   const place = useMemo(() => places?.find(p => Object.values(p.slug).includes(slug as string)), [places, slug]);
 
   const stopAudio = useCallback(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+    if (synthRef.current) {
+        synthRef.current.cancel();
     }
     setIsPlaying(false);
     setIsGenerating(false);
@@ -88,15 +95,14 @@ function PlaceDetailContent() {
   }, [place]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+    const synth = synthRef.current;
+    if (!synth || !text) return;
 
     const startUtterance = () => {
-      // Önceki tüm anlatımları durdur
-      window.speechSynthesis.cancel();
+      // 1. Önceki her şeyi temizle
+      synth.cancel();
       
-      const voices = window.speechSynthesis.getVoices();
-      
-      // Metin temizliği ve özel kısaltmalar
+      // 2. Metin temizliği
       let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
       if (lang === 'tr') {
         fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
@@ -111,7 +117,7 @@ function PlaceDetailContent() {
 
       const utterance = new SpeechSynthesisUtterance(fixedText);
       
-      // Dil kodunu ayarla (Zorunlu)
+      // 3. Dil Kodları (Mobil varyasyonları ile)
       const langCodes: Record<Language, string> = {
         'tr': 'tr-TR',
         'en': 'en-US',
@@ -120,34 +126,28 @@ function PlaceDetailContent() {
         'ja': 'ja-JP',
       };
       utterance.lang = langCodes[lang] || 'tr-TR';
-      
-      // Daha agresif ses seçimi
+
+      // 4. Agresif Ses Seçimi
+      const voices = synth.getVoices();
       const findVoice = () => {
-        const availableVoices = window.speechSynthesis.getVoices();
-        
-        // 1. Tercih: Tam dil kodu eşleşmesi
-        let voice = availableVoices.find(v => v.lang.replace('_', '-').toLowerCase() === utterance.lang.toLowerCase());
-        
-        // 2. Tercih: Dil kodunun başlangıcı (örn: 'tr' ile başlayanlar)
-        if (!voice) {
-          voice = availableVoices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+        // Tam eşleşme (tr-TR)
+        let v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === utterance.lang.toLowerCase());
+        // Kısmi eşleşme (tr ile başlayan)
+        if (!v) v = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+        // İsimde dil geçen (Turkish)
+        if (!v) {
+          const search = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
+          if (search) v = voices.find(v => v.name.toLowerCase().includes(search));
         }
-        
-        // 3. Tercih: Ses adında dilin adı geçiyor mu? (Mobil tarayıcılar için kritik)
-        if (!voice) {
-           const langSearch = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
-           if (langSearch) {
-             voice = availableVoices.find(v => v.name.toLowerCase().includes(langSearch));
-           }
-        }
-        
-        return voice;
+        return v;
       };
 
-      const selectedVoice = findVoice();
-      if (selectedVoice) {
-          utterance.voice = selectedVoice;
-      }
+      const voice = findVoice();
+      if (voice) utterance.voice = voice;
+
+      // 5. Mobil İnce Ayarlar
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
 
       utterance.onstart = () => { 
         setIsPlaying(true); 
@@ -165,34 +165,22 @@ function PlaceDetailContent() {
         setIsGenerating(false);
       };
       
-      // Mobil tarayıcı meşguliyetini önlemek için kısa gecikme
+      // 6. Mobil "Durdur-Başlat" senkronu için kısa gecikme
       setTimeout(() => {
-          try {
-            window.speechSynthesis.speak(utterance);
-          } catch (err) {
-            setIsPlaying(false);
-            setIsGenerating(false);
-          }
-      }, 100);
+          synth.speak(utterance);
+      }, 50);
     };
 
     setIsGenerating(true);
 
-    // Bazı tarayıcılarda (özellikle iOS Safari) getVoices boş dönebilir
-    const initialVoices = window.speechSynthesis.getVoices();
-    if (initialVoices.length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => {
+    // Mobilde voices listesi asenkron yüklenir
+    if (synth.getVoices().length === 0) {
+      synth.onvoiceschanged = () => {
         startUtterance();
-        window.speechSynthesis.onvoiceschanged = null;
+        synth.onvoiceschanged = null;
       };
       // Fallback
-      setTimeout(() => {
-        if (window.speechSynthesis.getVoices().length > 0) startUtterance();
-        else {
-            // Hiç ses yüklenmese bile default ile dene
-            startUtterance();
-        }
-      }, 500);
+      setTimeout(startUtterance, 300);
     } else {
       startUtterance();
     }
@@ -208,11 +196,13 @@ function PlaceDetailContent() {
   }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
   useEffect(() => {
+    // Autoplay mobilde sadece kullanıcı daha önce sayfada bir yere dokunduysa çalışabilir
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
+      // Sayfa yüklenir yüklenmez değil, biraz bekleyip motoru deniyoruz
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 800);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage]);
