@@ -61,7 +61,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 window.speechSynthesis.cancel();
             }
         } else {
-            // Audio Unlock Mechanism for Mobile Browsers
+            // Audio Unlock Mechanism for Mobile/Production Browsers
             if (typeof window !== 'undefined' && window.speechSynthesis) {
                 const utterance = new SpeechSynthesisUtterance('');
                 utterance.volume = 0;

@@ -79,6 +79,7 @@ function PlaceDetailContent() {
       window.speechSynthesis.cancel();
       setIsGenerating(true);
 
+      // Give a tiny timeout for cancel to complete
       setTimeout(() => {
         const voices = window.speechSynthesis.getVoices();
         
@@ -86,7 +87,7 @@ function PlaceDetailContent() {
         if (lang === 'tr') {
           fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
         } else if (lang === 'en') {
-          fixedText = fixedText.replace(/M\.Ö\./g, 'BC').replace(/BC/g, 'Before Christ');
+          fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ');
         }
         
         const utterance = new SpeechSynthesisUtterance(fixedText);
@@ -96,7 +97,10 @@ function PlaceDetailContent() {
         
         const voicePreferences = langMap[lang];
         let selectedVoice = voices.find(voice => voicePreferences?.some(pref => voice.lang.replace('_', '-') === pref));
-        if (!selectedVoice) selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
+        
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang.startsWith(lang));
+        }
         
         if (selectedVoice) {
           utterance.voice = selectedVoice;
@@ -105,24 +109,30 @@ function PlaceDetailContent() {
           utterance.lang = voicePreferences?.[0] || 'en-US';
         }
 
-        utterance.onstart = () => { setIsPlaying(true); setIsGenerating(false); };
+        utterance.onstart = () => { 
+          setIsPlaying(true); 
+          setIsGenerating(false); 
+        };
         utterance.onend = () => setIsPlaying(false);
         utterance.onerror = (event) => {
-          // Suppress interrupted errors to avoid NextJS error overlay
+          // Suppress interrupted or canceled errors to avoid NextJS error overlay
           if (event.error !== 'interrupted' && event.error !== 'canceled') {
-            console.warn("Speech Error:", event.error);
+            console.warn("Speech Synthesis Error:", event.error);
           }
           setIsPlaying(false);
           setIsGenerating(false);
         };
         
         window.speechSynthesis.speak(utterance);
-      }, 50);
+      }, 100);
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = startUtterance;
-      setTimeout(startUtterance, 300);
+      // Fallback for some browsers that don't trigger voiceschanged immediately
+      setTimeout(() => {
+        if (window.speechSynthesis.getVoices().length > 0) startUtterance();
+      }, 500);
     } else {
       startUtterance();
     }
@@ -188,6 +198,10 @@ function PlaceDetailContent() {
                 </Button>
             )}
           </div>
+        </div>
+
+        <div className="mt-20 border-t pt-10">
+          <Survey placeId={place.id} placeName={place.name.tr} />
         </div>
       </div>
     </div>

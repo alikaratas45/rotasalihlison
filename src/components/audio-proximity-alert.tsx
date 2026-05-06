@@ -45,34 +45,47 @@ export function AudioProximityAlert() {
     const startSpeak = () => {
       window.speechSynthesis.cancel();
       
-      // Pronunciation fixes for prompt
-      let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
-      if (language === 'tr') {
-        fixedText = fixedText
-          .replace(/M\.Ö\./g, 'milattan önce')
-          .replace(/M\.Ö/g, 'milattan önce')
-          .replace(/MÖ/g, 'milattan önce')
-          .replace(/İ\. Ö\./g, 'milattan önce')
-          .replace(/İ\.Ö\./g, 'milattan önce');
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(fixedText);
-      
-      const langMap: Record<string, string> = {
-        'tr': 'tr-TR',
-        'en': 'en-US',
-        'fr': 'fr-FR',
-        'de': 'de-DE',
-        'ja': 'ja-JP',
-      };
-      
-      utterance.lang = langMap[language] || 'tr-TR';
-      window.speechSynthesis.speak(utterance);
+      // Give a tiny timeout for cancel to complete
+      setTimeout(() => {
+        // Pronunciation fixes for prompt
+        let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
+        if (language === 'tr') {
+          fixedText = fixedText
+            .replace(/M\.Ö\./g, 'milattan önce')
+            .replace(/M\.Ö/g, 'milattan önce')
+            .replace(/MÖ/g, 'milattan önce')
+            .replace(/İ\. Ö\./g, 'milattan önce')
+            .replace(/İ\.Ö\./g, 'milattan önce');
+        } else if (language === 'en') {
+          fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ');
+        }
+        
+        const utterance = new SpeechSynthesisUtterance(fixedText);
+        
+        const langMap: Record<string, string> = {
+          'tr': 'tr-TR',
+          'en': 'en-US',
+          'fr': 'fr-FR',
+          'de': 'de-DE',
+          'ja': 'ja-JP',
+        };
+        
+        utterance.lang = langMap[language] || 'tr-TR';
+        
+        // Error suppression
+        utterance.onerror = (e) => {
+          if (e.error !== 'interrupted' && e.error !== 'canceled') {
+            console.warn("Speech Synthesis Alert Error:", e.error);
+          }
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }, 100);
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.addEventListener('voiceschanged', startSpeak, { once: true });
-      setTimeout(startSpeak, 200);
+      setTimeout(startSpeak, 500);
     } else {
       startSpeak();
     }
