@@ -13,8 +13,8 @@ import { googleMapsApiKey } from '@/lib/config';
 interface PlacesMapProps {
   places: Place[];
   className?: string;
-  isRoute?: boolean; // Rota olarak mı çizilsin (Google Directions API)
-  startLocation?: { lat: number; lng: number }; // Rotanın başlangıç noktası (Opsiyonel: Kullanıcı Konumu)
+  isRoute?: boolean;
+  startLocation?: { lat: number; lng: number };
 }
 
 export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false, startLocation }) => {
@@ -70,11 +70,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       });
       setMap(newMap);
 
-      // Initialize Directions Service
       directionsServiceRef.current = new google.maps.DirectionsService();
       directionsRendererRef.current = new google.maps.DirectionsRenderer({
         map: newMap,
-        suppressMarkers: true, // We will use our own custom markers
+        suppressMarkers: true,
         polylineOptions: {
           strokeColor: '#4285F4',
           strokeWeight: 5,
@@ -84,53 +83,49 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // Continuous Location Tracking
+  // Track User Location and Show Marker
   useEffect(() => {
     if (!map || !isApiLoaded) return;
 
-    if ("geolocation" in navigator) {
-      watchIdRef.current = navigator.geolocation.watchPosition(
-        (position) => {
-          const userPos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
+    const updateUserMarker = (pos: { lat: number, lng: number }) => {
+      if (userMarkerRef.current) {
+        userMarkerRef.current.setPosition(pos);
+      } else {
+        userMarkerRef.current = new window.google.maps.Marker({
+          position: pos,
+          map: map,
+          title: "Konumunuz",
+          icon: {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: '#4285F4',
+            fillOpacity: 1,
+            strokeColor: 'white',
+            strokeWeight: 2,
+            scale: 10,
+          },
+          zIndex: 1000
+        });
+      }
+    };
 
-          if (userMarkerRef.current) {
-            userMarkerRef.current.setPosition(userPos);
-          } else {
-            userMarkerRef.current = new window.google.maps.Marker({
-              position: userPos,
-              map: map,
-              title: "Konumunuz",
-              icon: {
-                path: window.google.maps.SymbolPath.CIRCLE,
-                fillColor: '#4285F4',
-                fillOpacity: 1,
-                strokeColor: 'white',
-                strokeWeight: 2,
-                scale: 8,
-              },
-              zIndex: 1000
-            });
-          }
-        },
-        (error) => {
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              break;
-            default:
-              console.warn("Geolocation warning:", error.message);
-          }
-        },
+    if ("geolocation" in navigator) {
+      // Initial Position
+      navigator.geolocation.getCurrentPosition(
+        (position) => updateUserMarker({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        null,
+        { enableHighAccuracy: true }
+      );
+
+      // Watch Position
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        (position) => updateUserMarker({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        (error) => console.warn("Geolocation warning:", error.message),
         { enableHighAccuracy: true, timeout: 10000 }
       );
     }
 
     return () => {
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
+      if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
       if (userMarkerRef.current) {
         userMarkerRef.current.setMap(null);
         userMarkerRef.current = null;
@@ -138,46 +133,27 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     };
   }, [map, isApiLoaded]);
 
-  // Handle Real Road Route using Directions API
+  // Directions logic for routes
   useEffect(() => {
     if (!map || !places || !isRoute || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) {
       directionsRendererRef.current?.setDirections({ routes: [] });
       return;
     }
 
-    // Determine origin
     const origin = startLocation || (places.length >= 2 ? places[0].coordinates : null);
-    if (!origin) {
-        directionsRendererRef.current.setDirections({ routes: [] });
-        return;
-    }
+    if (!origin) return;
 
-    // Determine destination and waypoints
     let destination;
     let waypoints: google.maps.DirectionsWaypoint[] = [];
 
     if (startLocation) {
-        // Route: User -> Place 1 -> Place 2 -> ... -> Last Place
-        if (places.length === 0) {
-            directionsRendererRef.current.setDirections({ routes: [] });
-            return;
-        };
+        if (places.length === 0) return;
         destination = places[places.length - 1].coordinates;
-        waypoints = places.slice(0, -1).map(p => ({
-            location: p.coordinates,
-            stopover: true
-        }));
+        waypoints = places.slice(0, -1).map(p => ({ location: p.coordinates, stopover: true }));
     } else {
-        // Route: Place 1 -> Place 2 -> ... -> Last Place
-        if (places.length < 2) {
-            directionsRendererRef.current.setDirections({ routes: [] });
-            return;
-        }
+        if (places.length < 2) return;
         destination = places[places.length - 1].coordinates;
-        waypoints = places.slice(1, -1).map(p => ({
-            location: p.coordinates,
-            stopover: true
-        }));
+        waypoints = places.slice(1, -1).map(p => ({ location: p.coordinates, stopover: true }));
     }
 
     directionsServiceRef.current.route({
@@ -188,13 +164,11 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     }, (result, status) => {
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
-      } else {
-        console.warn("Directions request failed due to " + status);
       }
     });
   }, [map, places, isRoute, authFailed, startLocation]);
 
-  // Handle Place Markers
+  // Place Markers
   useEffect(() => {
     if (!map || !places || authFailed) return;
 
@@ -203,7 +177,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
 
     places.forEach(place => {
       if (!place.coordinates) return;
-
       const marker = new window.google.maps.Marker({
         position: place.coordinates,
         map: map,
@@ -231,105 +204,40 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         infoWindow.setContent(contentString);
         infoWindow.open(map, marker);
       });
-
       markers.push(marker);
     });
 
-    if (places.length > 0 && !isRoute) { // Only auto-fit bounds if it's not a route (Directions API handles its own bounds)
+    if (places.length > 0 && !isRoute) {
       const bounds = new window.google.maps.LatLngBounds();
-      places.forEach(place => {
-        if (place.coordinates) bounds.extend(place.coordinates);
-      });
-      
-      if (startLocation) {
-          bounds.extend(startLocation);
-      }
-
+      places.forEach(place => { if (place.coordinates) bounds.extend(place.coordinates); });
+      if (startLocation) bounds.extend(startLocation);
       map.fitBounds(bounds);
-
-      if (places.length === 1 && !startLocation) {
-        map.setZoom(14);
-      }
+      if (places.length === 1 && !startLocation) map.setZoom(14);
     }
 
-    return () => {
-      markers.forEach(marker => marker.setMap(null));
-    };
+    return () => markers.forEach(m => m.setMap(null));
   }, [map, places, typedLanguage, t, authFailed, isRoute, startLocation]);
 
   const handleCenterOnUser = () => {
-      if (userMarkerRef.current && map) {
-          const pos = userMarkerRef.current.getPosition();
-          if (pos) {
-              map.panTo(pos);
-              map.setZoom(15);
-          }
-      } else {
-          navigator.geolocation.getCurrentPosition((pos) => {
-              const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-              map?.panTo(coords);
-              map?.setZoom(15);
-          }, (error) => {
-              console.warn("Manual center failed:", error.message);
-          });
-      }
+    navigator.geolocation.getCurrentPosition((pos) => {
+        const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        map?.panTo(coords);
+        map?.setZoom(15);
+    });
   };
 
-  if (authFailed) {
-      const searchQuery = places.map(p => p.name[typedLanguage] + ", Salihli").join(' | ');
-      const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(searchQuery)}&output=embed&hl=${language}`;
-      
-      return (
-          <div className={className}>
-              <Alert variant="destructive" className="mb-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Harita Yüklenemedi</AlertTitle>
-                  <AlertDescription>
-                    Alternatif harita görünümü kullanılıyor.
-                  </AlertDescription>
-              </Alert>
-              <iframe
-                  src={embedUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, minHeight: '400px', borderRadius: 'var(--radius)' }}
-                  allowFullScreen={true}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title={t('places.title')}
-              ></iframe>
-          </div>
-      );
-  }
-  
-  if (apiError) {
-      return (
-        <Alert variant="destructive" className={className}>
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Hata</AlertTitle>
-          <AlertDescription>{apiError}</AlertDescription>
-        </Alert>
-      )
-  }
+  if (authFailed) return <div className={className}><Alert variant="destructive"><AlertTitle>Harita Hatası</AlertTitle><AlertDescription>Google Maps yüklenemedi.</AlertDescription></Alert></div>;
 
   return (
     <div className={cn("relative", className)}>
       {!isApiLoaded && (
-         <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg absolute inset-0 z-10">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <p className="ml-4 text-muted-foreground">Harita yükleniyor...</p>
+         <div className="w-full h-full flex items-center justify-center bg-muted absolute inset-0 z-10">
+            <Loader2 className="h-8 w-8 animate-spin" /><p className="ml-4 text-muted-foreground">Harita yükleniyor...</p>
          </div>
       )}
       <div ref={mapRef} className={cn("w-full h-full rounded-lg overflow-hidden", { 'invisible': !isApiLoaded })} />
-      
       {isApiLoaded && (
-          <Button 
-            variant="secondary" 
-            size="icon" 
-            className="absolute bottom-6 right-4 z-20 shadow-lg bg-background/90 backdrop-blur hover:bg-background border-2 border-primary/20 h-12 w-12 rounded-full"
-            onClick={handleCenterOnUser}
-            title="Konumuma Odaklan"
-          >
+          <Button variant="secondary" size="icon" className="absolute bottom-6 right-4 z-20 shadow-lg bg-background/90 h-12 w-12 rounded-full border-2 border-primary/20" onClick={handleCenterOnUser}>
             <Navigation className="h-6 w-6 text-primary fill-primary/20" />
           </Button>
       )}

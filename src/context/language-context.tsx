@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
@@ -55,13 +54,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setIsAudioGuideEnabled(prev => {
         const newState = !prev;
         localStorage.setItem('audioGuideEnabled', JSON.stringify(newState));
-        
         if (!newState) {
-            if (typeof window !== 'undefined' && window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-            }
+            if (typeof window !== 'undefined' && window.speechSynthesis) window.speechSynthesis.cancel();
         } else {
-            // Audio Unlock Mechanism for Mobile/Production Browsers
             if (typeof window !== 'undefined' && window.speechSynthesis) {
                 const utterance = new SpeechSynthesisUtterance('');
                 utterance.volume = 0;
