@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/use-language';
 import { useCollection, useFirestore } from '@/firebase';
@@ -19,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Volume2 } from 'lucide-react';
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371000; // Meters
+  const R = 6371000; // Metre cinsinden
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a =
@@ -81,6 +80,7 @@ export function AudioProximityAlert() {
     const slug = activeAlertPlace.slug[typedLanguage] || activeAlertPlace.slug.tr;
     
     setActiveAlertPlace(null);
+    // autoplay=true parametresi ile yönlendiriyoruz
     router.push(`/yerler/${slug}?autoplay=true`);
   };
 
