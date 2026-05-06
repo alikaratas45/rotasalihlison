@@ -76,9 +76,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         map: newMap,
         suppressMarkers: true,
         polylineOptions: {
-          strokeColor: '#4285F4',
-          strokeWeight: 5,
-          strokeOpacity: 0.7
+          strokeColor: '#1A237E', // Koyu Mavi / Lacivert
+          strokeWeight: 8,       // Daha kalın çizgi
+          strokeOpacity: 0.9,     // Daha belirgin opaklık
         }
       });
     }
@@ -180,7 +180,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     if (!map || !kmlUrl || authFailed) return;
 
     // Note: KmlLayer requires a publicly accessible URL to work.
-    // Construct absolute URL for the KML file served from /public
     const protocol = window.location.protocol;
     const host = window.location.host;
     const fullUrl = kmlUrl.startsWith('http') ? kmlUrl : `${protocol}//${host}${kmlUrl}`;
@@ -188,7 +187,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     const kmlLayer = new google.maps.KmlLayer({
       url: fullUrl,
       map: map,
-      preserveViewport: places.length > 0, // Preserve current view if markers exist
+      preserveViewport: places.length > 0, 
     });
 
     return () => {
@@ -238,7 +237,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     if (places.length > 0 && !isRoute) {
       const bounds = new window.google.maps.LatLngBounds();
       places.forEach(place => { if (place.coordinates) bounds.extend(place.coordinates); });
-      // If we have a user position, include it in bounds too if it's the main places map
       if (userMarkerRef.current?.getPosition()) {
           bounds.extend(userMarkerRef.current.getPosition()!);
       }
