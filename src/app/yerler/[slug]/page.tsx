@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -87,7 +88,7 @@ function PlaceDetailContent() {
   }, [place]);
 
   const speak = useCallback((text: string, lang: Language) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
 
     const startUtterance = () => {
       // Temizlik - Her zaman yeni bir anlatıma başlamadan önce öncekini durdur
@@ -102,6 +103,11 @@ function PlaceDetailContent() {
         fixedText = fixedText.replace(/M\.Ö\./g, 'Before Christ').replace(/BC/g, 'Before Christ').replace(/B\.C\./g, 'Before Christ');
       }
       
+      if (!fixedText.trim()) {
+          setIsGenerating(false);
+          return;
+      }
+
       const utterance = new SpeechSynthesisUtterance(fixedText);
       
       const langMap: Record<Language, string[]> = {
@@ -132,15 +138,25 @@ function PlaceDetailContent() {
         setIsPlaying(false);
       };
       utterance.onerror = (e) => {
-        // 'interrupted', 'canceled' veya 'not-allowed' (autoplay engeli) durumlarını hata olarak gösterme
-        if (!['interrupted', 'canceled', 'not-allowed'].includes(e.error)) {
-            console.error("Speech Synthesis Error:", e.error, e);
+        // 'interrupted', 'canceled', 'not-allowed' veya 'synthesis-failed' (flaky browser issue) durumlarını hata ekranı olarak gösterme
+        const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
+        if (!silentErrors.includes(e.error)) {
+            console.warn("Speech Synthesis Warning (Handled):", e.error, e);
         }
         setIsPlaying(false);
         setIsGenerating(false);
       };
       
-      window.speechSynthesis.speak(utterance);
+      // Bazı tarayıcılarda cancel() sonrası hemen speak() sorun yaratabilir, çok kısa bir bekleme ekleyelim
+      setTimeout(() => {
+          try {
+            window.speechSynthesis.speak(utterance);
+          } catch (err) {
+            console.warn("Speech Synthesis Execute Error:", err);
+            setIsPlaying(false);
+            setIsGenerating(false);
+          }
+      }, 50);
     };
 
     setIsGenerating(true);
