@@ -65,14 +65,17 @@ function PlaceDetailContent() {
     }
     setIsPlaying(false);
     setIsGenerating(false);
+    utteranceRef.current = null;
   }, []);
 
+  // Sayfadan çıkınca sesi durdur
   useEffect(() => {
     return () => {
       stopAudio();
     };
   }, [stopAudio]);
 
+  // Konum takibi (Anket için)
   useEffect(() => {
     if (!place) return;
     if ("geolocation" in navigator) {
@@ -94,98 +97,95 @@ function PlaceDetailContent() {
     const synth = window.speechSynthesis;
 
     const startUtterance = () => {
+      // Önceki her şeyi temizle
       synth.cancel();
       
-      // Metin temizleme ve telaffuz düzeltmeleri
-      let fixedText = text
-        .replace(/Gymnasium/gi, 'Cimnazyum')
-        .replace(/Sardes/gi, 'Sardes')
-        .replace(/Bintepeler/gi, 'Bintepeler');
-
-      if (lang === 'tr') {
-        fixedText = fixedText
-            .replace(/M\.Ö\./g, 'milattan önce')
-            .replace(/MÖ/g, 'milattan önce')
-            .replace(/İ\.Ö\./g, 'milattan önce')
-            .replace(/MS/g, 'milattan sonra')
-            .replace(/M\.S\./g, 'milattan sonra');
-      } else if (lang === 'en') {
-        fixedText = fixedText
-            .replace(/M\.Ö\./g, 'Before Christ')
-            .replace(/BC/g, 'Before Christ')
-            .replace(/B\.C\./g, 'Before Christ')
-            .replace(/AD/g, 'Anno Domini');
-      }
-      
-      if (!fixedText.trim()) {
-          setIsGenerating(false);
-          return;
-      }
-
-      const utterance = new SpeechSynthesisUtterance(fixedText);
-      utteranceRef.current = utterance; // GC (Garbage Collection) koruması
-      
-      const langCodes: Record<Language, string[]> = {
-        'tr': ['tr-TR', 'tr_TR', 'tr'],
-        'en': ['en-US', 'en-GB', 'en'],
-        'fr': ['fr-FR', 'fr'],
-        'de': ['de-DE', 'de'],
-        'ja': ['ja-JP', 'ja'],
-      };
-
-      const preferredCodes = langCodes[lang] || ['tr-TR'];
-      utterance.lang = preferredCodes[0];
-
-      const voices = synth.getVoices();
-      const findVoice = () => {
-        // 1. Tercih edilen kodlarla tam eşleşme
-        for (const code of preferredCodes) {
-            const v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === code.toLowerCase());
-            if (v) return v;
-        }
-        // 2. Dil kodu ile başlayanlar
-        const vPrefix = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
-        if (vPrefix) return vPrefix;
-        // 3. İsimde dil geçenler
-        const searchName = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
-        if (searchName) {
-            const vName = voices.find(v => v.name.toLowerCase().includes(searchName));
-            if (vName) return vName;
-        }
-        return null;
-      };
-
-      const voice = findVoice();
-      if (voice) {
-          utterance.voice = voice;
-          utterance.lang = voice.lang;
-      }
-
-      utterance.rate = 0.95; 
-      utterance.pitch = 1.0;
-
-      utterance.onstart = () => { 
-        setIsPlaying(true); 
-        setIsGenerating(false); 
-      };
-      utterance.onend = () => {
-        setIsPlaying(false);
-        utteranceRef.current = null;
-      };
-      utterance.onerror = (e) => {
-        const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
-        if (!silentErrors.includes(e.error)) {
-            console.warn("Speech Synthesis Warning:", e.error);
-        }
-        setIsPlaying(false);
-        setIsGenerating(false);
-        utteranceRef.current = null;
-      };
-      
-      // Mobil cihazlarda donanım hazırlığı için kısa gecikme
+      // Mobil cihazlarda donanım çakışmasını önlemek için kısa bir bekleme
       setTimeout(() => {
-          synth.speak(utterance);
-      }, 150);
+        // Metin temizleme ve telaffuz düzeltmeleri
+        let fixedText = text
+            .replace(/Gymnasium/gi, 'Cimnazyum')
+            .replace(/Sardes/gi, 'Sardes')
+            .replace(/Bintepeler/gi, 'Bintepeler');
+
+        if (lang === 'tr') {
+            fixedText = fixedText
+                .replace(/M\.Ö\./g, 'milattan önce')
+                .replace(/MÖ/g, 'milattan önce')
+                .replace(/İ\.Ö\./g, 'milattan önce')
+                .replace(/MS/g, 'milattan sonra')
+                .replace(/M\.S\./g, 'milattan sonra');
+        }
+
+        if (!fixedText.trim()) {
+            setIsGenerating(false);
+            return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(fixedText);
+        
+        // KRİTİK: Garbage Collection'ı önlemek için global referans ve window'a bağlama
+        utteranceRef.current = utterance;
+        (window as any)._lastUtterance = utterance; 
+        
+        // Dil Kodu
+        const langCodes: Record<Language, string[]> = {
+            'tr': ['tr-TR', 'tr_TR', 'tr'],
+            'en': ['en-US', 'en-GB', 'en'],
+            'fr': ['fr-FR', 'fr'],
+            'de': ['de-DE', 'de'],
+            'ja': ['ja-JP', 'ja'],
+        };
+        const preferredCodes = langCodes[lang] || ['tr-TR'];
+        utterance.lang = preferredCodes[0];
+
+        // Ses Seçimi (Agresif Arama)
+        const voices = synth.getVoices();
+        const findVoice = () => {
+            for (const code of preferredCodes) {
+                const v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === code.toLowerCase());
+                if (v) return v;
+            }
+            const vPrefix = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase()));
+            if (vPrefix) return vPrefix;
+            const searchName = lang === 'tr' ? 'turkish' : lang === 'en' ? 'english' : '';
+            if (searchName) {
+                const vName = voices.find(v => v.name.toLowerCase().includes(searchName));
+                if (vName) return vName;
+            }
+            return null;
+        };
+
+        const voice = findVoice();
+        if (voice) {
+            utterance.voice = voice;
+            utterance.lang = voice.lang;
+        }
+
+        utterance.rate = 0.92; 
+        utterance.pitch = 1.0;
+
+        utterance.onstart = () => { 
+            setIsPlaying(true); 
+            setIsGenerating(false); 
+        };
+        utterance.onend = () => {
+            setIsPlaying(false);
+            utteranceRef.current = null;
+        };
+        utterance.onerror = (e) => {
+            // Sessiz hataları loglama (mobil tarayıcılarda normaldir)
+            const silentErrors = ['interrupted', 'canceled', 'not-allowed', 'synthesis-failed'];
+            if (!silentErrors.includes(e.error)) {
+                console.warn("Speech Synthesis Warning:", e.error);
+            }
+            setIsPlaying(false);
+            setIsGenerating(false);
+            utteranceRef.current = null;
+        };
+        
+        synth.speak(utterance);
+      }, 100);
     };
 
     setIsGenerating(true);
@@ -201,8 +201,7 @@ function PlaceDetailContent() {
         startUtterance();
         synth.onvoiceschanged = null;
       };
-      // Fallback
-      setTimeout(startUtterance, 1000);
+      setTimeout(startUtterance, 800);
     } else {
       startUtterance();
     }
@@ -217,12 +216,14 @@ function PlaceDetailContent() {
     }
   }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
+  // Otomatik Oynatma (Autoplay)
   useEffect(() => {
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current) {
       hasAutoplayedRef.current = true;
+      // Mobil cihazlarda DOM'un tamamen hazır olması için güvenli bekleme
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 1500);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage]);
@@ -247,13 +248,6 @@ function PlaceDetailContent() {
             {place.description[typedLanguage]}
           </div>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 clear-both pt-4">
-             {place.id !== '3' && (
-               <Button size="lg" asChild className="flex-1 md:flex-none md:min-w-[200px]">
-                 <a href={`https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`} target="_blank" rel="noopener noreferrer">
-                   <MapPin className="mr-2 h-5 w-5" />{t('actions.showOnMap')}
-                 </a>
-               </Button>
-             )}
             <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
               {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
               {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
