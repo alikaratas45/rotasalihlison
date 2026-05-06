@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -55,6 +56,21 @@ function PlaceDetailContent() {
 
   const place = useMemo(() => places?.find(p => Object.values(p.slug).includes(slug as string)), [places, slug]);
 
+  const stopAudio = useCallback(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    setIsPlaying(false);
+    setIsGenerating(false);
+  }, []);
+
+  // Stop audio when leaving the page (Component Unmount)
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, [stopAudio]);
+
   useEffect(() => {
     if (!place) return;
     if ("geolocation" in navigator) {
@@ -69,12 +85,6 @@ function PlaceDetailContent() {
       return () => navigator.geolocation.clearWatch(watchId);
     }
   }, [place]);
-
-  const stopAudio = useCallback(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) window.speechSynthesis.cancel();
-    setIsPlaying(false);
-    setIsGenerating(false);
-  }, []);
 
   const speak = useCallback((text: string, lang: Language) => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
