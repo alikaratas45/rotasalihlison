@@ -111,14 +111,20 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     if ("geolocation" in navigator) {
       // Initial Position
       navigator.geolocation.getCurrentPosition(
-        (position) => updateUserMarker({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        (position) => {
+            const coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+            updateUserMarker(coords);
+        },
         null,
         { enableHighAccuracy: true }
       );
 
       // Watch Position
       watchIdRef.current = navigator.geolocation.watchPosition(
-        (position) => updateUserMarker({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        (position) => {
+            const coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+            updateUserMarker(coords);
+        },
         (error) => console.warn("Geolocation warning:", error.message),
         { enableHighAccuracy: true, timeout: 10000 }
       );
@@ -210,6 +216,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     if (places.length > 0 && !isRoute) {
       const bounds = new window.google.maps.LatLngBounds();
       places.forEach(place => { if (place.coordinates) bounds.extend(place.coordinates); });
+      // If we have a user position, include it in bounds too if it's the main places map
+      if (userMarkerRef.current?.getPosition()) {
+          bounds.extend(userMarkerRef.current.getPosition()!);
+      }
       if (startLocation) bounds.extend(startLocation);
       map.fitBounds(bounds);
       if (places.length === 1 && !startLocation) map.setZoom(14);

@@ -83,8 +83,10 @@ function PlaceDetailContent() {
       window.speechSynthesis.cancel();
       setIsGenerating(true);
 
+      // Delay to ensure voices are loaded and cancel is finished
       setTimeout(() => {
         const voices = window.speechSynthesis.getVoices();
+        
         let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
         if (lang === 'tr') {
           fixedText = fixedText.replace(/M\.Ö\./g, 'milattan önce').replace(/MÖ/g, 'milattan önce').replace(/İ\.Ö\./g, 'milattan önce');
@@ -93,8 +95,13 @@ function PlaceDetailContent() {
         }
         
         const utterance = new SpeechSynthesisUtterance(fixedText);
+        
         const langMap: Record<Language, string[]> = {
-          'tr': ['tr-TR'], 'en': ['en-US', 'en-GB', 'en-AU', 'en-IN'], 'fr': ['fr-FR'], 'de': ['de-DE'], 'ja': ['ja-JP'],
+          'tr': ['tr-TR'],
+          'en': ['en-US', 'en-GB', 'en-AU', 'en-CA', 'en-IN'],
+          'fr': ['fr-FR', 'fr-CA'],
+          'de': ['de-DE'],
+          'ja': ['ja-JP'],
         };
         
         const voicePreferences = langMap[lang];
@@ -110,18 +117,28 @@ function PlaceDetailContent() {
 
         utterance.onstart = () => { setIsPlaying(true); setIsGenerating(false); };
         utterance.onend = () => setIsPlaying(false);
-        utterance.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') console.warn("TTS Error:", e.error); setIsPlaying(false); setIsGenerating(false); };
+        utterance.onerror = (e) => {
+          if (e.error !== 'interrupted' && e.error !== 'canceled') {
+              console.warn("Speech Synthesis Error:", e.error);
+          }
+          setIsPlaying(false);
+          setIsGenerating(false);
+        };
+        
         window.speechSynthesis.speak(utterance);
-      }, 100);
+      }, 150);
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = startUtterance;
-      setTimeout(startUtterance, 500);
+      // Safety timeout
+      setTimeout(() => {
+        if (isGenerating) startUtterance();
+      }, 500);
     } else {
       startUtterance();
     }
-  }, []);
+  }, [isGenerating]);
 
   const handlePlayPause = useCallback(() => {
     if (!isAudioGuideEnabled || isGenerating || !place) return;
@@ -145,14 +162,35 @@ function PlaceDetailContent() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl md:text-5xl font-bold font-headline mb-8 text-primary">{place.name[typedLanguage]}</h1>
         <div className="relative block">
-          <div className="md:float-left md:w-1/2 lg:w-3/5 md:mr-10 md:mb-8 mb-8 w-full"><Card className="overflow-hidden shadow-2xl border-none"><div className="relative h-[300px] md:h-[500px] w-full"><Image src={place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`} alt={place.name[typedLanguage]} data-ai-hint={place.imageHint || 'landmark'} fill className="object-cover" priority /></div></Card></div>
-          <div className="text-lg md:text-xl text-muted-foreground whitespace-pre-line leading-relaxed text-justify">{place.description[typedLanguage]}</div>
+          <div className="md:float-left md:w-1/2 lg:w-3/5 md:mr-10 md:mb-8 mb-8 w-full">
+            <Card className="overflow-hidden shadow-2xl border-none">
+              <div className="relative h-[300px] md:h-[500px] w-full">
+                <Image src={place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`} alt={place.name[typedLanguage]} data-ai-hint={place.imageHint || 'landmark'} fill className="object-cover" priority />
+              </div>
+            </Card>
+          </div>
+          <div className="text-lg md:text-xl text-muted-foreground whitespace-pre-line leading-relaxed text-justify">
+            {place.description[typedLanguage]}
+          </div>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 clear-both pt-4">
-             <Button size="lg" asChild className="flex-1 md:flex-none md:min-w-[200px]"><a href={`https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`} target="_blank" rel="noopener noreferrer"><MapPin className="mr-2 h-5 w-5" />{t('actions.showOnMap')}</a></Button>
-            {isAudioGuideEnabled && (<Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">{isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}{isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}</Button>)}
+             <Button size="lg" asChild className="flex-1 md:flex-none md:min-w-[200px]">
+               <a href={`https://www.google.com/maps/search/?api=1&query=${place.coordinates.lat},${place.coordinates.lng}`} target="_blank" rel="noopener noreferrer">
+                 <MapPin className="mr-2 h-5 w-5" />{t('actions.showOnMap')}
+               </a>
+             </Button>
+            {isAudioGuideEnabled && (
+              <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
+                {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
+                {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
+              </Button>
+            )}
           </div>
         </div>
-        {isNearPlace && <div className="mt-20 border-t pt-10 animate-in fade-in slide-in-from-bottom-4 duration-700"><Survey placeId={place.id} placeName={place.name.tr} /></div>}
+        {isNearPlace && (
+          <div className="mt-20 border-t pt-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Survey placeId={place.id} placeName={place.name.tr} />
+          </div>
+        )}
       </div>
     </div>
   );
