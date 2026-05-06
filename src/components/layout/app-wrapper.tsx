@@ -14,6 +14,7 @@ export default function AppWrapper({
 }: {
   children: React.ReactNode;
 }) {
+  // SSR sırasında true, client'da session kontrolüne göre güncellenir
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export default function AppWrapper({
     const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
     
     if (splashShown) {
-      // Eğer daha önce gösterildiyse (örneğin dil değişimi için sayfa yenilendiyse) bekletme yapma
+      // Eğer daha önce gösterildiyse bekletme yapma, hemen kapat
       setIsLoading(false);
     } else {
       // İlk girişte 2 saniye göster ve flag'i set et
@@ -36,6 +37,7 @@ export default function AppWrapper({
 
   return (
     <>
+      {/* isLoading true olsa bile splashShown varsa render etme veya gizli render et */}
       <SplashScreen isLoading={isLoading} />
       {!isLoading && <AudioProximityAlert />}
       <div className={cn("flex flex-col min-h-screen transition-opacity duration-700", isLoading ? 'opacity-0' : 'opacity-100')}>

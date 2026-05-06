@@ -39,74 +39,8 @@ export function AudioProximityAlert() {
   const [activeAlertPlace, setActiveAlertPlace] = useState<Place | null>(null);
   const [notifiedPlaceIds, setNotifiedPlaceIds] = useState<Set<string>>(new Set());
 
-  const speakPrompt = useCallback((text: string) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-    
-    const startSpeak = () => {
-      window.speechSynthesis.cancel();
-      
-      // Give a tiny timeout for cancel to complete
-      setTimeout(() => {
-        // Pronunciation fixes
-        let fixedText = text.replace(/Gymnasium/gi, 'Cimnazyum');
-        if (language === 'tr') {
-          fixedText = fixedText
-            .replace(/M\.Ö\./g, 'milattan önce')
-            .replace(/M\.Ö/g, 'milattan önce')
-            .replace(/MÖ/g, 'milattan önce')
-            .replace(/İ\. Ö\./g, 'milattan önce')
-            .replace(/İ\.Ö\./g, 'milattan önce');
-        } else if (language === 'en') {
-          fixedText = fixedText
-            .replace(/M\.Ö\./g, 'Before Christ')
-            .replace(/BC/g, 'Before Christ')
-            .replace(/B\.C\./g, 'Before Christ');
-        }
-        
-        const utterance = new SpeechSynthesisUtterance(fixedText);
-        
-        const langMap: Record<string, string> = {
-          'tr': 'tr-TR',
-          'en': 'en-US',
-          'fr': 'fr-FR',
-          'de': 'de-DE',
-          'ja': 'ja-JP',
-        };
-        
-        // Find best matching voice
-        const voices = window.speechSynthesis.getVoices();
-        const targetLang = langMap[language] || (language === 'en' ? 'en-US' : 'tr-TR');
-        
-        const bestVoice = voices.find(v => v.lang.replace('_', '-').toLowerCase() === targetLang.toLowerCase()) || 
-                          voices.find(v => v.lang.toLowerCase().startsWith(language.toLowerCase()));
-        
-        if (bestVoice) {
-            utterance.voice = bestVoice;
-            utterance.lang = bestVoice.lang;
-        } else {
-            utterance.lang = targetLang;
-        }
-        
-        // Error suppression
-        utterance.onerror = (e) => {
-          if (e.error !== 'interrupted' && e.error !== 'canceled') {
-            console.warn("Speech Synthesis Alert Error:", e.error);
-          }
-        };
-
-        window.speechSynthesis.speak(utterance);
-      }, 100);
-    };
-
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.addEventListener('voiceschanged', startSpeak, { once: true });
-      setTimeout(startSpeak, 500);
-    } else {
-      startSpeak();
-    }
-  }, [language]);
-
   useEffect(() => {
+    // Sesli rehber kapalıysa veya yerler yüklenmediyse takip yapma
     if (!isAudioGuideEnabled || !places || places.length === 0) return;
 
     if (!("geolocation" in navigator)) return;
@@ -119,19 +53,13 @@ export function AudioProximityAlert() {
         for (const place of places) {
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
           
-          // Show alert if within 30 meters
-          if (dist <= 30 && !notifiedPlaceIds.has(place.id)) {
+          // 20 metre sınırı ve daha önce uyarılmamış olma şartı
+          if (dist <= 20 && !notifiedPlaceIds.has(place.id)) {
             setActiveAlertPlace(place);
             setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
-            
-            const typedLanguage = language as keyof typeof place.name;
-            const placeName = place.name[typedLanguage] || place.name.tr;
-            const promptText = t('proximity.alert', placeName);
-            
-            setTimeout(() => speakPrompt(promptText), 500);
             break; 
-          } else if (dist > 150 && notifiedPlaceIds.has(place.id)) {
-            // Reset notification if user leaves the area (more than 150m away)
+          } else if (dist > 100 && notifiedPlaceIds.has(place.id)) {
+            // Mekandan 100m uzaklaşınca listeyi temizle ki tekrar gelirse uyarı versin
             setNotifiedPlaceIds(prev => {
               const next = new Set(prev);
               next.delete(place.id);
@@ -140,27 +68,23 @@ export function AudioProximityAlert() {
           }
         }
       },
-      (error) => {
-        console.warn("Geolocation watch error:", error.message);
-      },
+      (error) => console.warn("Konum takibi hatası:", error.message),
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [isAudioGuideEnabled, places, notifiedPlaceIds, language, speakPrompt, t]);
+  }, [isAudioGuideEnabled, places, notifiedPlaceIds]);
 
   const handleConfirm = () => {
     if (!activeAlertPlace) return;
     const typedLanguage = language as keyof typeof activeAlertPlace.slug;
     const slug = activeAlertPlace.slug[typedLanguage] || activeAlertPlace.slug.tr;
     
-    window.speechSynthesis.cancel();
     setActiveAlertPlace(null);
     router.push(`/yerler/${slug}?autoplay=true`);
   };
 
   const handleClose = () => {
-    window.speechSynthesis.cancel();
     setActiveAlertPlace(null);
   };
 

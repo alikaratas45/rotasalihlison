@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -43,7 +44,7 @@ function PlaceDetailContent() {
   const searchParams = useSearchParams();
   const slug = params.slug;
   const autoplay = searchParams.get('autoplay') === 'true';
-  const { t, language, isAudioGuideEnabled } = useLanguage();
+  const { t, language } = useLanguage();
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -83,7 +84,6 @@ function PlaceDetailContent() {
       window.speechSynthesis.cancel();
       setIsGenerating(true);
 
-      // Delay to ensure voices are loaded and cancel is finished
       setTimeout(() => {
         const voices = window.speechSynthesis.getVoices();
         
@@ -131,27 +131,25 @@ function PlaceDetailContent() {
 
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = startUtterance;
-      // Safety timeout
-      setTimeout(() => {
-        if (isGenerating) startUtterance();
-      }, 500);
+      setTimeout(() => { if (isGenerating) startUtterance(); }, 500);
     } else {
       startUtterance();
     }
   }, [isGenerating]);
 
   const handlePlayPause = useCallback(() => {
-    if (!isAudioGuideEnabled || isGenerating || !place) return;
+    if (isGenerating || !place) return;
     if (isPlaying) stopAudio();
     else speak(place.description[typedLanguage], typedLanguage);
-  }, [isAudioGuideEnabled, isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
+  }, [isGenerating, isPlaying, place, typedLanguage, speak, stopAudio]);
 
   useEffect(() => {
-    if (autoplay && place && !placesLoading && !isPlaying && isAudioGuideEnabled) {
-      const timer = setTimeout(handlePlayPause, 1500);
+    // Yakınlık uyarısından gelindiyse otomatik başlat
+    if (autoplay && place && !placesLoading && !isPlaying) {
+      const timer = setTimeout(handlePlayPause, 1000);
       return () => clearTimeout(timer);
     }
-  }, [autoplay, place, placesLoading, isAudioGuideEnabled, handlePlayPause, isPlaying]);
+  }, [autoplay, place, placesLoading, handlePlayPause, isPlaying]);
   
   if (placesLoading) return <PlaceDetailSkeleton />;
   if (!place) return <div className="container mx-auto px-4 py-12 text-center"><h1 className="text-4xl font-bold">{t('places.notFoundTitle')}</h1><Button asChild className="mt-8"><Link href="/yerler">{t('actions.viewAllPlaces')}</Link></Button></div>;
@@ -180,12 +178,10 @@ function PlaceDetailContent() {
                  </a>
                </Button>
              )}
-            {isAudioGuideEnabled && (
-              <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
-                {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
-                {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
-              </Button>
-            )}
+            <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className="flex-1 md:flex-none md:min-w-[200px]">
+              {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
+              {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : t('actions.listenAudio')}
+            </Button>
           </div>
         </div>
         {isNearPlace && (
