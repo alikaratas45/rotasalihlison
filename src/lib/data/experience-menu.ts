@@ -11,7 +11,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       ja: 'ハイキングルート'
     },
     icon: 'Climbing',
-    link: '/yerler?category=nature',
+    link: '/yuruyus-rotalari',
     order: 1
   },
   {
@@ -31,7 +31,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       tr: 'Doğa ve Huzur',
       en: 'Nature and Peace',
       fr: 'Nature et Paix',
-      de: 'Natur und Frieden',
+      de: 'Natur obedience',
       ja: '自然と平和'
     },
     icon: 'Mountain',
