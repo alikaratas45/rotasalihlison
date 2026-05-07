@@ -505,8 +505,8 @@ export default function AdminPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">Tüm Mekanlar</SelectItem>
-                                    {sortedPlaces.map(place => (
-                                        <SelectItem key={place.id || `fb-place-${place.name.tr}`} value={place.id}>{place.name.tr}</SelectItem>
+                                    {sortedPlaces.map((place, idx) => (
+                                        <SelectItem key={place.id || `fb-place-${idx}`} value={place.id}>{place.name.tr}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -564,7 +564,7 @@ export default function AdminPage() {
                                 </Card>
                                 <Card>
                                     <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Yeterli Bilgi Panosu</CardDescription>
+                                        <CardDescription className="text-xs uppercase tracking-wider">Bilgi Panosu</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.infoBoardsCount}</CardTitle>
                                     </CardHeader>
                                 </Card>

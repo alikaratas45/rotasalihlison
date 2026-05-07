@@ -37,7 +37,6 @@ export function updateExperienceItem(
 ) {
   if (!firestore || !itemId || itemId === 'undefined') {
     const error = new Error("Geçerli bir öğe ID'si bulunamadı.");
-    console.error("updateExperienceItem error:", error);
     callbacks?.onError?.(error);
     return;
   }
@@ -62,7 +61,6 @@ export function deleteExperienceItem(
 ) {
   if (!firestore || !itemId || itemId === 'undefined') {
     const error = new Error("Geçerli bir öğe ID'si bulunamadığı için silinemedi.");
-    console.error("deleteExperienceItem error:", error);
     callbacks?.onError?.(error);
     return;
   }

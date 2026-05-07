@@ -16,11 +16,11 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Doğa ve Huzur',
-      en: 'Nature and Peace',
-      fr: 'Nature et Paix',
-      de: 'Natur and Frieden',
-      ja: '自然と平和'
+      tr: 'Yürüyüş Rotaları',
+      en: 'Hiking Routes',
+      fr: 'Itinéraires de Randonnée',
+      de: 'Wanderwege',
+      ja: 'ハイキングルート'
     },
     icon: 'Climbing',
     link: '/yerler?category=nature',
