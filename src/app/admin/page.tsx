@@ -524,43 +524,43 @@ export default function AdminPage() {
                         <div className="space-y-8">
                             {/* Stats Summary */}
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
-                                <Card className="bg-primary/5 border-primary/10">
+                                <Card key="stat-total" className="bg-primary/5 border-primary/10">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Toplam Katılım</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><Users className="h-5 w-5 text-primary" />{stats?.total}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card>
+                                <Card key="stat-clean">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Temizlik Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgCleanliness || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card>
+                                <Card key="stat-access">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Erişim Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgAccessibility || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card>
+                                <Card key="stat-satis">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Memnuniyet Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgSatisfaction || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card>
+                                <Card key="stat-tour">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Turla Gelen</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.tourCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card>
+                                <Card key="stat-guide">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Rehberli</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.guidedCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card>
+                                <Card key="stat-info">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Bilgi Panosu</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.infoBoardsCount}</CardTitle>

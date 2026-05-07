@@ -4,8 +4,8 @@ import * as icons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import React from 'react';
 
-// Daha temiz ve estetik bir dağcı/yürüyüşçü simgesi
-const HikerIcon = (props: LucideProps) => (
+// Gönderilen görsele uygun ayak izi (Footprints) simgesi
+const FootprintsIcon = (props: LucideProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -18,24 +18,20 @@ const HikerIcon = (props: LucideProps) => (
     strokeLinejoin="round"
     {...props}
   >
-    {/* Kafa */}
-    <circle cx="13" cy="5" r="1" />
-    {/* Gövde ve Bacaklar */}
-    <path d="m13 6-2 3v4l-2 3v4" />
-    <path d="M11 13l3 4v4" />
-    {/* Kollar */}
-    <path d="m13 8-4-1-2 2" />
-    <path d="m13 8 4 1 1 2" />
-    {/* Yürüyüş Batonu */}
-    <path d="M7 4v16" />
+    {/* Sol Ayak İzi */}
+    <path d="M7 9a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0V9z" />
+    <path d="M7 12h5" />
+    {/* Sağ Ayak İzi (Biraz yukarda) */}
+    <path d="M13 6a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0V6z" />
+    <path d="M13 9h5" />
   </svg>
 );
 
-// Lucide ikon listesine 'Climbing' adıyla dağcı figürünü ekliyoruz.
+// Lucide ikon listesine 'Climbing' adıyla bu yeni figürü ekliyoruz.
 // @ts-ignore
 const iconMap: { [key: string]: React.FC<LucideProps> } = {
   ...icons,
-  Climbing: HikerIcon,
+  Climbing: FootprintsIcon,
 };
 
 
@@ -48,7 +44,6 @@ export const LucideIcon = ({ name, ...props }: LucideIconProps) => {
   const Icon = iconMap[name];
 
   if (!Icon) {
-    // İkon bulunamazsa varsayılan olarak HelpCircle döner
     return <icons.HelpCircle {...props} />;
   }
 

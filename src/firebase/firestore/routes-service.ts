@@ -37,7 +37,7 @@ export function updateRoute(
   routeData: RouteData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !routeId) {
+  if (!firestore || !routeId || routeId === 'undefined' || routeId === '') {
     const error = new Error("Geçerli bir rota ID'si bulunamadı.");
     callbacks?.onError?.(error);
     return;
@@ -62,7 +62,7 @@ export function deleteRoute(
   routeId: string,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !routeId) {
+  if (!firestore || !routeId || routeId === 'undefined' || routeId === '') {
     const error = new Error("Silinecek rotanın ID'si eksik.");
     callbacks?.onError?.(error);
     return;
