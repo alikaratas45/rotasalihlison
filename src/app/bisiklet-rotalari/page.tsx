@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -42,7 +41,7 @@ export default function BisikletRotalariPage() {
         {/* Header Section */}
         <div className="flex items-center gap-4 mb-10">
           <div className="p-3 bg-red-500 rounded-full text-white shadow-lg">
-            <Bike className="h-8 w-8" />
+            < Bike className="h-8 w-8" />
           </div>
           <h1 className="text-4xl font-bold font-headline tracking-tight text-slate-900">
             {t('bicycleRoutes.title')}
@@ -95,7 +94,7 @@ export default function BisikletRotalariPage() {
             </h2>
             <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <PlacesMap 
-                    places={[]} // Rota çizgisine odaklanmak için mekan markerlarını kaldırıyoruz
+                    places={[]} 
                     className="w-full h-full" 
                     kmlUrl={activeRoute.kmlUrl}
                 />
@@ -115,16 +114,21 @@ export default function BisikletRotalariPage() {
              </div>
 
              <Card className="overflow-hidden border-none shadow-2xl rounded-2xl bg-white border border-slate-100">
-                <div className="w-full min-h-[600px]">
+                <div className="w-full min-h-[500px]">
                     <iframe 
-                        src={`https://www.wikiloc.com/wikiloc/embed.do?id=${activeRoute.wikilocId}&tile_map=1&map_type=h`} 
+                        src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=off&images=off&maptype=H`} 
                         width="100%" 
-                        height="600" 
+                        height="500" 
                         frameBorder="0" 
                         scrolling="no"
                         title={`${activeRoute.name} Wikiloc Detayı`}
-                        className="w-full h-full"
+                        className="w-full"
                     ></iframe>
+                </div>
+                <div className="px-6 py-4 bg-slate-50/50 border-t flex justify-between items-center">
+                    <div className="text-slate-400 text-[11px] leading-relaxed">
+                        Powered by <a href="https://tr.wikiloc.com" target="_blank" rel="noopener noreferrer" className="text-[#4C8C2B] font-bold hover:underline">Wikiloc</a>
+                    </div>
                 </div>
              </Card>
           </div>
