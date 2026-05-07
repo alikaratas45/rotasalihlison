@@ -19,7 +19,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       tr: 'Doğa ve Huzur',
       en: 'Nature and Peace',
       fr: 'Nature et Paix',
-      de: 'Natur und Frieden',
+      de: 'Natur and Frieden',
       ja: '自然と平和'
     },
     icon: 'Mountain',
@@ -46,7 +46,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       de: 'Route Erstellen',
       ja: 'ルートを作成'
     },
-    icon: 'Route',
+    icon: 'MapPinned',
     link: '/rota-olustur',
     order: 4
   },

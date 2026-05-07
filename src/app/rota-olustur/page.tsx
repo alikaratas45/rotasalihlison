@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Map, Route as RouteIcon, X, Navigation } from 'lucide-react';
+import { Loader2, Route as RouteIcon, X, Navigation } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Language } from '@/context/language-context';
 import { cn } from '@/lib/utils';
@@ -243,7 +243,7 @@ export default function RotaOlusturPage() {
                             )}
                             {orderedSelectedPlaces.length > 0 && (
                                 <Button onClick={handleOpenInMaps} disabled={isMapLoading} className="mt-4 w-full" size="lg">
-                                    {isMapLoading ? <Loader2 className="mr-2 animate-spin" /> : <Map className="mr-2"/>}
+                                    {isMapLoading ? <Loader2 className="mr-2 animate-spin" /> : <Navigation className="mr-2"/>}
                                     {t('routePlanner.openInMaps')}
                                 </Button>
                             )}

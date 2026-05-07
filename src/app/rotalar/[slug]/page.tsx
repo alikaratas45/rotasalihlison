@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Loader2, Map, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Loader2, Navigation, ChevronRight } from 'lucide-react';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -119,7 +119,7 @@ export default function RouteDetailPage() {
             <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4">{route.name[typedLanguage]}</h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">{route.description[typedLanguage]}</p>
             <Button size="lg" className="mt-6" onClick={handleStartRoute} disabled={isMapLoading}>
-                {isMapLoading ? <Loader2 className="mr-2 animate-spin" /> : <Map className="mr-2" />}
+                {isMapLoading ? <Loader2 className="mr-2 animate-spin" /> : <Navigation className="mr-2" />}
                 {t('actions.startRouteOnMap')}
             </Button>
         </div>
