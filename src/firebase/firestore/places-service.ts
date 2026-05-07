@@ -40,7 +40,7 @@ export function updatePlace(
   formData: any,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !placeId || placeId === 'undefined' || placeId === '') {
+  if (!firestore || !placeId) {
     const error = new Error("Geçerli bir yer ID'si bulunamadı.");
     callbacks?.onError?.(error);
     return;
@@ -78,7 +78,7 @@ export function deletePlace(
   placeId: string,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !placeId || placeId === 'undefined' || placeId === '') {
+  if (!firestore || !placeId) {
     const error = new Error("Silinecek yerin ID'si eksik.");
     callbacks?.onError?.(error);
     return;
