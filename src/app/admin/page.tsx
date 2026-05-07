@@ -395,16 +395,14 @@ export default function AdminPage() {
                                             <FormLabel>Duraklar</FormLabel>
                                             <ScrollArea className="h-72 w-full rounded-md border p-4">
                                             {sortedPlaces.map((place, idx) => (
-                                                <FormField key={place.id || `stop-sel-${idx}`} control={addRouteForm.control} name="stops" render={({ field }) => (
-                                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
-                                                        <FormControl>
-                                                            <Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {
-                                                                return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));
-                                                            }}/>
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">{place.name.tr}</FormLabel>
-                                                    </FormItem>
-                                                )}/>
+                                                <FormItem key={place.id || `stop-sel-${idx}`} className="flex flex-row items-start space-x-3 space-y-0 mb-4">
+                                                    <FormControl>
+                                                        <Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {
+                                                            return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));
+                                                        }}/>
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">{place.name.tr}</FormLabel>
+                                                </FormItem>
                                             ))}
                                             </ScrollArea>
                                             <FormMessage />
@@ -679,12 +677,10 @@ export default function AdminPage() {
                                     <FormLabel>Duraklar</FormLabel>
                                     <ScrollArea className="h-72 w-full rounded-md border p-4">
                                     {sortedPlaces.map((place, idx) => (
-                                        <FormField key={place.id || `edit-stop-sel-${idx}`} control={editRouteForm.control} name="stops" render={({ field }) => (
-                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
-                                                <FormControl><Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));}}/></FormControl>
-                                                <FormLabel className="font-normal">{place.name.tr}</FormLabel>
-                                            </FormItem>
-                                        )}/>
+                                        <FormItem key={place.id || `edit-stop-sel-${idx}`} className="flex flex-row items-start space-x-3 space-y-0 mb-4">
+                                            <FormControl><Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));}}/></FormControl>
+                                            <FormLabel className="font-normal">{place.name.tr}</FormLabel>
+                                        </FormItem>
                                     ))}
                                     </ScrollArea><FormMessage />
                                 </FormItem>

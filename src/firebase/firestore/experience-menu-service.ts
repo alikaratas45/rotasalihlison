@@ -35,7 +35,7 @@ export function updateExperienceItem(
   itemData: ExperienceItemData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !itemId || itemId === 'undefined') {
+  if (!firestore || !itemId || itemId === 'undefined' || itemId === '') {
     const error = new Error("Geçerli bir öğe ID'si bulunamadı.");
     callbacks?.onError?.(error);
     return;
@@ -59,7 +59,7 @@ export function deleteExperienceItem(
   itemId: string,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !itemId || itemId === 'undefined') {
+  if (!firestore || !itemId || itemId === 'undefined' || itemId === '') {
     const error = new Error("Geçerli bir öğe ID'si bulunamadığı için silinemedi.");
     callbacks?.onError?.(error);
     return;
