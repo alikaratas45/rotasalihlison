@@ -22,7 +22,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       de: 'Natur and Frieden',
       ja: '自然と平和'
     },
-    icon: 'Mountain',
+    icon: 'Climbing',
     link: '/yerler?category=nature',
     order: 2
   },
