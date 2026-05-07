@@ -19,11 +19,14 @@ const FootprintsIcon = (props: LucideProps) => (
     {...props}
   >
     {/* Sol Ayak İzi */}
-    <path d="M7 9a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0V9z" />
-    <path d="M7 12h5" />
-    {/* Sağ Ayak İzi (Biraz yukarda) */}
-    <path d="M13 6a2.5 2.5 0 0 1 5 0v6a2.5 2.5 0 0 1-5 0V6z" />
-    <path d="M13 9h5" />
+    <path d="M5 15.5c0-2.5 1.3-4.5 3-4.5s3 2 3 4.5-1.3 4.5-3 4.5-3-2-3-4.5z" />
+    <path d="M5.5 14h5" />
+    <path d="M5.5 17h5" />
+    
+    {/* Sağ Ayak İzi (Biraz yukarda ve sağda) */}
+    <path d="M13 8.5c0-2.5 1.3-4.5 3-4.5s3 2 3 4.5-1.3 4.5-3 4.5-3-2-3-4.5z" />
+    <path d="M13.5 7h5" />
+    <path d="M13.5 10h5" />
   </svg>
 );
 
