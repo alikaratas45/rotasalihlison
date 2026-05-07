@@ -175,7 +175,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     });
   }, [map, places, isRoute, authFailed, startLocation, kmlUrl]);
 
-  // Professional KML Processing
+  // Professional KML Processing: Manual fetch and draw
   useEffect(() => {
     // Clear previous polylines
     polylinesRef.current.forEach(p => p.setMap(null));
@@ -247,7 +247,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     const markers: google.maps.Marker[] = [];
     const infoWindow = new window.google.maps.InfoWindow();
 
-    places.forEach(place => {
+    places.forEach((place, idx) => {
       if (!place.coordinates) return;
       const marker = new window.google.maps.Marker({
         position: place.coordinates,

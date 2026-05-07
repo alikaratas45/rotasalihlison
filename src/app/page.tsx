@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -57,12 +58,12 @@ export default function Home() {
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8">
             {experienceLoading ? Array.from({length: 6}).map((_, i) => (
-                <Card key={i} className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 h-full">
+                <Card key={`skeleton-${i}`} className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 h-full">
                     <Skeleton className="w-12 h-12 rounded-full mb-4" />
                     <Skeleton className="h-5 w-3/4" />
                 </Card>
-            )) : displayExperienceItems.map((item) => (
-              <Link href={item.link} key={item.id} className="group h-full">
+            )) : displayExperienceItems.map((item, index) => (
+              <Link href={item.link} key={item.id || `exp-${index}`} className="group h-full">
                 <Card className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 hover:bg-secondary transition-all duration-300 h-full transform hover:scale-105 hover:shadow-md border-primary/10">
                   <LucideIcon name={item.icon} className="w-12 h-12 text-primary mb-4" />
                   <h3 className="font-semibold text-center">{item.name[typedLanguage]}</h3>

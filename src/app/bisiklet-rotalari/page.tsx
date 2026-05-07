@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -56,9 +57,9 @@ export default function BisikletRotalariPage() {
             </h2>
             
             <div className="grid gap-6">
-              {routes.map((route) => (
+              {routes.map((route, idx) => (
                 <div 
-                  key={route.id} 
+                  key={route.id || `route-${idx}`} 
                   className="text-left"
                 >
                   <Card className={cn(

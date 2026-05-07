@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -345,9 +346,9 @@ export default function AdminPage() {
                             <Table>
                               <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead className="hidden md:table-cell">Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                               <TableBody>
-                                {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={i}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
-                                : sortedPlaces?.map((place) => (
-                                  <TableRow key={place.id}>
+                                {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={`p-skeleton-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                : sortedPlaces?.map((place, idx) => (
+                                  <TableRow key={place.id || `place-${idx}`}>
                                     <TableCell className="font-medium">{place.name.tr}</TableCell>
                                     <TableCell className="hidden md:table-cell"><Badge variant="secondary">{categoryLabels[place.category] || 'Diğer'}</Badge></TableCell>
                                     <TableCell className="text-right">
@@ -381,8 +382,8 @@ export default function AdminPage() {
                                         <FormItem>
                                             <FormLabel>Duraklar</FormLabel>
                                             <ScrollArea className="h-72 w-full rounded-md border p-4">
-                                            {sortedPlaces.map((place) => (
-                                                <FormField key={place.id} control={addRouteForm.control} name="stops" render={({ field }) => (
+                                            {sortedPlaces.map((place, idx) => (
+                                                <FormField key={place.id || `stop-${idx}`} control={addRouteForm.control} name="stops" render={({ field }) => (
                                                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
                                                         <FormControl>
                                                             <Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {
@@ -409,9 +410,9 @@ export default function AdminPage() {
                                 <Table>
                                     <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Durak Sayısı</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {routesLoading ? Array.from({ length: 3 }).map((_, i) => (<TableRow key={i}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell><Skeleton className="h-5 w-12" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
-                                        : routes?.map((route) => (
-                                            <TableRow key={route.id}>
+                                        {routesLoading ? Array.from({ length: 3 }).map((_, i) => (<TableRow key={`r-skeleton-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell><Skeleton className="h-5 w-12" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                        : routes?.map((route, idx) => (
+                                            <TableRow key={route.id || `route-${idx}`}>
                                                 <TableCell className="font-medium">{route.name.tr}</TableCell>
                                                 <TableCell>{route.stops.length}</TableCell>
                                                 <TableCell className="text-right">
@@ -457,9 +458,9 @@ export default function AdminPage() {
                                 <Table>
                                     <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={i}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
-                                        : experienceItems?.map((item) => (
-                                            <TableRow key={item.id}>
+                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skeleton-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                        : experienceItems?.map((item, idx) => (
+                                            <TableRow key={item.id || `exp-${idx}`}>
                                                 <TableCell>{item.order}</TableCell>
                                                 <TableCell className="font-medium">{item.name.tr}</TableCell>
                                                 <TableCell><code>{item.icon}</code></TableCell>
@@ -665,8 +666,8 @@ export default function AdminPage() {
                                 <FormItem>
                                     <FormLabel>Duraklar</FormLabel>
                                     <ScrollArea className="h-72 w-full rounded-md border p-4">
-                                    {sortedPlaces.map((place) => (
-                                        <FormField key={place.id} control={editRouteForm.control} name="stops" render={({ field }) => (
+                                    {sortedPlaces.map((place, idx) => (
+                                        <FormField key={place.id || `edit-stop-${idx}`} control={editRouteForm.control} name="stops" render={({ field }) => (
                                             <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
                                                 <FormControl><Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));}}/></FormControl>
                                                 <FormLabel className="font-normal">{place.name.tr}</FormLabel>

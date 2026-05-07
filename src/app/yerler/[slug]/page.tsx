@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -213,7 +214,7 @@ function PlaceDetailContent() {
       hasAutoplayedRef.current = true;
       const timer = setTimeout(() => {
           speak(place.description[typedLanguage], typedLanguage);
-      }, 800); // Shorter delay for faster response
+      }, 500); // Faster trigger for mobile gesture window
       return () => clearTimeout(timer);
     }
   }, [autoplay, place, placesLoading, speak, typedLanguage, mounted]);
