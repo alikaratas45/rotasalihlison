@@ -4,18 +4,6 @@ import type { ExperienceItem } from '@/lib/definitions';
 export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   {
     name: {
-      tr: 'Tarihe Yolculuk',
-      en: 'Journey to History',
-      fr: 'Voyage dans l\'Histoire',
-      de: 'Reise in die Geschichte',
-      ja: '歴史への旅'
-    },
-    icon: 'Landmark',
-    link: '/yerler?category=history',
-    order: 1
-  },
-  {
-    name: {
       tr: 'Yürüyüş Rotaları',
       en: 'Hiking Routes',
       fr: 'Itinéraires de Randonnée',
@@ -24,7 +12,31 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Climbing',
     link: '/yerler?category=nature',
+    order: 1
+  },
+  {
+    name: {
+      tr: 'Tarihe Yolculuk',
+      en: 'Journey to History',
+      fr: 'Voyage dans l\'Histoire',
+      de: 'Reise in die Geschichte',
+      ja: '歴史への旅'
+    },
+    icon: 'Landmark',
+    link: '/yerler?category=history',
     order: 2
+  },
+  {
+    name: {
+      tr: 'Doğa ve Huzur',
+      en: 'Nature and Peace',
+      fr: 'Nature et Paix',
+      de: 'Natur und Frieden',
+      ja: '自然と平和'
+    },
+    icon: 'Mountain',
+    link: '/yerler?category=nature',
+    order: 3
   },
   {
     name: {
@@ -36,7 +48,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Utensils',
     link: '/lezzetler',
-    order: 3
+    order: 4
   },
   {
     name: {
@@ -48,7 +60,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'MapPinned',
     link: '/rota-olustur',
-    order: 4
+    order: 5
   },
   {
     name: {
@@ -60,7 +72,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'BookOpen',
     link: '/hikayeler',
-    order: 5
+    order: 6
   },
   {
     name: {
@@ -72,6 +84,6 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Bike',
     link: '/bisiklet-rotalari',
-    order: 6
+    order: 7
   }
 ];

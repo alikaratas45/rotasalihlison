@@ -530,37 +530,37 @@ export default function AdminPage() {
                                         <CardTitle className="text-2xl flex items-center gap-2"><Users className="h-5 w-5 text-primary" />{stats?.total}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-clean">
+                                <Card key="stat-clean" className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Temizlik Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgCleanliness || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-access">
+                                <Card key="stat-access" className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Erişim Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgAccessibility || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-satis">
+                                <Card key="stat-satis" className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Memnuniyet Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgSatisfaction || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-tour">
+                                <Card key="stat-tour" className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Turla Gelen</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.tourCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-guide">
+                                <Card key="stat-guide" className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Rehberli</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.guidedCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-info">
+                                <Card key="stat-info" className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Bilgi Panosu</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.infoBoardsCount}</CardTitle>

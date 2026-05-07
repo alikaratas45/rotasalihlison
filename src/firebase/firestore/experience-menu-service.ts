@@ -60,7 +60,7 @@ export function deleteExperienceItem(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore || !itemId || itemId === 'undefined' || itemId === '') {
-    const error = new Error("Geçerli bir öğe ID'si bulunamadığı için silinemedi.");
+    const error = new Error("Geçerli bir öğe ID'si bulunmadığı için silinemedi.");
     callbacks?.onError?.(error);
     return;
   }

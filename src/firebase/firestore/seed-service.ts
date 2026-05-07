@@ -82,10 +82,10 @@ export async function seedDatabase(firestore: Firestore): Promise<{
 
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);
   
-  // Experience items seeding with icon fix
+  // Experience items seeding with icon fix and visual order mapping
   const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})), (item) => {
-      // Fix hiking icon if it was previously set to something else
-      if (item.link.includes('category=nature')) {
+      // Ensure "Hiking Routes" has the custom Climbing icon (footprints)
+      if (item.name.tr === 'Yürüyüş Rotaları') {
           return { ...item, icon: 'Climbing' };
       }
       return item;
