@@ -86,7 +86,7 @@ const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
 const LocalizedFormFields = ({ form, fieldNames }: { form: any, fieldNames: Array<'name' | 'slug' | 'description'> }) => (
     <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
         {languages.map((lang) => (
-            <AccordionItem value={lang} key={lang}>
+            <AccordionItem value={lang} key={`lang-acc-${lang}`}>
                 <AccordionTrigger>{languageNames[lang]}</AccordionTrigger>
                 <AccordionContent className="space-y-4">
                     {fieldNames.includes('name') && <FormField control={form.control} name={`name.${lang}`} render={({ field }) => (
@@ -360,7 +360,7 @@ export default function AdminPage() {
                               <TableBody>
                                 {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={`p-skel-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                 : sortedPlaces?.map((place, idx) => (
-                                  <TableRow key={place.id || `place-${idx}`}>
+                                  <TableRow key={place.id || `place-row-${idx}`}>
                                     <TableCell className="font-medium">{place.name.tr}</TableCell>
                                     <TableCell className="hidden md:table-cell"><Badge variant="secondary">{categoryLabels[place.category] || 'Diğer'}</Badge></TableCell>
                                     <TableCell className="text-right">
@@ -422,7 +422,7 @@ export default function AdminPage() {
                                     <TableBody>
                                         {routesLoading ? Array.from({ length: 3 }).map((_, i) => (<TableRow key={`r-skel-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell><Skeleton className="h-5 w-12" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                         : routes?.map((route, idx) => (
-                                            <TableRow key={route.id || `route-${idx}`}>
+                                            <TableRow key={route.id || `route-row-${idx}`}>
                                                 <TableCell className="font-medium">{route.name.tr}</TableCell>
                                                 <TableCell>{route.stops.length}</TableCell>
                                                 <TableCell className="text-right">
@@ -470,7 +470,7 @@ export default function AdminPage() {
                                     <TableBody>
                                         {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skel-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                         : experienceItems?.map((item, idx) => (
-                                            <TableRow key={item.id || `exp-row-${idx}`}>
+                                            <TableRow key={item.id || `exp-row-id-${idx}`}>
                                                 <TableCell>{item.order}</TableCell>
                                                 <TableCell className="font-medium">{item.name.tr}</TableCell>
                                                 <TableCell><code>{item.icon}</code></TableCell>
@@ -504,7 +504,7 @@ export default function AdminPage() {
                                 <SelectContent>
                                     <SelectItem value="all">Tüm Mekanlar</SelectItem>
                                     {sortedPlaces.map((place, idx) => (
-                                        <SelectItem key={place.id || `fb-place-${idx}`} value={place.id}>{place.name.tr}</SelectItem>
+                                        <SelectItem key={place.id || `fb-place-sel-${idx}`} value={place.id}>{place.name.tr}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -591,7 +591,7 @@ export default function AdminPage() {
                                             </TableHeader>
                                             <TableBody>
                                                 {filteredFeedbacks.map((f, index) => (
-                                                    <TableRow key={f.id || `feedback-${index}`}>
+                                                    <TableRow key={f.id || `feedback-row-${index}`}>
                                                         <TableCell className="font-medium flex items-center gap-2">
                                                             <MapPin className="h-3 w-3 text-muted-foreground" />
                                                             {f.placeName}

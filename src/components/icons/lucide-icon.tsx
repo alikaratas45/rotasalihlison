@@ -4,12 +4,10 @@ import * as icons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import React from 'react';
 
-// Gönderilen görsele uygun ayak izi (Footprints) simgesi
+// İsteğe özel ayak izi (Footprints) simgesi
 const FootprintsIcon = (props: LucideProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -19,14 +17,14 @@ const FootprintsIcon = (props: LucideProps) => (
     {...props}
   >
     {/* Sol Ayak İzi */}
-    <path d="M5 15.5c0-2.5 1.3-4.5 3-4.5s3 2 3 4.5-1.3 4.5-3 4.5-3-2-3-4.5z" />
-    <path d="M5.5 14h5" />
-    <path d="M5.5 17h5" />
+    <path d="M4 15c0-2.2 1.3-4 3-4s3 1.8 3 4-1.3 4-3 4-3-1.8-3-4z" />
+    <line x1="4.5" y1="13.5" x2="9.5" y2="13.5" />
+    <line x1="4.5" y1="16.5" x2="9.5" y2="16.5" />
     
     {/* Sağ Ayak İzi (Biraz yukarda ve sağda) */}
-    <path d="M13 8.5c0-2.5 1.3-4.5 3-4.5s3 2 3 4.5-1.3 4.5-3 4.5-3-2-3-4.5z" />
-    <path d="M13.5 7h5" />
-    <path d="M13.5 10h5" />
+    <path d="M14 9c0-2.2 1.3-4 3-4s3 1.8 3 4-1.3 4-3 4-3-1.8-3-4z" />
+    <line x1="14.5" y1="7.5" x2="19.5" y2="7.5" />
+    <line x1="14.5" y1="10.5" x2="19.5" y2="10.5" />
   </svg>
 );
 
