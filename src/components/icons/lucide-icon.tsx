@@ -4,7 +4,7 @@ import * as icons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import React from 'react';
 
-// Custom Hiker / Climbing Icon
+// Özel Dağcı / Yürüyüşçü İkonu
 const HikerIcon = (props: LucideProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -28,9 +28,7 @@ const HikerIcon = (props: LucideProps) => (
   </svg>
 );
 
-// This is a workaround for the fact that TS cannot handle the dynamic import of icons.
-// All available icons in lucide-react are listed here.
-// You can find the list of icons at https://lucide.dev/
+// Lucide ikon listesine 'Climbing' adıyla dağcı figürünü ekliyoruz.
 // @ts-ignore
 const iconMap: { [key: string]: React.FC<LucideProps> } = {
   ...icons,
@@ -47,7 +45,7 @@ export const LucideIcon = ({ name, ...props }: LucideIconProps) => {
   const Icon = iconMap[name];
 
   if (!Icon) {
-    // Return a default icon or null if the icon name is not found
+    // İkon bulunamazsa varsayılan olarak HelpCircle döner
     return <icons.HelpCircle {...props} />;
   }
 
