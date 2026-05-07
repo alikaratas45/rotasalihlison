@@ -4,7 +4,7 @@ import * as icons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import React from 'react';
 
-// Özel Dağcı / Yürüyüşçü İkonu (Daha temiz ve dengeli tasarım)
+// Daha temiz ve estetik bir dağcı/yürüyüşçü simgesi
 const HikerIcon = (props: LucideProps) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -18,14 +18,14 @@ const HikerIcon = (props: LucideProps) => (
     strokeLinejoin="round"
     {...props}
   >
-    {/* Baş */}
-    <circle cx="13" cy="4" r="2" />
+    {/* Kafa */}
+    <circle cx="13" cy="5" r="1" />
     {/* Gövde ve Bacaklar */}
-    <path d="m13 6-3 3v5l-2 3v5" />
-    <path d="M13 11l3 3v5" />
+    <path d="m13 6-2 3v4l-2 3v4" />
+    <path d="M11 13l3 4v4" />
     {/* Kollar */}
     <path d="m13 8-4-1-2 2" />
-    <path d="m13 8 4 1 2 3" />
+    <path d="m13 8 4 1 1 2" />
     {/* Yürüyüş Batonu */}
     <path d="M7 4v16" />
   </svg>
