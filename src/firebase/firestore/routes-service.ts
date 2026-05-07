@@ -11,6 +11,11 @@ export function addRoute(
   routeData: RouteData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
+  if (!firestore) {
+    const error = new Error("Firestore instance is missing.");
+    callbacks?.onError?.(error);
+    return;
+  }
   const routesCollection = collection(firestore, 'routes');
   addDoc(routesCollection, routeData)
     .then(() => callbacks?.onSuccess?.())
@@ -32,6 +37,11 @@ export function updateRoute(
   routeData: RouteData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
+  if (!firestore || !routeId) {
+    const error = new Error("Firestore instance or routeId is missing.");
+    callbacks?.onError?.(error);
+    return;
+  }
   const routeDocRef = doc(firestore, 'routes', routeId);
   updateDoc(routeDocRef, routeData)
     .then(() => callbacks?.onSuccess?.())
@@ -52,6 +62,11 @@ export function deleteRoute(
   routeId: string,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
+  if (!firestore || !routeId) {
+    const error = new Error("Firestore instance or routeId is missing.");
+    callbacks?.onError?.(error);
+    return;
+  }
   const routeDocRef = doc(firestore, 'routes', routeId);
   deleteDoc(routeDocRef)
     .then(() => callbacks?.onSuccess?.())

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -236,7 +235,10 @@ export default function AdminPage() {
         addPlace(firestore, newPlace, createApiCallbacks("Yer", () => addPlaceForm.reset(defaultPlaceValues)));
     }
     function onEditPlaceSubmit(values: PlaceFormData) {
-        if (!editingPlace) return;
+        if (!editingPlace || !editingPlace.id) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Düzenlenecek yer ID\'si bulunamadı.' });
+            return;
+        }
         setIsSubmitting(true);
         updatePlace(firestore, editingPlace.id, values, createApiCallbacks("Yer", () => setEditingPlace(null)));
     }
@@ -245,7 +247,10 @@ export default function AdminPage() {
         addRoute(firestore, values, createApiCallbacks("Rota", () => addRouteForm.reset(defaultRouteValues)));
     }
     function onEditRouteSubmit(values: RouteFormData) {
-        if (!editingRoute) return;
+        if (!editingRoute || !editingRoute.id) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Düzenlenecek rota ID\'si bulunamadı.' });
+            return;
+        }
         setIsSubmitting(true);
         updateRoute(firestore, editingRoute.id, values, createApiCallbacks("Rota", () => setEditingRoute(null)));
     }
@@ -254,7 +259,10 @@ export default function AdminPage() {
         addExperienceItem(firestore, values, createApiCallbacks("Deneyim Öğesi", () => addExperienceItemForm.reset(defaultExperienceItemValues)));
     }
     function onEditExperienceItemSubmit(values: ExperienceItemFormData) {
-        if (!editingExperienceItem) return;
+        if (!editingExperienceItem || !editingExperienceItem.id) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Düzenlenecek öğe ID\'si bulunamadı.' });
+            return;
+        }
         setIsSubmitting(true);
         updateExperienceItem(firestore, editingExperienceItem.id, values, createApiCallbacks("Deneyim Öğesi", () => setEditingExperienceItem(null)));
     }
@@ -266,7 +274,7 @@ export default function AdminPage() {
         setDeletingEntity: (entity: T | null) => void,
         entityName: string
     ) => {
-        if (!entity) return;
+        if (!entity || !entity.id) return;
         deleteFn(firestore, entity.id, {
             onSuccess: () => {
                 toast({ title: 'Başarılı!', description: `"${entity.name.tr}" silindi.` });

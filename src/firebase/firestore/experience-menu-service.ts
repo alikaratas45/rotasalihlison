@@ -11,6 +11,11 @@ export function addExperienceItem(
   itemData: ExperienceItemData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
+  if (!firestore) {
+    const error = new Error("Firestore instance is missing.");
+    callbacks?.onError?.(error);
+    return;
+  }
   const itemsCollection = collection(firestore, 'experience-items');
   addDoc(itemsCollection, itemData)
     .then(() => callbacks?.onSuccess?.())
@@ -32,6 +37,11 @@ export function updateExperienceItem(
   itemData: ExperienceItemData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
+  if (!firestore || !itemId) {
+    const error = new Error("Firestore instance or itemId is missing.");
+    callbacks?.onError?.(error);
+    return;
+  }
   const itemDocRef = doc(firestore, 'experience-items', itemId);
   updateDoc(itemDocRef, itemData)
     .then(() => callbacks?.onSuccess?.())
@@ -52,6 +62,11 @@ export function deleteExperienceItem(
   itemId: string,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
+  if (!firestore || !itemId) {
+    const error = new Error("Firestore instance or itemId is missing.");
+    callbacks?.onError?.(error);
+    return;
+  }
   const itemDocRef = doc(firestore, 'experience-items', itemId);
   deleteDoc(itemDocRef)
     .then(() => callbacks?.onSuccess?.())
