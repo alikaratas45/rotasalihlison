@@ -12,15 +12,13 @@ export function addExperienceItem(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore) {
-    const error = new Error("Firestore instance is missing.");
-    callbacks?.onError?.(error);
+    callbacks?.onError?.(new Error("Firestore instance missing"));
     return;
   }
   const itemsCollection = collection(firestore, 'experience-items');
   addDoc(itemsCollection, itemData)
     .then(() => callbacks?.onSuccess?.())
     .catch((serverError) => {
-      console.error('Error adding document: ', serverError);
       const permissionError = new FirestorePermissionError({
         path: 'experience-items',
         operation: 'create',
@@ -37,8 +35,9 @@ export function updateExperienceItem(
   itemData: ExperienceItemData,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !itemId) {
+  if (!firestore || !itemId || itemId === 'undefined') {
     const error = new Error("Geçerli bir öğe ID'si bulunamadı.");
+    console.error("updateExperienceItem error:", error);
     callbacks?.onError?.(error);
     return;
   }
@@ -46,7 +45,6 @@ export function updateExperienceItem(
   updateDoc(itemDocRef, itemData)
     .then(() => callbacks?.onSuccess?.())
     .catch((serverError) => {
-      console.error(`Error updating document ${itemId}: `, serverError);
       const permissionError = new FirestorePermissionError({
         path: itemDocRef.path,
         operation: 'update',
@@ -62,8 +60,9 @@ export function deleteExperienceItem(
   itemId: string,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-  if (!firestore || !itemId) {
-    const error = new Error("Silinecek öğenin ID'si eksik.");
+  if (!firestore || !itemId || itemId === 'undefined') {
+    const error = new Error("Geçerli bir öğe ID'si bulunamadığı için silinemedi.");
+    console.error("deleteExperienceItem error:", error);
     callbacks?.onError?.(error);
     return;
   }
@@ -71,7 +70,6 @@ export function deleteExperienceItem(
   deleteDoc(itemDocRef)
     .then(() => callbacks?.onSuccess?.())
     .catch((serverError) => {
-      console.error(`Error deleting document ${itemId}: `, serverError);
       const permissionError = new FirestorePermissionError({
         path: itemDocRef.path,
         operation: 'delete',

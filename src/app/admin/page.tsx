@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -26,7 +26,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, PlusCircle, Star, Users, MapPin, CheckCircle2, XCircle, Download, Info } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Star, Users, MapPin, CheckCircle2, XCircle, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -268,17 +268,18 @@ export default function AdminPage() {
     }
 
     // --- Deletion Handlers ---
-    const handleDelete = <T extends { id: string; name: { tr: string } }>(
+    const handleDelete = <T extends { id?: string; name: { tr: string } }>(
         entity: T | null,
         deleteFn: (db: any, id: string, callbacks: any) => void,
         setDeletingEntity: (entity: T | null) => void,
         entityName: string
     ) => {
-        if (!entity || !entity.id) {
-            toast({ variant: 'destructive', title: 'Hata', description: `${entityName} ID'si bulunamadığı için silinemiyor.` });
+        const id = entity?.id;
+        if (!entity || !id) {
+            toast({ variant: 'destructive', title: 'Hata', description: `${entityName} ID'si bulunmadığı için silinemiyor.` });
             return;
         }
-        deleteFn(firestore, entity.id, {
+        deleteFn(firestore, id, {
             onSuccess: () => {
                 toast({ title: 'Başarılı!', description: `"${entity.name.tr}" silindi.` });
                 setDeletingEntity(null);
@@ -357,7 +358,7 @@ export default function AdminPage() {
                             <Table>
                               <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead className="hidden md:table-cell">Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                               <TableBody>
-                                {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={`p-skeleton-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={`p-skel-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                 : sortedPlaces?.map((place, idx) => (
                                   <TableRow key={place.id || `place-${idx}`}>
                                     <TableCell className="font-medium">{place.name.tr}</TableCell>
@@ -366,8 +367,8 @@ export default function AdminPage() {
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /><span className="sr-only">Menü</span></Button></DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                          <DropdownMenuItem onSelect={() => setEditingPlace(place)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
-                                          <DropdownMenuItem onSelect={() => setDeletingPlace(place)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => setEditingPlace(place)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => setDeletingPlace(place)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
                                     </TableCell>
@@ -394,7 +395,7 @@ export default function AdminPage() {
                                             <FormLabel>Duraklar</FormLabel>
                                             <ScrollArea className="h-72 w-full rounded-md border p-4">
                                             {sortedPlaces.map((place, idx) => (
-                                                <FormField key={place.id || `stop-${idx}`} control={addRouteForm.control} name="stops" render={({ field }) => (
+                                                <FormField key={place.id || `stop-sel-${idx}`} control={addRouteForm.control} name="stops" render={({ field }) => (
                                                     <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
                                                         <FormControl>
                                                             <Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {
@@ -421,7 +422,7 @@ export default function AdminPage() {
                                 <Table>
                                     <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Durak Sayısı</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {routesLoading ? Array.from({ length: 3 }).map((_, i) => (<TableRow key={`r-skeleton-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell><Skeleton className="h-5 w-12" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                        {routesLoading ? Array.from({ length: 3 }).map((_, i) => (<TableRow key={`r-skel-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell><Skeleton className="h-5 w-12" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                         : routes?.map((route, idx) => (
                                             <TableRow key={route.id || `route-${idx}`}>
                                                 <TableCell className="font-medium">{route.name.tr}</TableCell>
@@ -430,8 +431,8 @@ export default function AdminPage() {
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem onSelect={() => setEditingRoute(route)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
-                                                            <DropdownMenuItem onSelect={() => setDeletingRoute(route)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => setEditingRoute(route)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => setDeletingRoute(route)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>
@@ -469,9 +470,9 @@ export default function AdminPage() {
                                 <Table>
                                     <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skeleton-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skel-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                         : experienceItems?.map((item, idx) => (
-                                            <TableRow key={item.id || `exp-${idx}`}>
+                                            <TableRow key={item.id || `exp-row-${idx}`}>
                                                 <TableCell>{item.order}</TableCell>
                                                 <TableCell className="font-medium">{item.name.tr}</TableCell>
                                                 <TableCell><code>{item.icon}</code></TableCell>
@@ -479,8 +480,8 @@ export default function AdminPage() {
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem onSelect={() => setEditingExperienceItem(item)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
-                                                            <DropdownMenuItem onSelect={() => setDeletingExperienceItem(item)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => setEditingExperienceItem(item)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => setDeletingExperienceItem(item)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>
@@ -505,7 +506,7 @@ export default function AdminPage() {
                                 <SelectContent>
                                     <SelectItem value="all">Tüm Mekanlar</SelectItem>
                                     {sortedPlaces.map(place => (
-                                        <SelectItem key={place.id} value={place.id}>{place.name.tr}</SelectItem>
+                                        <SelectItem key={place.id || `fb-place-${place.name.tr}`} value={place.id}>{place.name.tr}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -678,7 +679,7 @@ export default function AdminPage() {
                                     <FormLabel>Duraklar</FormLabel>
                                     <ScrollArea className="h-72 w-full rounded-md border p-4">
                                     {sortedPlaces.map((place, idx) => (
-                                        <FormField key={place.id || `edit-stop-${idx}`} control={editRouteForm.control} name="stops" render={({ field }) => (
+                                        <FormField key={place.id || `edit-stop-sel-${idx}`} control={editRouteForm.control} name="stops" render={({ field }) => (
                                             <FormItem className="flex flex-row items-start space-x-3 space-y-0 mb-4">
                                                 <FormControl><Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));}}/></FormControl>
                                                 <FormLabel className="font-normal">{place.name.tr}</FormLabel>

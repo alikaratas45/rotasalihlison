@@ -1,7 +1,6 @@
-// IMPORTANT: This file is a work in progress and should not be used in production.
 'use client';
 import { type Query } from 'firebase/firestore';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useCollection as useFirebaseCollection } from 'react-firebase-hooks/firestore';
 
 export const useCollection = <T,>(
   query: Query | null
@@ -10,14 +9,14 @@ export const useCollection = <T,>(
   loading: boolean;
   error: Error | null;
 } => {
-  // react-firebase-hooks' useCollectionData is stable and handles connection state.
-  // The idField option automatically includes the document ID in the data.
-  const [data, loading, error] = useCollectionData<T & { id: string }>(
-    query as Query<T & { id: string }>,
-    {
-      idField: 'id',
-    }
-  );
+  const [snapshot, loading, error] = useFirebaseCollection(query);
 
-  return { data: data || null, loading, error: error || null };
+  const data = snapshot
+    ? snapshot.docs.map((doc) => ({
+        ...(doc.data() as T),
+        id: doc.id,
+      }))
+    : null;
+
+  return { data, loading, error: error || null };
 };

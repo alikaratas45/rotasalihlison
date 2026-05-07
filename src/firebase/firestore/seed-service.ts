@@ -1,4 +1,3 @@
-
 'use client';
 import { collection, doc, getDoc, setDoc, deleteDoc, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -82,7 +81,15 @@ export async function seedDatabase(firestore: Firestore): Promise<{
   });
 
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);
-  const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})));
+  
+  // Experience items seeding with icon fix
+  const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})), (item) => {
+      // Fix hiking icon if it was previously set to something else
+      if (item.link.includes('category=nature')) {
+          return { ...item, icon: 'Climbing' };
+      }
+      return item;
+  });
   
   if (placesResult.errors > 0 || routesResult.errors > 0 || experienceResult.errors > 0) {
       throw new Error("Veritabanı beslenirken bir veya daha fazla hata oluştu.");
