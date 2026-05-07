@@ -37,15 +37,15 @@ export function addPlace(
 export function updatePlace(
   firestore: Firestore,
   placeId: string,
-  formData: any, // The type is enforced by zod in the page
+  formData: any,
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
-    if (!firestore || !placeId) {
-        const error = new Error("Firestore instance or placeId is missing.");
-        console.error("Error in updatePlace:", error);
-        callbacks?.onError?.(error);
-        return;
-    }
+  if (!firestore || !placeId) {
+    const error = new Error("Geçerli bir yer ID'si bulunamadı.");
+    console.error("Error in updatePlace:", error);
+    callbacks?.onError?.(error);
+    return;
+  }
   const placeDocRef = doc(firestore, 'places', placeId);
 
   const updatedData = {
@@ -80,7 +80,7 @@ export function deletePlace(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore || !placeId) {
-    const error = new Error("Firestore instance or placeId is missing.");
+    const error = new Error("Silinecek yerin ID'si eksik.");
     console.error("Error in deletePlace:", error);
     callbacks?.onError?.(error);
     return;

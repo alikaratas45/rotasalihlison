@@ -38,7 +38,7 @@ export function updateExperienceItem(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore || !itemId) {
-    const error = new Error("Firestore instance or itemId is missing.");
+    const error = new Error("Geçerli bir öğe ID'si bulunamadı.");
     callbacks?.onError?.(error);
     return;
   }
@@ -63,7 +63,7 @@ export function deleteExperienceItem(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore || !itemId) {
-    const error = new Error("Firestore instance or itemId is missing.");
+    const error = new Error("Silinecek öğenin ID'si eksik.");
     callbacks?.onError?.(error);
     return;
   }

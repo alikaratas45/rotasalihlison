@@ -38,7 +38,7 @@ export function updateRoute(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore || !routeId) {
-    const error = new Error("Firestore instance or routeId is missing.");
+    const error = new Error("Geçerli bir rota ID'si bulunamadı.");
     callbacks?.onError?.(error);
     return;
   }
@@ -63,7 +63,7 @@ export function deleteRoute(
   callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
 ) {
   if (!firestore || !routeId) {
-    const error = new Error("Firestore instance or routeId is missing.");
+    const error = new Error("Silinecek rotanın ID'si eksik.");
     callbacks?.onError?.(error);
     return;
   }

@@ -274,7 +274,10 @@ export default function AdminPage() {
         setDeletingEntity: (entity: T | null) => void,
         entityName: string
     ) => {
-        if (!entity || !entity.id) return;
+        if (!entity || !entity.id) {
+            toast({ variant: 'destructive', title: 'Hata', description: `${entityName} ID'si bulunamadığı için silinemiyor.` });
+            return;
+        }
         deleteFn(firestore, entity.id, {
             onSuccess: () => {
                 toast({ title: 'Başarılı!', description: `"${entity.name.tr}" silindi.` });
