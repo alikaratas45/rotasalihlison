@@ -197,16 +197,17 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
         
-        const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
+        // Use querySelectorAll to be more robust across different namespaces
+        const coordinatesElements = xmlDoc.querySelectorAll('coordinates');
         const bounds = new google.maps.LatLngBounds();
         let hasPath = false;
 
-        for (let i = 0; i < coordinatesElements.length; i++) {
-          const coordString = coordinatesElements[i].textContent?.trim();
+        coordinatesElements.forEach((element) => {
+          const coordString = element.textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
             // Split by any whitespace including newlines and tabs
-            const points = coordString.split(/\s+/).filter(p => p.trim());
+            const points = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
             
             points.forEach(p => {
               const parts = p.split(',');
@@ -234,7 +235,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
               hasPath = true;
             }
           }
-        }
+        });
 
         if (hasPath && !bounds.isEmpty()) {
           map.fitBounds(bounds);
