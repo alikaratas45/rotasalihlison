@@ -1,11 +1,12 @@
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { PlacesMap } from '@/components/places-map';
 import { Bike, Navigation, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BicycleRoute {
   id: string;
@@ -18,6 +19,8 @@ interface BicycleRoute {
 
 export default function BisikletRotalariPage() {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
+  const mapSectionRef = useRef<HTMLDivElement>(null);
   
   const routes: BicycleRoute[] = [
     {
@@ -57,6 +60,13 @@ export default function BisikletRotalariPage() {
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
+  const handleRouteClick = (id: string) => {
+    setSelectedRouteId(id);
+    if (isMobile) {
+      mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <div className="container mx-auto px-4 py-8 md:py-12">
@@ -81,7 +91,7 @@ export default function BisikletRotalariPage() {
               {routes.map((route) => (
                 <button 
                   key={route.id} 
-                  onClick={() => setSelectedRouteId(route.id)}
+                  onClick={() => handleRouteClick(route.id)}
                   className="text-left w-full transition-transform active:scale-95"
                 >
                   <Card className={cn(
@@ -124,7 +134,7 @@ export default function BisikletRotalariPage() {
           </div>
 
           {/* Map Section */}
-          <div className="space-y-6">
+          <div className="space-y-6" ref={mapSectionRef}>
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
               <Navigation className="h-5 w-5 text-primary" />
               Rota Haritası
