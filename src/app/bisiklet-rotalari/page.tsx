@@ -34,7 +34,7 @@ export default function BisikletRotalariPage() {
       distance: '35,20 km',
       description: "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur.",
       kmlUrl: '/salihli-alasehir.kml',
-      wikilocId: '' 
+      wikilocId: '167004910' 
     }
   ];
 
