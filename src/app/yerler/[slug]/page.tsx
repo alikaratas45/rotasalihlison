@@ -318,7 +318,7 @@ function PlaceDetailContent() {
             <div className="mt-16 clear-both">
                 <div className="flex items-center gap-3 mb-8 border-b pb-4">
                     <MapPinned className="h-6 w-6 text-primary" />
-                    <h2 className="text-2xl font-bold font-headline">Mekan İçindeki Özel Noktalar</h2>
+                    <h2 className="text-2xl font-bold font-headline">Mekanın Bölümleri</h2>
                 </div>
                 <div className="grid gap-8">
                     {place.subPoints.map((sub) => (

@@ -77,6 +77,12 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     }
 
     data.coordinates = place.coordinates;
+    
+    // Alt noktaları (subPoints) her zaman senkronize et
+    if (place.subPoints) {
+      data.subPoints = place.subPoints;
+    }
+
     return data;
   });
 

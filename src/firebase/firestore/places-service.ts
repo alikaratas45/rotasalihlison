@@ -1,5 +1,5 @@
 'use client';
-import { collection, addDoc, doc, updateDoc, deleteDoc, type Firestore } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, deleteDoc, type Firestore, getDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import type { Place } from '@/lib/definitions';
@@ -34,7 +34,7 @@ export function addPlace(
     });
 }
 
-export function updatePlace(
+export async function updatePlace(
   firestore: Firestore,
   placeId: string,
   formData: any,
@@ -45,32 +45,41 @@ export function updatePlace(
     callbacks?.onError?.(error);
     return;
   }
+  
   const placeDocRef = doc(firestore, 'places', placeId);
 
-  const updatedData = {
-    name: formData.name,
-    slug: formData.slug,
-    description: formData.description,
-    category: formData.category,
-    coordinates: { lat: formData.lat, lng: formData.lng },
-    imageUrl: formData.imageUrl,
-    imageHint: formData.imageHint,
-  };
+  try {
+    // Mevcut veriyi çekip subPoints gibi formda olmayan alanları koruyalım
+    const currentSnap = await getDoc(placeDocRef);
+    const currentData = currentSnap.exists() ? currentSnap.data() : {};
 
-  updateDoc(placeDocRef, updatedData)
-    .then(() => {
-      callbacks?.onSuccess?.();
-    })
-    .catch((serverError) => {
-      console.error(`Error updating document ${placeId}: `, serverError);
-      const permissionError = new FirestorePermissionError({
-        path: placeDocRef.path,
-        operation: 'update',
-        requestResourceData: updatedData,
-      });
-      errorEmitter.emit('permission-error', permissionError);
-      callbacks?.onError?.(serverError);
+    const updatedData: any = {
+      name: formData.name,
+      slug: formData.slug,
+      description: formData.description,
+      category: formData.category,
+      coordinates: { lat: formData.lat, lng: formData.lng },
+      imageUrl: formData.imageUrl,
+      imageHint: formData.imageHint,
+    };
+
+    // Eğer mevcut veride subPoints varsa ve formda yoksa koru
+    if (currentData.subPoints) {
+      updatedData.subPoints = currentData.subPoints;
+    }
+
+    await updateDoc(placeDocRef, updatedData);
+    callbacks?.onSuccess?.();
+  } catch (serverError: any) {
+    console.error(`Error updating document ${placeId}: `, serverError);
+    const permissionError = new FirestorePermissionError({
+      path: placeDocRef.path,
+      operation: 'update',
+      requestResourceData: formData,
     });
+    errorEmitter.emit('permission-error', permissionError);
+    callbacks?.onError?.(serverError);
+  }
 }
 
 export function deletePlace(
