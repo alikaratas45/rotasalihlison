@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -16,6 +15,7 @@ import type { Place, SubPoint } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Survey } from '@/components/survey';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371000;
