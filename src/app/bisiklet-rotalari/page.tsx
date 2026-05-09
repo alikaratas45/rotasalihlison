@@ -35,6 +35,14 @@ export default function BisikletRotalariPage() {
       description: "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur.",
       kmlUrl: '/salihli-alasehir.kml',
       wikilocId: '167004910' 
+    },
+    {
+      id: 'kursunlu-marmara-1',
+      name: 'Kurşunlu-Marmara Bisiklet Rotası',
+      distance: '45,80 km',
+      description: "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına kadar uzanan, eşsiz doğa manzaraları sunan geniş kapsamlı bir bisiklet parkuru.",
+      kmlUrl: '/kursunlu-marmara.kml',
+      wikilocId: '35690357'
     }
   ];
 
