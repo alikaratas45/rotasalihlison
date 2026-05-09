@@ -35,6 +35,14 @@ export default function YuruyusRotalariPage() {
       description: "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru.",
       kmlUrl: '/kursunlu-allahdiyen.kml',
       wikilocId: '163454363' 
+    },
+    {
+      id: 'kayabasi-walking-1',
+      name: 'Salihli Kayabaşı Yürüyüş Rotası',
+      distance: '9,50 km',
+      description: "Salihli'nin Kayabaşı mevkiinde, doğa ile iç içe, muazzam manzaralar ve kaya oluşumları sunan huzurlu bir yürüyüş parkuru.",
+      kmlUrl: '/kayabasi.kml',
+      wikilocId: '67911227'
     }
   ];
 
