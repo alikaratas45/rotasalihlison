@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -177,13 +176,17 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
 
   // Professional KML Processing: Manual fetch and draw
   useEffect(() => {
-    // Clear previous polylines
-    polylinesRef.current.forEach(p => p.setMap(null));
-    polylinesRef.current = [];
-
-    if (!map || !kmlUrl || authFailed) return;
+    if (!map || !kmlUrl || authFailed) {
+        polylinesRef.current.forEach(p => p.setMap(null));
+        polylinesRef.current = [];
+        return;
+    }
 
     const processKml = async () => {
+      // Clear previous polylines before starting new fetch
+      polylinesRef.current.forEach(p => p.setMap(null));
+      polylinesRef.current = [];
+
       try {
         const response = await fetch(kmlUrl);
         if (!response.ok) {
@@ -202,11 +205,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
           const coordString = coordinatesElements[i].textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
-            // Handle various possible separators in KML (spaces, newlines, tabs)
-            const points = coordString.split(/[\s\n\t]+/);
+            // Split by any whitespace including newlines and tabs
+            const points = coordString.split(/\s+/).filter(p => p.trim());
             
             points.forEach(p => {
-              if (!p) return;
               const parts = p.split(',');
               if (parts.length >= 2) {
                 const lng = parseFloat(parts[0]);
@@ -234,7 +236,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
           }
         }
 
-        if (hasPath) {
+        if (hasPath && !bounds.isEmpty()) {
           map.fitBounds(bounds);
         }
       } catch (error) {

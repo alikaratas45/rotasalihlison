@@ -33,8 +33,8 @@ export default function BisikletRotalariPage() {
       name: 'Salihli-Alaşehir Bisiklet Rotası',
       distance: '35,20 km',
       description: "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur.",
-      kmlUrl: '/Salihli-alasehir.kml',
-      wikilocId: '' // Kod bekleniyor
+      kmlUrl: '/salihli-alasehir.kml',
+      wikilocId: '' 
     }
   ];
 
@@ -118,7 +118,7 @@ export default function BisikletRotalariPage() {
                     places={[]} 
                     className="w-full h-full" 
                     kmlUrl={activeRoute.kmlUrl}
-                    key={activeRoute.id} // Re-mount map when route changes
+                    key={activeRoute.id} 
                 />
             </div>
             <p className="text-xs text-muted-foreground italic text-center">
