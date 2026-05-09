@@ -183,33 +183,33 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     }
 
     const processKml = async () => {
-      // Clear previous polylines before starting new fetch
+      // Clear previous polylines
       polylinesRef.current.forEach(p => p.setMap(null));
       polylinesRef.current = [];
 
       try {
         const response = await fetch(kmlUrl);
         if (!response.ok) {
-          console.warn(`KML file not found at ${kmlUrl}. Skipping KML processing.`);
+          console.warn(`KML file not found at ${kmlUrl}`);
           return;
         }
         const kmlText = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
         
-        // Use querySelectorAll to be more robust across different namespaces
-        const coordinatesElements = xmlDoc.querySelectorAll('coordinates');
+        // Use getElementsByTagName to be agnostic about XML namespaces
+        const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
         const bounds = new google.maps.LatLngBounds();
         let hasPath = false;
 
-        coordinatesElements.forEach((element) => {
+        Array.from(coordinatesElements).forEach((element) => {
           const coordString = element.textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
-            // Split by any whitespace including newlines and tabs
-            const points = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
+            // Robust coordinate splitting: handles spaces, newlines, and tabs
+            const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
             
-            points.forEach(p => {
+            rawPoints.forEach(p => {
               const parts = p.split(',');
               if (parts.length >= 2) {
                 const lng = parseFloat(parts[0]);
@@ -228,7 +228,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
                 geodesic: true,
                 strokeColor: '#1A237E', // Dark Blue
                 strokeOpacity: 0.9,
-                strokeWeight: 8,
+                strokeWeight: 6,
                 map: map,
               });
               polylinesRef.current.push(polyline);
@@ -241,7 +241,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
           map.fitBounds(bounds);
         }
       } catch (error) {
-        console.error("KML loading error:", error);
+        console.error("KML Processing error:", error);
       }
     };
 
