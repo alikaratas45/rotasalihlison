@@ -83,7 +83,8 @@ const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', f
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
 
 // --- Helper Components ---
-const LocalizedFormFields = ({ form, fieldNames }: { form: any, fieldNames: Array<'name' | 'slug' | 'description'> }) => (
+function LocalizedFormFields({ form, fieldNames }: { form: any, fieldNames: Array<'name' | 'slug' | 'description'> }) {
+  return (
     <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
         {languages.map((lang) => (
             <AccordionItem value={lang} key={`lang-acc-${lang}`}>
@@ -102,16 +103,17 @@ const LocalizedFormFields = ({ form, fieldNames }: { form: any, fieldNames: Arra
             </AccordionItem>
         ))}
     </Accordion>
-);
+  );
+}
 
-const RatingBadge = ({ rating }: { rating: number }) => {
+function RatingBadge({ rating }: { rating: number }) {
     return (
         <div className="flex items-center gap-1">
             <span className="font-bold">{rating.toFixed(1)}</span>
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
         </div>
     );
-};
+}
 
 
 export default function AdminPage() {
@@ -267,13 +269,13 @@ export default function AdminPage() {
         updateExperienceItem(firestore, editingExperienceItem.id, values, createApiCallbacks("Deneyim Öğesi", () => setEditingExperienceItem(null)));
     }
 
-    // --- Deletion Handlers ---
-    const handleDelete = <T extends { id?: string; name: { tr: string } }>(
-        entity: T | null,
+    // --- Deletion Handler ---
+    function handleDeleteItem(
+        entity: { id?: string; name: { tr: string } } | null,
         deleteFn: (db: any, id: string, callbacks: any) => void,
-        setDeletingEntity: (entity: T | null) => void,
+        setDeletingEntity: (entity: any) => void,
         entityName: string
-    ) => {
+    ) {
         const id = entity?.id;
         if (!entity || !id) {
             toast({ variant: 'destructive', title: 'Hata', description: `${entityName} ID'si bulunmadığı için silinemiyor.` });
@@ -289,7 +291,7 @@ export default function AdminPage() {
                 setDeletingEntity(null);
             }
         });
-    };
+    }
 
     // --- Database Management Handlers ---
     async function handleSeed(mode: 'SAFE' | 'UPDATE') {
@@ -322,7 +324,7 @@ export default function AdminPage() {
         }
     }
 
-    const categoryLabels: Record<Place['category'], string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
+    const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
 
     return (
         <div className="space-y-8">
@@ -349,7 +351,19 @@ export default function AdminPage() {
                             <form onSubmit={addPlaceForm.handleSubmit(onAddPlaceSubmit)} className="space-y-8">
                               <LocalizedFormFields form={addPlaceForm} fieldNames={['name', 'slug', 'description']} />
                               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                 <FormField control={addPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select><FormMessage /></FormItem>)}/>
+                                 <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Kategori</FormLabel>
+                                        <select {...field} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                            <option value="history">Tarih</option>
+                                            <option value="nature">Doğa</option>
+                                            <option value="food">Lezzet</option>
+                                            <option value="shopping">Alışveriş</option>
+                                            <option value="poi">Önemli Nokta</option>
+                                        </select>
+                                        <FormMessage />
+                                    </FormItem>
+                                 )}/>
                                  <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Latitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                                  <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Longitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                               </div>
@@ -538,43 +552,43 @@ export default function AdminPage() {
                         <div className="space-y-8">
                             {/* Stats Summary */}
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
-                                <Card key="stat-total" className="bg-primary/5 border-primary/10">
+                                <Card className="bg-primary/5 border-primary/10">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Toplam Katılım</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><Users className="h-5 w-5 text-primary" />{stats?.total}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-clean" className="bg-card">
+                                <Card className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Temizlik Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgCleanliness || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-access" className="bg-card">
+                                <Card className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Erişim Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgAccessibility || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-satis" className="bg-card">
+                                <Card className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Memnuniyet Ort.</CardDescription>
                                         <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgSatisfaction || 0} /></CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-tour" className="bg-card">
+                                <Card className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Turla Gelen</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.tourCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-guide" className="bg-card">
+                                <Card className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Rehberli</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.guidedCount}</CardTitle>
                                     </CardHeader>
                                 </Card>
-                                <Card key="stat-info" className="bg-card">
+                                <Card className="bg-card">
                                     <CardHeader className="p-4 pb-2">
                                         <CardDescription className="text-xs uppercase tracking-wider">Bilgi Panosu</CardDescription>
                                         <CardTitle className="text-2xl">{stats?.infoBoardsCount}</CardTitle>
@@ -666,7 +680,7 @@ export default function AdminPage() {
                                 <div className="border rounded-lg p-4 space-y-3 border-orange-200 bg-orange-50/20">
                                     <h3 className="font-bold flex items-center gap-2 text-orange-600"><RefreshCw className="h-4 w-4" /> Akıllı Güncelleme</h3>
                                     <p className="text-sm text-muted-foreground">Kod üzerindeki yeni bilgileri (ör. Sinagog bölümü) mevcut mekanlarınıza ekler. Elle girdiğiniz açıklamaları korumaya çalışır.</p>
-                                    <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700">
+                                    <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">
                                         {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Verileri Kod ile Güncelle
                                     </Button>
                                 </div>
@@ -697,7 +711,19 @@ export default function AdminPage() {
                         <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto pr-4">
                             <LocalizedFormFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                <FormField control={editPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select><FormMessage /></FormItem>)}/>
+                                <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Kategori</FormLabel>
+                                        <select {...field} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                            <option value="history">Tarih</option>
+                                            <option value="nature">Doğa</option>
+                                            <option value="food">Lezzet</option>
+                                            <option value="shopping">Alışveriş</option>
+                                            <option value="poi">Önemli Nokta</option>
+                                        </select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}/>
                                 <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Latitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                                 <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Longitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                             </div>
@@ -711,7 +737,7 @@ export default function AdminPage() {
                 </DialogContent>
             </Dialog>
             <AlertDialog open={!!deletingPlace} onOpenChange={(open) => !open && setDeletingPlace(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" adlı yeri kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDelete(deletingPlace, deletePlace, setDeletingPlace, 'Yer')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" adlı yeri kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingPlace, deletePlace, setDeletingPlace, 'Yer')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
             <Dialog open={!!editingRoute} onOpenChange={(open) => !open && setEditingRoute(null)}>
                 <DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle>Rotayı Düzenle</DialogTitle></DialogHeader>
@@ -737,7 +763,7 @@ export default function AdminPage() {
                 </DialogContent>
             </Dialog>
             <AlertDialog open={!!deletingRoute} onOpenChange={(open) => !open && setDeletingRoute(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingRoute?.name.tr}" adlı rotayı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDelete(deletingRoute, deleteRoute, setDeletingRoute, 'Rota')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingRoute?.name.tr}" adlı rotayı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingRoute, deleteRoute, setDeletingRoute, 'Rota')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
             <Dialog open={!!editingExperienceItem} onOpenChange={(open) => !open && setEditingExperienceItem(null)}>
                 <DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle>Deneyim Öğesini Düzenle</DialogTitle></DialogHeader>
@@ -755,7 +781,7 @@ export default function AdminPage() {
                 </DialogContent>
             </Dialog>
             <AlertDialog open={!!deletingExperienceItem} onOpenChange={(open) => !open && setDeletingExperienceItem(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperienceItem?.name.tr}" adlı öğeyi kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDelete(deletingExperienceItem, deleteExperienceItem, setDeletingExperienceItem, 'Deneyim Öğesi')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperienceItem?.name.tr}" adlı öğeyi kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingExperienceItem, deleteExperienceItem, setDeletingExperienceItem, 'Deneyim Öğesi')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
         </div>
     );
