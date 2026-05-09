@@ -34,7 +34,7 @@ export default function YuruyusRotalariPage() {
       distance: '18,60 km',
       description: "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru.",
       kmlUrl: '/kursunlu-allahdiyen.kml',
-      wikilocId: '61754545' 
+      wikilocId: '163454363' 
     }
   ];
 
