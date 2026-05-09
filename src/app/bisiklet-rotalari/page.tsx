@@ -24,7 +24,7 @@ export default function BisikletRotalariPage() {
       id: 'lidya-yolu-1',
       name: 'Lidya Yolu Bisiklet Rotası',
       distance: '28,50 km',
-      description: "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih ve doğa dolu bir parkur.",
+      description: "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih and doğa dolu bir parkur.",
       kmlUrl: '/lidyayolu.kml',
       wikilocId: '40219098'
     },
@@ -49,7 +49,7 @@ export default function BisikletRotalariPage() {
       name: 'Kula-Salihli Geopark Bisiklet Rotası',
       distance: '52,40 km',
       description: "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur.",
-      kmlUrl: '/Kula-Salihli-Geopark.kml',
+      kmlUrl: '/kula-salihli-geopark.kml',
       wikilocId: '75216382'
     }
   ];
