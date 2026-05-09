@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -20,21 +19,19 @@ interface BicycleRoute {
 export default function BisikletRotalariPage() {
   const { t } = useLanguage();
   
-  // Sadece Kurşunlu rotası kalsın
-  const [selectedRouteId] = useState<string>('kursunlu-1');
-
   const routes: BicycleRoute[] = [
     {
-      id: 'kursunlu-1',
-      name: 'Kurşunlu Bisiklet Rotası',
-      distance: '12,40 km',
-      description: "Kurşunlu Kaplıcaları'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur.",
-      kmlUrl: '/kursunlu.kml',
-      wikilocId: '149618956'
+      id: 'lidya-yolu-1',
+      name: 'Lidya Yolu Bisiklet Rotası',
+      distance: '28,50 km',
+      description: "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih ve doğa dolu bir parkur.",
+      kmlUrl: '/lidyayolu.kml',
+      wikilocId: '40219098'
     }
   ];
 
-  const activeRoute = routes[0];
+  const [selectedRouteId] = useState<string>(routes[0].id);
+  const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -117,7 +114,7 @@ export default function BisikletRotalariPage() {
              <Card className="overflow-hidden border-none shadow-2xl rounded-2xl bg-white border border-slate-100">
                 <div className="w-full min-h-[500px]">
                     <iframe 
-                        src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=off&images=off&maptype=H`} 
+                        src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
                         width="100%" 
                         height="500" 
                         frameBorder="0" 
