@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -20,6 +21,7 @@ export function Header() {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Navigasyon linklerini düzenledik ve tekrar edenleri temizledik
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
     { href: '/rotalar', label: t('header.routes') },
