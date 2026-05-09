@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -34,7 +35,7 @@ export default function YuruyusRotalariPage() {
       distance: '18,60 km',
       description: "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru.",
       kmlUrl: '/kursunlu-allahdiyen.kml',
-      wikilocId: '' // Kod bekleniyor
+      wikilocId: '' 
     }
   ];
 
@@ -118,7 +119,7 @@ export default function YuruyusRotalariPage() {
                     places={[]} 
                     className="w-full h-full" 
                     kmlUrl={activeRoute.kmlUrl}
-                    key={activeRoute.id} // Re-mount map when route changes
+                    key={activeRoute.id} 
                 />
             </div>
             <p className="text-xs text-muted-foreground italic text-center">

@@ -186,6 +186,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     const processKml = async () => {
       try {
         const response = await fetch(kmlUrl);
+        if (!response.ok) throw new Error('KML file not found');
         const kmlText = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
@@ -198,14 +199,20 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
           const coordString = coordinatesElements[i].textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
-            const points = coordString.split(/\s+/);
+            // Handle various possible separators in KML (spaces, newlines, tabs)
+            const points = coordString.split(/[\s\n\t]+/);
             
             points.forEach(p => {
-              const [lng, lat] = p.split(',').map(Number);
-              if (!isNaN(lat) && !isNaN(lng)) {
-                const coord = { lat, lng };
-                path.push(coord);
-                bounds.extend(coord);
+              if (!p) return;
+              const parts = p.split(',');
+              if (parts.length >= 2) {
+                const lng = parseFloat(parts[0]);
+                const lat = parseFloat(parts[1]);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                  const coord = { lat, lng };
+                  path.push(coord);
+                  bounds.extend(coord);
+                }
               }
             });
 
