@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -35,7 +34,7 @@ export default function YuruyusRotalariPage() {
       distance: '18,60 km',
       description: "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru.",
       kmlUrl: '/kursunlu-allahdiyen.kml',
-      wikilocId: '' 
+      wikilocId: '61754545' 
     }
   ];
 
@@ -140,7 +139,7 @@ export default function YuruyusRotalariPage() {
                 <Card className="overflow-hidden border-none shadow-2xl rounded-2xl bg-white border border-slate-100">
                     <div className="w-full min-h-[500px]">
                         <iframe 
-                            src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=off&images=off&maptype=H`} 
+                            src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
                             width="100%" 
                             height="500" 
                             frameBorder="0" 
