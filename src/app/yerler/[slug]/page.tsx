@@ -5,8 +5,8 @@ import { useParams, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation, Utensils, ExternalLink, Info } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation, Utensils, ExternalLink, Info, MapPinned } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
@@ -48,6 +48,7 @@ function PlaceDetailContent() {
   const { t, language, mounted } = useLanguage();
   
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playingId, setPlayingId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isNearPlace, setIsNearPlace] = useState(false);
   const [activeSubPoint, setActiveSubPoint] = useState<SubPoint | null>(null);
@@ -67,6 +68,7 @@ function PlaceDetailContent() {
     }
     setIsPlaying(false);
     setIsGenerating(false);
+    setPlayingId(null);
     utteranceRef.current = null;
   }, []);
 
@@ -111,7 +113,7 @@ function PlaceDetailContent() {
     }
   }, [place]);
 
-  const speak = useCallback((text: string, lang: Language) => {
+  const speak = useCallback((text: string, lang: Language, id: string) => {
     if (typeof window === 'undefined' || !window.speechSynthesis || !text) return;
 
     const synth = window.speechSynthesis;
@@ -120,7 +122,6 @@ function PlaceDetailContent() {
       synth.cancel();
       
       setTimeout(() => {
-        // PHONETIC FIXES for better Turkish narration on mobile
         let fixedText = text
             .replace(/Gymnasium/gi, 'Cimnazyum')
             .replace(/Sardes/gi, 'Sardes')
@@ -146,7 +147,6 @@ function PlaceDetailContent() {
 
         const utterance = new SpeechSynthesisUtterance(fixedText);
         utteranceRef.current = utterance;
-        (window as any)._lastUtterance = utterance; 
         
         utterance.lang = lang === 'tr' ? 'tr-TR' : lang === 'en' ? 'en-US' : 'tr-TR';
 
@@ -168,15 +168,29 @@ function PlaceDetailContent() {
         utterance.rate = 0.95; 
         utterance.pitch = 1.0;
 
-        utterance.onstart = () => { setIsPlaying(true); setIsGenerating(false); };
-        utterance.onend = () => { setIsPlaying(false); utteranceRef.current = null; };
-        utterance.onerror = () => { setIsPlaying(false); setIsGenerating(false); utteranceRef.current = null; };
+        utterance.onstart = () => { 
+            setIsPlaying(true); 
+            setIsGenerating(false); 
+            setPlayingId(id);
+        };
+        utterance.onend = () => { 
+            setIsPlaying(false); 
+            setPlayingId(null);
+            utteranceRef.current = null; 
+        };
+        utterance.onerror = () => { 
+            setIsPlaying(false); 
+            setIsGenerating(false); 
+            setPlayingId(null);
+            utteranceRef.current = null; 
+        };
         
         synth.speak(utterance);
       }, 150);
     };
 
     setIsGenerating(true);
+    setPlayingId(id);
     const priming = new SpeechSynthesisUtterance('');
     priming.volume = 0;
     synth.speak(priming);
@@ -189,29 +203,20 @@ function PlaceDetailContent() {
     }
   }, []);
 
-  const handlePlayPause = useCallback(() => {
-    if (isGenerating || !place) return;
-    if (isPlaying) {
+  const handlePlayPause = useCallback((id: string, text: string) => {
+    if (isGenerating) return;
+    if (isPlaying && playingId === id) {
       stopAudio();
     } else {
-      // Prioritize SubPoint description if active
-      const textToSpeak = activeSubPoint 
-        ? activeSubPoint.description[typedLanguage] 
-        : place.description[typedLanguage];
-      speak(textToSpeak, typedLanguage);
+      speak(text, typedLanguage, id);
     }
-  }, [isGenerating, isPlaying, place, activeSubPoint, typedLanguage, speak, stopAudio]);
+  }, [isGenerating, isPlaying, playingId, typedLanguage, speak, stopAudio]);
 
-  const handleGetDirections = useCallback(() => {
+  const handleGetDirections = useCallback((coords?: {lat: number, lng: number}) => {
     if (!place) return;
-    const { lat, lng } = activeSubPoint ? activeSubPoint.coordinates : place.coordinates;
+    const { lat, lng } = coords || (activeSubPoint ? activeSubPoint.coordinates : place.coordinates);
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
   }, [place, activeSubPoint]);
-
-  const handleOpenRestaurants = useCallback(() => {
-    const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
-    window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
-  }, []);
 
   useEffect(() => {
     if (autoplay && place && !placesLoading && !hasAutoplayedRef.current && mounted) {
@@ -220,7 +225,8 @@ function PlaceDetailContent() {
           const textToSpeak = activeSubPoint 
             ? activeSubPoint.description[typedLanguage] 
             : place.description[typedLanguage];
-          speak(textToSpeak, typedLanguage);
+          const id = activeSubPoint ? activeSubPoint.id : 'main';
+          speak(textToSpeak, typedLanguage, id);
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -237,7 +243,6 @@ function PlaceDetailContent() {
       <div className="mb-6"><Button asChild variant="ghost" size="sm"><Link href="/yerler" className="flex items-center gap-2"><ArrowLeft className="h-4 w-4" />{t('actions.backToPlaces')}</Link></Button></div>
       <div className="max-w-6xl mx-auto">
         
-        {/* Dynamic Title and Proximity Badge */}
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
             <h1 className="text-3xl md:text-5xl font-bold font-headline text-primary transition-all duration-500">
                 {currentDisplayName}
@@ -279,18 +284,27 @@ function PlaceDetailContent() {
             {currentDescription}
           </div>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 clear-both pt-4">
-            <Button size="lg" variant="outline" onClick={handlePlayPause} disabled={isGenerating} className={cn("flex-1 md:flex-none md:min-w-[200px]", activeSubPoint && "border-primary ring-1 ring-primary/20")}>
-              {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
-              {isGenerating ? t('actions.loadingAudio') : isPlaying ? t('actions.stopAudio') : `${currentDisplayName} Dinle`}
+            <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={() => handlePlayPause('main', currentDescription)} 
+                disabled={isGenerating && playingId !== 'main'} 
+                className={cn("flex-1 md:flex-none md:min-w-[200px]", activeSubPoint && "border-primary ring-1 ring-primary/20")}
+            >
+              {isGenerating && playingId === 'main' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying && playingId === 'main' ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
+              {isGenerating && playingId === 'main' ? t('actions.loadingAudio') : isPlaying && playingId === 'main' ? t('actions.stopAudio') : `${currentDisplayName} Dinle`}
             </Button>
             
             {place.id !== '3' ? (
-              <Button size="lg" onClick={handleGetDirections} className="flex-1 md:flex-none md:min-w-[200px] gap-2">
+              <Button size="lg" onClick={() => handleGetDirections()} className="flex-1 md:flex-none md:min-w-[200px] gap-2">
                 <Navigation className="h-5 w-5" />
                 {t('actions.showOnMap')}
               </Button>
             ) : (
-              <Button size="lg" onClick={handleOpenRestaurants} className="flex-1 md:flex-none md:min-w-[200px] gap-2 bg-orange-600 hover:bg-orange-700 text-white border-none shadow-md">
+              <Button size="lg" onClick={() => {
+                const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
+                window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
+              }} className="flex-1 md:flex-none md:min-w-[200px] gap-2 bg-orange-600 hover:bg-orange-700 text-white border-none shadow-md">
                 <Utensils className="h-5 w-5" />
                 Haritada Tüm Restaurantlar
                 <ExternalLink className="h-4 w-4 opacity-70 ml-1" />
@@ -298,6 +312,64 @@ function PlaceDetailContent() {
             )}
           </div>
         </div>
+
+        {/* SubPoints (Sinagog etc.) Permanent Section */}
+        {place.subPoints && place.subPoints.length > 0 && (
+            <div className="mt-16 clear-both">
+                <div className="flex items-center gap-3 mb-8 border-b pb-4">
+                    <MapPinned className="h-6 w-6 text-primary" />
+                    <h2 className="text-2xl font-bold font-headline">Mekan İçindeki Özel Noktalar</h2>
+                </div>
+                <div className="grid gap-8">
+                    {place.subPoints.map((sub) => (
+                        <Card key={sub.id} className={cn(
+                            "overflow-hidden transition-all duration-500",
+                            activeSubPoint?.id === sub.id ? "ring-2 ring-primary bg-primary/5 shadow-xl" : "bg-card"
+                        )}>
+                            <CardContent className="p-6 md:p-8">
+                                <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+                                    <div>
+                                        <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2">
+                                            {sub.name[typedLanguage]}
+                                            {activeSubPoint?.id === sub.id && <Badge variant="secondary">Şu an buradasınız</Badge>}
+                                        </h3>
+                                        <div className="flex items-center text-muted-foreground text-sm gap-1">
+                                            <MapPin className="h-3 w-3" />
+                                            {sub.coordinates.lat.toFixed(6)}, {sub.coordinates.lng.toFixed(6)}
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 w-full md:w-auto">
+                                        <Button 
+                                            variant="outline" 
+                                            size="sm" 
+                                            onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage])}
+                                            disabled={isGenerating && playingId !== sub.id}
+                                            className="flex-1 md:flex-none"
+                                        >
+                                            {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />}
+                                            Dinle
+                                        </Button>
+                                        <Button 
+                                            variant="secondary" 
+                                            size="sm" 
+                                            onClick={() => handleGetDirections(sub.coordinates)}
+                                            className="flex-1 md:flex-none"
+                                        >
+                                            <Navigation className="h-4 w-4 mr-2" />
+                                            Yol Tarifi
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg">
+                                    {sub.description[typedLanguage]}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        )}
+
         {isNearPlace && (
           <div className="mt-20 border-t pt-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Survey placeId={place.id} placeName={place.name.tr} />
