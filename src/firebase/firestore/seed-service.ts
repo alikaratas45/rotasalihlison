@@ -1,5 +1,6 @@
+
 'use client';
-import { collection, doc, getDoc, setDoc, deleteDoc, type Firestore } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc, updateDoc, type Firestore } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -13,7 +14,7 @@ async function seedCollection<T extends {id: string}>(
     firestore: Firestore,
     collectionName: string,
     staticData: T[],
-    dataProcessor: (item: T, existingData?: any) => any = (item) => item
+    isPlaces: boolean = false
 ): Promise<{ added: number, updated: number, errors: number }> {
     let added = 0, updated = 0, errors = 0;
     const collectionRef = collection(firestore, collectionName);
@@ -22,14 +23,27 @@ async function seedCollection<T extends {id: string}>(
         const docRef = doc(collectionRef, item.id);
         try {
             const docSnap = await getDoc(docRef);
-            const existingData = docSnap.exists() ? docSnap.data() : undefined;
-            const processedData = dataProcessor(item, existingData);
-            
-            await setDoc(docRef, processedData, { merge: true });
             
             if (docSnap.exists()) {
-                updated++;
+                // BELGE MEVCUTSA: Manuel değişiklikleri (açıklama, resim vb.) ASLA EZME
+                const updates: any = {};
+                
+                if (isPlaces) {
+                    const placeItem = item as unknown as Place;
+                    // Sadece subPoints (Sinagog gibi) eksikse veya güncellenmesi gerekiyorsa ekle
+                    if (placeItem.subPoints) {
+                        updates.subPoints = placeItem.subPoints;
+                    }
+                }
+
+                // Sadece belirlenen kritik/yeni alanları güncelle, diğer alanlara (description, imageUrl vb.) dokunma
+                if (Object.keys(updates).length > 0) {
+                    await updateDoc(docRef, updates);
+                    updated++;
+                }
             } else {
+                // BELGE YOKSA: Yeni belge olarak tamamını ekle
+                await setDoc(docRef, item);
                 added++;
             }
         } catch (serverError) {
@@ -37,7 +51,7 @@ async function seedCollection<T extends {id: string}>(
             const permissionError = new FirestorePermissionError({
                 path: docRef.path,
                 operation: 'create',
-                requestResourceData: dataProcessor(item),
+                requestResourceData: item,
             });
             errorEmitter.emit('permission-error', permissionError);
             errors++;
@@ -51,51 +65,11 @@ export async function seedDatabase(firestore: Firestore): Promise<{
     routes: { added: number, updated: number },
     experienceItems: { added: number, updated: number }
 }> {
-  
-  try {
-      const ataturkAnitiRef = doc(firestore, 'places', '4');
-      await deleteDoc(ataturkAnitiRef);
-  } catch (e) {
-      console.warn("Atatürk Anıtı silinirken bir sorun oluştu.");
-  }
+  // Not: Artık deleteDoc (silme) işlemleri kaldırıldı, tamamen koruyucu moda geçildi.
 
-  const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, (place, existingData) => {
-    const data = { ...place };
-    
-    // Basit ve kesin kural: Kod tarafındaki görsel bir 'imgur' veya 'unsplash' linki ise veritabanını güncelle.
-    // Sadece 'picsum.photos' gibi geçici/rastgele görseller varsa veritabanındaki veriyi koru.
-    const isCodeImageSpecific = place.imageUrl && (
-        place.imageUrl.includes('imgur.com') || 
-        place.imageUrl.includes('unsplash.com')
-    );
-
-    const isDbImagePlaceholder = !existingData?.imageUrl || existingData.imageUrl.includes('picsum.photos');
-
-    // Eğer kod tarafındaki görsel spesifik bir link değilse ve DB'de zaten iyi bir görsel varsa DB'dekini tut.
-    if (!isCodeImageSpecific && !isDbImagePlaceholder) {
-        data.imageUrl = existingData.imageUrl;
-    }
-
-    data.coordinates = place.coordinates;
-    
-    // Alt noktaları (subPoints) her zaman senkronize et
-    if (place.subPoints) {
-      data.subPoints = place.subPoints;
-    }
-
-    return data;
-  });
-
+  const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, true);
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes);
-  
-  // Experience items seeding with icon fix and visual order mapping
-  const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})), (item) => {
-      // Ensure "Hiking Routes" has the custom Climbing icon (footprints)
-      if (item.name.tr === 'Yürüyüş Rotaları') {
-          return { ...item, icon: 'Climbing' };
-      }
-      return item;
-  });
+  const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({...item, id: `exp${index+1}`})));
   
   if (placesResult.errors > 0 || routesResult.errors > 0 || experienceResult.errors > 0) {
       throw new Error("Veritabanı beslenirken bir veya daha fazla hata oluştu.");
