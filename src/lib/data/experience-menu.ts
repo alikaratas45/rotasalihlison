@@ -1,4 +1,4 @@
-import type { ExperienceItem } from '@/lib/definitions';
+import { ExperienceItem } from '@/lib/definitions';
 
 // Omit 'id' because it will be auto-generated during seeding
 export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
