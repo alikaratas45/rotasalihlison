@@ -1,4 +1,3 @@
-
 import type { Place } from '@/lib/definitions';
 
 export const places: Place[] = [
@@ -76,7 +75,7 @@ export const places: Place[] = [
         id: '9',
         slug: { tr: 'suuctu-selalesi', en: 'suuctu-waterfall', fr: 'cascade-suuctu', de: 'suuctu-wasserfall', ja: 'suuctu-waterfall-ja' },
         name: { tr: 'Suuçtu Şelalesi', en: 'Suuçtu Waterfall', fr: 'Cascade de Suuçtu', de: 'Suuçtu Wasserfall', ja: 'スーチュ滝' },
-        description: { tr: `Adala Kanyonu'na dökülen doğa harikası şelale.`, en: `Natural wonder waterfall pouring into Adala Canyon.`, fr: `Cascade se jetant dans le canyon d'Adala.`, de: `Wasserfall, der in den Adala-Canyon stürzt.`, ja: `アダラ渓谷に流れ落ちる自然の驚異の滝。` },
+        description: { tr: `Adala Kanyonu'na dökülen doğa harikası şelale.`, en: `Natural wonder waterfall pouring into Adala Canyon.`, fr: `Cascade se jetant dans le canyon d'Adala.`, de: `Wasserfall, der in den Adala-Canyon stürzt.`, ja: `アダラ渓谷に流れ落ちる natural wonder の滝。` },
         category: 'nature',
         coordinates: { lat: 38.603174968474164, lng: 28.287310874314443 },
         imageUrl: 'https://i.imgur.com/B2DiIdP.jpeg',
@@ -110,13 +109,33 @@ export const places: Place[] = [
         category: 'history',
         coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
         imageUrl: 'https://i.imgur.com/l2YJCmK.jpeg',
-        imageHint: 'ancient gymnasium'
+        imageHint: 'ancient gymnasium',
+        subPoints: [
+            {
+                id: 'synagogue-1',
+                name: {
+                    tr: 'Sinagog (Havra)',
+                    en: 'Synagogue',
+                    fr: 'Synagogue',
+                    de: 'Synagoge',
+                    ja: 'シナゴーグ（会堂）'
+                },
+                coordinates: { lat: 38.488307, lng: 28.040346 },
+                description: {
+                    tr: `Abidevi havra, Geç Roma döneminde, Musevi toplumunun dini merkezi olarak kullanılmaktaydı. 1962 yılında ortaya çıkarılan bina ve süslemeler kısmen restore edilmiştir. Bin kişiyi barındırabilecek büyüklükte ve uzunluğu 50 metreyi aşkın ana toplantı salonu yer almaktadır. Yerden 14 metre yükseklikteki çatı masif taş payelerle desteklenmiştir. Bina, birkaç kere yenilenmiştir. Önceleri, Roma Hamam-Gymnasium Kompleksinin bir parçası iken, daha sonraları, Musevi toplumunun ibadethanesi haline dönüşmüştür. Mozaik yer döşemeleri, mefruşatı ve mermer duvar bezemeleri, değişik zamanlarda yapılmıştır; ancak bugün mevcut olanlar ise MS 4. ve 5. yüzyıldan kalanlardır. Havra, yedinci yüzyılın başlarında, Batı Anadolu’da yaygın görülen akımın etkisiyle terk edilmiştir.`,
+                    en: `The monumental synagogue was used as the religious center of the Jewish community in the Late Roman period. Excavated in 1962, the building and its decorations have been partially restored. It features a main assembly hall large enough to accommodate a thousand people, exceeding 50 meters in length. The roof, 14 meters above the ground, was supported by massive stone pillars. The building was renovated several times. Initially part of the Roman Bath-Gymnasium Complex, it later became a place of worship for the Jewish community. Mosaic floors, furnishings, and marble wall decorations were made at different times; however, those existing today date from the 4th and 5th centuries AD. The synagogue was abandoned in the early seventh century due to the influence of widespread movements in Western Anatolia.`,
+                    fr: `Cette synagogue monumentale servait de centre religieux à la communauté juive à la fin de l'époque romaine. Découvert en 1962, le bâtiment et ses décorations ont été partiellement restaurés. Il comprend une salle de réunion principale pouvant accueillir mille personnes et mesurant plus de 50 mètres de long. Le toit, situé à 14 mètres du sol, était soutenu par d'énormes piliers en pierre. Le bâtiment a été rénové à plusieurs reprises. Initialement partie intégrante du complexe thermal-gymnase romain, il est devenu plus tard un lieu de culte pour la communauté juive. Les sols en mosaïque, le mobilier et les décorations murales en marbre ont été réalisés à différentes époques ; cependant, les vestiges actuels datent des IVe et Ve siècles de notre ère. La synagogue fut abandonnée au début du VIIe siècle, sous l'influence des courants alors répandus en Anatolie occidentale.`,
+                    de: `Die monumentale Synagoge diente in der spätrömischen Zeit als religiöses Zentrum der jüdischen Gemeinde. Das 1962 freigelegte Gebäude und sein Schmuck wurden teilweise restauriert. Es verfügt über eine Hauptversammlungshalle, die groß genug für tausend Personen ist und eine Länge von über 50 Metern aufweist. Das Dach in 14 Metern Höhe wurde von massiven Steinpfeilern getragen. Das Gebäude wurde mehrmals renoviert. Ursprünglich Teil des römischen Bad-Gymnasium-Komplexes, wurde es später zum Gotteshaus der jüdischen Gemeinde. Mosaikböden, Einrichtungsgegenstände und marmorne Wanddekorationen entstanden zu verschiedenen Zeiten; die heute sichtbaren stammen jedoch aus dem 4. und 5. Jahrhundert n. Chr. Die Synagoge wurde zu Beginn des siebten Jahrhunderts aufgegeben, beeinflusst durch Strömungen, die in Westanatolien verbreitet waren.`,
+                    ja: `この記念碑的なシナゴーグは、後期ローマ時代にユダヤ人コミュニティの宗教的中心地として使用されていました。1962年に発掘された建物と装飾は、部分的に復元されています。1000人を収容できる大きさで、長さ50メートルを超えるメインの集会ホールがあります。地上14メートルの高さの屋根は、巨大な石の柱で支えられています。建物は数回改修されました。当初はローマの浴場・ギムナジウム・コンプレックスの一部でしたが、後にユダヤ人コミュニティの礼拝所となりました。モザイクの床、家具、大理石の壁の装飾はさまざまな時期に作られましたが、現在残っているものは西暦4世紀から5世紀のものです。この会堂は、7世紀初頭に西アナトリアで広まった潮流の影響により、放棄されました。`
+                }
+            }
+        ]
     },
     {
         id: '13',
         slug: { tr: 'artemis-tapinagi', en: 'temple-of-artemis', fr: 'temple-artemis', de: 'artemis-tempel', ja: 'temple-of-artemis-ja' },
         name: { tr: 'Artemis Tapınağı', en: 'Temple of Artemis', fr: 'Temple d\'Artémis', de: 'Artemis-Tempel', ja: 'アルテミス神殿' },
-        description: { tr: `Antik dünyanın en büyük tapınaklarından biri.`, en: `One of the largest temples of the ancient world.`, fr: `L'un des plus grands temples du monde antique.`, de: `Einer der größten Tempel der antiken Welt.`, ja: `古代世界で最大の神殿の一つ。` },
+        description: { tr: `Antik dünyada inşa edilmiş en büyük tapınaklardan biridir.`, en: `One of the largest temples built in the ancient world.`, fr: `L'un des plus grands temples du monde antique.`, de: `Einer der größten Tempel der antiken Welt.`, ja: `古代世界で建てられた最大の神殿の一つ。` },
         category: 'history',
         coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 },
         imageUrl: 'https://i.imgur.com/d2RoArI.jpeg',

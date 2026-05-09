@@ -11,6 +11,13 @@ export type Coordinates = {
     lng: number;
 };
 
+export type SubPoint = {
+    id: string;
+    name: LocalizedString;
+    description: LocalizedString;
+    coordinates: Coordinates;
+};
+
 export type Place = {
     id: string;
     slug: LocalizedString;
@@ -20,6 +27,7 @@ export type Place = {
     coordinates: Coordinates;
     imageUrl?: string;
     imageHint?: string;
+    subPoints?: SubPoint[];
 };
 
 export type Route = {
