@@ -43,6 +43,14 @@ export default function BisikletRotalariPage() {
       description: "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına kadar uzanan, eşsiz doğa manzaraları sunan geniş kapsamlı bir bisiklet parkuru.",
       kmlUrl: '/kursunlu-marmara.kml',
       wikilocId: '35690357'
+    },
+    {
+      id: 'kula-salihli-geopark-1',
+      name: 'Kula-Salihli Geopark Bisiklet Rotası',
+      distance: '52,40 km',
+      description: "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur.",
+      kmlUrl: '/Kula-Salihli-Geopark.kml',
+      wikilocId: '75216382'
     }
   ];
 
