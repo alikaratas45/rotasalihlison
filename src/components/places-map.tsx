@@ -186,7 +186,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     const processKml = async () => {
       try {
         const response = await fetch(kmlUrl);
-        if (!response.ok) throw new Error('KML file not found');
+        if (!response.ok) {
+          console.warn(`KML file not found at ${kmlUrl}. Skipping KML processing.`);
+          return;
+        }
         const kmlText = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
