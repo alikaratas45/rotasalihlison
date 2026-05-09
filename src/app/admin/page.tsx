@@ -14,7 +14,7 @@ import { tr as trLocale } from 'date-fns/locale';
 import { addPlace, updatePlace, deletePlace } from '@/firebase/firestore/places-service';
 import { addRoute, updateRoute, deleteRoute } from '@/firebase/firestore/routes-service';
 import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
-import { seedDatabase } from '@/firebase/firestore/seed-service';
+import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Star, Users, MapPin, CheckCircle2, XCircle, Download } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Star, Users, MapPin, CheckCircle2, XCircle, Download, History, DatabaseBackup, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -120,7 +120,7 @@ export default function AdminPage() {
     
     // --- State Management ---
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSeeding, setIsSeeding] = useState(false);
+    const [isDatabaseActionLoading, setIsDatabaseActionLoading] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState<string>('all');
 
     const [editingPlace, setEditingPlace] = useState<Place | null>(null);
@@ -291,20 +291,34 @@ export default function AdminPage() {
         });
     };
 
-    // --- Seeding Handler ---
-    async function handleSeedDatabase() {
-        setIsSeeding(true);
+    // --- Database Management Handlers ---
+    async function handleSeed(mode: 'SAFE' | 'UPDATE') {
+        setIsDatabaseActionLoading(true);
         try {
-            const results = await seedDatabase(firestore);
+            const results = await seedDatabase(firestore, mode);
             toast({
-                title: 'Veritabanı Beslendi!',
-                description: `${results.places.added} yer, ${results.routes.added} rota, ${results.experienceItems.added} deneyim öğesi eklendi.`,
+                title: mode === 'SAFE' ? 'Eksikler Tamamlandı' : 'Veriler Güncellendi',
+                description: `${results.places.added + results.routes.added + results.experienceItems.added} yeni öğe eklendi, ${results.places.updated} öğe akıllıca güncellendi. Her ihtimale karşı yedek alındı.`,
             });
-        } catch (error) {
-            toast({ variant: 'destructive', title: 'Hata!', description: 'Veritabanı beslenirken bir sorun oluştu. Lütfen konsolu kontrol edin.' });
-            console.error(error);
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Hata!', description: `İşlem sırasında bir hata oluştu: ${error.message}` });
         } finally {
-            setIsSeeding(false);
+            setIsDatabaseActionLoading(false);
+        }
+    }
+
+    async function handleUndo() {
+        setIsDatabaseActionLoading(true);
+        try {
+            await undoLastOperation(firestore);
+            toast({
+                title: 'Geri Yüklendi',
+                description: 'Veritabanı son işlemden önceki haline başarıyla geri döndürüldü.',
+            });
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Geri Alma Başarısız', description: error.message });
+        } finally {
+            setIsDatabaseActionLoading(false);
         }
     }
 
@@ -466,9 +480,9 @@ export default function AdminPage() {
                         <CardContent>
                             <div className="rounded-md border">
                                 <Table>
-                                    <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
+                                    <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead className="text-right">Eylemler</TableHead></TableHeader>
                                     <TableBody>
-                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skel-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skel-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
                                         : experienceItems?.map((item, idx) => (
                                             <TableRow key={item.id || `exp-row-id-${idx}`}>
                                                 <TableCell>{item.order}</TableCell>
@@ -632,15 +646,47 @@ export default function AdminPage() {
                 
                 {/* DATABASE TAB */}
                 <TabsContent value="database">
-                     <Card>
-                        <CardHeader>
-                          <CardTitle>Veritabanı Yönetimi</CardTitle>
-                          <CardDescription>Uygulamanın başlangıç verilerini (Yerler, Rotalar, Deneyim Öğeleri) veritabanına yükleyin. Bu işlem sadece eksik olan başlangıç verilerini ekler, mevcut verilerinize dokunmaz.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <Button onClick={handleSeedDatabase} disabled={isSeeding}>{isSeeding && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Başlangıç Verilerini Yükle</Button>
-                        </CardContent>
-                      </Card>
+                     <div className="grid gap-6">
+                        <Card>
+                            <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><DatabaseBackup className="h-5 w-5" /> Veritabanı Yönetimi</CardTitle>
+                            <CardDescription>
+                                Uygulamanın başlangıç verilerini yönetin. Her işlemden önce otomatik yedek alınır.
+                            </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="border rounded-lg p-4 space-y-3">
+                                    <h3 className="font-bold flex items-center gap-2 text-primary"><RefreshCw className="h-4 w-4" /> Güvenli Mod</h3>
+                                    <p className="text-sm text-muted-foreground">Mevcut verilerinize dokunmaz. Sadece veritabanında hiç olmayan yeni yerleri ve rotaları ekler.</p>
+                                    <Button onClick={() => handleSeed('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">
+                                        {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Eksikleri Tamamla
+                                    </Button>
+                                </div>
+                                <div className="border rounded-lg p-4 space-y-3 border-orange-200 bg-orange-50/20">
+                                    <h3 className="font-bold flex items-center gap-2 text-orange-600"><RefreshCw className="h-4 w-4" /> Akıllı Güncelleme</h3>
+                                    <p className="text-sm text-muted-foreground">Kod üzerindeki yeni bilgileri (ör. Sinagog bölümü) mevcut mekanlarınıza ekler. Elle girdiğiniz açıklamaları korumaya çalışır.</p>
+                                    <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700">
+                                        {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Verileri Kod ile Güncelle
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="pt-6 border-t">
+                                <div className="flex flex-col items-center text-center space-y-4">
+                                    <div className="p-3 bg-muted rounded-full"><History className="h-8 w-8 text-muted-foreground" /></div>
+                                    <div>
+                                        <h3 className="font-bold text-lg">Bir Hata mı Oldu?</h3>
+                                        <p className="text-muted-foreground">Yaptığınız son veritabanı işlemini geri alarak verileri bir önceki haline döndürün.</p>
+                                    </div>
+                                    <Button onClick={handleUndo} disabled={isDatabaseActionLoading} variant="outline" className="px-10 border-primary text-primary hover:bg-primary/5">
+                                        {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Son İşlemi Geri Al (Undo)
+                                    </Button>
+                                </div>
+                            </div>
+                            </CardContent>
+                        </Card>
+                     </div>
                 </TabsContent>
             </Tabs>
       
