@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -18,10 +17,10 @@ import type { Language } from '@/lib/language-config';
 import React from 'react';
 
 export function Header() {
-  const { t, mounted } = useLanguage();
+  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Navigasyon linkleri - "Çevremde Ne Var?" (Yakındakiler) eklendi
+  // Navigasyon linkleri - Broşürler tamamen kaldırıldı
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
     { href: '/rotalar', label: t('header.routes') },

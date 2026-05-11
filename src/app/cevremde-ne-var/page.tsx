@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Info, Navigation, Loader2, LocateFixed } from 'lucide-react';
+import { MapPin, Info, Navigation, LocateFixed } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
@@ -26,10 +26,9 @@ export default function AroundMePage() {
   const [locationError, setLocationDenied] = useState(false);
   const [isSearching, setIsSearching] = useState(true);
 
-  // Fetch all places
-  const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
-    useMemo(() => query(collection(firestore, 'places')), [firestore])
-  );
+  // Fetch all places from Firestore
+  const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+  const { data: allPlaces, loading: placesLoading } = useCollection<Place>(placesQuery);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -42,7 +41,7 @@ export default function AroundMePage() {
           setIsSearching(false);
         },
         (error) => {
-          console.error("Location error:", error);
+          console.error("Location access error:", error);
           setLocationDenied(true);
           setIsSearching(false);
         },
@@ -70,13 +69,13 @@ export default function AroundMePage() {
       .sort((a, b) => a.distanceInKm - b.distanceInKm);
   }, [allPlaces, userLocation]);
 
-  const categoryLabels: Record<string, string> = { 
+  const categoryLabels: Record<string, string> = useMemo(() => ({ 
     history: t('history.title'), 
     nature: t('nature.title'), 
     food: t('header.cuisine'), 
     shopping: t('shopping.title'), 
     poi: 'POI' 
-  };
+  }), [t]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -96,7 +95,6 @@ export default function AroundMePage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-10">
-          {/* MAP SECTION */}
           <div className="lg:col-span-2 space-y-6">
             <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <PlacesMap 
@@ -107,7 +105,6 @@ export default function AroundMePage() {
             </div>
           </div>
 
-          {/* LIST SECTION */}
           <div className="lg:col-span-1 space-y-6">
             <div className="flex items-center justify-between border-b pb-4">
                 <h2 className="text-xl font-bold font-headline text-slate-800">
@@ -119,9 +116,9 @@ export default function AroundMePage() {
             </div>
 
             <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                {isSearching || placesLoading ? (
+                {(isSearching || placesLoading) ? (
                     Array.from({ length: 3 }).map((_, i) => (
-                        <Card key={i} className="overflow-hidden border-none shadow-sm">
+                        <Card key={`skeleton-${i}`} className="overflow-hidden border-none shadow-sm">
                             <div className="flex gap-4 p-4">
                                 <Skeleton className="h-20 w-20 rounded-lg flex-shrink-0" />
                                 <div className="space-y-2 flex-1">
@@ -180,9 +177,9 @@ export default function AroundMePage() {
                     </div>
                 )}
             </div>
+          </div>
         </div>
 
-        {/* FEATURED NEARBY POIS (GRID) */}
         {!isSearching && nearbyPlaces.length > 0 && (
             <div className="mt-20">
                 <div className="flex items-center gap-3 mb-8 border-b pb-4">
@@ -192,7 +189,7 @@ export default function AroundMePage() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {nearbyPlaces.map((place) => (
-                        <Card key={place.id} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
+                        <Card key={`featured-${place.id}`} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
                             <div className="relative h-48 w-full overflow-hidden">
                                 <Image
                                     src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
