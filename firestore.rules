@@ -14,10 +14,12 @@ service cloud.firestore {
     }
 
     match /feedbacks/{feedbackId} {
-      // Kullanıcıların anket oluşturmasına, güncellemesine ve kendi anketini ID ile görmesine izin ver
       allow create, update, get: if true;
-      // Sadece admin tüm listeyi görebilir ve silebilir
       allow list, delete: if isAdmin();
+    }
+
+    match /backups/{backupId} {
+      allow read, write: if isAdmin();
     }
 
     match /places/{placeId} {

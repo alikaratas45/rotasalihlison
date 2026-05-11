@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query } from 'firebase/firestore';
@@ -26,13 +26,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, DatabaseBackup, RefreshCw, Plus, MapPin, Layers, Download } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
@@ -67,22 +65,6 @@ const subPointFormSchema = z.object({
     lng: z.coerce.number().min(-180).max(180),
 });
 type SubPointFormData = z.infer<typeof subPointFormSchema>;
-
-const routeFormSchema = z.object({
-  name: localizedStringSchema,
-  slug: localizedStringSchema,
-  description: localizedStringSchema,
-  stops: z.array(z.string()).min(1, 'En az bir durak seçmelisiniz.'),
-});
-type RouteFormData = z.infer<typeof routeFormSchema>;
-
-const experienceItemFormSchema = z.object({
-    name: localizedStringSchema,
-    icon: z.string().min(1, 'Ikon adı gereklidir.'),
-    link: z.string().min(1, 'Link gereklidir.'),
-    order: z.coerce.number(),
-});
-type ExperienceItemFormData = z.infer<typeof experienceItemFormSchema>;
 
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
@@ -124,16 +106,9 @@ export default function AdminPage() {
     const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
     const [managingSubPointsPlace, setManagingSubPointsPlace] = useState<Place | null>(null);
     
-    const [editingRoute, setEditingRoute] = useState<Route | null>(null);
-    const [deletingRoute, setDeletingRoute] = useState<Route | null>(null);
-
-    const [editingExperienceItem, setEditingExperienceItem] = useState<ExperienceItem | null>(null);
-    const [deletingExperienceItem, setDeletingExperienceItem] = useState<ExperienceItem | null>(null);
-
     const { data: places, loading: placesLoading } = useCollection<Place>(useMemo(() => query(collection(firestore, 'places')), [firestore]));
-    const { data: routes, loading: routesLoading } = useCollection<Route>(useMemo(() => query(collection(firestore, 'routes')), [firestore]));
-    const { data: experienceItems, loading: experienceItemsLoading } = useCollection<ExperienceItem>(useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]));
-    const { data: feedbacks, loading: feedbacksLoading } = useCollection<Feedback>(useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]));
+    const { data: experienceItems } = useCollection<ExperienceItem>(useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]));
+    const { data: feedbacks } = useCollection<Feedback>(useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]));
 
     const sortedPlaces = useMemo(() => {
         if (!places) return [];
@@ -143,10 +118,19 @@ export default function AdminPage() {
     const addPlaceForm = useForm<PlaceFormData>({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14 } });
     const editPlaceForm = useForm<PlaceFormData>({ resolver: zodResolver(placeFormSchema) });
     const subPointForm = useForm<SubPointFormData>({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 } });
-    const addRouteForm = useForm<RouteFormData>({ resolver: zodResolver(routeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, stops: [] } });
-    const addExperienceItemForm = useForm<ExperienceItemFormData>({ resolver: zodResolver(experienceItemFormSchema), defaultValues: { name: { tr: '', en: '' }, icon: '', link: '', order: 0 } });
 
-    useEffect(() => { if (editingPlace) editPlaceForm.reset({ ...editingPlace, lat: editingPlace.coordinates.lat, lng: editingPlace.coordinates.lng }); }, [editingPlace, editPlaceForm]);
+    useEffect(() => { 
+        if (editingPlace) editPlaceForm.reset({ 
+            name: editingPlace.name,
+            slug: editingPlace.slug,
+            description: editingPlace.description,
+            category: editingPlace.category,
+            lat: editingPlace.coordinates.lat, 
+            lng: editingPlace.coordinates.lng,
+            imageUrl: editingPlace.imageUrl,
+            imageHint: editingPlace.imageHint
+        }); 
+    }, [editingPlace, editPlaceForm]);
 
     const onAddPlaceSubmit = (values: PlaceFormData) => {
         setIsSubmitting(true);
@@ -174,40 +158,196 @@ export default function AdminPage() {
         try {
             const results = await seedDatabase(firestore, mode);
             toast({ title: 'Tamamlandı', description: `${results.places.added + results.experienceItems.added} yeni öğe işlendi.` });
-        } catch (error: any) { toast({ variant: 'destructive', title: 'Hata', description: error.message }); }
+        } catch (error: any) { 
+            toast({ variant: 'destructive', title: 'Hata', description: error.message }); 
+        }
         setIsDatabaseActionLoading(false);
     };
 
     const handleUndo = async () => {
         setIsDatabaseActionLoading(true);
-        try { await undoLastOperation(firestore); toast({ title: 'Geri Alındı' }); } catch (error: any) { toast({ variant: 'destructive', title: 'Hata', description: error.message }); }
+        try { 
+            await undoLastOperation(firestore); 
+            toast({ title: 'Geri Alındı' }); 
+        } catch (error: any) { 
+            toast({ variant: 'destructive', title: 'Hata', description: error.message }); 
+        }
         setIsDatabaseActionLoading(false);
     };
 
     return (
         <div className="space-y-8">
             <Tabs defaultValue="places">
-                <div className="flex justify-center"><TabsList><TabsTrigger value="places">Yerler</TabsTrigger><TabsTrigger value="routes">Rotalar</TabsTrigger><TabsTrigger value="experiences">Deneyim Menüsü</TabsTrigger><TabsTrigger value="feedbacks">Anketler</TabsTrigger><TabsTrigger value="database">Veritabanı</TabsTrigger></TabsList></div>
+                <div className="flex justify-center">
+                    <TabsList>
+                        <TabsTrigger value="places">Yerler</TabsTrigger>
+                        <TabsTrigger value="experiences">Deneyim Menüsü</TabsTrigger>
+                        <TabsTrigger value="feedbacks">Anketler</TabsTrigger>
+                        <TabsTrigger value="database">Veritabanı</TabsTrigger>
+                    </TabsList>
+                </div>
                 
                 <TabsContent value="places">
-                    <Card><CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader><CardContent><Form {...addPlaceForm}><form onSubmit={addPlaceForm.handleSubmit(onAddPlaceSubmit)} className="space-y-8"><LocalizedFormFields form={addPlaceForm} fieldNames={['name', 'slug', 'description']} /><div className="grid grid-cols-1 gap-6 md:grid-cols-3"><FormField control={addPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>)}/><FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/><FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/></div><Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle</Button></form></Form></CardContent></Card>
-                    <Card className="mt-8"><CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader><TableBody>{placesLoading ? <TableRow><TableCell colSpan={3}><Skeleton className="h-20 w-full" /></TableCell></TableRow> : sortedPlaces.map((place) => (<TableRow key={place.id}><TableCell>{place.name.tr}</TableCell><TableCell><Badge variant="secondary">{categoryLabels[place.category]}</Badge></TableCell><TableCell className="text-right"><DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal /></Button></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem onClick={() => setEditingPlace(place)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem><DropdownMenuItem onClick={() => setManagingSubPointsPlace(place)}><Layers className="mr-2" /> Alt Başlıkları Yönet</DropdownMenuItem><DropdownMenuSeparator /><DropdownMenuItem onClick={() => setDeletingPlace(place)} className="text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem></DropdownMenuContent></DropdownMenu></TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
+                    <Card>
+                        <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
+                        <CardContent>
+                            <Form {...addPlaceForm}>
+                                <form onSubmit={addPlaceForm.handleSubmit(onAddPlaceSubmit)} className="space-y-8">
+                                    <LocalizedFormFields form={addPlaceForm} fieldNames={['name', 'slug', 'description']} />
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                        <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Kategori</FormLabel>
+                                                <select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                                                    <option value="history">Tarih</option>
+                                                    <option value="nature">Doğa</option>
+                                                    <option value="food">Lezzet</option>
+                                                    <option value="shopping">Alışveriş</option>
+                                                    <option value="poi">Önemli Nokta</option>
+                                                </select>
+                                            </FormItem>
+                                        )}/>
+                                        <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (
+                                            <FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>
+                                        )}/>
+                                        <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (
+                                            <FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>
+                                        )}/>
+                                    </div>
+                                    <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle</Button>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+                    <Card className="mt-8">
+                        <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>İsim</TableHead>
+                                        <TableHead>Kategori</TableHead>
+                                        <TableHead className="text-right">Eylemler</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {placesLoading ? (
+                                        <TableRow><TableCell colSpan={3}><Skeleton className="h-20 w-full" /></TableCell></TableRow>
+                                    ) : sortedPlaces.map((place) => (
+                                        <TableRow key={place.id}>
+                                            <TableCell>{place.name.tr}</TableCell>
+                                            <TableCell><Badge variant="secondary">{categoryLabels[place.category]}</Badge></TableCell>
+                                            <TableCell className="text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal /></Button></DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem onClick={() => setEditingPlace(place)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => setManagingSubPointsPlace(place)}><Layers className="mr-2" /> Alt Başlıkları Yönet</DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem onClick={() => setDeletingPlace(place)} className="text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
                 </TabsContent>
 
                 <TabsContent value="experiences">
-                    <Card><CardHeader><CardTitle>Deneyim Menüsü</CardTitle></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader><TableBody>{experienceItems?.map((item) => (<TableRow key={item.id}><TableCell>{item.order}</TableCell><TableCell>{item.name.tr}</TableCell><TableCell className="text-right"><Button variant="ghost" size="icon" onClick={() => setEditingExperienceItem(item)}><FilePenLine /></Button></TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
+                    <Card>
+                        <CardHeader><CardTitle>Deneyim Menüsü</CardTitle></CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Sıra</TableHead>
+                                        <TableHead>İsim</TableHead>
+                                        <TableHead className="text-right">Durum</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {experienceItems?.map((item) => (
+                                        <TableRow key={item.id}>
+                                            <TableCell>{item.order}</TableCell>
+                                            <TableCell>{item.name.tr}</TableCell>
+                                            <TableCell className="text-right"><Badge variant="outline">Aktif</Badge></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
                 </TabsContent>
 
                 <TabsContent value="feedbacks">
-                    <div className="flex gap-4 mb-4"><div className="w-64"><Label>Filtre</Label><Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}><SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Yerler</SelectItem>{sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}</SelectContent></Select></div></div>
-                    <Card><CardContent className="p-0"><Table><TableHeader><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell>{f.placeName}</TableCell><TableCell>{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell>{f.satisfaction}/5</TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
+                    <div className="flex gap-4 mb-4">
+                        <div className="w-64">
+                            <Label>Mekan Filtresi</Label>
+                            <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
+                                <SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Tüm Yerler</SelectItem>
+                                    {sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                    <Card>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Mekan</TableHead>
+                                        <TableHead>Tarih</TableHead>
+                                        <TableHead>Puan</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (
+                                        <TableRow key={f.id}>
+                                            <TableCell>{f.placeName}</TableCell>
+                                            <TableCell>{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell>
+                                            <TableCell>{f.satisfaction}/5</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
                 </TabsContent>
 
                 <TabsContent value="database">
                     <div className="grid gap-6 md:grid-cols-2">
-                        <Card><CardHeader><CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle><CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeed('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button></CardContent></Card>
-                        <Card className="border-orange-200 bg-orange-50/10"><CardHeader><CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle><CardDescription>Kod tarafındaki yeni bilgileri (alt başlık, sıra vb.) mevcut verilerinizle birleştirir.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button></CardContent></Card>
-                        <Card className="md:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle><CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription></CardHeader><CardContent className="flex justify-center"><Button onClick={handleUndo} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button></CardContent></Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle>
+                                <CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Button onClick={() => handleSeed('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-orange-200 bg-orange-50/10">
+                            <CardHeader>
+                                <CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle>
+                                <CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button>
+                            </CardContent>
+                        </Card>
+                        <Card className="md:col-span-2">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle>
+                                <CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex justify-center">
+                                <Button onClick={handleUndo} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button>
+                            </CardContent>
+                        </Card>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -219,18 +359,56 @@ export default function AdminPage() {
                     <div className="space-y-8">
                         <div className="border p-4 rounded-lg bg-muted/20">
                             <h3 className="font-bold mb-4 flex items-center gap-2"><Plus className="h-4 w-4" /> Yeni Alt Başlık</h3>
-                            <Form {...subPointForm}><form onSubmit={subPointForm.handleSubmit(onAddSubPointSubmit)} className="space-y-4"><LocalizedFormFields form={subPointForm} fieldNames={['name', 'description']} /><div className="grid grid-cols-2 gap-4"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/></div><Button type="submit" disabled={isSubmitting} className="w-full">Kaydet</Button></form></Form>
+                            <Form {...subPointForm}>
+                                <form onSubmit={subPointForm.handleSubmit(onAddSubPointSubmit)} className="space-y-4">
+                                    <LocalizedFormFields form={subPointForm} fieldNames={['name', 'description']} />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                        <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                    </div>
+                                    <Button type="submit" disabled={isSubmitting} className="w-full">Kaydet</Button>
+                                </form>
+                            </Form>
                         </div>
                         <div>
                             <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
-                            <div className="space-y-2">{managingSubPointsPlace?.subPoints?.map((s) => (<div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background"><div><p className="font-bold">{s.name.tr}</p><p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p></div><Button variant="ghost" size="icon" className="text-destructive" onClick={() => { const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); }}><Trash2 /></Button></div>))}</div>
+                            <div className="space-y-2">
+                                {managingSubPointsPlace?.subPoints?.map((s) => (
+                                    <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
+                                        <div><p className="font-bold">{s.name.tr}</p><p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p></div>
+                                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { 
+                                            const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; 
+                                            updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); 
+                                        }}><Trash2 /></Button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}><DialogContent className="max-w-xl"><DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader><Form {...editPlaceForm}><form onSubmit={editPlaceForm.handleSubmit(onEditPlaceSubmit)} className="space-y-4"><LocalizedFormFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} /><DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter></form></Form></DialogContent></Dialog>
-            <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setDeletingPlace(null)}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingPlace?.id) deletePlace(firestore, deletingPlace.id, { onSuccess: () => setDeletingPlace(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+            <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
+                <DialogContent className="max-w-xl">
+                    <DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
+                    <Form {...editPlaceForm}>
+                        <form onSubmit={editPlaceForm.handleSubmit(onEditPlaceSubmit)} className="space-y-4">
+                            <LocalizedFormFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
+                            <DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter>
+                        </form>
+                    </Form>
+                </DialogContent>
+            </Dialog>
+
+            <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setDeletingPlace(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>İptal</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => { if (deletingPlace?.id) deletePlace(firestore, deletingPlace.id, { onSuccess: () => setDeletingPlace(null) }); }}>Sil</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

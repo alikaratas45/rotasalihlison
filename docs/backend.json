@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "UserProfile": {
@@ -178,6 +177,10 @@
     "/feedbacks": {
       "schema": { "$ref": "#/backend/entities/Feedback" },
       "description": "Collection of user feedbacks for places."
+    },
+    "/backups": {
+      "schema": { "type": "object" },
+      "description": "Stores database backups before operations."
     },
     "/routes": {
       "schema": { "$ref": "#/backend/entities/Route" },
