@@ -1,8 +1,9 @@
+
 'use client';
 import { collection, addDoc, doc, updateDoc, deleteDoc, type Firestore, getDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
-import type { Place } from '@/lib/definitions';
+import type { Place, SubPoint } from '@/lib/definitions';
 
 type NewPlaceData = Omit<Place, 'id'>;
 
@@ -13,17 +14,15 @@ export function addPlace(
 ) {
   if (!firestore) {
     const error = new Error("Firestore instance is missing.");
-    console.error("Error in addPlace:", error);
     callbacks?.onError?.(error);
     return;
   }
   const placesCollection = collection(firestore, 'places');
-  addDoc(placesCollection, placeData)
+  addDoc(placesCollection, { ...placeData, subPoints: placeData.subPoints || [] })
     .then(() => {
       callbacks?.onSuccess?.();
     })
     .catch((serverError) => {
-      console.error('Error adding document: ', serverError);
       const permissionError = new FirestorePermissionError({
         path: 'places',
         operation: 'create',
@@ -49,7 +48,6 @@ export async function updatePlace(
   const placeDocRef = doc(firestore, 'places', placeId);
 
   try {
-    // Mevcut veriyi çekip subPoints gibi formda olmayan alanları koruyalım
     const currentSnap = await getDoc(placeDocRef);
     const currentData = currentSnap.exists() ? currentSnap.data() : {};
 
@@ -63,15 +61,16 @@ export async function updatePlace(
       imageHint: formData.imageHint,
     };
 
-    // Eğer mevcut veride subPoints varsa ve formda yoksa koru
-    if (currentData.subPoints) {
+    // SubPoints alanını kaybetmemek için mevcut veriyi koru veya formdan geleni al
+    if (formData.subPoints !== undefined) {
+      updatedData.subPoints = formData.subPoints;
+    } else if (currentData.subPoints) {
       updatedData.subPoints = currentData.subPoints;
     }
 
     await updateDoc(placeDocRef, updatedData);
     callbacks?.onSuccess?.();
   } catch (serverError: any) {
-    console.error(`Error updating document ${placeId}: `, serverError);
     const permissionError = new FirestorePermissionError({
       path: placeDocRef.path,
       operation: 'update',
@@ -80,6 +79,27 @@ export async function updatePlace(
     errorEmitter.emit('permission-error', permissionError);
     callbacks?.onError?.(serverError);
   }
+}
+
+export async function updateSubPoints(
+  firestore: Firestore,
+  placeId: string,
+  subPoints: SubPoint[],
+  callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
+) {
+  if (!firestore || !placeId) return;
+  const docRef = doc(firestore, 'places', placeId);
+  updateDoc(docRef, { subPoints })
+    .then(() => callbacks?.onSuccess?.())
+    .catch((err) => {
+      const permissionError = new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'update',
+        requestResourceData: { subPoints },
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      callbacks?.onError?.(err);
+    });
 }
 
 export function deletePlace(
@@ -99,7 +119,6 @@ export function deletePlace(
       callbacks?.onSuccess?.();
     })
     .catch((serverError) => {
-      console.error(`Error deleting document ${placeId}: `, serverError);
       const permissionError = new FirestorePermissionError({
         path: placeDocRef.path,
         operation: 'delete',

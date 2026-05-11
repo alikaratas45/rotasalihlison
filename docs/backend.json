@@ -26,9 +26,25 @@
         "category": { "type": "string", "enum": ["history", "nature", "food", "shopping", "poi"] },
         "coordinates": { "$ref": "#/backend/entities/Coordinates" },
         "imageUrl": { "type": "string", "format": "uri" },
-        "imageHint": { "type": "string" }
+        "imageHint": { "type": "string" },
+        "subPoints": {
+          "type": "array",
+          "items": { "$ref": "#/backend/entities/SubPoint" }
+        }
       },
       "required": ["id", "slug", "name", "description", "category", "coordinates"]
+    },
+    "SubPoint": {
+      "title": "Sub Point",
+      "description": "A specific section or point of interest within a larger place.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "$ref": "#/backend/entities/LocalizedString" },
+        "description": { "$ref": "#/backend/entities/LocalizedString" },
+        "coordinates": { "$ref": "#/backend/entities/Coordinates" }
+      },
+      "required": ["id", "name", "description", "coordinates"]
     },
     "Feedback": {
       "title": "Feedback",
@@ -122,7 +138,7 @@
       "required": ["id", "labelKey", "href", "order"]
     },
     "LocalizedString": {
-      "title": "Localized String",
+      "title": "LocalizedString",
       "description": "A string that can be localized into multiple languages.",
       "type": "object",
       "properties": {
