@@ -56,7 +56,7 @@ export default function BisikletRotalariPage() {
       description: "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur.",
       kmlUrl: '/salihli-alasehir.kml',
       wikilocId: '167004910',
-      poiIds: ['11'] // Bintepeler
+      poiIds: ['11', '1', '3'] // Bintepeler, Sardes, Odun Köfte (Merkez)
     },
     {
       id: 'kursunlu-marmara-1',
