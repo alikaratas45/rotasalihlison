@@ -1,6 +1,7 @@
 'use client';
 import { type Query } from 'firebase/firestore';
 import { useCollection as useFirebaseCollection } from 'react-firebase-hooks/firestore';
+import { useMemo } from 'react';
 
 export const useCollection = <T,>(
   query: Query | null
@@ -11,12 +12,13 @@ export const useCollection = <T,>(
 } => {
   const [snapshot, loading, error] = useFirebaseCollection(query);
 
-  const data = snapshot
-    ? snapshot.docs.map((doc) => ({
-        ...(doc.data() as T),
-        id: doc.id,
-      }))
-    : null;
+  const data = useMemo(() => {
+    if (!snapshot) return null;
+    return snapshot.docs.map((doc) => ({
+      ...(doc.data() as T),
+      id: doc.id,
+    }));
+  }, [snapshot]);
 
   return { data, loading, error: error || null };
 };

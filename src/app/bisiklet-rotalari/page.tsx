@@ -38,7 +38,7 @@ export default function BisikletRotalariPage() {
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
   
-  const routes: BicycleRoute[] = [
+  const routes: BicycleRoute[] = useMemo(() => [
     {
       id: 'lidya-yolu-1',
       key: 'lidya_yolu',
@@ -67,22 +67,28 @@ export default function BisikletRotalariPage() {
       kmlUrl: '/kula-salihli-geopark.kml',
       wikilocId: '75216382'
     }
-  ];
+  ], []);
 
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
   const [routePois, setRoutePois] = useState<Place[]>([]);
   const [isProcessingPois, setIsProcessingPois] = useState(false);
   
-  const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
+  const activeRoute = useMemo(() => 
+    routes.find(r => r.id === selectedRouteId) || routes[0]
+  , [selectedRouteId, routes]);
 
   // 2 KM PROXIMITY RULE: Dynamic filtering based on KML path
   useEffect(() => {
+    let isMounted = true;
+
     async function updatePois() {
       if (!allPlaces) return;
       setIsProcessingPois(true);
       
       try {
         const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
+        if (!isMounted) return;
+
         const filtered = allPlaces.filter(place => {
           // 2000 meters = 2 km proximity threshold
           return isPointNearRoute(place.coordinates, kmlPoints, 2000);
@@ -91,11 +97,12 @@ export default function BisikletRotalariPage() {
       } catch (err) {
         console.error("Proximity filtering error:", err);
       } finally {
-        setIsProcessingPois(false);
+        if (isMounted) setIsProcessingPois(false);
       }
     }
     
     updatePois();
+    return () => { isMounted = false; };
   }, [activeRoute.id, allPlaces]);
 
   const handleRouteClick = (id: string) => {
