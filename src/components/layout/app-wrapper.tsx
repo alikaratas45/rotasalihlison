@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -25,7 +24,7 @@ export default function AppWrapper({
   useEffect(() => {
     setMounted(true);
     
-    // PWA Service Worker Registration - Essential for PWA criteria
+    // PWA Service Worker Registration - Essential for PWA installability
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')

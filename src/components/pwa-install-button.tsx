@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -16,7 +15,7 @@ export function PwaInstallButton() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // 1. Check if already installed or in standalone mode
+    // 1. Check if already installed
     if (typeof window !== 'undefined') {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
         || (window.navigator as any).standalone 
@@ -30,45 +29,43 @@ export function PwaInstallButton() {
       e.preventDefault();
       setDeferredPrompt(e);
       setIsVisible(true);
-      // Trigger a custom event so other parts of the app (like the /install page) can access it
-      window.dispatchEvent(new CustomEvent('pwa-prompt-available', { detail: e }));
     };
 
-    // 3. Hide button after installation
-    const handleAppInstalled = () => {
+    // 3. Listen for custom trigger from /install page
+    const handleTriggerInstall = () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+      } else {
+        toast({
+          title: "Bilgi",
+          description: "Lütfen tarayıcı menüsünden 'Ana Ekrana Ekle' seçeneğini kullanın.",
+        });
+      }
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('trigger-pwa-install', handleTriggerInstall);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('trigger-pwa-install', handleTriggerInstall);
+    };
+  }, [toast]);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
       setDeferredPrompt(null);
       setIsVisible(false);
       toast({
         title: t('pwa.installedTitle', 'Başarılı'),
-        description: t('pwa.installedDescription', 'Uygulama cihazınıza başarıyla eklendi.'),
+        description: t('pwa.installedDescription', 'Uygulama başarıyla eklendi.'),
       });
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  }, [t, toast]);
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      toast({
-        variant: 'default',
-        title: t('pwa.errorTitle', 'Bilgi'),
-        description: t('pwa.errorDescription', 'Yükleme için tarayıcı menüsünü (Ana Ekrana Ekle) kullanabilirsiniz.'),
-      });
-      return;
     }
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`PWA: Install choice: ${outcome}`);
-    
-    setDeferredPrompt(null);
-    setIsVisible(false);
   };
 
   if (isStandalone || !isVisible) return null;
