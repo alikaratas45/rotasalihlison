@@ -29,6 +29,7 @@
         "historyTrip": "Journey to History",
         "naturePeace": "Nature and Peace",
         "flavorStops": "Flavor Stops",
+        "aroundMe": "What's Around Me?",
         "shopping": "Shopping",
         "thematicRoutesTitle": "Thematic Routes",
         "thematicRoutesSubtitle": "Discover the riches of Salihli with specially prepared routes.",
@@ -99,6 +100,14 @@
         "maxLimitToastDescription": "You can select a maximum of 10 places.",
         "startPlanning": "Select Places to Start Planning",
         "routeMap": "Route Map"
+    },
+    "aroundMe": {
+        "title": "What's Around Me?",
+        "description": "Discover historical and natural beauties within 15 km of your location.",
+        "searching": "Retrieving your location and searching for nearby places...",
+        "noPlaces": "No registered places found within 15 km of your location.",
+        "locationDenied": "Location access denied. Please grant location permission to see nearby places.",
+        "distance": "{0} km away"
     },
     "bicycleRoutes": {
         "title": "Bicycle Routes",

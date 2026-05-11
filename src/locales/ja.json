@@ -11,7 +11,7 @@
         "audioGuide": "音声ガイド"
     },
     "footer": {
-        "about": "Rota Salihliは、サリフリの歴史的、文化的、自然の美しさを発見するためのデジタルガイドです。",
+        "about": "Rota Salihliは、サリフリの歴史 presidential、文化的、自然の美しさを発見するためのデジタルガイドです。",
         "copyright": "無断複写・転載を禁じます。",
         "links": "リンク",
         "contact": "連絡先"
@@ -29,6 +29,7 @@
         "historyTrip": "歴史への旅",
         "naturePeace": "自然と平和",
         "flavorStops": "味の停留所",
+        "aroundMe": "私の周りに何がある？",
         "shopping": "ショッピング",
         "thematicRoutesTitle": "テーマ別ルート",
         "thematicRoutesSubtitle": "特別に準備されたルートでサリフリの豊かさを発見してください。",
@@ -83,6 +84,14 @@
         "by": "作成者：",
         "relatedPlace": "関連場所"
     },
+    "aroundMe": {
+        "title": "私の周りに何がある？",
+        "description": "現在地から15km以内の歴史的・自然の美しさを発見してください。",
+        "searching": "現在地を取得し、周辺の場所を検索しています...",
+        "noPlaces": "半径15km以内に登録された場所は見つかりませんでした。",
+        "locationDenied": "位置情報へのアクセスが拒否されました。位置情報の許可をオンにしてください。",
+        "distance": "{0} km先"
+    },
     "cuisine": {
         "title": "サリフリの味マップ",
         "description": "サリフリで最高の食事場所を地図に表示しています。お食事をお楽しみください！"
@@ -101,7 +110,7 @@
     },
     "bicycleRoutes": {
         "title": "自転車ルート",
-        "description": "サリフリとその周辺の自転車コースや小道を発見してください。ペダルをこぎ始めましょう！",
+        "description": "サリフリとその周辺 host の自転車コースや小道を発見してください。ペダルをこぎ始めましょう！",
         "availableRoutes": "利用可能なルート",
         "routeMap": "ルートマップ",
         "distanceLabel": "距離:",

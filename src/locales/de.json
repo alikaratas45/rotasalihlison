@@ -29,6 +29,7 @@
         "historyTrip": "Reise in die Geschichte",
         "naturePeace": "Natur und Frieden",
         "flavorStops": "Geschmacksstopps",
+        "aroundMe": "Was ist um mich herum?",
         "shopping": "Einkaufen",
         "thematicRoutesTitle": "Thematische Routen",
         "thematicRoutesSubtitle": "Entdecken Sie die Reichtümer von Salihli mit speziell vorbereiteten Routen.",
@@ -82,6 +83,14 @@
         "notFoundDescription": "Die gesuchte Geschichte existiert nicht.",
         "by": "Von:",
         "relatedPlace": "Verwandter Ort"
+    },
+    "aroundMe": {
+        "title": "Was ist um mich herum?",
+        "description": "Entdecken Sie historische und natürliche Schönheiten im Umkreis von 15 km um Ihren Standort.",
+        "searching": "Standort wird abgerufen und nach Orten in der Nähe gesucht...",
+        "noPlaces": "Keine registrierten Orte im Umkreis von 15 km gefunden.",
+        "locationDenied": "Standortzugriff verweigert. Bitte erlauben Sie den Zugriff.",
+        "distance": "{0} km entfernt"
     },
     "cuisine": {
         "title": "Salihlis Geschmackskarte",
