@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -78,10 +79,10 @@ export default function Home() {
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           
           {/* PWA Install Button placed right under the experience title for maximum visibility */}
-          <div className="mb-10 px-4">
+          <div className="mb-12 px-4 max-w-2xl mx-auto">
             <PwaInstallButton />
           </div>
 

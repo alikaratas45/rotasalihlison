@@ -1,17 +1,30 @@
 
-// Rota Salihli - Minimal Service Worker for PWA compliance
+// PWA Service Worker - Essential for installability
 const CACHE_NAME = 'rota-salihli-v1';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/logos.png',
+  '/manifest.webmanifest'
+];
 
 self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(self.clients.claim());
 });
 
-// Essential fetch listener for PWA installability criteria
 self.addEventListener('fetch', (event) => {
-  // We can implement caching strategies here if needed
-  // For now, this is a pass-through to satisfy PWA requirements
+  // Essential fetch handler for PWA criteria
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });

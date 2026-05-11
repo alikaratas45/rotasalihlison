@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download } from 'lucide-react';
+import { Smartphone, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -16,7 +16,7 @@ export function PwaInstallButton() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // 1. Standalone mod kontrolü (Uygulama zaten yüklüyse gösterme)
+    // 1. Check if already installed or in standalone mode
     if (typeof window !== 'undefined') {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
         || (window.navigator as any).standalone 
@@ -25,17 +25,16 @@ export function PwaInstallButton() {
       setIsStandalone(isStandaloneMode);
     }
 
-    // 2. Tarayıcı yükleme isteğini yakalama
+    // 2. Capture the install prompt event
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Varsayılan pencereyi engelle
       e.preventDefault();
-      // Olayı sakla
       setDeferredPrompt(e);
-      // Butonu görünür yap (Sadece olay tetiklendiğinde aktif etme kuralı)
       setIsVisible(true);
+      // Trigger a custom event so other parts of the app (like the /install page) can access it
+      window.dispatchEvent(new CustomEvent('pwa-prompt-available', { detail: e }));
     };
 
-    // 3. Yükleme tamamlandığında butonu gizle
+    // 3. Hide button after installation
     const handleAppInstalled = () => {
       setDeferredPrompt(null);
       setIsVisible(false);
@@ -54,50 +53,44 @@ export function PwaInstallButton() {
     };
   }, [t, toast]);
 
-  // 4. Butona tıklayınca yüklemeyi başlat
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
       toast({
-        variant: 'destructive',
+        variant: 'default',
         title: t('pwa.errorTitle', 'Bilgi'),
         description: t('pwa.errorDescription', 'Yükleme için tarayıcı menüsünü (Ana Ekrana Ekle) kullanabilirsiniz.'),
       });
       return;
     }
 
-    // Yükleme penceresini göster
     deferredPrompt.prompt();
-    
-    // Kullanıcı seçimini bekle
     const { outcome } = await deferredPrompt.userChoice;
-    console.log(`PWA: Kullanıcı yükleme tercihi: ${outcome}`);
+    console.log(`PWA: Install choice: ${outcome}`);
     
-    // Olayı temizle ve butonu gizle
     setDeferredPrompt(null);
     setIsVisible(false);
   };
 
-  // Eğer uygulama zaten yüklüyse veya tarayıcı hazır değilse (henüz prompt fırlatmadıysa) hiçbir şey gösterme
   if (isStandalone || !isVisible) return null;
 
   return (
-    <Card className="w-full max-w-md mx-auto border-primary/20 bg-primary/5 shadow-md animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-full text-primary">
-            <Download className="h-6 w-6" />
+    <Card className="w-full max-w-md mx-auto border-primary/20 bg-primary/5 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <CardContent className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-primary/10 rounded-2xl text-primary ring-4 ring-primary/5">
+            <Smartphone className="h-7 w-7" />
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-sm leading-none">{t('pwa.title', 'Uygulamayı Yükle')}</h3>
+            <h3 className="font-bold text-base leading-tight">{t('pwa.title', 'Uygulamayı Yükle')}</h3>
             <p className="text-xs text-muted-foreground mt-1">{t('pwa.description', 'Daha hızlı ve çevrimdışı erişim için.')}</p>
           </div>
         </div>
         <Button 
             onClick={handleInstallClick} 
-            size="sm"
-            className="w-full sm:w-auto font-bold gap-2 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg h-10 px-6"
+            size="lg"
+            className="w-full sm:w-auto font-bold gap-2 bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md h-12 px-8"
         >
-            <Download className="h-4 w-4" />
+            <PlusCircle className="h-5 w-5" />
             {t('pwa.installButton', 'Hemen Yükle')}
         </Button>
       </CardContent>
