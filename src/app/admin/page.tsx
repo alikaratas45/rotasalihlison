@@ -260,9 +260,9 @@ export default function AdminPage() {
     );
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-20">
+        <div className="space-y-8 max-w-7xl mx-auto pb-20 overflow-hidden">
             <Tabs defaultValue="places" className="w-full">
-                <div className="flex justify-center sticky top-0 z-40 bg-muted/40 backdrop-blur-md py-4 border-b">
+                <div className="flex justify-center sticky top-0 z-40 bg-background/95 backdrop-blur-md py-4 border-b">
                     <TabsList className="flex-wrap h-auto">
                         <TabsTrigger value="places">Yerler</TabsTrigger>
                         <TabsTrigger value="general">Genel Bilgiler</TabsTrigger>
@@ -272,29 +272,30 @@ export default function AdminPage() {
                     </TabsList>
                 </div>
                 
-                <TabsContent value="places" className="mt-6 space-y-8">
-                    <Card>
-                        <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
-                        <CardContent>
-                            <Form {...addPlaceForm}>
-                                <form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-8">
-                                    {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                        <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
-                                            <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
-                                        )}/>
-                                        <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
-                                        <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
-                                    </div>
-                                    <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle</Button>
-                                </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
-                        <CardContent className="p-0">
-                            <ScrollArea className="h-[600px]">
+                <ScrollArea className="h-[calc(100vh-140px)] w-full">
+                  <div className="p-4 space-y-8">
+                    <TabsContent value="places" className="mt-0 space-y-8">
+                        <Card>
+                            <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
+                            <CardContent>
+                                <Form {...addPlaceForm}>
+                                    <form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-8">
+                                        {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                            <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
+                                                <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
+                                            )}/>
+                                            <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                            <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                        </div>
+                                        <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle</Button>
+                                    </form>
+                                </Form>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
+                            <CardContent className="p-0">
                                 <Table>
                                     <TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
@@ -317,57 +318,55 @@ export default function AdminPage() {
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </ScrollArea>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
 
-                <TabsContent value="general" className="mt-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Info className="text-primary" /> Salihli Hakkında Bilgileri</CardTitle>
-                            <CardDescription>Ana sayfadaki "Salihli Hakkında" butonuna basıldığında açılan penceredeki metinleri 5 dilde düzenleyin.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                             <Form {...siteSettingsForm}>
-                                <form onSubmit={siteSettingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-8">
-                                    {renderLocalizedFields(siteSettingsForm, ['aboutTitle', 'aboutContent'])}
-                                    <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg">
-                                        {isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet
-                                    </Button>
-                                </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                    <TabsContent value="general" className="mt-0">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><Info className="text-primary" /> Salihli Hakkında Bilgileri</CardTitle>
+                                <CardDescription>Ana sayfadaki "Salihli Hakkında" butonuna basıldığında açılan penceredeki metinleri 5 dilde düzenleyin.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Form {...siteSettingsForm}>
+                                    <form onSubmit={siteSettingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-8">
+                                        {renderLocalizedFields(siteSettingsForm, ['aboutTitle', 'aboutContent'])}
+                                        <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet
+                                        </Button>
+                                    </form>
+                                </Form>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
 
-                <TabsContent value="experiences" className="mt-6 space-y-8">
-                    <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2"><LayoutGrid className="text-primary" /> Yeni Menü Öğesi Ekle</CardTitle><CardDescription>Ana sayfadaki 6'lı grid menüye yeni bir seçenek ekleyin.</CardDescription></CardHeader>
-                        <CardContent>
-                            <Form {...addExperienceForm}>
-                                <form onSubmit={addExperienceForm.handleSubmit(handleAddExperienceSubmit)} className="space-y-6">
-                                    {renderLocalizedFields(addExperienceForm, ['name'])}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <FormField control={addExperienceForm.control} name="icon" render={({ field }) => (
-                                            <FormItem><FormLabel>İkon (Lucide)</FormLabel><FormControl><Input placeholder="Mountain, Landmark vb." {...field} /></FormControl></FormItem>
-                                        )} />
-                                        <FormField control={addExperienceForm.control} name="link" render={({ field }) => (
-                                            <FormItem><FormLabel>Link</FormLabel><FormControl><Input placeholder="/yerler?category=nature" {...field} /></FormControl></FormItem>
-                                        )} />
-                                        <FormField control={addExperienceForm.control} name="order" render={({ field }) => (
-                                            <FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
-                                        )} />
-                                    </div>
-                                    <Button type="submit" disabled={isSubmitting}>Ekle</Button>
-                                </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader><CardTitle>Deneyim Menüsü Sıralaması</CardTitle><CardDescription>Menü öğeleri 'order' değerine göre ana sayfada listelenir.</CardDescription></CardHeader>
-                        <CardContent className="p-0">
-                            <ScrollArea className="h-[400px]">
+                    <TabsContent value="experiences" className="mt-0 space-y-8">
+                        <Card>
+                            <CardHeader><CardTitle className="flex items-center gap-2"><LayoutGrid className="text-primary" /> Yeni Menü Öğesi Ekle</CardTitle><CardDescription>Ana sayfadaki 6'lı grid menüye yeni bir seçenek ekleyin.</CardDescription></CardHeader>
+                            <CardContent>
+                                <Form {...addExperienceForm}>
+                                    <form onSubmit={addExperienceForm.handleSubmit(handleAddExperienceSubmit)} className="space-y-6">
+                                        {renderLocalizedFields(addExperienceForm, ['name'])}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <FormField control={addExperienceForm.control} name="icon" render={({ field }) => (
+                                                <FormItem><FormLabel>İkon (Lucide)</FormLabel><FormControl><Input placeholder="Mountain, Landmark vb." {...field} /></FormControl></FormItem>
+                                            )} />
+                                            <FormField control={addExperienceForm.control} name="link" render={({ field }) => (
+                                                <FormItem><FormLabel>Link</FormLabel><FormControl><Input placeholder="/yerler?category=nature" {...field} /></FormControl></FormItem>
+                                            )} />
+                                            <FormField control={addExperienceForm.control} name="order" render={({ field }) => (
+                                                <FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                                            )} />
+                                        </div>
+                                        <Button type="submit" disabled={isSubmitting}>Ekle</Button>
+                                    </form>
+                                </Form>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader><CardTitle>Deneyim Menüsü Sıralaması</CardTitle><CardDescription>Menü öğeleri 'order' değerine göre ana sayfada listelenir.</CardDescription></CardHeader>
+                            <CardContent className="p-0">
                                 <Table>
                                     <TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>Link</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
@@ -389,23 +388,24 @@ export default function AdminPage() {
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </ScrollArea>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
 
-                <TabsContent value="feedbacks" className="mt-6">
-                    <div className="flex gap-4 mb-4"><div className="w-full sm:w-64"><Label>Mekan Filtresi</Label><Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}><SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Yerler</SelectItem>{sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}</SelectContent></Select></div></div>
-                    <Card><CardContent className="p-0"><ScrollArea className="h-[600px]"><Table><TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell className="font-medium">{f.placeName}</TableCell><TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell><Badge>{f.satisfaction}/5</Badge></TableCell></TableRow>))}</TableBody></Table></ScrollArea></CardContent></Card>
-                </TabsContent>
+                    <TabsContent value="feedbacks" className="mt-0">
+                        <div className="flex gap-4 mb-4"><div className="w-full sm:w-64"><Label>Mekan Filtresi</Label><Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}><SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Yerler</SelectItem>{sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}</SelectContent></Select></div></div>
+                        <Card><CardContent className="p-0"><Table><TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell className="font-medium">{f.placeName}</TableCell><TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell><Badge>{f.satisfaction}/5</Badge></TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
+                    </TabsContent>
 
-                <TabsContent value="database" className="mt-6">
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <Card><CardHeader><CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle><CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button></CardContent></Card>
-                        <Card className="border-orange-200 bg-orange-50/10"><CardHeader><CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle><CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button></CardContent></Card>
-                        <Card className="md:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle><CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription></CardHeader><CardContent className="flex justify-center"><Button onClick={handleUndoAction} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button></CardContent></Card>
-                    </div>
-                </TabsContent>
+                    <TabsContent value="database" className="mt-0">
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <Card><CardHeader><CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle><CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button></CardContent></Card>
+                            <Card className="border-orange-200 bg-orange-50/10"><CardHeader><CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle><CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button></CardContent></Card>
+                            <Card className="md:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle><CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription></CardHeader><CardContent className="flex justify-center"><Button onClick={handleUndoAction} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button></CardContent></Card>
+                        </div>
+                    </TabsContent>
+                  </div>
+                </ScrollArea>
             </Tabs>
 
             {/* --- MODALS --- */}

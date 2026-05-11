@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -24,6 +23,16 @@ export default function AppWrapper({
   useEffect(() => {
     setMounted(true);
     
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator && window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(
+                (registration) => console.log('SW registered:', registration.scope),
+                (err) => console.log('SW registration failed:', err)
+            );
+        });
+    }
+
     // Visitor Count Logic (Once per session)
     const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
     if (!visitorTracked) {
@@ -47,7 +56,6 @@ export default function AppWrapper({
     }
   }, [firestore]);
 
-  // Global Audio Unlocker: Unlock Speech Synthesis on first user interaction (CRITICAL for mobile)
   const handleInteraction = useCallback(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis && !(window as any)._audioUnlocked) {
         const utterance = new SpeechSynthesisUtterance('');
