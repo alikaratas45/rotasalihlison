@@ -25,7 +25,7 @@
         "getStarted": "Voir tous les lieux",
         "aboutSalihli": "À propos de Salihli",
         "experienceTitle": "Une journée à Salihli",
-        "experienceSubtitle": "Choisissez parmi différentes expériences, personnalisez votre aventure à Salihli.",
+        "experienceSubtitle": "Choisissez parmi différentes expériences, personalisez votre aventure à Salihli.",
         "historyTrip": "Voyage dans l'Histoire",
         "naturePeace": "Nature et Paix",
         "flavorStops": "Arrêts Gourmands",
@@ -101,7 +101,33 @@
     },
     "bicycleRoutes": {
         "title": "Pistes Cyclables",
-        "description": "Découvrez les pistes et sentiers cyclables à Salihli et ses environs. Commencez à pédaler !"
+        "description": "Découvrez les pistes et sentiers cyclables à Salihli et ses environs. Commencez à pédaler !",
+        "availableRoutes": "Itinéraires Disponibles",
+        "routeMap": "Carte des Pistes",
+        "distanceLabel": "Distance :",
+        "selectedLabel": "Sélectionné",
+        "viewOnMapLabel": "Voir sur la Carte",
+        "legendText": "* La ligne bleu foncé sur la carte représente {0}.",
+        "poisTitle": "Qu'y a-t-il sur cette route ?",
+        "noPoisFound": "Aucun lieu enregistré n'a été trouvé pour cet itinéraire.",
+        "routes": {
+            "lidya_yolu": {
+                "name": "Piste Cyclable de la Voie Lydienne",
+                "description": "Un parcours plein d'histoire et de nature suivant les traces de l'ancienne civilisation lydienne, partant de la cité antique de Sardes et s'étendant jusqu'aux contreforts des montagnes Bozdağ."
+            },
+            "salihli_alasehir": {
+                "name": "Piste Cyclable Salihli-Alaşehir",
+                "description": "Un sentier agréable partant de Salihli et s'étendant jusqu'à Alaşehir, traversant les terres agricoles fertiles de la région et les vignobles de renommée mondiale."
+            },
+            "kursunlu_marmara": {
+                "name": "Piste Cyclable Kurşunlu-Marmara",
+                "description": "Un sentier cyclable complet partant des sources thermales de Kurşunlu jusqu'aux rives du lac Marmara, offrant des vues naturelles uniques."
+            },
+            "kula_salihli_geopark": {
+                "name": "Piste Cyclable du Géoparc Kula-Salihli",
+                "description": "Un sentier fascinant traversant les formations géologiques uniques du géoparc mondial UNESCO de Kula-Salihli, accompagné de cônes volcaniques et de coulées de lave."
+            }
+        }
     },
     "hikingRoutes": {
         "title": "Itinéraires de Randonnée",

@@ -102,7 +102,33 @@
     },
     "bicycleRoutes": {
         "title": "Bisiklet Rotaları",
-        "description": "Salihli ve çevresindeki bir dizi bisiklet parkurunu ve yollarını keşfedin. Pedal çevirmeye başlayın!"
+        "description": "Salihli ve çevresindeki bir dizi bisiklet parkurunu ve yollarını keşfedin. Pedal çevirmeye başlayın!",
+        "availableRoutes": "Mevcut Rotalar",
+        "routeMap": "Rota Haritası",
+        "distanceLabel": "Mesafe:",
+        "selectedLabel": "Seçili",
+        "viewOnMapLabel": "Haritada Gör",
+        "legendText": "* Harita üzerinde koyu mavi çizgi ile gösterilen rota {0}'nı temsil eder.",
+        "poisTitle": "Bu Rotada Neler Var?",
+        "noPoisFound": "Bu rotaya bağlı kayıtlı mekan bulunamadı.",
+        "routes": {
+            "lidya_yolu": {
+                "name": "Lidya Yolu Bisiklet Rotası",
+                "description": "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih ve doğa dolu bir parkur."
+            },
+            "salihli_alasehir": {
+                "name": "Salihli-Alaşehir Bisiklet Rotası",
+                "description": "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur."
+            },
+            "kursunlu_marmara": {
+                "name": "Kurşunlu-Marmara Bisiklet Rotası",
+                "description": "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına kadar uzanan, eşsiz doğa manzaraları sunan geniş kapsamlı bir bisiklet parkuru."
+            },
+            "kula_salihli_geopark": {
+                "name": "Kula-Salihli Geopark Bisiklet Rotası",
+                "description": "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur."
+            }
+        }
     },
     "hikingRoutes": {
         "title": "Yürüyüş Rotaları",

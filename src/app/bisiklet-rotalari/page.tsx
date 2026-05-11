@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -19,12 +20,11 @@ import { Button } from '@/components/ui/button';
 
 interface BicycleRoute {
   id: string;
-  name: string;
+  key: string; // Translation key
   distance: string;
-  description: string;
   kmlUrl: string;
   wikilocId?: string;
-  poiIds: string[]; // İlişkisel veri yapısı: Mekan ID'leri
+  poiIds: string[]; // Relational data structure: Place IDs
 }
 
 export default function BisikletRotalariPage() {
@@ -34,7 +34,7 @@ export default function BisikletRotalariPage() {
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const firestore = useFirestore();
 
-  // Tüm mekanları Firestore'dan çekiyoruz
+  // Fetch all places from Firestore
   const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
@@ -42,36 +42,32 @@ export default function BisikletRotalariPage() {
   const routes: BicycleRoute[] = [
     {
       id: 'lidya-yolu-1',
-      name: 'Lidya Yolu Bisiklet Rotası',
+      key: 'lidya_yolu',
       distance: '28,50 km',
-      description: "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih ve doğa dolu bir parkur.",
       kmlUrl: '/lidyayolu.kml',
       wikilocId: '40219098',
       poiIds: ['1', '12', '13'] // Sardes, Gymnasium, Artemis
     },
     {
       id: 'salihli-alasehir-1',
-      name: 'Salihli-Alaşehir Bisiklet Rotası',
+      key: 'salihli_alasehir',
       distance: '35,20 km',
-      description: "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur.",
       kmlUrl: '/salihli-alasehir.kml',
       wikilocId: '167004910',
       poiIds: ['11', '1', '3'] // Bintepeler, Sardes, Odun Köfte (Merkez)
     },
     {
       id: 'kursunlu-marmara-1',
-      name: 'Kurşunlu-Marmara Bisiklet Rotası',
+      key: 'kursunlu_marmara',
       distance: '45,80 km',
-      description: "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına kadar uzanan, eşsiz doğa manzaraları sunan geniş kapsamlı bir bisiklet parkuru.",
       kmlUrl: '/kursunlu-marmara.kml',
       wikilocId: '35690357',
       poiIds: ['2', '11'] // Kurşunlu, Bintepeler
     },
     {
       id: 'kula-salihli-geopark-1',
-      name: 'Kula-Salihli Geopark Bisiklet Rotası',
+      key: 'kula_salihli_geopark',
       distance: '52,40 km',
-      description: "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur.",
       kmlUrl: '/kula-salihli-geopark.kml',
       wikilocId: '75216382',
       poiIds: ['7'] // Adala Kanyonu
@@ -81,7 +77,7 @@ export default function BisikletRotalariPage() {
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
-  // Dinamik Veri Çekme/Filtreleme: Rotaya ait POI'leri süzen fonksiyonel mantık
+  // Dynamic POI Filtering
   const routePois = useMemo(() => {
     if (!allPlaces || !activeRoute.poiIds) return [];
     return allPlaces.filter(place => activeRoute.poiIds.includes(place.id));
@@ -119,7 +115,7 @@ export default function BisikletRotalariPage() {
           {/* Routes List Section */}
           <div className="space-y-8">
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2">
-              Mevcut Rotalar
+              {t('bicycleRoutes.availableRoutes')}
             </h2>
             
             <div className="grid gap-4">
@@ -141,25 +137,25 @@ export default function BisikletRotalariPage() {
                             "text-xl font-bold font-headline",
                             selectedRouteId === route.id ? "text-primary" : "text-slate-900"
                         )}>
-                            {route.name}
+                            {t(`bicycleRoutes.routes.${route.key}.name`)}
                         </h3>
                         {selectedRouteId === route.id && (
                              <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded uppercase tracking-wider">
-                                Seçili
+                                {t('bicycleRoutes.selectedLabel')}
                             </span>
                         )}
                       </div>
                       <p className="text-slate-400 text-xs mb-3 font-medium">
-                        Mesafe: {route.distance}
+                        {t('bicycleRoutes.distanceLabel')} {route.distance}
                       </p>
                       <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">
-                        {route.description}
+                        {t(`bicycleRoutes.routes.${route.key}.description`)}
                       </p>
                       <div className={cn(
                           "mt-3 flex items-center text-xs font-bold uppercase tracking-widest transition-colors",
                           selectedRouteId === route.id ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
                       )}>
-                          Haritada Gör <ChevronRight className="h-3 w-3 ml-1" />
+                          {t('bicycleRoutes.viewOnMapLabel')} <ChevronRight className="h-3 w-3 ml-1" />
                       </div>
                     </CardContent>
                   </Card>
@@ -172,7 +168,7 @@ export default function BisikletRotalariPage() {
           <div className="space-y-6" ref={mapSectionRef}>
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
               <Navigation className="h-5 w-5 text-primary" />
-              Rota Haritası
+              {t('bicycleRoutes.routeMap')}
             </h2>
             <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <PlacesMap 
@@ -183,7 +179,7 @@ export default function BisikletRotalariPage() {
                 />
             </div>
             <p className="text-xs text-muted-foreground italic text-center">
-              * Harita üzerinde koyu mavi çizgi ile gösterilen rota <strong>{activeRoute.name}</strong>'nı temsil eder.
+              {t('bicycleRoutes.legendText', t(`bicycleRoutes.routes.${activeRoute.key}.name`))}
             </p>
           </div>
         </div>
@@ -192,7 +188,7 @@ export default function BisikletRotalariPage() {
         <div className="mt-20">
             <div className="flex items-center gap-3 mb-8 border-b pb-4">
                 <MapPinned className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl font-bold font-headline text-slate-900">Bu Rotada Neler Var?</h2>
+                <h2 className="text-3xl font-bold font-headline text-slate-900">{t('bicycleRoutes.poisTitle')}</h2>
             </div>
 
             {placesLoading ? (
@@ -237,7 +233,7 @@ export default function BisikletRotalariPage() {
                                 <Button asChild className="w-full font-bold h-11" variant="outline">
                                     <Link href={`/yerler/${place.slug[typedLanguage]}`}>
                                         <Info className="mr-2 h-4 w-4" />
-                                        Daha Fazla Bilgi
+                                        {t('actions.seeDetails')}
                                     </Link>
                                 </Button>
                             </CardContent>
@@ -247,7 +243,7 @@ export default function BisikletRotalariPage() {
             ) : (
                 <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                     <Info className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-500 font-medium">Bu rotaya bağlı kayıtlı mekan bulunamadı.</p>
+                    <p className="text-slate-500 font-medium">{t('bicycleRoutes.noPoisFound')}</p>
                 </div>
             )}
         </div>
@@ -257,7 +253,7 @@ export default function BisikletRotalariPage() {
             <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">
                 <h2 className="text-3xl font-bold font-headline text-slate-900">
-                    Wikiloc Rota Detayı: {activeRoute.name}
+                    {t('hikingRoutes.wikilocDetailTitle', t(`bicycleRoutes.routes.${activeRoute.key}.name`))}
                 </h2>
                 </div>
 
@@ -269,7 +265,7 @@ export default function BisikletRotalariPage() {
                             height="500" 
                             frameBorder="0" 
                             scrolling="no"
-                            title={`${activeRoute.name} Wikiloc Detayı`}
+                            title={`${t(`bicycleRoutes.routes.${activeRoute.key}.name`)} Wikiloc Detayı`}
                             className="w-full"
                         ></iframe>
                     </div>

@@ -102,7 +102,33 @@
     },
     "bicycleRoutes": {
         "title": "Bicycle Routes",
-        "description": "Discover bicycle tracks and paths in and around Salihli. Start pedaling!"
+        "description": "Discover bicycle tracks and paths in and around Salihli. Start pedaling!",
+        "availableRoutes": "Available Routes",
+        "routeMap": "Route Map",
+        "distanceLabel": "Distance:",
+        "selectedLabel": "Selected",
+        "viewOnMapLabel": "View on Map",
+        "legendText": "* The dark blue line on the map represents the {0}.",
+        "poisTitle": "What's on this Route?",
+        "noPoisFound": "No registered places found for this route.",
+        "routes": {
+            "lidya_yolu": {
+                "name": "Lydian Way Bicycle Route",
+                "description": "A path full of history and nature following the traces of the ancient Lydian civilization, starting from Sardis Ancient City and stretching to the foothills of the Bozdağ Mountains."
+            },
+            "salihli_alasehir": {
+                "name": "Salihli-Alaşehir Bicycle Route",
+                "description": "A pleasant trail starting from Salihli and extending to Alaşehir, passing through the region's fertile agricultural lands and world-famous vineyards."
+            },
+            "kursunlu_marmara": {
+                "name": "Kurşunlu-Marmara Bicycle Route",
+                "description": "A comprehensive bicycle trail starting from Kurşunlu Thermal Springs to the shores of Lake Marmara, offering unique natural views."
+            },
+            "kula_salihli_geopark": {
+                "name": "Kula-Salihli Geopark Bicycle Route",
+                "description": "A fascinating trail passing through the unique geological formations of the Kula-Salihli UNESCO Global Geopark, accompanied by volcanic cones and lava flows."
+            }
+        }
     },
     "hikingRoutes": {
         "title": "Hiking Routes",

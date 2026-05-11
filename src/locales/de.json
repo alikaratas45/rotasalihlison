@@ -38,7 +38,7 @@
     },
     "about": {
         "title": "Geschichte von Salihli",
-        "content": "Die Geschichte von Salihli beginnt mit der antiken Stadt Sardes (SART). Sardes wurde im Gediz-Becken an den Nordhängen der Hügel westlich von Bozdağ gegründet. Sie wurde im 7.-6. Jahrhundert v. Chr. die Hauptstadt des lydischen Staates. Sardes behielt seine Bedeutung während der persischen, römischen und byzantinischen Zeit bei."
+        "content": "Die Geschichte von Salihli beginnt mit der antiken Stadt Sardes (SART). Sardes wurde im Gediz-Becken an den Nordhängen der Hügel westlich von Bozdağ gegründet. Sie wurde im 7.-6. Jahrhundert v. Chr. die Hauptstadt des lydischen Staaten. Sardes behielt seine Bedeutung während der persischen, römischen und byzantinischen Zeit bei."
     },
     "actions": {
         "seeDetails": "Details ansehen →",
@@ -101,7 +101,33 @@
     },
     "bicycleRoutes": {
         "title": "Fahrradrouten",
-        "description": "Entdecken Sie Fahrradwege und Pfade in und um Salihli. Treten Sie in die Pedale!"
+        "description": "Entdecken Sie Fahrradwege und Pfade in und um Salihli. Treten Sie in die Pedale!",
+        "availableRoutes": "Verfügbare Routen",
+        "routeMap": "Routenkarte",
+        "distanceLabel": "Entfernung:",
+        "selectedLabel": "Ausgewählt",
+        "viewOnMapLabel": "Auf der Karte ansehen",
+        "legendText": "* Die dunkelblaue Linie auf der Karte stellt die {0} dar.",
+        "poisTitle": "Was ist auf dieser Route?",
+        "noPoisFound": "Keine registrierten Orte für diese Route gefunden.",
+        "routes": {
+            "lidya_yolu": {
+                "name": "Lydischer Weg Fahrradroute",
+                "description": "Ein Weg voller Geschichte und Natur, der den Spuren der alten lydischen Zivilisation folgt, beginnend in der antiken Stadt Sardes und bis zu den Ausläufern des Bozdağ-Gebirges reichend."
+            },
+            "salihli_alasehir": {
+                "name": "Salihli-Alaşehir Fahrradroute",
+                "description": "Ein angenehmer Weg, der in Salihli beginnt und bis nach Alaşehir führt, vorbei an den fruchtbaren landwirtschaftlichen Flächen der Region und den weltberühmten Weinbergen."
+            },
+            "kursunlu_marmara": {
+                "name": "Kurşunlu-Marmara Fahrradroute",
+                "description": "Ein umfassender Fahrradweg, der von den Kurşunlu-Thermalquellen bis zum Ufer des Marmara-Sees führt und einzigartige Naturerlebnisse bietet."
+            },
+            "kula_salihli_geopark": {
+                "name": "Kula-Salihli Geopark Fahrradroute",
+                "description": "Ein faszinierender Weg durch die einzigartigen geologischen Formationen des UNESCO Global Geoparks Kula-Salihli, begleitet von Vulkankegeln und Lavaströmen."
+            }
+        }
     },
     "hikingRoutes": {
         "title": "Wanderwege",
