@@ -14,7 +14,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { LucideIcon } from '@/components/icons/lucide-icon';
 import { experienceItems as staticExperienceItems } from '@/lib/data/experience-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Info } from 'lucide-react';
+import { Info, MessageSquare } from 'lucide-react';
+import { FeedbackSystem } from '@/components/feedback-system';
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -91,6 +92,24 @@ export default function Home() {
                 </Card>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
+              <MessageSquare className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-3xl font-bold font-headline mb-2">{t('guestbook.title')}</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {t('guestbook.description')}
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <FeedbackSystem />
           </div>
         </div>
       </section>
