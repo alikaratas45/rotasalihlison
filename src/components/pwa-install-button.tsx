@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Smartphone } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -16,7 +16,7 @@ export function PwaInstallButton() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Check if app is already in standalone mode
+    // 1. Standalone mod kontrolü (Uygulama zaten yüklüyse gösterme)
     if (typeof window !== 'undefined') {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
         || (window.navigator as any).standalone 
@@ -25,15 +25,17 @@ export function PwaInstallButton() {
       setIsStandalone(isStandaloneMode);
     }
 
+    // 2. Tarayıcı yükleme isteğini yakalama
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent browser's default prompt
+      // Varsayılan pencereyi engelle
       e.preventDefault();
-      // Store event to trigger it later
+      // Olayı sakla
       setDeferredPrompt(e);
-      // Show our custom button
+      // Butonu görünür yap (Sadece olay tetiklendiğinde aktif etme kuralı)
       setIsVisible(true);
     };
 
+    // 3. Yükleme tamamlandığında butonu gizle
     const handleAppInstalled = () => {
       setDeferredPrompt(null);
       setIsVisible(false);
@@ -52,6 +54,7 @@ export function PwaInstallButton() {
     };
   }, [t, toast]);
 
+  // 4. Butona tıklayınca yüklemeyi başlat
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
       toast({
@@ -62,14 +65,19 @@ export function PwaInstallButton() {
       return;
     }
 
+    // Yükleme penceresini göster
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
     
+    // Kullanıcı seçimini bekle
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`PWA: Kullanıcı yükleme tercihi: ${outcome}`);
+    
+    // Olayı temizle ve butonu gizle
     setDeferredPrompt(null);
     setIsVisible(false);
   };
 
-  // Hide if already installed or prompt not yet fired
+  // Eğer uygulama zaten yüklüyse veya tarayıcı hazır değilse (henüz prompt fırlatmadıysa) hiçbir şey gösterme
   if (isStandalone || !isVisible) return null;
 
   return (
@@ -87,7 +95,7 @@ export function PwaInstallButton() {
         <Button 
             onClick={handleInstallClick} 
             size="sm"
-            className="w-full sm:w-auto font-bold gap-2 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg"
+            className="w-full sm:w-auto font-bold gap-2 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg h-10 px-6"
         >
             <Download className="h-4 w-4" />
             {t('pwa.installButton', 'Hemen Yükle')}

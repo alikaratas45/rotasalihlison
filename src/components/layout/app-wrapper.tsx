@@ -25,16 +25,17 @@ export default function AppWrapper({
   useEffect(() => {
     setMounted(true);
     
-    // PWA Service Worker Registration
+    // PWA Service Worker Registration - Essential for PWA criteria
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-        // Essential for PWA install criteria
-        navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                console.log('PWA: Service Worker successfully registered:', registration.scope);
-            })
-            .catch((err) => {
-                console.warn('PWA: Service Worker registration failed:', err);
-            });
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then((registration) => {
+                    console.log('PWA: Service Worker successfully registered:', registration.scope);
+                })
+                .catch((err) => {
+                    console.warn('PWA: Service Worker registration failed:', err);
+                });
+        });
     }
 
     // Visitor Count Logic (Once per session)
