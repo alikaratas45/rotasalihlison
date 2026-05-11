@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -103,6 +104,11 @@ export default function AdminPage() {
         if (!places) return [];
         return [...places].sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr'));
     }, [places]);
+
+    const sortedExperienceItems = useMemo(() => {
+        if (!experienceItems) return [];
+        return [...experienceItems].sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
+    }, [experienceItems]);
 
     const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14 } as any });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
@@ -370,7 +376,7 @@ export default function AdminPage() {
                                 <Table>
                                     <TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>Link</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {experienceLoading ? (<TableRow><TableCell colSpan={4}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : experienceItems?.map((item) => (
+                                        {experienceLoading ? (<TableRow><TableCell colSpan={4}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : sortedExperienceItems?.map((item) => (
                                             <TableRow key={item.id}>
                                                 <TableCell className="font-bold text-primary">{item.order}</TableCell>
                                                 <TableCell>{item.name.tr}</TableCell>

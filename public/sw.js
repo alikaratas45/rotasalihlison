@@ -1,4 +1,7 @@
-// Rota Salihli - PWA Service Worker
+
+// This is a minimal Service Worker required for PWA installability.
+// Modern browsers require a fetch event listener to consider the app installable.
+
 const CACHE_NAME = 'rota-salihli-v1';
 
 self.addEventListener('install', (event) => {
@@ -9,8 +12,8 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-// A functional fetch handler is REQUIRED for a site to be considered "installable" (PWA)
 self.addEventListener('fetch', (event) => {
-  // We can implement caching strategies here in the future
-  // For now, this exists to satisfy PWA criteria
+  // Required for PWA criteria. 
+  // We can implement actual caching strategies here if needed.
+  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
 });
