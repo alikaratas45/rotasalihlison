@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -79,6 +80,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           
+          {/* UYGULAMAYI İNDİR BUTONU - TAM OLARAK BURADA */}
           <div className="mb-12 px-4 max-w-2xl mx-auto">
             <PwaInstallButton />
           </div>
