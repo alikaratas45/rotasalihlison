@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query } from 'firebase/firestore';
@@ -12,8 +12,6 @@ import { tr as trLocale } from 'date-fns/locale';
 
 // Services
 import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/firestore/places-service';
-import { addRoute, updateRoute, deleteRoute } from '@/firebase/firestore/routes-service';
-import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
 import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
 
 // UI Components
@@ -35,7 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 
 // Definitions
-import type { Place, Route, ExperienceItem, Feedback, SubPoint } from '@/lib/definitions';
+import type { Place, ExperienceItem, Feedback, SubPoint } from '@/lib/definitions';
 
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
@@ -120,29 +118,45 @@ export default function AdminPage() {
     const subPointForm = useForm<SubPointFormData>({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 } });
 
     useEffect(() => { 
-        if (editingPlace) editPlaceForm.reset({ 
-            name: editingPlace.name,
-            slug: editingPlace.slug,
-            description: editingPlace.description,
-            category: editingPlace.category,
-            lat: editingPlace.coordinates.lat, 
-            lng: editingPlace.coordinates.lng,
-            imageUrl: editingPlace.imageUrl,
-            imageHint: editingPlace.imageHint
-        }); 
+        if (editingPlace) {
+            editPlaceForm.reset({ 
+                name: editingPlace.name,
+                slug: editingPlace.slug,
+                description: editingPlace.description,
+                category: editingPlace.category,
+                lat: editingPlace.coordinates.lat, 
+                lng: editingPlace.coordinates.lng,
+                imageUrl: editingPlace.imageUrl,
+                imageHint: editingPlace.imageHint
+            }); 
+        }
     }, [editingPlace, editPlaceForm]);
 
     const onAddPlaceSubmit = (values: PlaceFormData) => {
         setIsSubmitting(true);
         const randomSeed = Math.random().toString(36).substring(7);
         const newPlace = { ...values, coordinates: { lat: values.lat, lng: values.lng }, imageUrl: values.imageUrl || `https://picsum.photos/seed/${randomSeed}/600/400`, imageHint: values.imageHint || 'landmark', subPoints: [] };
-        addPlace(firestore, newPlace, { onSuccess: () => { toast({ title: 'Eklendi' }); addPlaceForm.reset(); setIsSubmitting(false); }, onError: () => setIsSubmitting(false) });
+        addPlace(firestore, newPlace, { 
+            onSuccess: () => { 
+                toast({ title: 'Eklendi' }); 
+                addPlaceForm.reset(); 
+                setIsSubmitting(false); 
+            }, 
+            onError: () => setIsSubmitting(false) 
+        });
     };
 
     const onEditPlaceSubmit = (values: PlaceFormData) => {
         if (!editingPlace?.id) return;
         setIsSubmitting(true);
-        updatePlace(firestore, editingPlace.id, values, { onSuccess: () => { toast({ title: 'Güncellendi' }); setEditingPlace(null); setIsSubmitting(false); }, onError: () => setIsSubmitting(false) });
+        updatePlace(firestore, editingPlace.id, values, { 
+            onSuccess: () => { 
+                toast({ title: 'Güncellendi' }); 
+                setEditingPlace(null); 
+                setIsSubmitting(false); 
+            }, 
+            onError: () => setIsSubmitting(false) 
+        });
     };
 
     const onAddSubPointSubmit = (values: SubPointFormData) => {
@@ -150,7 +164,15 @@ export default function AdminPage() {
         setIsSubmitting(true);
         const newSubPoint: SubPoint = { id: Math.random().toString(36).substring(7), name: values.name, description: values.description, coordinates: { lat: values.lat, lng: values.lng } };
         const updatedSubPoints = [...(managingSubPointsPlace.subPoints || []), newSubPoint];
-        updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, { onSuccess: () => { toast({ title: 'Alt Başlık Eklendi' }); subPointForm.reset(); setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updatedSubPoints }); setIsSubmitting(false); }, onError: () => setIsSubmitting(false) });
+        updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, { 
+            onSuccess: () => { 
+                toast({ title: 'Alt Başlık Eklendi' }); 
+                subPointForm.reset(); 
+                setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updatedSubPoints }); 
+                setIsSubmitting(false); 
+            }, 
+            onError: () => setIsSubmitting(false) 
+        });
     };
 
     const handleSeed = async (mode: 'SAFE' | 'UPDATE') => {
@@ -258,12 +280,12 @@ export default function AdminPage() {
 
                 <TabsContent value="experiences">
                     <Card>
-                        <CardHeader><CardTitle>Deneyim Menüsü</CardTitle></CardHeader>
+                        <CardHeader><CardTitle>Deneyim Menüsü Sıralaması</CardTitle><CardDescription>Menü öğeleri 'order' değerine göre ana sayfada listelenir.</CardDescription></CardHeader>
                         <CardContent>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Sıra</TableHead>
+                                        <TableHead>Sıra (Order)</TableHead>
                                         <TableHead>İsim</TableHead>
                                         <TableHead className="text-right">Durum</TableHead>
                                     </TableRow>
@@ -271,7 +293,7 @@ export default function AdminPage() {
                                 <TableBody>
                                     {experienceItems?.map((item) => (
                                         <TableRow key={item.id}>
-                                            <TableCell>{item.order}</TableCell>
+                                            <TableCell className="font-bold text-primary">{item.order}</TableCell>
                                             <TableCell>{item.name.tr}</TableCell>
                                             <TableCell className="text-right"><Badge variant="outline">Aktif</Badge></TableCell>
                                         </TableRow>

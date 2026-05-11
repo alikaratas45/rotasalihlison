@@ -24,8 +24,13 @@ export default function Home() {
   const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(query(collection(firestore, 'experience-items'), orderBy('order')));
 
   const displayExperienceItems = useMemo(() => {
-    if (experienceItems && experienceItems.length > 0) return [...experienceItems].sort((a, b) => a.order - b.order);
-    return [...staticExperienceItems].sort((a,b) => a.order - b.order).map((item, index) => ({...item, id: `static-exp-${index}`}));
+    // Veritabanından gelen veriyi 'order' değerine göre kesin sıralıyoruz.
+    // Eğer veritabanı boşsa static listeyi kullanıyoruz.
+    const rawItems = (experienceItems && experienceItems.length > 0) 
+      ? experienceItems 
+      : staticExperienceItems.map((item, index) => ({ ...item, id: `static-exp-${index}` }));
+
+    return [...rawItems].sort((a, b) => (a.order || 0) - (b.order || 0));
   }, [experienceItems]);
 
   return (
