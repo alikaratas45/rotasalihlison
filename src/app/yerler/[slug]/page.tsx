@@ -89,10 +89,9 @@ function PlaceDetailContent() {
           const distToMain = calculateDistance(lat, lng, place.coordinates.lat, place.coordinates.lng);
           setIsNearPlace(distToMain <= 50);
 
-          // SubPoint Proximity Check
           if (place.subPoints && place.subPoints.length > 0) {
               let nearestSub: SubPoint | null = null;
-              let minDistance = 30; // 30 metre eşiği
+              let minDistance = 30;
 
               for (const sub of place.subPoints) {
                   const dist = calculateDistance(lat, lng, sub.coordinates.lat, sub.coordinates.lng);
@@ -122,17 +121,18 @@ function PlaceDetailContent() {
       synth.cancel();
       
       setTimeout(() => {
-        let fixedText = text
-            .replace(/Gymnasium/gi, 'Cimnazyum')
-            .replace(/Sardes/gi, 'Sardes')
-            .replace(/Artemis/gi, 'Artemis')
-            .replace(/Lidya/gi, 'Lidya')
-            .replace(/Bintepeler/gi, 'Bintepeler')
-            .replace(/Sinagog/gi, 'Sinagog')
-            .replace(/Havra/gi, 'Havra');
+        let fixedText = text;
 
+        // Sadece Türkçe okuma yapılıyorsa özel telaffuz düzeltmelerini uygula
         if (lang === 'tr') {
             fixedText = fixedText
+                .replace(/Gymnasium/gi, 'Cimnazyum')
+                .replace(/Sardes/gi, 'Sardes')
+                .replace(/Artemis/gi, 'Artemis')
+                .replace(/Lidya/gi, 'Lidya')
+                .replace(/Bintepeler/gi, 'Bintepeler')
+                .replace(/Sinagog/gi, 'Sinagog')
+                .replace(/Havra/gi, 'Havra')
                 .replace(/M\.Ö\./g, 'milattan önce')
                 .replace(/MÖ/g, 'milattan önce')
                 .replace(/İ\.Ö\./g, 'milattan önce')
@@ -148,18 +148,41 @@ function PlaceDetailContent() {
         const utterance = new SpeechSynthesisUtterance(fixedText);
         utteranceRef.current = utterance;
         
-        utterance.lang = lang === 'tr' ? 'tr-TR' : lang === 'en' ? 'en-US' : 'tr-TR';
+        // Dil kodlarını standart BCP 47 formatına eşle
+        const langMap: Record<string, string> = {
+            tr: 'tr-TR',
+            en: 'en-US',
+            fr: 'fr-FR',
+            de: 'de-DE',
+            ja: 'ja-JP'
+        };
+        const targetLang = langMap[lang] || 'tr-TR';
+        utterance.lang = targetLang;
 
         const voices = synth.getVoices();
-        const findVoice = () => {
-            let v = voices.find(v => v.lang.replace('_', '-').toLowerCase() === utterance.lang.toLowerCase());
-            if (v) return v;
-            v = voices.find(v => v.name.toLowerCase().includes('turkish') || v.name.toLowerCase().includes('türkçe'));
-            if (v) return v;
-            return null;
+        
+        // İlgili dil için en uygun sesi bul
+        const findBestVoice = () => {
+            // 1. Tam eşleşme (örn: fr-FR)
+            let matchingVoices = voices.filter(v => v.lang.toLowerCase().replace('_', '-') === targetLang.toLowerCase());
+            
+            // 2. Kısmi eşleşme (örn: 'fr' ile başlayanlar)
+            if (matchingVoices.length === 0) {
+                const langPart = targetLang.split('-')[0];
+                matchingVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langPart.toLowerCase()));
+            }
+
+            if (matchingVoices.length === 0) return null;
+
+            // 3. Kalite tercihi: Google sesleri genellikle daha doğal duyulur
+            const googleVoice = matchingVoices.find(v => v.name.includes('Google'));
+            if (googleVoice) return googleVoice;
+
+            // 4. İlk eşleşen sesi döndür
+            return matchingVoices[0];
         };
 
-        const voice = findVoice();
+        const voice = findBestVoice();
         if (voice) {
             utterance.voice = voice;
             utterance.lang = voice.lang;
@@ -191,6 +214,8 @@ function PlaceDetailContent() {
 
     setIsGenerating(true);
     setPlayingId(id);
+    
+    // Audio unlock priming
     const priming = new SpeechSynthesisUtterance('');
     priming.volume = 0;
     synth.speak(priming);
@@ -313,7 +338,6 @@ function PlaceDetailContent() {
           </div>
         </div>
 
-        {/* SubPoints (Sinagog etc.) Permanent Section */}
         {place.subPoints && place.subPoints.length > 0 && (
             <div className="mt-16 clear-both">
                 <div className="flex items-center gap-3 mb-8 border-b pb-4">
