@@ -20,7 +20,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       tr: 'Doğa ve Huzur',
       en: 'Nature and Peace',
       fr: 'Nature et Paix',
-      de: 'Natur obedience',
+      de: 'Natur und Frieden',
       ja: '自然と平和'
     },
     icon: 'Mountain',
@@ -95,7 +95,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       de: 'Wanderwege',
       ja: 'ハイキングルート'
     },
-    icon: 'Climbing',
+    icon: 'Footprints',
     link: '/yuruyus-rotalari',
     order: 8
   }

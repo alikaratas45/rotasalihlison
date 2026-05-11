@@ -21,12 +21,13 @@ export function Header() {
   const { t, mounted } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Navigasyon linkleri - Broşürler tamamen kaldırıldı
+  // Navigasyon linkleri - "Çevremde Ne Var?" (Yakındakiler) eklendi
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
     { href: '/rotalar', label: t('header.routes') },
     { href: '/hikayeler', label: t('header.stories') },
     { href: '/lezzetler', label: t('header.cuisine') },
+    { href: '/cevremde-ne-var', label: t('header.nearby') },
   ];
 
   return (
