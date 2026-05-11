@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { PlacesMap } from '@/components/places-map';
-import { Bike, Navigation, ChevronRight, MapPinned, Info, Loader2 } from 'lucide-react';
+import { Bike, Navigation, ChevronRight, MapPinned, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -17,14 +16,14 @@ import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { getKmlPoints, isPointNearRoute } from '@/lib/geo-utils';
 
 interface BicycleRoute {
   id: string;
-  key: string; // Translation key
+  key: string; 
   distance: string;
   kmlUrl: string;
   wikilocId?: string;
-  poiIds: string[]; // Relational data structure: Place IDs
 }
 
 export default function BisikletRotalariPage() {
@@ -45,43 +44,59 @@ export default function BisikletRotalariPage() {
       key: 'lidya_yolu',
       distance: '28,50 km',
       kmlUrl: '/lidyayolu.kml',
-      wikilocId: '40219098',
-      poiIds: ['1', '12', '13'] // Sardes, Gymnasium, Artemis
+      wikilocId: '40219098'
     },
     {
       id: 'salihli-alasehir-1',
       key: 'salihli_alasehir',
       distance: '35,20 km',
       kmlUrl: '/salihli-alasehir.kml',
-      wikilocId: '167004910',
-      poiIds: ['11', '1', '3'] // Bintepeler, Sardes, Odun Köfte (Merkez)
+      wikilocId: '167004910'
     },
     {
       id: 'kursunlu-marmara-1',
       key: 'kursunlu_marmara',
       distance: '45,80 km',
       kmlUrl: '/kursunlu-marmara.kml',
-      wikilocId: '35690357',
-      poiIds: ['2', '11'] // Kurşunlu, Bintepeler
+      wikilocId: '35690357'
     },
     {
       id: 'kula-salihli-geopark-1',
       key: 'kula_salihli_geopark',
       distance: '52,40 km',
       kmlUrl: '/kula-salihli-geopark.kml',
-      wikilocId: '75216382',
-      poiIds: ['7'] // Adala Kanyonu
+      wikilocId: '75216382'
     }
   ];
 
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
+  const [routePois, setRoutePois] = useState<Place[]>([]);
+  const [isProcessingPois, setIsProcessingPois] = useState(false);
+  
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
-  // Dynamic POI Filtering
-  const routePois = useMemo(() => {
-    if (!allPlaces || !activeRoute.poiIds) return [];
-    return allPlaces.filter(place => activeRoute.poiIds.includes(place.id));
-  }, [allPlaces, activeRoute.poiIds]);
+  // 2 KM PROXIMITY RULE: Dynamic filtering based on KML path
+  useEffect(() => {
+    async function updatePois() {
+      if (!allPlaces) return;
+      setIsProcessingPois(true);
+      
+      try {
+        const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
+        const filtered = allPlaces.filter(place => {
+          // 2000 meters = 2 km proximity threshold
+          return isPointNearRoute(place.coordinates, kmlPoints, 2000);
+        });
+        setRoutePois(filtered);
+      } catch (err) {
+        console.error("Proximity filtering error:", err);
+      } finally {
+        setIsProcessingPois(false);
+      }
+    }
+    
+    updatePois();
+  }, [activeRoute.id, allPlaces]);
 
   const handleRouteClick = (id: string) => {
     setSelectedRouteId(id);
@@ -101,7 +116,6 @@ export default function BisikletRotalariPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* Header Section */}
         <div className="flex items-center gap-4 mb-10">
           <div className="p-3 bg-red-500 rounded-full text-white shadow-lg">
             < Bike className="h-8 w-8" />
@@ -112,7 +126,6 @@ export default function BisikletRotalariPage() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-10 mb-12">
-          {/* Routes List Section */}
           <div className="space-y-8">
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2">
               {t('bicycleRoutes.availableRoutes')}
@@ -164,7 +177,6 @@ export default function BisikletRotalariPage() {
             </div>
           </div>
 
-          {/* Map Section */}
           <div className="space-y-6" ref={mapSectionRef}>
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
               <Navigation className="h-5 w-5 text-primary" />
@@ -184,14 +196,13 @@ export default function BisikletRotalariPage() {
           </div>
         </div>
 
-        {/* POI SECTION: Rota Üzerindeki Görülecek Yerler */}
         <div className="mt-20">
             <div className="flex items-center gap-3 mb-8 border-b pb-4">
                 <MapPinned className="h-8 w-8 text-primary" />
                 <h2 className="text-3xl font-bold font-headline text-slate-900">{t('bicycleRoutes.poisTitle')}</h2>
             </div>
 
-            {placesLoading ? (
+            {placesLoading || isProcessingPois ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[1, 2, 3].map((i) => (
                         <Card key={i} className="overflow-hidden border-none shadow-md">
@@ -248,7 +259,6 @@ export default function BisikletRotalariPage() {
             )}
         </div>
 
-        {/* Wikiloc Detail Section */}
         {activeRoute.wikilocId && (
             <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">

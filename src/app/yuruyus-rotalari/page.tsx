@@ -1,9 +1,9 @@
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { PlacesMap } from '@/components/places-map';
-import { Footprints, Navigation, ChevronRight, MapPinned, Info, Loader2 } from 'lucide-react';
+import { Footprints, Navigation, ChevronRight, MapPinned, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { getKmlPoints, isPointNearRoute } from '@/lib/geo-utils';
 
 interface RouteDetail {
   id: string;
@@ -24,7 +25,6 @@ interface RouteDetail {
   description: string;
   kmlUrl: string;
   wikilocId?: string;
-  poiIds: string[]; // İlişkisel veri yapısı: Mekan ID'leri
 }
 
 export default function YuruyusRotalariPage() {
@@ -34,7 +34,7 @@ export default function YuruyusRotalariPage() {
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const firestore = useFirestore();
 
-  // Tüm mekanları Firestore'dan çekiyoruz
+  // Fetch all places from Firestore
   const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
@@ -46,8 +46,7 @@ export default function YuruyusRotalariPage() {
       distance: '12,40 km',
       description: t('hikingRoutes.routes.kursunlu.description'),
       kmlUrl: '/kursunlu.kml',
-      wikilocId: '149618956',
-      poiIds: ['2'] // Kurşunlu Kaplıcaları
+      wikilocId: '149618956'
     },
     {
       id: 'kursunlu-allahdiyen-1',
@@ -55,8 +54,7 @@ export default function YuruyusRotalariPage() {
       distance: '18,60 km',
       description: t('hikingRoutes.routes.kursunlu_allahdiyen.description'),
       kmlUrl: '/kursunlu-allahdiyen.kml',
-      wikilocId: '163454363',
-      poiIds: ['2'] // Kurşunlu Kaplıcaları
+      wikilocId: '163454363'
     },
     {
       id: 'kayabasi-walking-1',
@@ -64,19 +62,38 @@ export default function YuruyusRotalariPage() {
       distance: '9,50 km',
       description: t('hikingRoutes.routes.kayabasi.description'),
       kmlUrl: '/kayabasi.kml',
-      wikilocId: '67911227',
-      poiIds: [] // Henüz atanmış mekan yok
+      wikilocId: '67911227'
     }
   ], [t]);
 
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
+  const [routePois, setRoutePois] = useState<Place[]>([]);
+  const [isProcessingPois, setIsProcessingPois] = useState(false);
+
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
-  // Dinamik Veri Çekme/Filtreleme: Rotaya ait POI'leri süzen fonksiyonel mantık
-  const routePois = useMemo(() => {
-    if (!allPlaces || !activeRoute.poiIds) return [];
-    return allPlaces.filter(place => activeRoute.poiIds.includes(place.id));
-  }, [allPlaces, activeRoute.poiIds]);
+  // 2 KM PROXIMITY RULE: Dynamic filtering based on KML path
+  useEffect(() => {
+    async function updatePois() {
+      if (!allPlaces) return;
+      setIsProcessingPois(true);
+      
+      try {
+        const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
+        const filtered = allPlaces.filter(place => {
+          // 2000 meters = 2 km proximity threshold
+          return isPointNearRoute(place.coordinates, kmlPoints, 2000);
+        });
+        setRoutePois(filtered);
+      } catch (err) {
+        console.error("Proximity filtering error:", err);
+      } finally {
+        setIsProcessingPois(false);
+      }
+    }
+    
+    updatePois();
+  }, [activeRoute.id, allPlaces]);
 
   const handleRouteClick = (id: string) => {
     setSelectedRouteId(id);
@@ -96,7 +113,6 @@ export default function YuruyusRotalariPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* Header Section */}
         <div className="flex items-center gap-4 mb-10">
           <div className="p-3 bg-primary rounded-full text-white shadow-lg">
             <Footprints className="h-8 w-8" />
@@ -107,7 +123,6 @@ export default function YuruyusRotalariPage() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-10 mb-12">
-          {/* Routes List Section */}
           <div className="space-y-8">
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2">
               {t('hikingRoutes.availableRoutes')}
@@ -159,7 +174,6 @@ export default function YuruyusRotalariPage() {
             </div>
           </div>
 
-          {/* Map Section */}
           <div className="space-y-6" ref={mapSectionRef}>
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
               <Navigation className="h-5 w-5 text-primary" />
@@ -179,14 +193,13 @@ export default function YuruyusRotalariPage() {
           </div>
         </div>
 
-        {/* POI SECTION: Rota Üzerindeki Görülecek Yerler */}
         <div className="mt-20">
             <div className="flex items-center gap-3 mb-8 border-b pb-4">
                 <MapPinned className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl font-bold font-headline text-slate-900">Bu Rotada Neler Var?</h2>
+                <h2 className="text-3xl font-bold font-headline text-slate-900">{t('bicycleRoutes.poisTitle')}</h2>
             </div>
 
-            {placesLoading ? (
+            {placesLoading || isProcessingPois ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[1, 2, 3].map((i) => (
                         <Card key={i} className="overflow-hidden border-none shadow-md">
@@ -228,7 +241,7 @@ export default function YuruyusRotalariPage() {
                                 <Button asChild className="w-full font-bold h-11" variant="outline">
                                     <Link href={`/yerler/${place.slug[typedLanguage]}`}>
                                         <Info className="mr-2 h-4 w-4" />
-                                        Daha Fazla Bilgi
+                                        {t('actions.seeDetails')}
                                     </Link>
                                 </Button>
                             </CardContent>
@@ -238,12 +251,11 @@ export default function YuruyusRotalariPage() {
             ) : (
                 <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                     <Info className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-500 font-medium">Bu rotaya bağlı kayıtlı mekan bulunamadı.</p>
+                    <p className="text-slate-500 font-medium">{t('bicycleRoutes.noPoisFound')}</p>
                 </div>
             )}
         </div>
 
-        {/* Wikiloc Detail Section */}
         {activeRoute.wikilocId && (
             <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">
