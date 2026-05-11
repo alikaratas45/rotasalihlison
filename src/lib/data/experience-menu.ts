@@ -1,4 +1,3 @@
-
 import { ExperienceItem } from '@/lib/definitions';
 
 // Omit 'id' because it will be auto-generated during seeding
@@ -29,18 +28,6 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Çevremde Ne Var?',
-      en: 'What\'s Around Me?',
-      fr: 'Qu\'y a-t-il autour de moi ?',
-      de: 'Was ist um mich herum?',
-      ja: '私の周りに何がある？'
-    },
-    icon: 'LocateFixed',
-    link: '/cevremde-ne-var',
-    order: 3
-  },
-  {
-    name: {
       tr: 'Lezzet Durakları',
       en: 'Flavor Stops',
       fr: 'Arrêts Gourmands',
@@ -49,7 +36,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Utensils',
     link: '/lezzetler',
-    order: 4
+    order: 3
   },
   {
     name: {
@@ -61,7 +48,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'MapPinned',
     link: '/rota-olustur',
-    order: 5
+    order: 4
   },
   {
     name: {
@@ -73,7 +60,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'BookOpen',
     link: '/hikayeler',
-    order: 6
+    order: 5
   },
   {
     name: {
@@ -85,7 +72,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Bike',
     link: '/bisiklet-rotalari',
-    order: 7
+    order: 6
   },
   {
     name: {
@@ -97,6 +84,18 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Footprints',
     link: '/yuruyus-rotalari',
+    order: 7
+  },
+  {
+    name: {
+      tr: 'Yakınımdakiler',
+      en: 'What\'s Around Me?',
+      fr: 'Qu\'y a-t-il autour de moi ?',
+      de: 'Was ist um mich herum?',
+      ja: '私の周りに何がある？'
+    },
+    icon: 'LocateFixed',
+    link: '/cevremde-ne-var',
     order: 8
   }
 ];
