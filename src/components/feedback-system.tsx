@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -66,11 +65,11 @@ export function FeedbackSystem() {
 
   return (
     <div className="space-y-12 max-w-4xl mx-auto">
-      {/* 1. COMMENTS LIST (NOW AT THE TOP) */}
+      {/* 1. COMMENTS LIST */}
       <div className="space-y-6">
         <h2 className="text-2xl font-bold font-headline border-b pb-4 flex items-center gap-2">
             <MessageSquare className="text-primary" />
-            {t('guestbook.diaryTitle')} ({comments?.length || 0})
+            {t('guestbook.diaryTitle')}
         </h2>
         
         {loading ? (
@@ -84,7 +83,7 @@ export function FeedbackSystem() {
         )}
       </div>
 
-      {/* 2. SUBMISSION FORM (NOW AT THE BOTTOM) */}
+      {/* 2. SUBMISSION FORM */}
       <Card className="shadow-lg border-primary/10">
         <CardHeader>
           <CardTitle className="font-headline text-2xl text-primary">{t('guestbook.leaveMessage')}</CardTitle>
