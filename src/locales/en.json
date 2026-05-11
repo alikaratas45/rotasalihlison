@@ -211,5 +211,14 @@
         "title": "Sections of the Place",
         "listen": "Listen",
         "directions": "Directions"
+    },
+    "pwa": {
+        "title": "Install App",
+        "description": "Add Rota Salihli to your home screen for faster and offline access.",
+        "installButton": "Install Now",
+        "installedTitle": "Installed",
+        "installedDescription": "The application has been successfully added to your device.",
+        "errorTitle": "Installation Error",
+        "errorDescription": "Installation could not be started. Please use the browser menu."
     }
 }

@@ -196,5 +196,14 @@
         "listen": "Dinle",
         "directions": "Yol Tarifi",
         "youAreHere": "Şu an buradasınız"
+    },
+    "pwa": {
+        "title": "Uygulamayı Yükle",
+        "description": "Rota Salihli'yi ana ekranınıza ekleyerek daha hızlı ve çevrimdışı erişim sağlayın.",
+        "installButton": "Hemen Yükle",
+        "installedTitle": "Yüklendi",
+        "installedDescription": "Uygulama başarıyla cihazınıza eklendi.",
+        "errorTitle": "Yükleme Hatası",
+        "errorDescription": "Yükleme başlatılamadı. Lütfen tarayıcı menüsünü kullanın."
     }
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -16,6 +17,7 @@ import { experienceItems as staticExperienceItems } from '@/lib/data/experience-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Info, MessageSquare } from 'lucide-react';
 import { FeedbackSystem } from '@/components/feedback-system';
+import { PwaInstallButton } from '@/components/pwa-install-button';
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -113,6 +115,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* PWA INSTALL SECTION */}
+      <PwaInstallButton />
     </div>
   );
 }
