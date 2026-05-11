@@ -39,11 +39,12 @@
     },
     "about": {
         "title": "History of Salihli",
-        "content": "To tell the history of Salihli, one must start with the Ancient City of Sardis (SART). Sardis was founded in the Gediz basin, on the northern slopes of the hills to the west of Bozdağ. It showed great development especially in the 7th-6th centuries BC, becoming the capital of the Lydian state. Industrial inventions, money, and international migration started here. Sardis maintained its importance as a center during the Persian, Roman, and Byzantine periods. \n\nIn 1075, Seljuk Turks captured Sardis and called it Sart. By 1313, it was under final Turkish rule. The first record of modern Salihli District dates back to 1518, mentioned as Veled-i Salih village."
+        "content": "To tell the history of Salihli, one must start with the Ancient City of Sardis (SART). Sardis was founded in the Gediz basin, on the northern slopes of the hills to the west of Bozdağ. It showed great development especially in the 7th-6th centuries BC, becoming the capital of the Lydian state. Industrial inventions, money, and international migration started here. Sardis maintained its importance as a center during the Persian, Roman, and Byzantine periods."
     },
     "actions": {
         "seeDetails": "See Details →",
         "listenAudio": "Listen Audio",
+        "listenTo": "Listen to {0}",
         "stopAudio": "Stop",
         "loadingAudio": "Loading...",
         "startRouteOnMap": "Start Route on Map",
@@ -138,7 +139,7 @@
         "no": "No, Thanks"
     },
     "subPoints": {
-        "title": "Mekanın Bölümleri",
+        "title": "Sections of the Place",
         "listen": "Listen",
         "directions": "Directions"
     }

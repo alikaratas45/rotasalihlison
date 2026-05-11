@@ -39,11 +39,12 @@
     },
     "about": {
         "title": "Salihli'nin Tarihçesi",
-        "content": "Salihli´nin tarihini anlatmaya Antik Sardes (SART) kenti ile başlamak gerekmektedir. Sardes, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ´ın kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda büyük gelişme gösteren kent, Lidya devletinin başkenti olmuş ve büyük önem kazanmıştır. Paranın ilk basıldığı yer olan Sardes; endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olmuştur. \n\n1075 yıllarında Selçuklu Türkleri tarafından fethedilen kent, o günden sonra Sart diye anılmaya başlanmıştır. 1313 yılında kesin olarak Türk egemenliği altına giren bölge, tarih boyunca önemini korumuştur. Bugünkü Salihli İlçesine ait ilk kayıtlar 1518 yılına kadar uzanmaktadır."
+        "content": "Salihli´nin tarihini anlatmaya Antik Sardes (SART) kenti ile başlamak gerekmektedir. Sardes, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ´ın kuzey yamaçları üzerinde Meles adlı bir kral tarafından kurulmuştur. M.Ö. 1750-1200 yıllarında Hititler döneminde Sardes´in de içinde bulunduğu bölge ASSUWA olarak anılmaktadır. Özellikle M.Ö. 7. ve 6. yüzyıllarda büyük gelişme gösteren kent, Lidya devletinin başkenti olmuş ve büyük önem kazanmıştır. Paranın ilk basıldığı yer olan Sardes; endüstriyel buluşların ve kültürel gelişimin merkezi olmuştur. 1075 yıllarında Selçuklu Türkleri tarafından fethedilen kent, o günden sonra Sart diye anılmaya başlanmıştır. 1313 yılında kesin olarak Türk egemenliği altına giren bölge, tarih boyunca önemini korumuştur."
     },
     "actions": {
         "seeDetails": "Detayları Gör →",
         "listenAudio": "Sesli Dinle",
+        "listenTo": "{0} Dinle",
         "stopAudio": "Durdur",
         "loadingAudio": "Yükleniyor...",
         "startRouteOnMap": "Rotayı Haritada Başlat",

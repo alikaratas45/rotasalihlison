@@ -39,11 +39,12 @@
     },
     "about": {
         "title": "Histoire de Salihli",
-        "content": "Pour raconter l'histoire de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes a été fondée dans le bassin du Gediz, sur les pentes nord des collines à l'ouest de Bozdağ. Elle est devenue la capitale de l'État lydien aux VIIe et VIe siècles av. J.-C. Sardes est restée importante sous les périodes perse, romaine et byzantine. \n\nEn 1075, les Turcs Seldjoukides s'emparèrent de Sardes et l'appelèrent Sart. En 1313, elle passa définitivement sous domination turque. Le premier registre de l'actuel district de Salihli date de 1518."
+        "content": "Pour raconter l'histoire de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes a été fondée dans le bassin du Gediz, sur les pentes nord des collines à l'ouest de Bozdağ. Elle est devenue la capitale de l'État lydien aux VIIe et VIe siècles av. J.-C. Sardes est restée importante sous les périodes perse, romaine et byzantine."
     },
     "actions": {
         "seeDetails": "Voir les détails →",
         "listenAudio": "Écouter l'audio",
+        "listenTo": "Écouter {0}",
         "stopAudio": "Arrêter",
         "loadingAudio": "Chargement...",
         "startRouteOnMap": "Démarrer l'itinéraire sur la carte",
@@ -77,7 +78,7 @@
     },
     "stories": {
         "title": "Histoires et Légendes de Salihli",
-        "description": "Explorez les mythes et les contes qui ont façonné ces terres anciennes depuis des millénaires.",
+        "description": "Explorez les mythes et les contes qui ont façonné ces terres anciennes depuis des millennaires.",
         "notFoundTitle": "Histoire non trouvée",
         "notFoundDescription": "L'histoire que vous recherchez n'existe pas.",
         "by": "Par :",
@@ -137,7 +138,7 @@
         "no": "Non, merci"
     },
     "subPoints": {
-        "title": "Mekanın Bölümleri",
+        "title": "Sections du lieu",
         "listen": "Écouter",
         "directions": "Itinéraire"
     }

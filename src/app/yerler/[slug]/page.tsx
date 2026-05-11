@@ -310,7 +310,7 @@ function PlaceDetailContent() {
                 className={cn("flex-1 md:flex-none md:min-w-[200px]", activeSubPoint && "border-primary ring-1 ring-primary/20")}
             >
               {isGenerating && playingId === 'main' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying && playingId === 'main' ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
-              {isGenerating && playingId === 'main' ? t('actions.loadingAudio') : isPlaying && playingId === 'main' ? t('actions.stopAudio') : `${currentDisplayName} Dinle`}
+              {isGenerating && playingId === 'main' ? t('actions.loadingAudio') : isPlaying && playingId === 'main' ? t('actions.stopAudio') : t('actions.listenTo', currentDisplayName)}
             </Button>
             
             {place.id !== '3' ? (
@@ -348,7 +348,7 @@ function PlaceDetailContent() {
                                     <div>
                                         <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2">
                                             {sub.name[typedLanguage]}
-                                            {activeSubPoint?.id === sub.id && <Badge variant="secondary">Şu an buradasınız</Badge>}
+                                            {activeSubPoint?.id === sub.id && <Badge variant="secondary">{t('subPoints.youAreHere', 'Şu an buradasınız')}</Badge>}
                                         </h3>
                                         <div className="flex items-center text-muted-foreground text-sm gap-1">
                                             <MapPin className="h-3 w-3" />
