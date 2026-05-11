@@ -108,6 +108,30 @@
         "title": "Bisiklet Rotaları",
         "description": "Salihli ve çevresindeki bir dizi bisiklet parkurunu ve yollarını keşfedin. Pedal çevirmeye başlayın!"
     },
+    "hikingRoutes": {
+        "title": "Yürüyüş Rotaları",
+        "availableRoutes": "Mevcut Rotalar",
+        "routeMap": "Rota Haritası",
+        "distanceLabel": "Mesafe:",
+        "selectedLabel": "Seçili",
+        "viewOnMapLabel": "Haritada Gör",
+        "legendText": "* Harita üzerinde koyu mavi çizgi ile gösterilen rota {0}'nı temsil eder.",
+        "wikilocDetailTitle": "Wikiloc Rota Detayı: {0}",
+        "routes": {
+            "kursunlu": {
+                "name": "Kurşunlu Yürüyüş Rotası",
+                "description": "Kurşunlu Kaplıcaları'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur."
+            },
+            "kursunlu_allahdiyen": {
+                "name": "Kurşunlu-Allahdiyen Yürüyüş Rotası",
+                "description": "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru."
+            },
+            "kayabasi": {
+                "name": "Salihli Kayabaşı Yürüyüş Rotası",
+                "description": "Salihli'nin Kayabaşı mevkiinde, doğa ile iç içe, muazzam manzaralar ve kaya oluşumları sunan huzurlu bir yürüyüş parkuru."
+            }
+        }
+    },
     "survey": {
         "title": "Deneyiminizi Puanlayın",
         "description": "Mekana yakın olduğunuz için geri bildirim verebilirsiniz. Görüşleriniz bizim için değerlidir.",

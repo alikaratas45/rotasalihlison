@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Home",
@@ -108,6 +107,30 @@
     "bicycleRoutes": {
         "title": "Bicycle Routes",
         "description": "Discover bicycle tracks and paths in and around Salihli. Start pedaling!"
+    },
+    "hikingRoutes": {
+        "title": "Hiking Routes",
+        "availableRoutes": "Available Routes",
+        "routeMap": "Route Map",
+        "distanceLabel": "Distance:",
+        "selectedLabel": "Selected",
+        "viewOnMapLabel": "View on Map",
+        "legendText": "* The dark blue line on the map represents the {0}.",
+        "wikilocDetailTitle": "Wikiloc Route Detail: {0}",
+        "routes": {
+            "kursunlu": {
+                "name": "Kurşunlu Walking Route",
+                "description": "A pleasant trail in the unique nature of Kurşunlu Thermal Springs, stretching along the valley where you will feel the coolness of the healing waters."
+            },
+            "kursunlu_allahdiyen": {
+                "name": "Kurşunlu-Allahdiyen Walking Route",
+                "description": "A medium-difficulty nature walk trail starting from Kurşunlu Thermal Springs to Allahdiyen village, accompanied by pine trees and the sound of the stream."
+            },
+            "kayabasi": {
+                "name": "Salihli Kayabaşı Walking Route",
+                "description": "A peaceful walking trail in the Kayabaşı area of Salihli, intertwined with nature, offering magnificent views and rock formations."
+            }
+        }
     },
     "survey": {
         "title": "Rate Your Experience",

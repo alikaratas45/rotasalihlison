@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Startseite",
@@ -107,6 +106,30 @@
     "bicycleRoutes": {
         "title": "Fahrradrouten",
         "description": "Entdecken Sie Fahrradwege und Pfade in und um Salihli. Treten Sie in die Pedale!"
+    },
+    "hikingRoutes": {
+        "title": "Wanderwege",
+        "availableRoutes": "Verfügbare Routen",
+        "routeMap": "Routenkarte",
+        "distanceLabel": "Entfernung:",
+        "selectedLabel": "Ausgewählt",
+        "viewOnMapLabel": "Auf der Karte ansehen",
+        "legendText": "* Die dunkelblaue Linie auf der Karte stellt die {0} dar.",
+        "wikilocDetailTitle": "Wikiloc Routen-Detail: {0}",
+        "routes": {
+            "kursunlu": {
+                "name": "Kurşunlu Wanderweg",
+                "description": "Ein angenehmer Weg in der einzigartigen Natur der Kurşunlu Thermalquellen, der sich entlang des Tals erstreckt, wo Sie die Kühle des heilenden Wassers spüren werden."
+            },
+            "kursunlu_allahdiyen": {
+                "name": "Kurşunlu-Allahdiyen Wanderweg",
+                "description": "Ein mittelschwerer Naturwanderweg, der von den Kurşunlu Thermalquellen zum Dorf Allahdiyen führt, begleitet von Pinien und dem Rauschen des Baches."
+            },
+            "kayabasi": {
+                "name": "Salihli Kayabaşı Wanderweg",
+                "description": "Ein friedlicher Wanderweg im Gebiet Kayabaşı in Salihli, inmitten der Natur, mit herrlichen Ausblicken und Felsformationen."
+            }
+        }
     },
     "survey": {
         "title": "Bewerten Sie Ihr Erlebnis",

@@ -1,7 +1,7 @@
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { PlacesMap } from '@/components/places-map';
 import { Footprints, Navigation, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,32 +22,32 @@ export default function YuruyusRotalariPage() {
   const isMobile = useIsMobile();
   const mapSectionRef = useRef<HTMLDivElement>(null);
   
-  const routes: RouteDetail[] = [
+  const routes: RouteDetail[] = useMemo(() => [
     {
       id: 'kursunlu-walking-1',
-      name: 'Kurşunlu Yürüyüş Rotası',
+      name: t('hikingRoutes.routes.kursunlu.name'),
       distance: '12,40 km',
-      description: "Kurşunlu Kaplıcaları'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur.",
+      description: t('hikingRoutes.routes.kursunlu.description'),
       kmlUrl: '/kursunlu.kml',
       wikilocId: '149618956'
     },
     {
       id: 'kursunlu-allahdiyen-1',
-      name: 'Kurşunlu-Allahdiyen Yürüyüş Rotası',
+      name: t('hikingRoutes.routes.kursunlu_allahdiyen.name'),
       distance: '18,60 km',
-      description: "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru.",
+      description: t('hikingRoutes.routes.kursunlu_allahdiyen.description'),
       kmlUrl: '/kursunlu-allahdiyen.kml',
       wikilocId: '163454363' 
     },
     {
       id: 'kayabasi-walking-1',
-      name: 'Salihli Kayabaşı Yürüyüş Rotası',
+      name: t('hikingRoutes.routes.kayabasi.name'),
       distance: '9,50 km',
-      description: "Salihli'nin Kayabaşı mevkiinde, doğa ile iç içe, muazzam manzaralar ve kaya oluşumları sunan huzurlu bir yürüyüş parkuru.",
+      description: t('hikingRoutes.routes.kayabasi.description'),
       kmlUrl: '/kayabasi.kml',
       wikilocId: '67911227'
     }
-  ];
+  ], [t]);
 
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
@@ -68,7 +68,7 @@ export default function YuruyusRotalariPage() {
             <Footprints className="h-8 w-8" />
           </div>
           <h1 className="text-4xl font-bold font-headline tracking-tight text-slate-900">
-            Yürüyüş Rotaları
+            {t('hikingRoutes.title')}
           </h1>
         </div>
 
@@ -76,7 +76,7 @@ export default function YuruyusRotalariPage() {
           {/* Routes List Section */}
           <div className="space-y-8">
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2">
-              Mevcut Rotalar
+              {t('hikingRoutes.availableRoutes')}
             </h2>
             
             <div className="grid gap-4">
@@ -102,12 +102,12 @@ export default function YuruyusRotalariPage() {
                         </h3>
                         {selectedRouteId === route.id && (
                              <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded uppercase tracking-wider">
-                                Seçili
+                                {t('hikingRoutes.selectedLabel')}
                             </span>
                         )}
                       </div>
                       <p className="text-slate-400 text-xs mb-3 font-medium">
-                        Mesafe: {route.distance}
+                        {t('hikingRoutes.distanceLabel')} {route.distance}
                       </p>
                       <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">
                         {route.description}
@@ -116,7 +116,7 @@ export default function YuruyusRotalariPage() {
                           "mt-3 flex items-center text-xs font-bold uppercase tracking-widest transition-colors",
                           selectedRouteId === route.id ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
                       )}>
-                          Haritada Gör <ChevronRight className="h-3 w-3 ml-1" />
+                          {t('hikingRoutes.viewOnMapLabel')} <ChevronRight className="h-3 w-3 ml-1" />
                       </div>
                     </CardContent>
                   </Card>
@@ -129,7 +129,7 @@ export default function YuruyusRotalariPage() {
           <div className="space-y-6" ref={mapSectionRef}>
             <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
               <Navigation className="h-5 w-5 text-primary" />
-              Rota Haritası
+              {t('hikingRoutes.routeMap')}
             </h2>
             <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <PlacesMap 
@@ -140,7 +140,7 @@ export default function YuruyusRotalariPage() {
                 />
             </div>
             <p className="text-xs text-muted-foreground italic text-center">
-              * Harita üzerinde koyu mavi çizgi ile gösterilen rota <strong>{activeRoute.name}</strong>'nı temsil eder.
+              {t('hikingRoutes.legendText', activeRoute.name)}
             </p>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default function YuruyusRotalariPage() {
             <div className="mt-16 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">
                 <h2 className="text-3xl font-bold font-headline text-slate-900">
-                    Wikiloc Rota Detayı: {activeRoute.name}
+                    {t('hikingRoutes.wikilocDetailTitle', activeRoute.name)}
                 </h2>
                 </div>
 

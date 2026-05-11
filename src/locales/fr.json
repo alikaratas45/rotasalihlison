@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Accueil",
@@ -107,6 +106,30 @@
     "bicycleRoutes": {
         "title": "Pistes Cyclables",
         "description": "Découvrez les pistes et sentiers cyclables à Salihli et ses environs. Commencez à pédaler !"
+    },
+    "hikingRoutes": {
+        "title": "Itinéraires de Randonnée",
+        "availableRoutes": "Itinéraires Disponibles",
+        "routeMap": "Carte de l'Itinéraire",
+        "distanceLabel": "Distance :",
+        "selectedLabel": "Sélectionné",
+        "viewOnMapLabel": "Voir sur la Carte",
+        "legendText": "* La ligne bleu foncé sur la carte représente {0}.",
+        "wikilocDetailTitle": "Détail de l'Itinéraire Wikiloc : {0}",
+        "routes": {
+            "kursunlu": {
+                "name": "Itinéraire de randonnée de Kurşunlu",
+                "description": "Un sentier agréable dans la nature unique des sources thermales de Kurşunlu, s'étendant le long de la vallée où vous sentirez la fraîcheur des eaux curatives."
+            },
+            "kursunlu_allahdiyen": {
+                "name": "Itinéraire Kurşunlu-Allahdiyen",
+                "description": "Un sentier de randonnée en pleine nature de difficulté moyenne partant des sources thermales de Kurşunlu jusqu'au village d'Allahdiyen, accompagné de pins et du murmure du ruisseau."
+            },
+            "kayabasi": {
+                "name": "Itinéraire de Salihli Kayabaşı",
+                "description": "Un sentier de randonnée paisible dans la zone de Kayabaşı à Salihli, au cœur de la nature, offrant des vues magnifiques et des formations rocheuses."
+            }
+        }
     },
     "survey": {
         "title": "Évaluez votre expérience",
