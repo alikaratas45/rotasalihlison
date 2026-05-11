@@ -1,5 +1,6 @@
+// Rota Salihli - PWA Service Worker
+// Bu dosya tarayıcının uygulamayı "yüklenebilir" olarak tanıması için zorunludur.
 
-// Rota Salihli - Service Worker
 const CACHE_NAME = 'rota-salihli-v1';
 
 self.addEventListener('install', (event) => {
@@ -10,11 +11,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-// fetch dinleyicisi PWA yüklenebilirliği için ZORUNLUDUR
+// PWA kriterleri için fetch dinleyicisi zorunludur
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
-  );
+  // Ağ isteklerini doğrudan geçir, ancak dinleyici mevcut olmalı.
 });

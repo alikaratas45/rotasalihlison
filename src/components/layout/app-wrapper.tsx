@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -27,13 +26,15 @@ export default function AppWrapper({
     
     // PWA Service Worker Kaydı - Yükleme butonu için KRİTİK
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      // Önceki kayıtları temizle ve taze kaydet (Daha sağlıklı çalışma için)
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
         navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                console.log('PWA: Service Worker başarıyla kaydedildi:', registration.scope);
-            })
-            .catch((err) => {
-                console.warn('PWA: Service Worker kaydı başarısız:', err);
-            });
+          .then((reg) => console.log('PWA: Service Worker başarıyla yüklendi.'))
+          .catch((err) => console.warn('PWA: Service Worker hatası:', err));
+      });
     }
 
     // Ziyaretçi Sayacı
