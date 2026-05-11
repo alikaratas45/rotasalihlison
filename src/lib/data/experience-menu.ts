@@ -1,4 +1,3 @@
-
 import { ExperienceItem } from '@/lib/definitions';
 
 // Omit 'id' because it will be auto-generated during seeding

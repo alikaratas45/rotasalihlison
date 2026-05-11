@@ -65,7 +65,7 @@ export function FeedbackSystem() {
 
   return (
     <div className="space-y-12 max-w-4xl mx-auto">
-      {/* 1. COMMENTS LIST */}
+      {/* 1. COMMENTS LIST - NOW ON TOP */}
       <div className="space-y-6">
         <h2 className="text-2xl font-bold font-headline border-b pb-4 flex items-center gap-2">
             <MessageSquare className="text-primary" />
@@ -83,7 +83,7 @@ export function FeedbackSystem() {
         )}
       </div>
 
-      {/* 2. SUBMISSION FORM */}
+      {/* 2. SUBMISSION FORM - NOW AT BOTTOM */}
       <Card className="shadow-lg border-primary/10">
         <CardHeader>
           <CardTitle className="font-headline text-2xl text-primary">{t('guestbook.leaveMessage')}</CardTitle>
@@ -127,10 +127,15 @@ function FeedbackItem({ comment }: { comment: CommentFeedback }) {
   const { t, language } = useLanguage();
   const firestore = useFirestore();
   const [showReplyForm, setShowReplyForm] = useState(false);
+  
   const [isLiked, setIsLiked] = useState(() => {
     if (typeof window === 'undefined') return false;
-    const liked = JSON.parse(localStorage.getItem('liked_feedbacks') || '[]');
-    return liked.includes(comment.id);
+    try {
+        const liked = JSON.parse(localStorage.getItem('liked_feedbacks') || '[]');
+        return liked.includes(comment.id);
+    } catch {
+        return false;
+    }
   });
 
   const handleLike = () => {
@@ -144,9 +149,14 @@ function FeedbackItem({ comment }: { comment: CommentFeedback }) {
     });
   };
 
-  const timeAgo = comment.createdAt?.toDate 
-    ? formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true, locale: locales[language] || tr })
-    : '...';
+  const timeAgo = useMemo(() => {
+    if (!comment.createdAt?.toDate) return '...';
+    try {
+        return formatDistanceToNow(comment.createdAt.toDate(), { addSuffix: true, locale: locales[language] || tr });
+    } catch {
+        return '...';
+    }
+  }, [comment.createdAt, language]);
 
   return (
     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">

@@ -26,8 +26,9 @@ export default function AroundMePage() {
   const [isSearching, setIsSearching] = useState(true);
 
   // Fetch all places from Firestore
-  const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
-  const { data: allPlaces, loading: placesLoading } = useCollection<Place>(placesQuery);
+  const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
+    useMemo(() => query(collection(firestore, 'places')), [firestore])
+  );
 
   useEffect(() => {
     if ("geolocation" in navigator) {

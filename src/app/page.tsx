@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -24,8 +23,12 @@ export default function Home() {
   const typedLanguage = language as Language;
   const firestore = useFirestore();
 
-  const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(query(collection(firestore, 'experience-items'), orderBy('order')));
-  const { data: aboutSettings } = useDoc<any>(doc(firestore, 'settings', 'about'));
+  const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(
+    useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore])
+  );
+  const { data: aboutSettings } = useDoc<any>(
+    useMemo(() => doc(firestore, 'settings', 'about'), [firestore])
+  );
 
   const aboutTitle = useMemo(() => {
     return aboutSettings?.aboutTitle?.[typedLanguage] || t('about.title');
@@ -45,12 +48,7 @@ export default function Home() {
         uniqueMap.set(item.link, item);
     });
 
-    // Hiking Routes (Yürüyüş Rotaları) should always be last
-    return Array.from(uniqueMap.values()).sort((a, b) => {
-        const orderA = a.link === '/yuruyus-rotalari' ? 999 : (Number(a.order) || 99);
-        const orderB = b.link === '/yuruyus-rotalari' ? 999 : (Number(b.order) || 99);
-        return orderA - orderB;
-    });
+    return Array.from(uniqueMap.values()).sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
   }, [experienceItems]);
 
   return (
@@ -98,7 +96,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PWA INSTALL SECTION - MOVED HIGHER FOR VISIBILITY */}
       <PwaInstallButton />
 
       <section className="py-16 bg-muted/20">
@@ -107,7 +104,7 @@ export default function Home() {
             <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
               <MessageSquare className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-3xl font-bold font-headline mb-2">{t('guestbook.title')}</h2>
+            <h2 className="text-3xl font-bold font-headline mb-2">{t('guestbook.diaryTitle')}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t('guestbook.description')}
             </p>
