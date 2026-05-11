@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -26,14 +27,19 @@ export default function AppWrapper({
     
     // PWA Service Worker Registration
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-        if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+        // Service worker kaydı, PWA install prompt için zorunludur
+        window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
-                .then((registration) => console.log('SW registered:', registration.scope))
-                .catch((err) => console.log('SW registration failed:', err));
-        }
+                .then((registration) => {
+                    console.log('PWA: Service Worker başarıyla kaydedildi:', registration.scope);
+                })
+                .catch((err) => {
+                    console.log('PWA: Service Worker kaydı başarısız:', err);
+                });
+        });
     }
 
-    // Visitor Count Logic (Once per session with strict guard)
+    // Visitor Count Logic (Once per session)
     if (!hasTrackedRef.current) {
         const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
         if (!visitorTracked) {

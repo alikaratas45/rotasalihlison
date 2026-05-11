@@ -1,4 +1,9 @@
-// Basic Service Worker for PWA Requirements
+
+// PWA Service Worker
+// Tarayıcıların uygulamayı "yüklenebilir" olarak tanıması için en az bir fetch event handler gereklidir.
+
+const CACHE_NAME = 'rota-salihli-v1';
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -8,6 +13,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Simple fetch handler to satisfy PWA criteria
-  event.respondWith(fetch(event.request));
+  // Offline destek için temel strateji (istenirse geliştirilebilir)
+  // Şimdilik boş bir fetch handler tarayıcı kriterleri için yeterlidir
 });
