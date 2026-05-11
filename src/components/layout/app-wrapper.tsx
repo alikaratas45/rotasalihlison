@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -19,25 +19,28 @@ export default function AppWrapper({
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [isSplashLoading, setIsSplashLoading] = useState(false);
   const firestore = useFirestore();
+  const hasTrackedRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
     
     // PWA Service Worker Registration
-    if ('serviceWorker' in navigator && window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').then(
-                (registration) => console.log('SW registered:', registration.scope),
-                (err) => console.log('SW registration failed:', err)
-            );
-        });
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+        if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+            navigator.serviceWorker.register('/sw.js')
+                .then((registration) => console.log('SW registered:', registration.scope))
+                .catch((err) => console.log('SW registration failed:', err));
+        }
     }
 
-    // Visitor Count Logic (Once per session)
-    const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
-    if (!visitorTracked) {
-      incrementVisitorCount(firestore);
-      sessionStorage.setItem('rota_salihli_visitor_tracked', 'true');
+    // Visitor Count Logic (Once per session with strict guard)
+    if (!hasTrackedRef.current) {
+        const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
+        if (!visitorTracked) {
+          incrementVisitorCount(firestore);
+          sessionStorage.setItem('rota_salihli_visitor_tracked', 'true');
+        }
+        hasTrackedRef.current = true;
     }
 
     const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
