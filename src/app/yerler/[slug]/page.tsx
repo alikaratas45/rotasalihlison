@@ -123,7 +123,6 @@ function PlaceDetailContent() {
       setTimeout(() => {
         let fixedText = text;
 
-        // Sadece Türkçe okuma yapılıyorsa özel telaffuz düzeltmelerini uygula
         if (lang === 'tr') {
             fixedText = fixedText
                 .replace(/Gymnasium/gi, 'Cimnazyum')
@@ -148,7 +147,6 @@ function PlaceDetailContent() {
         const utterance = new SpeechSynthesisUtterance(fixedText);
         utteranceRef.current = utterance;
         
-        // Dil kodlarını standart BCP 47 formatına eşle
         const langMap: Record<string, string> = {
             tr: 'tr-TR',
             en: 'en-US',
@@ -161,12 +159,9 @@ function PlaceDetailContent() {
 
         const voices = synth.getVoices();
         
-        // İlgili dil için en uygun sesi bul
         const findBestVoice = () => {
-            // 1. Tam eşleşme (örn: fr-FR)
             let matchingVoices = voices.filter(v => v.lang.toLowerCase().replace('_', '-') === targetLang.toLowerCase());
             
-            // 2. Kısmi eşleşme (örn: 'fr' ile başlayanlar)
             if (matchingVoices.length === 0) {
                 const langPart = targetLang.split('-')[0];
                 matchingVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langPart.toLowerCase()));
@@ -174,11 +169,9 @@ function PlaceDetailContent() {
 
             if (matchingVoices.length === 0) return null;
 
-            // 3. Kalite tercihi: Google sesleri genellikle daha doğal duyulur
             const googleVoice = matchingVoices.find(v => v.name.includes('Google'));
             if (googleVoice) return googleVoice;
 
-            // 4. İlk eşleşen sesi döndür
             return matchingVoices[0];
         };
 
@@ -215,7 +208,6 @@ function PlaceDetailContent() {
     setIsGenerating(true);
     setPlayingId(id);
     
-    // Audio unlock priming
     const priming = new SpeechSynthesisUtterance('');
     priming.volume = 0;
     synth.speak(priming);
