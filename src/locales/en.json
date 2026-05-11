@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Home",
@@ -5,7 +6,6 @@
         "routes": "Routes",
         "stories": "Stories",
         "cuisine": "Cuisine",
-        "brochures": "Brochures",
         "nearby": "Nearby",
         "qrScanner": "QR Scanner",
         "audioGuide": "Audio Guide"
@@ -87,10 +87,6 @@
     "cuisine": {
         "title": "Salihli's Flavor Map",
         "description": "We are showing you the best dining places in Salihli on the map. Enjoy your meal!"
-    },
-    "brochures": {
-        "title": "Our Brochures",
-        "description": "Discover the beauties and opportunities of Salihli with our interactive digital brochures."
     },
     "routePlanner": {
         "title": "Create Your Own Route",

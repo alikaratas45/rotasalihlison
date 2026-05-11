@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Accueil",
@@ -5,7 +6,6 @@
         "routes": "Itinéraires",
         "stories": "Histoires",
         "cuisine": "Cuisine",
-        "brochures": "Nos Brochures",
         "nearby": "À proximité",
         "qrScanner": "Scanner QR",
         "audioGuide": "Guide Audio"
@@ -86,10 +86,6 @@
     "cuisine": {
         "title": "Carte des saveurs de Salihli",
         "description": "Nous vous montrons les meilleurs restaurants de Salihli sur la carte. Bon appétit !"
-    },
-    "brochures": {
-        "title": "Nos Brochures",
-        "description": "Découvrez les beautés et les opportunités de Salihli avec nos brochures numériques interactives."
     },
     "routePlanner": {
         "title": "Créez votre propre itinéraire",

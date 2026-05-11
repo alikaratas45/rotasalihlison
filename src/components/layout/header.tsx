@@ -21,13 +21,12 @@ export function Header() {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Navigasyon linklerini düzenledik ve tekrar edenleri temizledik
+  // Navigasyon linklerini düzenledik, broşürleri kaldırdık
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
     { href: '/rotalar', label: t('header.routes') },
     { href: '/hikayeler', label: t('header.stories') },
     { href: '/lezzetler', label: t('header.cuisine') },
-    { href: '/brosurler', label: t('header.brochures') },
   ];
 
   return (

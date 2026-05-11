@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "ホーム",
@@ -5,7 +6,6 @@
         "routes": "ルート",
         "stories": "物語",
         "cuisine": "料理",
-        "brochures": "パンフレット",
         "nearby": "近く",
         "qrScanner": "QRスキャナー",
         "audioGuide": "音声ガイド"
@@ -86,10 +86,6 @@
     "cuisine": {
         "title": "サリフリの味マップ",
         "description": "サリフリで最高の食事場所を地図に表示しています。お食事をお楽しみください！"
-    },
-    "brochures": {
-        "title": "私たちのパンフレット",
-        "description": "インタラクティブなデジタルパンフレットで、サリフリの美しさと機会を発見してください。"
     },
     "routePlanner": {
         "title": "独自のルートを作成",
