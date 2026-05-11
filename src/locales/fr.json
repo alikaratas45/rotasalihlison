@@ -14,7 +14,8 @@
         "about": "Rota Salihli est un guide numérique pour découvrir les beautés historiques, culturelles et naturelles de Salihli.",
         "copyright": "Tous droits réservés.",
         "links": "Liens",
-        "contact": "Contact"
+        "contact": "Contact",
+        "totalVisitors": "Total des visiteurs"
     },
     "splash": {
         "slogan": "Héritage de Sardes, centre de la monnaie"
@@ -59,7 +60,7 @@
     },
     "places": {
         "title": "Découvrez tous les lieux",
-        "description": "Explorez toutes les richesses historiques, naturelles et culturelles que Salihli a à offrir.",
+        "description": "Explorez toutes les richesses historiques, naturelles et culturelles que Salihli a à occuper.",
         "mapSearchQuery": "Salihli, Manisa, Turquie, attractions touristiques",
         "notFoundTitle": "Lieu non trouvé",
         "notFoundDescription": "Le lieu que vous recherchez n'existe pas."
@@ -141,7 +142,7 @@
     "hikingRoutes": {
         "title": "Itinéraires de Randonnée",
         "availableRoutes": "Itinéraires Disponibles",
-        "routeMap": "Carte de l'Itinéraire",
+        "routeMap": "Voir sur la Carte",
         "distanceLabel": "Distance :",
         "selectedLabel": "Sélectionné",
         "viewOnMapLabel": "Voir sur la Carte",

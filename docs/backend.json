@@ -163,6 +163,13 @@
         "lng": { "type": "number" }
       },
       "required": ["lat", "lng"]
+    },
+    "SiteStats": {
+      "title": "Site Stats",
+      "type": "object",
+      "properties": {
+        "visitorCount": { "type": "number" }
+      }
     }
   },
   "auth": {
@@ -206,6 +213,10 @@
     "/menu-items": {
       "schema": { "$ref": "#/backend/entities/MenuItem" },
       "description": "Collection of main navigation menu items."
+    },
+    "/settings/stats": {
+       "schema": { "$ref": "#/backend/entities/SiteStats" },
+       "description": "Global website statistics like visitor count."
     }
   }
 }

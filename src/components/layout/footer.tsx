@@ -1,12 +1,22 @@
+
 "use client";
 
 import Link from 'next/link';
 import { Logo } from '@/components/icons/logo';
 import { useLanguage } from '@/hooks/use-language';
+import { useDoc, useFirestore } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { useMemo } from 'react';
+import { Users } from 'lucide-react';
 
 export function Footer() {
   const year = new Date().getFullYear();
   const { t } = useLanguage();
+  const firestore = useFirestore();
+
+  // Listen to the live visitor count from Firestore
+  const statsDocRef = useMemo(() => doc(firestore, 'settings', 'stats'), [firestore]);
+  const { data: stats } = useDoc<any>(statsDocRef);
 
   return (
     <footer className="bg-secondary/30 border-t">
@@ -20,6 +30,13 @@ export function Footer() {
             <p className="text-sm text-muted-foreground max-w-xs">
               {t('footer.about')}
             </p>
+            
+            {/* Live Visitor Counter */}
+            <div className="flex items-center gap-2 text-primary font-bold bg-primary/5 w-fit px-3 py-1.5 rounded-full border border-primary/10">
+                <Users className="h-4 w-4" />
+                <span className="text-xs uppercase tracking-wider">{t('footer.totalVisitors')}:</span>
+                <span className="text-sm font-mono">{stats?.visitorCount?.toLocaleString() || '...'}</span>
+            </div>
           </div>
           <div>
             <h4 className="font-semibold mb-4">{t('footer.links')}</h4>

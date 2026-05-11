@@ -8,6 +8,8 @@ import { Footer } from '@/components/layout/footer';
 import { SplashScreen } from '@/components/splash-screen';
 import { AudioProximityAlert } from '@/components/audio-proximity-alert';
 import { cn } from '@/lib/utils';
+import { useFirestore } from '@/firebase';
+import { incrementVisitorCount } from '@/firebase/firestore/stats-service';
 
 export default function AppWrapper({
   children,
@@ -17,11 +19,19 @@ export default function AppWrapper({
   const [mounted, setMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [isSplashLoading, setIsSplashLoading] = useState(false);
+  const firestore = useFirestore();
 
   useEffect(() => {
     setMounted(true);
-    const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
     
+    // Visitor Count Logic (Once per session)
+    const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
+    if (!visitorTracked) {
+      incrementVisitorCount(firestore);
+      sessionStorage.setItem('rota_salihli_visitor_tracked', 'true');
+    }
+
+    const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
     if (!splashShown) {
       setIsFirstVisit(true);
       setIsSplashLoading(true);
@@ -35,7 +45,7 @@ export default function AppWrapper({
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [firestore]);
 
   // Global Audio Unlocker: Unlock Speech Synthesis on first user interaction (CRITICAL for mobile)
   const handleInteraction = useCallback(() => {
