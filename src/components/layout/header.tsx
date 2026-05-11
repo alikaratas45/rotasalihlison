@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { Menu, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 
@@ -18,10 +18,10 @@ import type { Language } from '@/lib/language-config';
 import React from 'react';
 
 export function Header() {
-  const { t } = useLanguage();
+  const { t, mounted } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Navigasyon linklerini düzenledik, broşürleri kaldırdık
+  // Navigasyon linkleri - Broşürler tamamen kaldırıldı
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
     { href: '/rotalar', label: t('header.routes') },
@@ -36,18 +36,26 @@ export function Header() {
           <Logo className="h-8 w-8" />
           <span className="hidden font-bold sm:inline-block font-headline">Rota Salihli</span>
         </Link>
+        
+        {/* Desktop Nav */}
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="transition-colors hover:text-foreground/80 text-foreground/60">
+            <Link 
+              key={link.href} 
+              href={link.href} 
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
               {link.label}
             </Link>
           ))}
         </nav>
+
         <div className="flex flex-1 items-center justify-end gap-3">
           <AudioGuideToggle />
           <LanguageSwitcher />
           <ThemeToggle />
 
+          {/* Mobile Nav */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
@@ -88,6 +96,12 @@ export function Header() {
 
 function ThemeToggle() {
   const { setTheme, theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return <div className="h-10 w-10" />;
+
   return (
     <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -97,7 +111,7 @@ function ThemeToggle() {
   );
 }
 
-const languages: { code: Language; name: string; flag: React.FC<any> }[] = [
+const languagesList: { code: Language; name: string; flag: React.FC<any> }[] = [
     { code: 'tr', name: 'Türkçe', flag: TurkishFlagIcon },
     { code: 'en', name: 'English', flag: UKFlagIcon },
     { code: 'fr', name: 'Français', flag: FrenchFlagIcon },
@@ -106,8 +120,12 @@ const languages: { code: Language; name: string; flag: React.FC<any> }[] = [
 ];
 
 function LanguageSwitcher() {
-    const { language, setLanguage } = useLanguage();
-    const selectedLanguage = languages.find(lang => lang.code === language);
+    const { language, setLanguage, mounted } = useLanguage();
+    
+    if (!mounted) return <div className="h-10 w-10" />;
+
+    const selectedLanguage = languagesList.find(lang => lang.code === language);
+    
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -117,7 +135,7 @@ function LanguageSwitcher() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {languages.map((lang) => (
+          {languagesList.map((lang) => (
             <DropdownMenuItem key={lang.code} className={cn("gap-2", language === lang.code && 'bg-accent')} onClick={() => setLanguage(lang.code)}>
                 <lang.flag className="h-4 w-4 rounded-sm" />
                 <span>{lang.name}</span>
@@ -129,7 +147,10 @@ function LanguageSwitcher() {
 }
 
 function AudioGuideToggle() {
-    const { isAudioGuideEnabled, toggleAudioGuide, t } = useLanguage();
+    const { isAudioGuideEnabled, toggleAudioGuide, t, mounted } = useLanguage();
+    
+    if (!mounted) return <div className="h-10 w-24" />;
+
     return (
       <Button
         variant={isAudioGuideEnabled ? "default" : "outline"}
