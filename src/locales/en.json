@@ -12,6 +12,7 @@
     },
     "guestbook": {
         "title": "Guestbook",
+        "diaryTitle": "My Salihli Diary",
         "description": "Share your Salihli experiences and discover messages from other visitors.",
         "leaveMessage": "Leave a Message",
         "namePlaceholder": "Your Name (Optional)",

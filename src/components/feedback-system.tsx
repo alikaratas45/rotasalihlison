@@ -14,11 +14,11 @@ import { addFeedbackComment, likeFeedback, addFeedbackReply } from '@/firebase/f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Loader2, ThumbsUp, MessageSquare, Send, CornerDownRight } from 'lucide-react';
-import type { CommentFeedback, CommentReply } from '@/lib/definitions';
+import type { CommentFeedback } from '@/lib/definitions';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -66,6 +66,25 @@ export function FeedbackSystem() {
 
   return (
     <div className="space-y-12 max-w-4xl mx-auto">
+      {/* 1. COMMENTS LIST (NOW AT THE TOP) */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold font-headline border-b pb-4 flex items-center gap-2">
+            <MessageSquare className="text-primary" />
+            {t('guestbook.diaryTitle')} ({comments?.length || 0})
+        </h2>
+        
+        {loading ? (
+          <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+        ) : comments?.length === 0 ? (
+          <div className="text-center py-10 text-muted-foreground">{t('guestbook.noFeedback')}</div>
+        ) : (
+          comments?.map((comment) => (
+            <FeedbackItem key={comment.id} comment={comment} />
+          ))
+        )}
+      </div>
+
+      {/* 2. SUBMISSION FORM (NOW AT THE BOTTOM) */}
       <Card className="shadow-lg border-primary/10">
         <CardHeader>
           <CardTitle className="font-headline text-2xl text-primary">{t('guestbook.leaveMessage')}</CardTitle>
@@ -101,23 +120,6 @@ export function FeedbackSystem() {
           </Form>
         </CardContent>
       </Card>
-
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold font-headline border-b pb-4 flex items-center gap-2">
-            <MessageSquare className="text-primary" />
-            {t('header.stories')} ({comments?.length || 0})
-        </h2>
-        
-        {loading ? (
-          <div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-        ) : comments?.length === 0 ? (
-          <div className="text-center py-10 text-muted-foreground">{t('guestbook.noFeedback')}</div>
-        ) : (
-          comments?.map((comment) => (
-            <FeedbackItem key={comment.id} comment={comment} />
-          ))
-        )}
-      </div>
     </div>
   );
 }

@@ -12,6 +12,7 @@
     },
     "guestbook": {
         "title": "Ziyaretçi Defteri",
+        "diaryTitle": "Salihli Günlüğüm",
         "description": "Salihli deneyimlerinizi paylaşın, diğer ziyaretçilerin mesajlarını keşfedin.",
         "leaveMessage": "Bir Mesaj Bırakın",
         "namePlaceholder": "İsminiz (Opsiyonel)",

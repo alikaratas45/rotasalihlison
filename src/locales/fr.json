@@ -10,6 +10,21 @@
         "qrScanner": "Scanner QR",
         "audioGuide": "Guide Audio"
     },
+    "guestbook": {
+        "title": "Livre d'or",
+        "diaryTitle": "Mon Journal de Salihli",
+        "description": "Partagez vos expériences à Salihli et découvrez les messages des autres visiteurs.",
+        "leaveMessage": "Laissez un message",
+        "namePlaceholder": "Votre nom (Facultatif)",
+        "messagePlaceholder": "Écrivez votre expérience ou votre message ici...",
+        "replyPlaceholder": "Votre réponse...",
+        "submit": "Envoyer le message",
+        "success": "Votre message a été publié avec succès !",
+        "anonymous": "Visiteur",
+        "reply": "Répondre",
+        "like": "J'aime",
+        "noFeedback": "Aucun message pour le moment. Soyez le premier à écrire !"
+    },
     "footer": {
         "about": "Rota Salihli est un guide numérique pour découvrir les beautés historiques, culturelles et naturelles de Salihli.",
         "copyright": "Tous droits réservés.",

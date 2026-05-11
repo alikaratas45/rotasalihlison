@@ -10,8 +10,23 @@
         "qrScanner": "QRスキャナー",
         "audioGuide": "音声ガイド"
     },
+    "guestbook": {
+        "title": "ゲストブック",
+        "diaryTitle": "私のサリフリ日記",
+        "description": "サリフリでの体験を共有し、他の訪問者からのメッセージを見つけてください。",
+        "leaveMessage": "メッセージを残す",
+        "namePlaceholder": "お名前（任意）",
+        "messagePlaceholder": "あなたの体験やメッセージをここに書いてください...",
+        "replyPlaceholder": "あなたの返信...",
+        "submit": "メッセージを送信",
+        "success": "メッセージが正常に投稿されました！",
+        "anonymous": "訪問者",
+        "reply": "返信",
+        "like": "いいね",
+        "noFeedback": "まだメッセージはありません。最初の書き込みをしましょう！"
+    },
     "footer": {
-        "about": "Rota Salihliは、サリフリの歴史 presidential、文化的、自然の美しさを発見するためのデジタルガイドです。",
+        "about": "Rota Salihliは、サリフリの歴史 presidential、文化的、自然の美しさを発見するための digital ガイドです。",
         "copyright": "無断複写・転載を禁じます。",
         "links": "リンク",
         "contact": "連絡先",
