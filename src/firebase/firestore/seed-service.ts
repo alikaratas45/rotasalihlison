@@ -1,7 +1,5 @@
 'use client';
 import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, type Firestore, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
 import { places as staticPlaces } from '@/lib/data/places';
 import { routes as staticRoutes } from '@/lib/data/routes';
@@ -39,20 +37,16 @@ export async function undoLastOperation(firestore: Firestore) {
   const collections = ['places', 'routes', 'experience-items'];
 
   for (const collName of collections) {
-    // Mevcutları sil
     const currentSnap = await getDocs(collection(firestore, collName));
     for (const d of currentSnap.docs) {
       await deleteDoc(doc(firestore, collName, d.id));
     }
-    // Yedekten geri yükle
     const items = lastBackup[collName] || [];
     for (const item of items) {
       const { id, ...data } = item;
       await setDoc(doc(firestore, collName, id), data);
     }
   }
-
-  // Kullanılan yedeği sil
   await deleteDoc(snap.docs[0].ref);
 }
 
@@ -76,17 +70,18 @@ async function seedCollection<T extends { id: string }>(
         const currentData = docSnap.data();
         const { id, ...staticPayload } = item as any;
         
-        // Akıllı Birleştirme Mantığı:
-        // Eğer koleksiyon 'experience-items' ise, kodun 'order' (sıra) bilgisini zorla uygula.
-        // Diğer alanlarda ve diğer koleksiyonlarda (Yerler/Rotalar), veritabanındaki veriyi koru.
         let mergedData;
         if (collectionName === 'experience-items') {
-            mergedData = { ...currentData, ...staticPayload }; // Kod verisi (sıralama vb.) öncelikli
+            // Menü sıralamasını (order) koddan güncelle ama isimleri koru (eğer farklıysa)
+            mergedData = { ...staticPayload, ...currentData, order: staticPayload.order };
         } else {
-            mergedData = { ...staticPayload, ...currentData }; // Mevcut veritabanı verisi (manuel düzenlemeler) öncelikli
-            // Eğer koda yeni bir subPoint eklediysek onu da dahil et
-            if (staticPayload.subPoints) {
-                mergedData.subPoints = currentData.subPoints || staticPayload.subPoints;
+            // Yerler ve Rotalar: Mevcut DB verisi (sizin yazdıklarınız) öncelikli. 
+            // Koddan sadece yeni eklenen SubPoints veya yeni alanlar (merge) aktarılır.
+            mergedData = { ...staticPayload, ...currentData };
+            
+            // Eğer kodda yeni bir subPoint (örn: Sinagog) varsa ve DB'de yoksa, koddan gelen subPoint'leri birleştir
+            if (staticPayload.subPoints && (!currentData.subPoints || currentData.subPoints.length === 0)) {
+                mergedData.subPoints = staticPayload.subPoints;
             }
         }
         
@@ -110,12 +105,10 @@ export async function seedDatabase(firestore: Firestore, mode: 'SAFE' | 'UPDATE'
   routes: { added: number, updated: number },
   experienceItems: { added: number, updated: number }
 }> {
-  // İşlemden önce yedek al
   await createBackup(firestore);
 
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, mode);
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes, mode);
-  // Deneyim öğeleri için ID'leri sabitliyoruz (exp1, exp2...) ki güncelleme mantıklı çalışsın
   const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({ ...item, id: `exp${index + 1}` })), mode);
 
   return {
