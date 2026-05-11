@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -44,6 +43,7 @@ export default function Home() {
       ? experienceItems 
       : staticExperienceItems.map((item, index) => ({ ...item, id: `static-exp-${index}` }));
 
+    // Ensure we sort by order and links are unique
     const uniqueMap = new Map();
     rawItems.forEach(item => {
         uniqueMap.set(item.link, item);
@@ -80,7 +80,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           
-          {/* PWA Install Button placed right under the experience title */}
+          {/* PWA Install Button placed right under the experience title for maximum visibility */}
           <div className="mb-10 px-4">
             <PwaInstallButton />
           </div>

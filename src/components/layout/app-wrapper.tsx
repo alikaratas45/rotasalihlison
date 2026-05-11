@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -27,16 +26,14 @@ export default function AppWrapper({
     
     // PWA Service Worker Registration
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-        // Service worker kaydı, PWA install prompt için zorunludur
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((registration) => {
-                    console.log('PWA: Service Worker başarıyla kaydedildi:', registration.scope);
-                })
-                .catch((err) => {
-                    console.log('PWA: Service Worker kaydı başarısız:', err);
-                });
-        });
+        // Essential for PWA install criteria
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('PWA: Service Worker successfully registered:', registration.scope);
+            })
+            .catch((err) => {
+                console.warn('PWA: Service Worker registration failed:', err);
+            });
     }
 
     // Visitor Count Logic (Once per session)

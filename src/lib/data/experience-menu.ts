@@ -76,14 +76,14 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Yakınımdakiler',
-      en: 'What\'s Around Me?',
-      fr: 'Qu\'y a-t-il autour de moi ?',
-      de: 'Was ist um mich herum?',
-      ja: '私の周りに何がある？'
+      tr: 'Bisiklet Rotaları',
+      en: 'Bicycle Routes',
+      fr: 'Itinéraires Cyclables',
+      de: 'Fahrradrouten',
+      ja: '自転車ルート'
     },
-    icon: 'LocateFixed',
-    link: '/cevremde-ne-var',
+    icon: 'Bike',
+    link: '/bisiklet-rotalari',
     order: 7
   },
   {
@@ -97,5 +97,17 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     icon: 'Footprints',
     link: '/yuruyus-rotalari',
     order: 8
+  },
+  {
+    name: {
+      tr: 'Yakınımdakiler',
+      en: 'What\'s Around Me?',
+      fr: 'Qu\'y a-t-il autour de moi ?',
+      de: 'Was ist um mich herum?',
+      ja: '私の周りに何がある？'
+    },
+    icon: 'LocateFixed',
+    link: '/cevremde-ne-var',
+    order: 9
   }
 ];
