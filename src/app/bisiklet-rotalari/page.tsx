@@ -1,12 +1,21 @@
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { PlacesMap } from '@/components/places-map';
-import { Bike, Navigation, ChevronRight } from 'lucide-react';
+import { Bike, Navigation, ChevronRight, MapPinned, Info, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import type { Place } from '@/lib/definitions';
+import type { Language } from '@/context/language-context';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface BicycleRoute {
   id: string;
@@ -15,21 +24,30 @@ interface BicycleRoute {
   description: string;
   kmlUrl: string;
   wikilocId?: string;
+  poiIds: string[]; // İlişkisel veri yapısı: Mekan ID'leri
 }
 
 export default function BisikletRotalariPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const typedLanguage = language as Language;
   const isMobile = useIsMobile();
   const mapSectionRef = useRef<HTMLDivElement>(null);
+  const firestore = useFirestore();
+
+  // Tüm mekanları Firestore'dan çekiyoruz
+  const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
+    useMemo(() => query(collection(firestore, 'places')), [firestore])
+  );
   
   const routes: BicycleRoute[] = [
     {
       id: 'lidya-yolu-1',
       name: 'Lidya Yolu Bisiklet Rotası',
       distance: '28,50 km',
-      description: "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih and doğa dolu bir parkur.",
+      description: "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih ve doğa dolu bir parkur.",
       kmlUrl: '/lidyayolu.kml',
-      wikilocId: '40219098'
+      wikilocId: '40219098',
+      poiIds: ['1', '12', '13'] // Sardes, Gymnasium, Artemis
     },
     {
       id: 'salihli-alasehir-1',
@@ -37,7 +55,8 @@ export default function BisikletRotalariPage() {
       distance: '35,20 km',
       description: "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur.",
       kmlUrl: '/salihli-alasehir.kml',
-      wikilocId: '167004910' 
+      wikilocId: '167004910',
+      poiIds: ['11'] // Bintepeler
     },
     {
       id: 'kursunlu-marmara-1',
@@ -45,7 +64,8 @@ export default function BisikletRotalariPage() {
       distance: '45,80 km',
       description: "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına kadar uzanan, eşsiz doğa manzaraları sunan geniş kapsamlı bir bisiklet parkuru.",
       kmlUrl: '/kursunlu-marmara.kml',
-      wikilocId: '35690357'
+      wikilocId: '35690357',
+      poiIds: ['2', '11'] // Kurşunlu, Bintepeler
     },
     {
       id: 'kula-salihli-geopark-1',
@@ -53,18 +73,33 @@ export default function BisikletRotalariPage() {
       distance: '52,40 km',
       description: "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur.",
       kmlUrl: '/kula-salihli-geopark.kml',
-      wikilocId: '75216382'
+      wikilocId: '75216382',
+      poiIds: ['7'] // Adala Kanyonu
     }
   ];
 
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
+  // Dinamik Veri Çekme/Filtreleme: Rotaya ait POI'leri süzen fonksiyonel mantık
+  const routePois = useMemo(() => {
+    if (!allPlaces || !activeRoute.poiIds) return [];
+    return allPlaces.filter(place => activeRoute.poiIds.includes(place.id));
+  }, [allPlaces, activeRoute.poiIds]);
+
   const handleRouteClick = (id: string) => {
     setSelectedRouteId(id);
     if (isMobile) {
       mapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+
+  const categoryLabels: Record<string, string> = { 
+    history: t('history.title'), 
+    nature: t('nature.title'), 
+    food: t('header.cuisine'), 
+    shopping: t('shopping.title'), 
+    poi: 'POI' 
   };
 
   return (
@@ -141,7 +176,7 @@ export default function BisikletRotalariPage() {
             </h2>
             <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <PlacesMap 
-                    places={[]} 
+                    places={routePois} 
                     className="w-full h-full" 
                     kmlUrl={activeRoute.kmlUrl}
                     key={activeRoute.id} 
@@ -153,9 +188,73 @@ export default function BisikletRotalariPage() {
           </div>
         </div>
 
+        {/* POI SECTION: Rota Üzerindeki Görülecek Yerler */}
+        <div className="mt-20">
+            <div className="flex items-center gap-3 mb-8 border-b pb-4">
+                <MapPinned className="h-8 w-8 text-primary" />
+                <h2 className="text-3xl font-bold font-headline text-slate-900">Bu Rotada Neler Var?</h2>
+            </div>
+
+            {placesLoading ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className="overflow-hidden border-none shadow-md">
+                            <Skeleton className="h-48 w-full" />
+                            <CardContent className="p-6 space-y-4">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-6 w-3/4" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-10 w-full rounded-md" />
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            ) : routePois.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {routePois.map((place) => (
+                        <Card key={place.id} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
+                            <div className="relative h-48 w-full overflow-hidden">
+                                <Image
+                                    src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
+                                    alt={place.name[typedLanguage]}
+                                    data-ai-hint={place.imageHint || 'landmark'}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                                <div className="absolute top-4 left-4">
+                                    <Badge className="bg-white/90 text-primary hover:bg-white font-bold backdrop-blur-sm border-none shadow-sm">
+                                        {categoryLabels[place.category]}
+                                    </Badge>
+                                </div>
+                            </div>
+                            <CardContent className="p-6">
+                                <h3 className="text-xl font-bold font-headline mb-3 text-slate-900 group-hover:text-primary transition-colors">
+                                    {place.name[typedLanguage]}
+                                </h3>
+                                <p className="text-slate-500 text-sm line-clamp-2 mb-6 leading-relaxed">
+                                    {place.description[typedLanguage]}
+                                </p>
+                                <Button asChild className="w-full font-bold h-11" variant="outline">
+                                    <Link href={`/yerler/${place.slug[typedLanguage]}`}>
+                                        <Info className="mr-2 h-4 w-4" />
+                                        Daha Fazla Bilgi
+                                    </Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                    <Info className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                    <p className="text-slate-500 font-medium">Bu rotaya bağlı kayıtlı mekan bulunamadı.</p>
+                </div>
+            )}
+        </div>
+
         {/* Wikiloc Detail Section */}
         {activeRoute.wikilocId && (
-            <div className="mt-16 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">
                 <h2 className="text-3xl font-bold font-headline text-slate-900">
                     Wikiloc Rota Detayı: {activeRoute.name}
