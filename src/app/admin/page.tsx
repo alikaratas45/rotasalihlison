@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useMemo, useEffect } from 'react';
-import { useCollection, useFirestore } from '@/firebase';
+import { useCollection, useFirestore, useDoc } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { collection, orderBy, query } from 'firebase/firestore';
+import { collection, orderBy, query, doc, setDoc } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { tr as trLocale } from 'date-fns/locale';
 
@@ -24,7 +24,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -62,6 +62,11 @@ const subPointFormSchema = z.object({
     lng: z.coerce.number().min(-180).max(180),
 });
 
+const settingsFormSchema = z.object({
+    aboutTitle: localizedStringSchema,
+    aboutContent: localizedStringSchema,
+});
+
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
 const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
@@ -81,6 +86,7 @@ export default function AdminPage() {
     const { data: places, loading: placesLoading } = useCollection<Place>(useMemo(() => query(collection(firestore, 'places')), [firestore]));
     const { data: experienceItems } = useCollection<ExperienceItem>(useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]));
     const { data: feedbacks } = useCollection<Feedback>(useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]));
+    const { data: aboutSettings } = useDoc<any>(useMemo(() => doc(firestore, 'settings', 'about'), [firestore]));
 
     const sortedPlaces = useMemo(() => {
         if (!places) return [];
@@ -90,6 +96,10 @@ export default function AdminPage() {
     const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14 } as any });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
     const subPointForm = useForm({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 } as any });
+    const siteSettingsForm = useForm({ 
+        resolver: zodResolver(settingsFormSchema),
+        defaultValues: { aboutTitle: { tr: '', en: '' }, aboutContent: { tr: '', en: '' } }
+    });
 
     useEffect(() => { 
         if (editingPlace) {
@@ -105,6 +115,19 @@ export default function AdminPage() {
             }); 
         }
     }, [editingPlace, editPlaceForm]);
+
+    // PREVENT INFINITE LOOP: Sync site settings form with DB data only once or when data changes significantly
+    useEffect(() => {
+        if (aboutSettings && !isSubmitting) {
+            const current = siteSettingsForm.getValues();
+            if (JSON.stringify(current.aboutTitle) !== JSON.stringify(aboutSettings.aboutTitle)) {
+                siteSettingsForm.reset({
+                    aboutTitle: aboutSettings.aboutTitle || { tr: '', en: '' },
+                    aboutContent: aboutSettings.aboutContent || { tr: '', en: '' },
+                });
+            }
+        }
+    }, [aboutSettings, siteSettingsForm, isSubmitting]);
 
     const handleAddPlaceSubmit = (values: any) => {
         setIsSubmitting(true);
@@ -141,6 +164,18 @@ export default function AdminPage() {
         });
     };
 
+    const handleSettingsSubmit = async (values: any) => {
+        setIsSubmitting(true);
+        try {
+            await setDoc(doc(firestore, 'settings', 'about'), values, { merge: true });
+            toast({ title: 'Ayarlar Kaydedildi' });
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Hata', description: error.message });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleSeedAction = async (mode: 'SAFE' | 'UPDATE') => {
         setIsDatabaseActionLoading(true);
         try {
@@ -166,11 +201,17 @@ export default function AdminPage() {
                         {fieldNames.includes('name') && <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>İsim ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />}
+                         {fieldNames.includes('aboutTitle') && <FormField control={form.control} name={`${prefix}aboutTitle.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>Başlık ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                        )} />}
                         {fieldNames.includes('slug') && <FormField control={form.control} name={`${prefix}slug.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>Link Metni ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />}
                         {fieldNames.includes('description') && <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>Açıklama ({lang})</FormLabel><FormControl><Textarea rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                        )} />}
+                        {fieldNames.includes('aboutContent') && <FormField control={form.control} name={`${prefix}aboutContent.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>Hakkında İçeriği ({lang})</FormLabel><FormControl><Textarea rows={8} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />}
                     </AccordionContent>
                 </AccordionItem>
@@ -184,6 +225,7 @@ export default function AdminPage() {
                 <div className="flex justify-center">
                     <TabsList>
                         <TabsTrigger value="places">Yerler</TabsTrigger>
+                        <TabsTrigger value="general">Genel Bilgiler</TabsTrigger>
                         <TabsTrigger value="experiences">Deneyim Menüsü</TabsTrigger>
                         <TabsTrigger value="feedbacks">Anketler</TabsTrigger>
                         <TabsTrigger value="database">Veritabanı</TabsTrigger>
@@ -238,6 +280,25 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
+                <TabsContent value="general">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><Info className="text-primary" /> Salihli Hakkında Bilgileri</CardTitle>
+                            <CardDescription>Ana sayfadaki "Salihli Hakkında" butonuna basıldığında açılan penceredeki metinleri 5 dilde düzenleyin.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                             <Form {...siteSettingsForm}>
+                                <form onSubmit={siteSettingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-8">
+                                    {renderLocalizedFields(siteSettingsForm, ['aboutTitle', 'aboutContent'])}
+                                    <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg">
+                                        {isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet
+                                    </Button>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 <TabsContent value="experiences">
                     <Card>
                         <CardHeader><CardTitle>Deneyim Menüsü Sıralaması</CardTitle><CardDescription>Menü öğeleri 'order' değerine göre ana sayfada listelenir.</CardDescription></CardHeader>
@@ -277,7 +338,10 @@ export default function AdminPage() {
                             <Form {...subPointForm}>
                                 <form onSubmit={subPointForm.handleSubmit(handleAddSubPointSubmit)} className="space-y-4">
                                     {renderLocalizedFields(subPointForm, ['name', 'description'])}
-                                    <div className="grid grid-cols-2 gap-4"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/></div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                        <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                    </div>
                                     <Button type="submit" disabled={isSubmitting} className="w-full">Kaydet</Button>
                                 </form>
                             </Form>
@@ -295,7 +359,15 @@ export default function AdminPage() {
             </Dialog>
 
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
-                <DialogContent className="max-w-xl"><DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader><Form {...editPlaceForm}><form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-4">{renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}<DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter></form></Form></DialogContent>
+                <DialogContent className="max-w-xl">
+                    <DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
+                    <Form {...editPlaceForm}>
+                        <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-4">
+                            {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
+                            <DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter>
+                        </form>
+                    </Form>
+                </DialogContent>
             </Dialog>
 
             <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setDeletingPlace(null)}>

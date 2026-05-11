@@ -21,6 +21,11 @@ service cloud.firestore {
     match /backups/{backupId} {
       allow read, write: if isAdmin();
     }
+    
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
     match /places/{placeId} {
       allow read: if true;

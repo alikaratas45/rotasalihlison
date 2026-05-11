@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
-import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useCollection, useFirestore, useDoc } from '@/firebase';
+import { collection, query, orderBy, doc } from 'firebase/firestore';
 import type { ExperienceItem } from '@/lib/definitions';
 import { useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,22 +22,27 @@ export default function Home() {
   const firestore = useFirestore();
 
   const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(query(collection(firestore, 'experience-items'), orderBy('order')));
+  const { data: aboutSettings } = useDoc<any>(doc(firestore, 'settings', 'about'));
+
+  const aboutTitle = useMemo(() => {
+    return aboutSettings?.aboutTitle?.[typedLanguage] || t('about.title');
+  }, [aboutSettings, typedLanguage, t]);
+
+  const aboutContent = useMemo(() => {
+    return aboutSettings?.aboutContent?.[typedLanguage] || t('about.content');
+  }, [aboutSettings, typedLanguage, t]);
 
   const displayExperienceItems = useMemo(() => {
-    // Veritabanından gelen veriyi kullanarak sıralama ve tekilleştirme yapıyoruz.
     const rawItems = (experienceItems && experienceItems.length > 0) 
       ? experienceItems 
       : staticExperienceItems.map((item, index) => ({ ...item, id: `static-exp-${index}` }));
 
-    // Link bilgisini anahtar kullanarak mükerrer kayıtları temizliyoruz.
     const uniqueMap = new Map();
     rawItems.forEach(item => {
         uniqueMap.set(item.link, item);
     });
 
-    // Kesin Sıralama Mantığı:
-    // order değeri varsa ona göre, yoksa (veya eşitse) varsayılan olarak en sona.
-    // Özellikle Yürüyüş Rotaları linki için özel bir kontrol ekleyerek en sonda kalmasını garanti ediyoruz.
+    // Hiking Routes (Yürüyüş Rotaları) should always be last
     return Array.from(uniqueMap.values()).sort((a, b) => {
         const orderA = a.link === '/yuruyus-rotalari' ? 999 : (Number(a.order) || 99);
         const orderB = b.link === '/yuruyus-rotalari' ? 999 : (Number(b.order) || 99);
@@ -57,9 +62,9 @@ export default function Home() {
             <Dialog>
               <DialogTrigger asChild><Button size="lg" variant="outline" className="bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white/20"><Info className="mr-2 h-5 w-5" />{t('home.aboutSalihli')}</Button></DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-                <DialogHeader><DialogTitle className="text-2xl font-headline font-bold text-primary">{t('about.title')}</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle className="text-2xl font-headline font-bold text-primary">{aboutTitle}</DialogTitle></DialogHeader>
                 <div className="py-4 space-y-4">
-                    <p className="text-foreground leading-relaxed whitespace-pre-line text-lg text-justify">{t('about.content')}</p>
+                    <p className="text-foreground leading-relaxed whitespace-pre-line text-lg text-justify">{aboutContent}</p>
                 </div>
                 <DialogFooter><Button variant="secondary" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>{t('actions.close')}</Button></DialogFooter>
               </DialogContent>
