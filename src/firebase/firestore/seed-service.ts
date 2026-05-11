@@ -1,5 +1,5 @@
 'use client';
-import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, type Firestore, serverTimestamp, query, orderBy, limit } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, type Firestore, serverTimestamp, query, orderBy, limit, where } from 'firebase/firestore';
 
 import { places as staticPlaces } from '@/lib/data/places';
 import { routes as staticRoutes } from '@/lib/data/routes';
@@ -60,9 +60,19 @@ async function seedCollection<T extends { id: string }>(
   const collectionRef = collection(firestore, collectionName);
 
   for (const item of staticData) {
-    const docRef = doc(collectionRef, item.id);
+    let docRef = doc(collectionRef, item.id);
     try {
-      const docSnap = await getDoc(docRef);
+      let docSnap = await getDoc(docRef);
+
+      // Deneyim menüsü için mükerrer kayıt kontrolü (Link üzerinden)
+      if (!docSnap.exists() && collectionName === 'experience-items') {
+          const q = query(collectionRef, where('link', '==', (item as any).link));
+          const existing = await getDocs(q);
+          if (!existing.empty) {
+              docRef = doc(collectionRef, existing.docs[0].id);
+              docSnap = await getDoc(docRef);
+          }
+      }
 
       if (docSnap.exists()) {
         if (mode === 'SAFE') continue;
@@ -72,14 +82,11 @@ async function seedCollection<T extends { id: string }>(
         
         let mergedData;
         if (collectionName === 'experience-items') {
-            // Menü sıralamasını (order) koddan güncelle ama isimleri koru (eğer farklıysa)
+            // Sıralamayı (order) KODDAN GÜNCELLE ama mevcut veriyi koru
             mergedData = { ...staticPayload, ...currentData, order: staticPayload.order };
         } else {
-            // Yerler ve Rotalar: Mevcut DB verisi (sizin yazdıklarınız) öncelikli. 
-            // Koddan sadece yeni eklenen SubPoints veya yeni alanlar (merge) aktarılır.
+            // Mevcut dökümanı bozma, sadece kodda varsa yeni alanları merge et
             mergedData = { ...staticPayload, ...currentData };
-            
-            // Eğer kodda yeni bir subPoint (örn: Sinagog) varsa ve DB'de yoksa, koddan gelen subPoint'leri birleştir
             if (staticPayload.subPoints && (!currentData.subPoints || currentData.subPoints.length === 0)) {
                 mergedData.subPoints = staticPayload.subPoints;
             }

@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query } from 'firebase/firestore';
@@ -54,7 +54,6 @@ const placeFormSchema = z.object({
   imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
   imageHint: z.string().optional(),
 });
-type PlaceFormData = z.infer<typeof placeFormSchema>;
 
 const subPointFormSchema = z.object({
     name: localizedStringSchema,
@@ -62,35 +61,10 @@ const subPointFormSchema = z.object({
     lat: z.coerce.number().min(-90).max(90),
     lng: z.coerce.number().min(-180).max(180),
 });
-type SubPointFormData = z.infer<typeof subPointFormSchema>;
 
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
 const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
-
-// --- Helper Component ---
-function LocalizedFormFields({ form, fieldNames, prefix = "" }: { form: any, fieldNames: Array<'name' | 'slug' | 'description'>, prefix?: string }) {
-  return (
-    <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
-        {languages.map((lang) => (
-            <AccordionItem value={lang} key={`lang-acc-${lang}`}>
-                <AccordionTrigger>{languageNames[lang]}</AccordionTrigger>
-                <AccordionContent className="space-y-4">
-                    {fieldNames.includes('name') && <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
-                        <FormItem><FormLabel>İsim ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
-                    )} />}
-                    {fieldNames.includes('slug') && <FormField control={form.control} name={`${prefix}slug.${lang}`} render={({ field }) => (
-                        <FormItem><FormLabel>Link Metni ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
-                    )} />}
-                    {fieldNames.includes('description') && <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
-                        <FormItem><FormLabel>Açıklama ({lang})</FormLabel><FormControl><Textarea rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
-                    )} />}
-                </AccordionContent>
-            </AccordionItem>
-        ))}
-    </Accordion>
-  );
-}
 
 export default function AdminPage() {
     const firestore = useFirestore();
@@ -98,7 +72,7 @@ export default function AdminPage() {
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDatabaseActionLoading, setIsDatabaseActionLoading] = useState(false);
-    const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState<string>('all');
+    const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
     const [editingPlace, setEditingPlace] = useState<Place | null>(null);
     const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
@@ -113,9 +87,9 @@ export default function AdminPage() {
         return [...places].sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr'));
     }, [places]);
 
-    const addPlaceForm = useForm<PlaceFormData>({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14 } });
-    const editPlaceForm = useForm<PlaceFormData>({ resolver: zodResolver(placeFormSchema) });
-    const subPointForm = useForm<SubPointFormData>({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 } });
+    const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14 } as any });
+    const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
+    const subPointForm = useForm({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 } as any });
 
     useEffect(() => { 
         if (editingPlace) {
@@ -132,34 +106,26 @@ export default function AdminPage() {
         }
     }, [editingPlace, editPlaceForm]);
 
-    const onAddPlaceSubmit = (values: PlaceFormData) => {
+    const handleAddPlaceSubmit = (values: any) => {
         setIsSubmitting(true);
         const randomSeed = Math.random().toString(36).substring(7);
         const newPlace = { ...values, coordinates: { lat: values.lat, lng: values.lng }, imageUrl: values.imageUrl || `https://picsum.photos/seed/${randomSeed}/600/400`, imageHint: values.imageHint || 'landmark', subPoints: [] };
         addPlace(firestore, newPlace, { 
-            onSuccess: () => { 
-                toast({ title: 'Eklendi' }); 
-                addPlaceForm.reset(); 
-                setIsSubmitting(false); 
-            }, 
+            onSuccess: () => { toast({ title: 'Eklendi' }); addPlaceForm.reset(); setIsSubmitting(false); }, 
             onError: () => setIsSubmitting(false) 
         });
     };
 
-    const onEditPlaceSubmit = (values: PlaceFormData) => {
+    const handleEditPlaceSubmit = (values: any) => {
         if (!editingPlace?.id) return;
         setIsSubmitting(true);
         updatePlace(firestore, editingPlace.id, values, { 
-            onSuccess: () => { 
-                toast({ title: 'Güncellendi' }); 
-                setEditingPlace(null); 
-                setIsSubmitting(false); 
-            }, 
+            onSuccess: () => { toast({ title: 'Güncellendi' }); setEditingPlace(null); setIsSubmitting(false); }, 
             onError: () => setIsSubmitting(false) 
         });
     };
 
-    const onAddSubPointSubmit = (values: SubPointFormData) => {
+    const handleAddSubPointSubmit = (values: any) => {
         if (!managingSubPointsPlace) return;
         setIsSubmitting(true);
         const newSubPoint: SubPoint = { id: Math.random().toString(36).substring(7), name: values.name, description: values.description, coordinates: { lat: values.lat, lng: values.lng } };
@@ -175,27 +141,42 @@ export default function AdminPage() {
         });
     };
 
-    const handleSeed = async (mode: 'SAFE' | 'UPDATE') => {
+    const handleSeedAction = async (mode: 'SAFE' | 'UPDATE') => {
         setIsDatabaseActionLoading(true);
         try {
             const results = await seedDatabase(firestore, mode);
             toast({ title: 'Tamamlandı', description: `${results.places.added + results.experienceItems.added} yeni öğe işlendi.` });
-        } catch (error: any) { 
-            toast({ variant: 'destructive', title: 'Hata', description: error.message }); 
-        }
+        } catch (error: any) { toast({ variant: 'destructive', title: 'Hata', description: error.message }); }
         setIsDatabaseActionLoading(false);
     };
 
-    const handleUndo = async () => {
+    const handleUndoAction = async () => {
         setIsDatabaseActionLoading(true);
-        try { 
-            await undoLastOperation(firestore); 
-            toast({ title: 'Geri Alındı' }); 
-        } catch (error: any) { 
-            toast({ variant: 'destructive', title: 'Hata', description: error.message }); 
-        }
+        try { await undoLastOperation(firestore); toast({ title: 'Geri Alındı' }); } 
+        catch (error: any) { toast({ variant: 'destructive', title: 'Hata', description: error.message }); }
         setIsDatabaseActionLoading(false);
     };
+
+    const renderLocalizedFields = (form: any, fieldNames: string[], prefix = "") => (
+        <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
+            {languages.map((lang) => (
+                <AccordionItem value={lang} key={`lang-acc-${lang}`}>
+                    <AccordionTrigger>{languageNames[lang]}</AccordionTrigger>
+                    <AccordionContent className="space-y-4">
+                        {fieldNames.includes('name') && <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>İsim ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                        )} />}
+                        {fieldNames.includes('slug') && <FormField control={form.control} name={`${prefix}slug.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>Link Metni ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                        )} />}
+                        {fieldNames.includes('description') && <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>Açıklama ({lang})</FormLabel><FormControl><Textarea rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                        )} />}
+                    </AccordionContent>
+                </AccordionItem>
+            ))}
+        </Accordion>
+    );
 
     return (
         <div className="space-y-8">
@@ -214,27 +195,14 @@ export default function AdminPage() {
                         <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
                         <CardContent>
                             <Form {...addPlaceForm}>
-                                <form onSubmit={addPlaceForm.handleSubmit(onAddPlaceSubmit)} className="space-y-8">
-                                    <LocalizedFormFields form={addPlaceForm} fieldNames={['name', 'slug', 'description']} />
+                                <form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-8">
+                                    {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Kategori</FormLabel>
-                                                <select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                                                    <option value="history">Tarih</option>
-                                                    <option value="nature">Doğa</option>
-                                                    <option value="food">Lezzet</option>
-                                                    <option value="shopping">Alışveriş</option>
-                                                    <option value="poi">Önemli Nokta</option>
-                                                </select>
-                                            </FormItem>
+                                            <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
                                         )}/>
-                                        <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (
-                                            <FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>
-                                        )}/>
-                                        <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (
-                                            <FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>
-                                        )}/>
+                                        <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                        <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
                                     </div>
                                     <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle</Button>
                                 </form>
@@ -245,17 +213,9 @@ export default function AdminPage() {
                         <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
                         <CardContent>
                             <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>İsim</TableHead>
-                                        <TableHead>Kategori</TableHead>
-                                        <TableHead className="text-right">Eylemler</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                                <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                 <TableBody>
-                                    {placesLoading ? (
-                                        <TableRow><TableCell colSpan={3}><Skeleton className="h-20 w-full" /></TableCell></TableRow>
-                                    ) : sortedPlaces.map((place) => (
+                                    {placesLoading ? (<TableRow><TableCell colSpan={3}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : sortedPlaces.map((place) => (
                                         <TableRow key={place.id}>
                                             <TableCell>{place.name.tr}</TableCell>
                                             <TableCell><Badge variant="secondary">{categoryLabels[place.category]}</Badge></TableCell>
@@ -283,20 +243,10 @@ export default function AdminPage() {
                         <CardHeader><CardTitle>Deneyim Menüsü Sıralaması</CardTitle><CardDescription>Menü öğeleri 'order' değerine göre ana sayfada listelenir.</CardDescription></CardHeader>
                         <CardContent>
                             <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Sıra (Order)</TableHead>
-                                        <TableHead>İsim</TableHead>
-                                        <TableHead className="text-right">Durum</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                                <TableHeader><TableRow><TableHead>Sıra (Order)</TableHead><TableHead>İsim</TableHead><TableHead className="text-right">Durum</TableHead></TableRow></TableHeader>
                                 <TableBody>
                                     {experienceItems?.map((item) => (
-                                        <TableRow key={item.id}>
-                                            <TableCell className="font-bold text-primary">{item.order}</TableCell>
-                                            <TableCell>{item.name.tr}</TableCell>
-                                            <TableCell className="text-right"><Badge variant="outline">Aktif</Badge></TableCell>
-                                        </TableRow>
+                                        <TableRow key={item.id}><TableCell className="font-bold text-primary">{item.order}</TableCell><TableCell>{item.name.tr}</TableCell><TableCell className="text-right"><Badge variant="outline">Aktif</Badge></TableCell></TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -305,76 +255,19 @@ export default function AdminPage() {
                 </TabsContent>
 
                 <TabsContent value="feedbacks">
-                    <div className="flex gap-4 mb-4">
-                        <div className="w-64">
-                            <Label>Mekan Filtresi</Label>
-                            <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
-                                <SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Tüm Yerler</SelectItem>
-                                    {sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    <Card>
-                        <CardContent className="p-0">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Mekan</TableHead>
-                                        <TableHead>Tarih</TableHead>
-                                        <TableHead>Puan</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (
-                                        <TableRow key={f.id}>
-                                            <TableCell>{f.placeName}</TableCell>
-                                            <TableCell>{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell>
-                                            <TableCell>{f.satisfaction}/5</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                    </Card>
+                    <div className="flex gap-4 mb-4"><div className="w-64"><Label>Mekan Filtresi</Label><Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}><SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Yerler</SelectItem>{sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}</SelectContent></Select></div></div>
+                    <Card><CardContent className="p-0"><Table><TableHeader><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell>{f.placeName}</TableCell><TableCell>{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell>{f.satisfaction}/5</TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
                 </TabsContent>
 
                 <TabsContent value="database">
                     <div className="grid gap-6 md:grid-cols-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle>
-                                <CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button onClick={() => handleSeed('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button>
-                            </CardContent>
-                        </Card>
-                        <Card className="border-orange-200 bg-orange-50/10">
-                            <CardHeader>
-                                <CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle>
-                                <CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button>
-                            </CardContent>
-                        </Card>
-                        <Card className="md:col-span-2">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle>
-                                <CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex justify-center">
-                                <Button onClick={handleUndo} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button>
-                            </CardContent>
-                        </Card>
+                        <Card><CardHeader><CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle><CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button></CardContent></Card>
+                        <Card className="border-orange-200 bg-orange-50/10"><CardHeader><CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle><CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button></CardContent></Card>
+                        <Card className="md:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle><CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription></CardHeader><CardContent className="flex justify-center"><Button onClick={handleUndoAction} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button></CardContent></Card>
                     </div>
                 </TabsContent>
             </Tabs>
 
-            {/* Alt Başlık Yönetimi Diyaloğu */}
             <Dialog open={!!managingSubPointsPlace} onOpenChange={(o) => !o && setManagingSubPointsPlace(null)}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader><DialogTitle>{managingSubPointsPlace?.name.tr} - Alt Başlık Yönetimi</DialogTitle></DialogHeader>
@@ -382,12 +275,9 @@ export default function AdminPage() {
                         <div className="border p-4 rounded-lg bg-muted/20">
                             <h3 className="font-bold mb-4 flex items-center gap-2"><Plus className="h-4 w-4" /> Yeni Alt Başlık</h3>
                             <Form {...subPointForm}>
-                                <form onSubmit={subPointForm.handleSubmit(onAddSubPointSubmit)} className="space-y-4">
-                                    <LocalizedFormFields form={subPointForm} fieldNames={['name', 'description']} />
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                        <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                    </div>
+                                <form onSubmit={subPointForm.handleSubmit(handleAddSubPointSubmit)} className="space-y-4">
+                                    {renderLocalizedFields(subPointForm, ['name', 'description'])}
+                                    <div className="grid grid-cols-2 gap-4"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/></div>
                                     <Button type="submit" disabled={isSubmitting} className="w-full">Kaydet</Button>
                                 </form>
                             </Form>
@@ -396,13 +286,7 @@ export default function AdminPage() {
                             <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
                             <div className="space-y-2">
                                 {managingSubPointsPlace?.subPoints?.map((s) => (
-                                    <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
-                                        <div><p className="font-bold">{s.name.tr}</p><p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p></div>
-                                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { 
-                                            const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; 
-                                            updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); 
-                                        }}><Trash2 /></Button>
-                                    </div>
+                                    <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background"><div><p className="font-bold">{s.name.tr}</p><p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p></div><Button variant="ghost" size="icon" className="text-destructive" onClick={() => { const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); }}><Trash2 /></Button></div>
                                 ))}
                             </div>
                         </div>
@@ -411,25 +295,11 @@ export default function AdminPage() {
             </Dialog>
 
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
-                <DialogContent className="max-w-xl">
-                    <DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <Form {...editPlaceForm}>
-                        <form onSubmit={editPlaceForm.handleSubmit(onEditPlaceSubmit)} className="space-y-4">
-                            <LocalizedFormFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
-                            <DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter>
-                        </form>
-                    </Form>
-                </DialogContent>
+                <DialogContent className="max-w-xl"><DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader><Form {...editPlaceForm}><form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-4">{renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}<DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter></form></Form></DialogContent>
             </Dialog>
 
             <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setDeletingPlace(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>İptal</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => { if (deletingPlace?.id) deletePlace(firestore, deletingPlace.id, { onSuccess: () => setDeletingPlace(null) }); }}>Sil</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingPlace?.id) deletePlace(firestore, deletingPlace.id, { onSuccess: () => setDeletingPlace(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
         </div>
     );

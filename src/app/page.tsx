@@ -24,13 +24,25 @@ export default function Home() {
   const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(query(collection(firestore, 'experience-items'), orderBy('order')));
 
   const displayExperienceItems = useMemo(() => {
-    // Veritabanından gelen veriyi 'order' değerine göre kesin sıralıyoruz.
-    // Eğer veritabanı boşsa static listeyi kullanıyoruz.
+    // Veritabanından gelen veriyi kullanarak sıralama ve tekilleştirme yapıyoruz.
     const rawItems = (experienceItems && experienceItems.length > 0) 
       ? experienceItems 
       : staticExperienceItems.map((item, index) => ({ ...item, id: `static-exp-${index}` }));
 
-    return [...rawItems].sort((a, b) => (a.order || 0) - (b.order || 0));
+    // Link bilgisini anahtar kullanarak mükerrer kayıtları temizliyoruz.
+    const uniqueMap = new Map();
+    rawItems.forEach(item => {
+        uniqueMap.set(item.link, item);
+    });
+
+    // Kesin Sıralama Mantığı:
+    // order değeri varsa ona göre, yoksa (veya eşitse) varsayılan olarak en sona.
+    // Özellikle Yürüyüş Rotaları linki için özel bir kontrol ekleyerek en sonda kalmasını garanti ediyoruz.
+    return Array.from(uniqueMap.values()).sort((a, b) => {
+        const orderA = a.link === '/yuruyus-rotalari' ? 999 : (Number(a.order) || 99);
+        const orderB = b.link === '/yuruyus-rotalari' ? 999 : (Number(b.order) || 99);
+        return orderA - orderB;
+    });
   }, [experienceItems]);
 
   return (
