@@ -24,9 +24,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Star, Users, MapPin, CheckCircle2, XCircle, Download, History, DatabaseBackup, RefreshCw } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Star, Download, History, DatabaseBackup, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -38,7 +38,6 @@ import { Label } from '@/components/ui/label';
 
 // Definitions
 import type { Place, Route, ExperienceItem, Feedback } from '@/lib/definitions';
-
 
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
@@ -61,7 +60,6 @@ const placeFormSchema = z.object({
 });
 type PlaceFormData = z.infer<typeof placeFormSchema>;
 
-
 const routeFormSchema = z.object({
   name: localizedStringSchema,
   slug: localizedStringSchema,
@@ -78,9 +76,9 @@ const experienceItemFormSchema = z.object({
 });
 type ExperienceItemFormData = z.infer<typeof experienceItemFormSchema>;
 
-
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
+const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
 
 // --- Helper Components ---
 function LocalizedFormFields({ form, fieldNames }: { form: any, fieldNames: Array<'name' | 'slug' | 'description'> }) {
@@ -115,7 +113,6 @@ function RatingBadge({ rating }: { rating: number }) {
     );
 }
 
-
 export default function AdminPage() {
     const firestore = useFirestore();
     const { toast } = useToast();
@@ -147,7 +144,10 @@ export default function AdminPage() {
     const feedbacksQuery = useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]);
     const { data: feedbacks, loading: feedbacksLoading } = useCollection<Feedback>(feedbacksQuery);
 
-    const sortedPlaces = useMemo(() => places?.slice().sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr')) || [], [places]);
+    const sortedPlaces = useMemo(() => {
+        if (!places) return [];
+        return [...places].sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr'));
+    }, [places]);
 
     // --- Feedback Filtering & Export ---
     const filteredFeedbacks = useMemo(() => {
@@ -155,19 +155,6 @@ export default function AdminPage() {
         if (feedbackPlaceFilter === 'all') return feedbacks;
         return feedbacks.filter(f => f.placeId === feedbackPlaceFilter);
     }, [feedbacks, feedbackPlaceFilter]);
-
-    const stats = useMemo(() => {
-        if (!filteredFeedbacks || filteredFeedbacks.length === 0) return null;
-        const total = filteredFeedbacks.length;
-        const avgCleanliness = filteredFeedbacks.reduce((acc, f) => acc + f.cleanliness, 0) / total;
-        const avgAccessibility = filteredFeedbacks.reduce((acc, f) => acc + f.accessibility, 0) / total;
-        const avgSatisfaction = filteredFeedbacks.reduce((acc, f) => acc + f.satisfaction, 0) / total;
-        const tourCount = filteredFeedbacks.filter(f => f.withTour === 'yes').length;
-        const guidedCount = filteredFeedbacks.filter(f => f.guided === 'yes').length;
-        const infoBoardsCount = filteredFeedbacks.filter(f => f.infoBoards === 'yes').length;
-
-        return { total, avgCleanliness, avgAccessibility, avgSatisfaction, tourCount, guidedCount, infoBoardsCount };
-    }, [filteredFeedbacks]);
 
     const handleDownloadReport = useCallback(() => {
         if (!filteredFeedbacks || filteredFeedbacks.length === 0) return;
@@ -237,10 +224,7 @@ export default function AdminPage() {
         addPlace(firestore, newPlace, createApiCallbacks("Yer", () => addPlaceForm.reset(defaultPlaceValues)));
     }
     function onEditPlaceSubmit(values: PlaceFormData) {
-        if (!editingPlace || !editingPlace.id) {
-            toast({ variant: 'destructive', title: 'Hata', description: 'Düzenlenecek yer ID\'si bulunamadı.' });
-            return;
-        }
+        if (!editingPlace?.id) return;
         setIsSubmitting(true);
         updatePlace(firestore, editingPlace.id, values, createApiCallbacks("Yer", () => setEditingPlace(null)));
     }
@@ -249,10 +233,7 @@ export default function AdminPage() {
         addRoute(firestore, values, createApiCallbacks("Rota", () => addRouteForm.reset(defaultRouteValues)));
     }
     function onEditRouteSubmit(values: RouteFormData) {
-        if (!editingRoute || !editingRoute.id) {
-            toast({ variant: 'destructive', title: 'Hata', description: 'Düzenlenecek rota ID\'si bulunamadı.' });
-            return;
-        }
+        if (!editingRoute?.id) return;
         setIsSubmitting(true);
         updateRoute(firestore, editingRoute.id, values, createApiCallbacks("Rota", () => setEditingRoute(null)));
     }
@@ -261,37 +242,22 @@ export default function AdminPage() {
         addExperienceItem(firestore, values, createApiCallbacks("Deneyim Öğesi", () => addExperienceItemForm.reset(defaultExperienceItemValues)));
     }
     function onEditExperienceItemSubmit(values: ExperienceItemFormData) {
-        if (!editingExperienceItem || !editingExperienceItem.id) {
-            toast({ variant: 'destructive', title: 'Hata', description: 'Düzenlenecek öğe ID\'si bulunamadı.' });
-            return;
-        }
+        if (!editingExperienceItem?.id) return;
         setIsSubmitting(true);
         updateExperienceItem(firestore, editingExperienceItem.id, values, createApiCallbacks("Deneyim Öğesi", () => setEditingExperienceItem(null)));
     }
 
     // --- Deletion Handler ---
-    function handleDeleteItem(
-        entity: { id?: string; name: { tr: string } } | null,
-        deleteFn: (db: any, id: string, callbacks: any) => void,
-        setDeletingEntity: (entity: any) => void,
-        entityName: string
-    ) {
-        const id = entity?.id;
-        if (!entity || !id) {
-            toast({ variant: 'destructive', title: 'Hata', description: `${entityName} ID'si bulunmadığı için silinemiyor.` });
-            return;
-        }
-        deleteFn(firestore, id, {
+    const handleDeleteItem = (entity: any, deleteFn: any, setDeletingEntity: any) => {
+        if (!entity?.id) return;
+        deleteFn(firestore, entity.id, {
             onSuccess: () => {
-                toast({ title: 'Başarılı!', description: `"${entity.name.tr}" silindi.` });
+                toast({ title: 'Silindi', description: `"${entity.name.tr}" silindi.` });
                 setDeletingEntity(null);
             },
-            onError: (error: any) => {
-                toast({ variant: 'destructive', title: 'Hata!', description: `${entityName} silinirken bir hata oluştu: ${error.message}` });
-                setDeletingEntity(null);
-            }
+            onError: (err: any) => toast({ variant: 'destructive', title: 'Hata', description: err.message })
         });
-    }
+    };
 
     // --- Database Management Handlers ---
     async function handleSeed(mode: 'SAFE' | 'UPDATE') {
@@ -300,10 +266,10 @@ export default function AdminPage() {
             const results = await seedDatabase(firestore, mode);
             toast({
                 title: mode === 'SAFE' ? 'Eksikler Tamamlandı' : 'Veriler Güncellendi',
-                description: `${results.places.added + results.routes.added + results.experienceItems.added} yeni öğe eklendi, ${results.places.updated} öğe akıllıca güncellendi. Her ihtimale karşı yedek alındı.`,
+                description: `${results.places.added + results.routes.added + results.experienceItems.added} yeni öğe eklendi.`,
             });
         } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Hata!', description: `İşlem sırasında bir hata oluştu: ${error.message}` });
+            toast({ variant: 'destructive', title: 'Hata!', description: error.message });
         } finally {
             setIsDatabaseActionLoading(false);
         }
@@ -313,18 +279,13 @@ export default function AdminPage() {
         setIsDatabaseActionLoading(true);
         try {
             await undoLastOperation(firestore);
-            toast({
-                title: 'Geri Yüklendi',
-                description: 'Veritabanı son işlemden önceki haline başarıyla geri döndürüldü.',
-            });
+            toast({ title: 'Geri Yüklendi', description: 'Veritabanı son işlemden önceki haline döndürüldü.' });
         } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Geri Alma Başarısız', description: error.message });
+            toast({ variant: 'destructive', title: 'Hata', description: error.message });
         } finally {
             setIsDatabaseActionLoading(false);
         }
     }
-
-    const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
 
     return (
         <div className="space-y-8">
@@ -339,7 +300,6 @@ export default function AdminPage() {
                     </TabsList>
                 </div>
                 
-                {/* PLACES TAB */}
                 <TabsContent value="places">
                     <Card>
                         <CardHeader>
@@ -354,7 +314,7 @@ export default function AdminPage() {
                                  <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Kategori</FormLabel>
-                                        <select {...field} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                        <select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background">
                                             <option value="history">Tarih</option>
                                             <option value="nature">Doğa</option>
                                             <option value="food">Lezzet</option>
@@ -367,36 +327,29 @@ export default function AdminPage() {
                                  <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Latitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                                  <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Longitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                               </div>
-                               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <FormField control={addPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>Resim URL'si</FormLabel><FormControl><Input placeholder="https://picsum.photos/..." {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)}/>
-                                <FormField control={addPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Resim İpucu (AI için)</FormLabel><FormControl><Input placeholder="landmark" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)}/>
-                              </div>
                               <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Yeri Ekle</Button>
                             </form>
                           </Form>
                         </CardContent>
                     </Card>
                     <Card className="mt-8">
-                        <CardHeader>
-                            <CardTitle>Mevcut Yerler</CardTitle>
-                            <CardDescription>Kayıtlı tüm yerleri buradan yönetebilirsiniz.</CardDescription>
-                        </CardHeader>
+                        <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
                         <CardContent>
                           <div className="rounded-md border">
                             <Table>
                               <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead className="hidden md:table-cell">Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                               <TableBody>
-                                {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={`p-skel-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
-                                : sortedPlaces?.map((place, idx) => (
-                                  <TableRow key={place.id || `place-row-${idx}`}>
+                                {placesLoading ? Array.from({ length: 5 }).map((_, i) => (<TableRow key={i}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                : sortedPlaces.map((place) => (
+                                  <TableRow key={place.id}>
                                     <TableCell className="font-medium">{place.name.tr}</TableCell>
                                     <TableCell className="hidden md:table-cell"><Badge variant="secondary">{categoryLabels[place.category] || 'Diğer'}</Badge></TableCell>
                                     <TableCell className="text-right">
                                       <DropdownMenu>
-                                        <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /><span className="sr-only">Menü</span></Button></DropdownMenuTrigger>
+                                        <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                           <DropdownMenuItem onClick={() => setEditingPlace(place)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
-                                          <DropdownMenuItem onClick={() => setDeletingPlace(place)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => setDeletingPlace(place)} className="text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
                                     </TableCell>
@@ -405,15 +358,13 @@ export default function AdminPage() {
                               </TableBody>
                             </Table>
                           </div>
-                          {!placesLoading && places?.length === 0 && (<div className="text-center p-8 text-muted-foreground">Henüz hiç yer eklenmemiş.</div>)}
                         </CardContent>
                     </Card>
                 </TabsContent>
 
-                {/* ROUTES TAB */}
                 <TabsContent value="routes">
                     <Card>
-                        <CardHeader><CardTitle>Yeni Rota Ekle</CardTitle><CardDescription>Yeni bir tematik rota oluşturun.</CardDescription></CardHeader>
+                        <CardHeader><CardTitle>Yeni Rota Ekle</CardTitle></CardHeader>
                         <CardContent>
                             <Form {...addRouteForm}>
                                 <form onSubmit={addRouteForm.handleSubmit(onAddRouteSubmit)} className="space-y-8">
@@ -422,92 +373,41 @@ export default function AdminPage() {
                                         <FormItem>
                                             <FormLabel>Duraklar</FormLabel>
                                             <ScrollArea className="h-72 w-full rounded-md border p-4">
-                                            {sortedPlaces.map((place, idx) => (
-                                                <FormItem key={place.id || `stop-sel-${idx}`} className="flex flex-row items-start space-x-3 space-y-0 mb-4">
-                                                    <FormControl>
-                                                        <Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {
-                                                            return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));
-                                                        }}/>
-                                                    </FormControl>
+                                            {sortedPlaces.map((place) => (
+                                                <FormItem key={place.id} className="flex flex-row items-start space-x-3 space-y-0 mb-4">
+                                                    <FormControl><Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((v: string) => v !== place.id))} /></FormControl>
                                                     <FormLabel className="font-normal">{place.name.tr}</FormLabel>
                                                 </FormItem>
                                             ))}
-                                            </ScrollArea>
-                                            <FormMessage />
+                                            </ScrollArea><FormMessage />
                                         </FormItem>
                                     )} />
-                                    <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Rotayı Ekle</Button>
+                                    <Button type="submit" disabled={isSubmitting}>Ekle</Button>
                                 </form>
                             </Form>
-                        </CardContent>
-                    </Card>
-                     <Card className="mt-8">
-                        <CardHeader><CardTitle>Mevcut Rotalar</CardTitle></CardHeader>
-                        <CardContent>
-                            <div className="rounded-md border">
-                                <Table>
-                                    <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Durak Sayısı</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
-                                    <TableBody>
-                                        {routesLoading ? Array.from({ length: 3 }).map((_, i) => (<TableRow key={`r-skel-${i}`}><TableCell><Skeleton className="h-5 w-3/4" /></TableCell><TableCell><Skeleton className="h-5 w-12" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
-                                        : routes?.map((route, idx) => (
-                                            <TableRow key={route.id || `route-row-${idx}`}>
-                                                <TableCell className="font-medium">{route.name.tr}</TableCell>
-                                                <TableCell>{route.stops.length}</TableCell>
-                                                <TableCell className="text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem onClick={() => setEditingRoute(route)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => setDeletingRoute(route)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
 
-                {/* EXPERIENCES TAB */}
                 <TabsContent value="experiences">
                     <Card>
-                        <CardHeader><CardTitle>Yeni Deneyim Öğesi Ekle</CardTitle><CardDescription>Ana sayfadaki "Salihli'de Bir Gün" bölümüne yeni bir kart ekleyin.</CardDescription></CardHeader>
-                        <CardContent>
-                            <Form {...addExperienceItemForm}>
-                                <form onSubmit={addExperienceItemForm.handleSubmit(onAddExperienceItemSubmit)} className="space-y-8">
-                                    <LocalizedFormFields form={addExperienceItemForm} fieldNames={['name']} />
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                      <FormField control={addExperienceItemForm.control} name="icon" render={({ field }) => (<FormItem><FormLabel>İkon Adı</FormLabel><FormControl><Input placeholder="Mountain" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                                      <FormField control={addExperienceItemForm.control} name="link" render={({ field }) => (<FormItem><FormLabel>Link</FormLabel><FormControl><Input placeholder="/yerler?category=nature" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                                      <FormField control={addExperienceItemForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                                    </div>
-                                    <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Yeni Öğeyi Ekle</Button>
-                                </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
-                     <Card className="mt-8">
-                        <CardHeader><CardTitle>Mevcut Deneyim Öğeleri</CardTitle></CardHeader>
+                        <CardHeader><CardTitle>Deneyim Menüsü</CardTitle></CardHeader>
                         <CardContent>
                             <div className="rounded-md border">
                                 <Table>
-                                    <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead className="text-right">Eylemler</TableHead></TableHeader>
+                                    <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={`e-skel-${i}`}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell className="h-5 w-24" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
-                                        : experienceItems?.map((item, idx) => (
-                                            <TableRow key={item.id || `exp-row-id-${idx}`}>
+                                        {experienceItemsLoading ? Array.from({ length: 4 }).map((_, i) => (<TableRow key={i}><TableCell><Skeleton className="h-5 w-4" /></TableCell><TableCell><Skeleton className="h-5 w-32" /></TableCell><TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell></TableRow>))
+                                        : experienceItems?.map((item) => (
+                                            <TableRow key={item.id}>
                                                 <TableCell>{item.order}</TableCell>
-                                                <TableCell className="font-medium">{item.name.tr}</TableCell>
-                                                <TableCell><code>{item.icon}</code></TableCell>
+                                                <TableCell>{item.name.tr}</TableCell>
                                                 <TableCell className="text-right">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
                                                             <DropdownMenuItem onClick={() => setEditingExperienceItem(item)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => setDeletingExperienceItem(item)} className="text-destructive focus:bg-destructive/10 focus:text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => setDeletingExperienceItem(item)} className="text-destructive"><Trash2 className="mr-2" /> Sil</DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 </TableCell>
@@ -520,268 +420,93 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                {/* FEEDBACKS TAB */}
                 <TabsContent value="feedbacks">
                     <div className="flex flex-col md:flex-row gap-4 mb-6 items-end">
                         <div className="w-full md:w-64">
-                            <Label className="mb-2 block">Mekan Filtresi</Label>
+                            <Label>Mekan Filtresi</Label>
                             <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Tüm Mekanlar" />
-                                </SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder="Tüm Mekanlar" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">Tüm Mekanlar</SelectItem>
-                                    {sortedPlaces.map((place, idx) => (
-                                        <SelectItem key={place.id || `fb-place-sel-${idx}`} value={place.id}>{place.name.tr}</SelectItem>
-                                    ))}
+                                    {sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}
                                 </SelectContent>
                             </Select>
                         </div>
-                        <Button variant="outline" onClick={handleDownloadReport} className="gap-2">
-                            <Download className="h-4 w-4" />
-                            Raporu İndir (CSV)
-                        </Button>
+                        <Button variant="outline" onClick={handleDownloadReport}><Download className="mr-2 h-4 w-4" /> Rapor İndir</Button>
                     </div>
-
-                    {feedbacksLoading ? (
-                        <div className="flex flex-col gap-8">
-                            <Skeleton className="h-32 w-full" />
-                            <Skeleton className="h-[400px] w-full" />
+                    {feedbacksLoading ? <Skeleton className="h-64 w-full" /> : (
+                        <div className="rounded-md border bg-card">
+                            <Table>
+                                <TableHeader><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Memnuniyet</TableHead></TableRow></TableHeader>
+                                <TableBody>
+                                    {filteredFeedbacks.map((f) => (
+                                        <TableRow key={f.id}>
+                                            <TableCell>{f.placeName}</TableCell>
+                                            <TableCell>{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell>
+                                            <TableCell><RatingBadge rating={f.satisfaction} /></TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
-                    ) : filteredFeedbacks && filteredFeedbacks.length > 0 ? (
-                        <div className="space-y-8">
-                            {/* Stats Summary */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
-                                <Card className="bg-primary/5 border-primary/10">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Toplam Katılım</CardDescription>
-                                        <CardTitle className="text-2xl flex items-center gap-2"><Users className="h-5 w-5 text-primary" />{stats?.total}</CardTitle>
-                                    </CardHeader>
-                                </Card>
-                                <Card className="bg-card">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Temizlik Ort.</CardDescription>
-                                        <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgCleanliness || 0} /></CardTitle>
-                                    </CardHeader>
-                                </Card>
-                                <Card className="bg-card">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Erişim Ort.</CardDescription>
-                                        <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgAccessibility || 0} /></CardTitle>
-                                    </CardHeader>
-                                </Card>
-                                <Card className="bg-card">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Memnuniyet Ort.</CardDescription>
-                                        <CardTitle className="text-2xl flex items-center gap-2"><RatingBadge rating={stats?.avgSatisfaction || 0} /></CardTitle>
-                                    </CardHeader>
-                                </Card>
-                                <Card className="bg-card">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Turla Gelen</CardDescription>
-                                        <CardTitle className="text-2xl">{stats?.tourCount}</CardTitle>
-                                    </CardHeader>
-                                </Card>
-                                <Card className="bg-card">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Rehberli</CardDescription>
-                                        <CardTitle className="text-2xl">{stats?.guidedCount}</CardTitle>
-                                    </CardHeader>
-                                </Card>
-                                <Card className="bg-card">
-                                    <CardHeader className="p-4 pb-2">
-                                        <CardDescription className="text-xs uppercase tracking-wider">Bilgi Panosu</CardDescription>
-                                        <CardTitle className="text-2xl">{stats?.infoBoardsCount}</CardTitle>
-                                    </CardHeader>
-                                </Card>
-                            </div>
-
-                            {/* Feedbacks Table */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Anket Yanıtları ({filteredFeedbacks.length})</CardTitle>
-                                    <CardDescription>Ziyaretçilerden gelen tüm geri bildirimler.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="rounded-md border">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead>Mekan</TableHead>
-                                                    <TableHead>Temizlik</TableHead>
-                                                    <TableHead>Erişim</TableHead>
-                                                    <TableHead>Memnuniyet</TableHead>
-                                                    <TableHead className="text-center">Tur</TableHead>
-                                                    <TableHead className="text-center">Rehber</TableHead>
-                                                    <TableHead className="text-center">Pano</TableHead>
-                                                    <TableHead className="text-right">Tarih</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {filteredFeedbacks.map((f, index) => (
-                                                    <TableRow key={f.id || `feedback-row-${index}`}>
-                                                        <TableCell className="font-medium flex items-center gap-2">
-                                                            <MapPin className="h-3 w-3 text-muted-foreground" />
-                                                            {f.placeName}
-                                                        </TableCell>
-                                                        <TableCell><RatingBadge rating={f.cleanliness} /></TableCell>
-                                                        <TableCell><RatingBadge rating={f.accessibility} /></TableCell>
-                                                        <TableCell><RatingBadge rating={f.satisfaction} /></TableCell>
-                                                        <TableCell className="text-center">
-                                                            {f.withTour === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
-                                                        </TableCell>
-                                                        <TableCell className="text-center">
-                                                            {f.guided === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
-                                                        </TableCell>
-                                                        <TableCell className="text-center">
-                                                            {f.infoBoards === 'yes' ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}
-                                                        </TableCell>
-                                                        <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
-                                                            {f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    ) : (
-                        <Card>
-                            <CardContent className="p-12 text-center flex flex-col items-center">
-                                <Star className="h-12 w-12 text-muted-foreground/20 mb-4" />
-                                <CardTitle className="text-muted-foreground">Gösterilecek veri yok.</CardTitle>
-                                <CardDescription>Seçili filtreye uygun anket verisi bulunamadı.</CardDescription>
-                            </CardContent>
-                        </Card>
                     )}
                 </TabsContent>
                 
-                {/* DATABASE TAB */}
                 <TabsContent value="database">
                      <div className="grid gap-6">
                         <Card>
                             <CardHeader>
                             <CardTitle className="flex items-center gap-2"><DatabaseBackup className="h-5 w-5" /> Veritabanı Yönetimi</CardTitle>
-                            <CardDescription>
-                                Uygulamanın başlangıç verilerini yönetin. Her işlemden önce otomatik yedek alınır.
-                            </CardDescription>
+                            <CardDescription>Uygulamanın verilerini yönetin. Her işlemden önce otomatik yedek alınır.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="border rounded-lg p-4 space-y-3">
-                                    <h3 className="font-bold flex items-center gap-2 text-primary"><RefreshCw className="h-4 w-4" /> Güvenli Mod</h3>
-                                    <p className="text-sm text-muted-foreground">Mevcut verilerinize dokunmaz. Sadece veritabanında hiç olmayan yeni yerleri ve rotaları ekler.</p>
-                                    <Button onClick={() => handleSeed('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">
-                                        {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Eksikleri Tamamla
-                                    </Button>
-                                </div>
-                                <div className="border rounded-lg p-4 space-y-3 border-orange-200 bg-orange-50/20">
-                                    <h3 className="font-bold flex items-center gap-2 text-orange-600"><RefreshCw className="h-4 w-4" /> Akıllı Güncelleme</h3>
-                                    <p className="text-sm text-muted-foreground">Kod üzerindeki yeni bilgileri (ör. Sinagog bölümü) mevcut mekanlarınıza ekler. Elle girdiğiniz açıklamaları korumaya çalışır.</p>
-                                    <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">
-                                        {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Verileri Kod ile Güncelle
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div className="pt-6 border-t">
-                                <div className="flex flex-col items-center text-center space-y-4">
-                                    <div className="p-3 bg-muted rounded-full"><History className="h-8 w-8 text-muted-foreground" /></div>
-                                    <div>
-                                        <h3 className="font-bold text-lg">Bir Hata mı Oldu?</h3>
-                                        <p className="text-muted-foreground">Yaptığınız son veritabanı işlemini geri alarak verileri bir önceki haline döndürün.</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="border rounded-lg p-4 space-y-3">
+                                        <h3 className="font-bold flex items-center gap-2 text-primary"><RefreshCw className="h-4 w-4" /> Güvenli Mod</h3>
+                                        <p className="text-sm text-muted-foreground">Sadece veritabanında hiç olmayan yeni yerleri ve rotaları ekler.</p>
+                                        <Button onClick={() => handleSeed('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">
+                                            {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Eksikleri Tamamla
+                                        </Button>
                                     </div>
-                                    <Button onClick={handleUndo} disabled={isDatabaseActionLoading} variant="outline" className="px-10 border-primary text-primary hover:bg-primary/5">
-                                        {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Son İşlemi Geri Al (Undo)
-                                    </Button>
+                                    <div className="border rounded-lg p-4 space-y-3 border-orange-200 bg-orange-50/20">
+                                        <h3 className="font-bold flex items-center gap-2 text-orange-600"><RefreshCw className="h-4 w-4" /> Akıllı Güncelleme</h3>
+                                        <p className="text-sm text-muted-foreground">Kod üzerindeki yeni bilgileri mevcut mekanlarınıza ekler.</p>
+                                        <Button onClick={() => handleSeed('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">
+                                            {isDatabaseActionLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Verileri Kod ile Güncelle
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
+                                <div className="pt-6 border-t flex flex-col items-center gap-4">
+                                    <div className="p-3 bg-muted rounded-full"><History className="h-8 w-8 text-muted-foreground" /></div>
+                                    <div className="text-center">
+                                        <h3 className="font-bold">Geri Yükle</h3>
+                                        <p className="text-sm text-muted-foreground">Son işlemi geri alarak verileri bir önceki haline döndürün.</p>
+                                    </div>
+                                    <Button onClick={handleUndo} disabled={isDatabaseActionLoading} variant="outline">Son İşlemi Geri Al (Undo)</Button>
+                                </div>
                             </CardContent>
                         </Card>
                      </div>
                 </TabsContent>
             </Tabs>
       
-            {/* DIALOGS for Editing & Deleting */}
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
-                <DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <Form {...editPlaceForm}><form onSubmit={editPlaceForm.handleSubmit(onEditPlaceSubmit)}>
-                        <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto pr-4">
-                            <LocalizedFormFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Kategori</FormLabel>
-                                        <select {...field} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                                            <option value="history">Tarih</option>
-                                            <option value="nature">Doğa</option>
-                                            <option value="food">Lezzet</option>
-                                            <option value="shopping">Alışveriş</option>
-                                            <option value="poi">Önemli Nokta</option>
-                                        </select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}/>
-                                <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Latitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                                <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Longitude</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                            </div>
-                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>Resim URL'si</FormLabel><FormControl><Input placeholder="https://picsum.photos/..." {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)}/>
-                                <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Resim İpucu (AI için)</FormLabel><FormControl><Input placeholder="landmark" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)}/>
-                            </div>
-                        </div>
-                        <DialogFooter className="pt-4"><DialogClose asChild><Button type="button" variant="outline">İptal</Button></DialogClose><Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Değişiklikleri Kaydet</Button></DialogFooter>
+                <DialogContent className="max-w-xl"><DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
+                    <Form {...editPlaceForm}><form onSubmit={editPlaceForm.handleSubmit(onEditPlaceSubmit)} className="space-y-4">
+                        <LocalizedFormFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
+                        <DialogFooter><Button type="submit" disabled={isSubmitting}>Değişiklikleri Kaydet</Button></DialogFooter>
                     </form></Form>
                 </DialogContent>
             </Dialog>
-            <AlertDialog open={!!deletingPlace} onOpenChange={(open) => !open && setDeletingPlace(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" adlı yeri kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingPlace, deletePlace, setDeletingPlace, 'Yer')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+
+            <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setDeletingPlace(null)}>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingPlace, deletePlace, setDeletingPlace)}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
-            <Dialog open={!!editingRoute} onOpenChange={(open) => !open && setEditingRoute(null)}>
-                <DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle>Rotayı Düzenle</DialogTitle></DialogHeader>
-                    <Form {...editRouteForm}><form onSubmit={editRouteForm.handleSubmit(onEditRouteSubmit)}>
-                        <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto pr-4">
-                            <LocalizedFormFields form={editRouteForm} fieldNames={['name', 'slug', 'description']} />
-                            <FormField control={editRouteForm.control} name="stops" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Duraklar</FormLabel>
-                                    <ScrollArea className="h-72 w-full rounded-md border p-4">
-                                    {sortedPlaces.map((place, idx) => (
-                                        <FormItem key={place.id || `edit-stop-sel-${idx}`} className="flex flex-row items-start space-x-3 space-y-0 mb-4">
-                                            <FormControl><Checkbox checked={field.value?.includes(place.id)} onCheckedChange={(checked) => {return checked ? field.onChange([...field.value, place.id]) : field.onChange(field.value?.filter((value) => value !== place.id));}}/></FormControl>
-                                            <FormLabel className="font-normal">{place.name.tr}</FormLabel>
-                                        </FormItem>
-                                    ))}
-                                    </ScrollArea><FormMessage />
-                                </FormItem>
-                            )} />
-                        </div>
-                        <DialogFooter className="pt-4"><DialogClose asChild><Button type="button" variant="outline">İptal</Button></DialogClose><Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Değişiklikleri Kaydet</Button></DialogFooter>
-                    </form></Form>
-                </DialogContent>
-            </Dialog>
-            <AlertDialog open={!!deletingRoute} onOpenChange={(open) => !open && setDeletingRoute(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingRoute?.name.tr}" adlı rotayı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingRoute, deleteRoute, setDeletingRoute, 'Rota')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
-            </AlertDialog>
-            <Dialog open={!!editingExperienceItem} onOpenChange={(open) => !open && setEditingExperienceItem(null)}>
-                <DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle>Deneyim Öğesini Düzenle</DialogTitle></DialogHeader>
-                    <Form {...editExperienceItemForm}><form onSubmit={editExperienceItemForm.handleSubmit(onEditExperienceItemSubmit)}>
-                        <div className="space-y-6 py-4 max-h-[70vh] overflow-y-auto pr-4">
-                             <LocalizedFormFields form={editExperienceItemForm} fieldNames={['name']} />
-                             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                <FormField control={editExperienceItemForm.control} name="icon" render={({ field }) => (<FormItem><FormLabel>İkon Adı</FormLabel><FormControl><Input placeholder="Mountain" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                                <FormField control={editExperienceItemForm.control} name="link" render={({ field }) => (<FormItem><FormLabel>Link</FormLabel><FormControl><Input placeholder="/yerler?category=nature" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                                <FormField control={editExperienceItemForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
-                             </div>
-                        </div>
-                        <DialogFooter className="pt-4"><DialogClose asChild><Button type="button" variant="outline">İptal</Button></DialogClose><Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Değişiklikleri Kaydet</Button></DialogFooter>
-                    </form></Form>
-                </DialogContent>
-            </Dialog>
-            <AlertDialog open={!!deletingExperienceItem} onOpenChange={(open) => !open && setDeletingExperienceItem(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperienceItem?.name.tr}" adlı öğeyi kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingExperienceItem, deleteExperienceItem, setDeletingExperienceItem, 'Deneyim Öğesi')} className="bg-destructive hover:bg-destructive/90">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+
+            <AlertDialog open={!!deletingExperienceItem} onOpenChange={(o) => !o && setDeletingExperienceItem(null)}>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperienceItem?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => handleDeleteItem(deletingExperienceItem, deleteExperienceItem, setDeletingExperienceItem)}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
         </div>
     );
