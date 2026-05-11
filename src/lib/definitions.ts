@@ -1,3 +1,4 @@
+
 export type LocalizedString = {
     tr: string;
     en: string;
@@ -55,14 +56,6 @@ export type Story = {
     placeId?: string; // Optional place ID
 };
 
-export type Cuisine = {
-    id: string;
-    slug: LocalizedString;
-    name: LocalizedString;
-    description: LocalizedString;
-    mapSearchQuery: string;
-};
-
 export type BrochurePage = {
     imageUrl: string;
     imageHint: string;
@@ -94,5 +87,20 @@ export type Feedback = {
     withTour: 'yes' | 'no';
     guided: 'yes' | 'no';
     infoBoards: 'yes' | 'no';
+    createdAt: any;
+};
+
+export type CommentReply = {
+    name: string;
+    message: string;
+    createdAt: any;
+};
+
+export type CommentFeedback = {
+    id: string;
+    name?: string;
+    message: string;
+    likes: number;
+    replies: CommentReply[];
     createdAt: any;
 };

@@ -1,3 +1,4 @@
+
 import { ExperienceItem } from '@/lib/definitions';
 
 // Omit 'id' because it will be auto-generated during seeding
@@ -64,27 +65,15 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Bisiklet Rotaları',
-      en: 'Bicycle Routes',
-      fr: 'Pistes Cyclables',
-      de: 'Fahrradrouten',
-      ja: '自転車ルート'
+      tr: 'Ziyaretçi Defteri',
+      en: 'Guestbook',
+      fr: 'Livre d\'or',
+      de: 'Gästebuch',
+      ja: 'ゲストブック'
     },
-    icon: 'Bike',
-    link: '/bisiklet-rotalari',
+    icon: 'MessageSquare',
+    link: '/ziyaretci-defteri',
     order: 6
-  },
-  {
-    name: {
-      tr: 'Yürüyüş Rotaları',
-      en: 'Hiking Routes',
-      fr: 'Itinéraires de Randonnée',
-      de: 'Wanderwege',
-      ja: 'ハイキングルート'
-    },
-    icon: 'Footprints',
-    link: '/yuruyus-rotalari',
-    order: 7
   },
   {
     name: {
@@ -96,6 +85,18 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'LocateFixed',
     link: '/cevremde-ne-var',
+    order: 7
+  },
+  {
+    name: {
+      tr: 'Yürüyüş Rotaları',
+      en: 'Hiking Routes',
+      fr: 'Itinéraires de Randonnée',
+      de: 'Wanderwege',
+      ja: 'ハイキングルート'
+    },
+    icon: 'Footprints',
+    link: '/yuruyus-rotalari',
     order: 8
   }
 ];

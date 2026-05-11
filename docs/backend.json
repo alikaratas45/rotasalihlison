@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -61,6 +62,33 @@
       },
       "required": ["placeId", "cleanliness", "accessibility", "satisfaction", "withTour", "guided"]
     },
+    "CommentFeedback": {
+      "title": "Comment Feedback",
+      "description": "General user comments for the guestbook.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "message": { "type": "string" },
+        "likes": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "replies": {
+          "type": "array",
+          "items": { "$ref": "#/backend/entities/CommentReply" }
+        }
+      },
+      "required": ["message", "createdAt"]
+    },
+    "CommentReply": {
+      "title": "Comment Reply",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["message", "createdAt"]
+    },
     "Route": {
       "title": "Route",
       "description": "A thematic route with multiple stops.",
@@ -100,29 +128,6 @@
         "placeId": { "type": "string" }
       },
       "required": ["id", "slug", "title", "author", "content"]
-    },
-    "Brochure": {
-      "title": "Brochure",
-      "description": "A digital brochure with multiple pages.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "title": { "$ref": "#/backend/entities/LocalizedString" },
-        "pages": { "type": "array", "items": { "$ref": "#/backend/entities/BrochurePage" } }
-      },
-      "required": ["id", "title", "pages"]
-    },
-    "BrochurePage": {
-      "title": "Brochure Page",
-      "description": "A single page within a brochure.",
-      "type": "object",
-      "properties": {
-        "imageUrl": { "type": "string", "format": "uri" },
-        "imageHint": { "type": "string" },
-        "title": { "$ref": "#/backend/entities/LocalizedString" },
-        "text": { "$ref": "#/backend/entities/LocalizedString" }
-      },
-      "required": ["imageUrl", "imageHint"]
     },
     "MenuItem": {
       "title": "Menu Item",
@@ -178,6 +183,10 @@
       "schema": { "$ref": "#/backend/entities/Feedback" },
       "description": "Collection of user feedbacks for places."
     },
+    "/feedback": {
+      "schema": { "$ref": "#/backend/entities/CommentFeedback" },
+      "description": "General guestbook messages."
+    },
     "/backups": {
       "schema": { "type": "object" },
       "description": "Stores database backups before operations."
@@ -193,10 +202,6 @@
     "/stories": {
       "schema": { "$ref": "#/backend/entities/Story" },
       "description": "Collection of all stories and legends."
-    },
-    "/brochures": {
-      "schema": { "$ref": "#/backend/entities/Brochure" },
-      "description": "Collection of all brochures."
     },
     "/menu-items": {
       "schema": { "$ref": "#/backend/entities/MenuItem" },

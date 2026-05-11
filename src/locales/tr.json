@@ -10,6 +10,20 @@
         "qrScanner": "QR Okuyucu",
         "audioGuide": "Sesli Rehber"
     },
+    "guestbook": {
+        "title": "Ziyaretçi Defteri",
+        "description": "Salihli deneyimlerinizi paylaşın, diğer ziyaretçilerin mesajlarını keşfedin.",
+        "leaveMessage": "Bir Mesaj Bırakın",
+        "namePlaceholder": "İsminiz (Opsiyonel)",
+        "messagePlaceholder": "Deneyiminizi veya mesajınızı buraya yazın...",
+        "replyPlaceholder": "Yanıtınız...",
+        "submit": "Mesajı Gönder",
+        "success": "Mesajınız başarıyla paylaşıldı!",
+        "anonymous": "Ziyaretçi",
+        "reply": "Yanıtla",
+        "like": "Beğen",
+        "noFeedback": "Henüz mesaj yazılmamış. İlk yazan siz olun!"
+    },
     "footer": {
         "about": "Rota Salihli, Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.",
         "copyright": "Tüm hakları saklıdır.",

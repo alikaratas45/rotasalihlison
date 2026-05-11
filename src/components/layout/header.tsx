@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -20,12 +21,12 @@ export function Header() {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Navigasyon linkleri - Broşürler tamamen kaldırıldı
   const navLinks = [
     { href: '/yerler', label: t('header.places') },
     { href: '/rotalar', label: t('header.routes') },
     { href: '/hikayeler', label: t('header.stories') },
     { href: '/lezzetler', label: t('header.cuisine') },
+    { href: '/ziyaretci-defteri', label: t('guestbook.title') },
     { href: '/cevremde-ne-var', label: t('header.nearby') },
   ];
 
@@ -37,7 +38,6 @@ export function Header() {
           <span className="hidden font-bold sm:inline-block font-headline">Rota Salihli</span>
         </Link>
         
-        {/* Desktop Nav */}
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           {navLinks.map((link) => (
             <Link 
@@ -55,7 +55,6 @@ export function Header() {
           <LanguageSwitcher />
           <ThemeToggle />
 
-          {/* Mobile Nav */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
