@@ -72,7 +72,7 @@ export default function YuruyusRotalariPage() {
 
   const activeRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
 
-  // 2 KM PROXIMITY RULE: Dynamic filtering based on KML path
+  // 200 METER PROXIMITY RULE: Dynamic filtering based on KML path
   useEffect(() => {
     async function updatePois() {
       if (!allPlaces) return;
@@ -81,8 +81,8 @@ export default function YuruyusRotalariPage() {
       try {
         const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
         const filtered = allPlaces.filter(place => {
-          // 2000 meters = 2 km proximity threshold
-          return isPointNearRoute(place.coordinates, kmlPoints, 2000);
+          // 200 meters proximity threshold (updated from 2000m)
+          return isPointNearRoute(place.coordinates, kmlPoints, 200);
         });
         setRoutePois(filtered);
       } catch (err) {

@@ -77,7 +77,7 @@ export default function BisikletRotalariPage() {
     routes.find(r => r.id === selectedRouteId) || routes[0]
   , [selectedRouteId, routes]);
 
-  // 2 KM PROXIMITY RULE: Dynamic filtering based on KML path
+  // 200 METER PROXIMITY RULE: Dynamic filtering based on KML path
   useEffect(() => {
     let isMounted = true;
 
@@ -90,8 +90,8 @@ export default function BisikletRotalariPage() {
         if (!isMounted) return;
 
         const filtered = allPlaces.filter(place => {
-          // 2000 meters = 2 km proximity threshold
-          return isPointNearRoute(place.coordinates, kmlPoints, 2000);
+          // 200 meters proximity threshold (updated from 2000m)
+          return isPointNearRoute(place.coordinates, kmlPoints, 200);
         });
         setRoutePois(filtered);
       } catch (err) {
