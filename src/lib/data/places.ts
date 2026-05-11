@@ -17,7 +17,7 @@ It maintained its importance throughout the Persian, Roman, and Byzantine period
             ja: `紀元前7世紀から6世紀にかけてのリディア王国の壮大な首都サルディスは、歴史上初めて硬貨が鋳造された場所として知られています。ゲディズ盆地に位置し、工業的発明、叙情詩、彫刻の中心地でした。`
         },
         category: 'history',
-        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
+        coordinates: { lat: 38.489271, lng: 28.037149 },
         imageUrl: 'https://i.imgur.com/2deYxHC.png',
         imageHint: 'ancient ruins'
     },
@@ -34,7 +34,7 @@ Bugün modern tesisleri, yeşilin her tonunu barındıran piknik alanları ve hu
 Nowadays, it offers visitors a peaceful retreat with its modern spa facilities, scenic picnic areas, and soothing waterfalls. The waters are widely recognized for their therapeutic benefits, particularly for skin conditions and rheumatic disorders.`,
             fr: `Situées au pied des montagnes Bozdağ, les sources thermales de Kurşunlu sont un centre de bien-être majeur, célèbre pour ses eaux curatives et sa nature luxuriante. La légende raconte que la princesse Kursun a retrouvé sa beauté légendaire après s'être baignée dans ces sources.`,
             de: `Die Thermalquellen von Kurşunlu am Fuße des Bozdağ-Gebirges sind ein bedeutendes Wellnesszentrum, das für sein heilendes Wasser und seine üppige Natur bekannt ist. Die Legende besagt, dass Prinzessin Kursun ihre legendäre Schönheit wiedererlangte, nachdem sie hier badete.`,
-            ja: `ボズダ山脈の麓に位置するクルシュンル温泉は、癒しの水と豊かな自然で有名な主要なウェルネスセンターです。伝説によると、クルスン王女は皮膚病を治すためにこの温泉に浸かった後、伝説的な美しさを取り戻したと言われています。`
+            ja: `ボズダ山脈の麓に位置するクルシュンル温泉は、癒しの水 ve 豊かな自然で有名な主要なウェルネスセンターです。伝説によると、クルスン王女は皮膚病を治すためにこの温泉に浸かった後、伝説的な美しさを取り戻したと言われています。`
         },
         category: 'nature',
         coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 },

@@ -31,7 +31,7 @@ export default function AroundMePage() {
   );
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
+    if (typeof window !== 'undefined' && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({
