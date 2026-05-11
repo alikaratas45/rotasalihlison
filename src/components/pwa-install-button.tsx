@@ -17,7 +17,7 @@ export function PwaInstallButton() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Standalone modunda olup olmadığını kontrol et
+    // Check if running in standalone mode
     if (typeof window !== 'undefined') {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
         || (window.navigator as any).standalone 
@@ -27,11 +27,11 @@ export function PwaInstallButton() {
     }
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Tarayıcının varsayılan promptunu engelle
+      // Prevent browser's default install banner
       e.preventDefault();
-      // Olayı sakla
+      // Store the event for later use
       setDeferredPrompt(e);
-      // Butonu görünür yap (Eğer standalone değilse)
+      // Show the install button (only if not already standalone)
       if (!isStandalone) {
         setIsVisible(true);
       }
@@ -65,31 +65,32 @@ export function PwaInstallButton() {
       return;
     }
 
-    // Promptu göster
+    // Show the native browser install prompt
     deferredPrompt.prompt();
 
-    // Kullanıcının seçimini bekle
+    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('Kullanıcı PWA yüklemesini kabul etti');
+      console.log('User accepted the PWA install');
     } else {
-      console.log('Kullanıcı PWA yüklemesini reddetti');
+      console.log('User dismissed the PWA install');
     }
 
-    // Promptu temizle
+    // Clear the prompt
     setDeferredPrompt(null);
     setIsVisible(false);
   };
 
+  // Do not render anything if already installed or not supported yet
   if (!isVisible || isStandalone) return null;
 
   return (
-    <div className="container mx-auto px-4 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="container mx-auto px-4 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <Card className="border-primary/20 bg-primary/5 shadow-lg overflow-hidden">
         <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-full text-primary">
+          <div className="flex items-center gap-4 text-left">
+            <div className="p-3 bg-primary/10 rounded-full text-primary shrink-0">
               <Download className="h-8 w-8" />
             </div>
             <div>
@@ -111,7 +112,7 @@ export function PwaInstallButton() {
             </Button>
             <Button 
                 onClick={handleInstallClick} 
-                className="flex-1 md:flex-none h-12 px-8 font-bold shadow-md"
+                className="flex-1 md:flex-none h-12 px-8 font-bold shadow-md bg-primary hover:bg-primary/90 text-white"
             >
                 {t('pwa.installButton')}
             </Button>
