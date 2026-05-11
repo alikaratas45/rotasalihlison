@@ -39,7 +39,7 @@
     },
     "about": {
         "title": "History of Salihli",
-        "content": "To tell the history of Salihli, one must start with the Ancient City of Sardis (SART). Sardis was founded by a king named Meles in the Gediz basin, on the northern slopes of the hills to the west of Bozdağ. During the Hittite period (1750-1200 BC), the region was known as ASSUWA. It showed great development especially in the 7th-6th centuries BC, becoming the capital of the Lydian state. Industrial inventions, money, and international migration started here. Sardis maintained its importance as a Satrapy center during the Persian period and a provincial center during the Roman and Byzantine periods. \n\nIn 1075, Seljuk Turks captured Sardis and called it Sart. By 1313, it was under final Turkish rule. The first record of modern Salihli District dates back to 1518, mentioned as Veled-i Salih/Salihoğlu village. Records from 1535 confirmed the existence of this village attached to the Sart district, including details about various districts such as Izmir, Çeşme, and others under the Aydın Province."
+        "content": "To tell the history of Salihli, one must start with the Ancient City of Sardis (SART). Sardis was founded in the Gediz basin, on the northern slopes of the hills to the west of Bozdağ. It showed great development especially in the 7th-6th centuries BC, becoming the capital of the Lydian state. Industrial inventions, money, and international migration started here. Sardis maintained its importance as a center during the Persian, Roman, and Byzantine periods. \n\nIn 1075, Seljuk Turks captured Sardis and called it Sart. By 1313, it was under final Turkish rule. The first record of modern Salihli District dates back to 1518, mentioned as Veled-i Salih village."
     },
     "actions": {
         "seeDetails": "See Details →",
@@ -136,5 +136,10 @@
         "alert": "You are currently at {0}. Would you like me to tell you about it?",
         "yes": "Yes, Listen",
         "no": "No, Thanks"
+    },
+    "subPoints": {
+        "title": "Mekanın Bölümleri",
+        "listen": "Listen",
+        "directions": "Directions"
     }
 }

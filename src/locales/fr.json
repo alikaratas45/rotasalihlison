@@ -39,7 +39,7 @@
     },
     "about": {
         "title": "Histoire de Salihli",
-        "content": "Pour raconter l'histoire de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes a été fondée par un roi nommé Meles dans le bassin du Gediz. Pendant la période hittite, elle était connue sous le nom d'ASSUWA. Elle est devenue la capitale de l'État lydien aux VIIe et VIe siècles av. J.-C. Sardes est restée importante sous les périodes perse, romaine et byzantine. \n\nEn 1075, les Turcs Seldjoukides s'emparèrent de Sardes et l'appelèrent Sart. En 1313, elle passa définitivement sous domination turque. Le premier registre de l'actuel district de Salihli date de 1518, mentionné comme le village de Veled-i Salih/Salihoğlu."
+        "content": "Pour raconter l'histoire de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes a été fondée dans le bassin du Gediz, sur les pentes nord des collines à l'ouest de Bozdağ. Elle est devenue la capitale de l'État lydien aux VIIe et VIe siècles av. J.-C. Sardes est restée importante sous les périodes perse, romaine et byzantine. \n\nEn 1075, les Turcs Seldjoukides s'emparèrent de Sardes et l'appelèrent Sart. En 1313, elle passa définitivement sous domination turque. Le premier registre de l'actuel district de Salihli date de 1518."
     },
     "actions": {
         "seeDetails": "Voir les détails →",
@@ -135,5 +135,10 @@
         "alert": "Vous êtes actuellement à {0}. Voulez-vous que je vous en parle ?",
         "yes": "Oui, écouter",
         "no": "Non, merci"
+    },
+    "subPoints": {
+        "title": "Mekanın Bölümleri",
+        "listen": "Écouter",
+        "directions": "Itinéraire"
     }
 }

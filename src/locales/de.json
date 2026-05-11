@@ -39,7 +39,7 @@
     },
     "about": {
         "title": "Geschichte von Salihli",
-        "content": "Die Geschichte von Salihli beginnt mit der antiken Stadt Sardes (SART). Sardes wurde von einem König namens Meles im Gediz-Becken gegründet. Während der hethitischen Zeit war die Region als ASSUWA bekannt. Sie wurde im 7.-6. Jahrhundert v. Chr. die Hauptstadt des lydischen Staates. Sardes behielt seine Bedeutung während der persischen, römischen und byzantinischen Zeit bei. \n\nIm Jahr 1075 eroberten die seldschukischen Türken Sardes und nannten es Sart. Im Jahr 1313 kam es endgültig unter türkische Herrschaft. Die erste Aufzeichnung über den heutigen Bezirk Salihli stammt aus dem Jahr 1518, erwähnt als Dorf Veled-i Salih/Salihoğlu."
+        "content": "Die Geschichte von Salihli beginnt mit der antiken Stadt Sardes (SART). Sardes wurde im Gediz-Becken an den Nordhängen der Hügel westlich von Bozdağ gegründet. Sie wurde im 7.-6. Jahrhundert v. Chr. die Hauptstadt des lydischen Staates. Sardes behielt seine Bedeutung während der persischen, römischen und byzantinischen Zeit bei. \n\nIm Jahr 1075 eroberten die seldschukischen Türken Sardes und nannten es Sart. Im Jahr 1313 kam es endgültig unter türkische Herrschaft. Die ersten Aufzeichnungen über den heutigen Bezirk Salihli stammen aus dem Jahr 1518."
     },
     "actions": {
         "seeDetails": "Details ansehen →",
@@ -135,5 +135,10 @@
         "alert": "Sie befinden sich derzeit in {0}. Möchten Sie, dass ich Ihnen davon erzähle?",
         "yes": "Ja, zuhören",
         "no": "Nein, danke"
+    },
+    "subPoints": {
+        "title": "Mekanın Bölümleri",
+        "listen": "Anhören",
+        "directions": "Anfahrt"
     }
 }

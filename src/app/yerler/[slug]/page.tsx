@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -334,7 +335,7 @@ function PlaceDetailContent() {
             <div className="mt-16 clear-both">
                 <div className="flex items-center gap-3 mb-8 border-b pb-4">
                     <MapPinned className="h-6 w-6 text-primary" />
-                    <h2 className="text-2xl font-bold font-headline">Mekanın Bölümleri</h2>
+                    <h2 className="text-2xl font-bold font-headline">{t('subPoints.title')}</h2>
                 </div>
                 <div className="grid gap-8">
                     {place.subPoints.map((sub) => (
@@ -363,7 +364,7 @@ function PlaceDetailContent() {
                                             className="flex-1 md:flex-none"
                                         >
                                             {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />}
-                                            Dinle
+                                            {t('subPoints.listen')}
                                         </Button>
                                         <Button 
                                             variant="secondary" 
@@ -372,7 +373,7 @@ function PlaceDetailContent() {
                                             className="flex-1 md:flex-none"
                                         >
                                             <Navigation className="h-4 w-4 mr-2" />
-                                            Yol Tarifi
+                                            {t('subPoints.directions')}
                                         </Button>
                                     </div>
                                 </div>
