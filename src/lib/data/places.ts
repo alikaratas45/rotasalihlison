@@ -8,7 +8,7 @@ export const places: Place[] = [
         description: { 
             tr: `Salihli’nin tarihini başlatan Antik Sardes (SART) kenti, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ’ın batısındaki tepelerin kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda Lidya Devleti'nin görkemli başkenti olan Sardes, tarihte paranın ilk basıldığı yer olarak bilinir. 
 
-Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde de önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
+Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde भी önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
             en: `Sardis, the magnificent capital of the Lydian Kingdom in the 7th and 6th centuries BC, is known as the place where money was first minted in history. Located in the Gediz basin, on the slopes of Mount Tmolus (Bozdağ), it was a center of industrial inventions, lyric poetry, and sculpture. 
 
 It maintained its importance throughout the Persian, Roman, and Byzantine periods as a major administrative and cultural hub. The vast spread of tumuli and ruins proves that the ancient city was a broad civilization basin reaching the south of modern-day Salihli.`,
@@ -100,7 +100,7 @@ Yerden 14 metre yükseklikteki çatı masif taş payelerle desteklenmiştir. Bin
 The roof, 14 meters above the ground, was supported by massive stone pillars. Initially part of the Roman Bath-Gymnasium Complex, it later became a dedicated place of worship. The mosaic floors and marble wall decorations are precious remains from the 4th and 5th centuries AD.`,
                     fr: `Cette synagogue monumentale servait de centre religieux à la communauté juive à la fin de l'époque romaine. Découvert en 1962, le bâtiment comprend une salle de réunion principale pouvant accueillir mille personnes.`,
                     de: `Die monumentale Synagoge diente in der spätrömischen Zeit als religiöses Zentrum der jüdischen Gemeinde. Das 1962 freigelegte Gebäude verfügt über eine Versammlungshalle für tausend Personen.`,
-                    ja: `この記念碑的なシナゴーグは、後期ローマ時代にユダヤ人コミュニティの宗教的中心地として使用されていました。1000人を収容できる大きさのメインホールがあります。`
+                    ja: `この記念碑的なシナゴーグは、後期ローマ時代にユダヤ人コミュニティの宗教的中心地として使用されていました。1000人を収容できる大きさ의メインホールがあります。`
                 }
             }
         ]

@@ -25,7 +25,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -121,10 +121,10 @@ export default function AdminPage() {
                 slug: editingPlace.slug,
                 description: editingPlace.description,
                 category: editingPlace.category,
-                lat: editingPlace.coordinates.lat, 
-                lng: editingPlace.coordinates.lng,
-                imageUrl: editingPlace.imageUrl,
-                imageHint: editingPlace.imageHint
+                lat: editingPlace.coordinates?.lat || 0, 
+                lng: editingPlace.coordinates?.lng || 0,
+                imageUrl: editingPlace.imageUrl || '',
+                imageHint: editingPlace.imageHint || ''
             }); 
         }
     }, [editingPlace, editPlaceForm]);
@@ -446,9 +446,27 @@ export default function AdminPage() {
                     <DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
                     <ScrollArea className="flex-1 pr-4">
                         <Form {...editPlaceForm}>
-                            <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-4 py-4">
+                            <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6 py-4">
                                 {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
-                                <DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter>
+                                
+                                <div className="space-y-6 pt-6 border-t">
+                                    <h4 className="font-bold flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Genel Bilgiler</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
+                                            <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
+                                        )}/>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat (Enlem)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                            <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng (Boylam)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>Görsel URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl></FormItem>)}/>
+                                        <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Görsel İpucu</FormLabel><FormControl><Input placeholder="landmark" {...field} /></FormControl></FormItem>)}/>
+                                    </div>
+                                </div>
+
+                                <DialogFooter className="sticky bottom-0 bg-background py-4 border-t"><Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle</Button></DialogFooter>
                             </form>
                         </Form>
                     </ScrollArea>
