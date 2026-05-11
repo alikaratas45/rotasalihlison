@@ -77,7 +77,13 @@ export default function Home() {
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
+          <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
+          
+          {/* PWA Install Button placed right under the experience title as requested */}
+          <div className="mb-8 flex justify-center">
+            <PwaInstallButton />
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8">
             {experienceLoading ? Array.from({length: 6}).map((_, i) => (
                 <Card key={`skeleton-exp-${i}`} className="p-6 flex flex-col items-center justify-center aspect-square bg-secondary/50 h-full">
@@ -95,8 +101,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <PwaInstallButton />
 
       <section className="py-16 bg-muted/20">
         <div className="container mx-auto px-4">
