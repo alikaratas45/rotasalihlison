@@ -1,6 +1,6 @@
 
-// PWA Service Worker
-// Tarayıcıların uygulamayı "yüklenebilir" olarak tanıması için en az bir fetch event handler gereklidir.
+// PWA Service Worker - Rota Salihli
+// Tarayıcının uygulamayı "yüklenebilir" olarak görmesi için zorunlu olan fetch dinleyicisi eklenmiştir.
 
 const CACHE_NAME = 'rota-salihli-v1';
 
@@ -13,6 +13,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Offline destek için temel strateji (istenirse geliştirilebilir)
-  // Şimdilik boş bir fetch handler tarayıcı kriterleri için yeterlidir
+  // PWA install prompt tetiklenmesi için bu blok zorunludur.
+  // Gerekirse statik dosyaları burada cache'leyebilirsiniz.
 });

@@ -80,7 +80,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           
-          {/* PWA Install Button placed right under the experience title as requested */}
+          {/* PWA Install Button placed right under the experience title */}
           <div className="mb-10 px-4">
             <PwaInstallButton />
           </div>

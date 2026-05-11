@@ -16,7 +16,7 @@ export function PwaInstallButton() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Uygulama zaten standalone (yüklenmiş) modda mı kontrol et
+    // Check if app is already in standalone mode
     if (typeof window !== 'undefined') {
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
         || (window.navigator as any).standalone 
@@ -26,13 +26,12 @@ export function PwaInstallButton() {
     }
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Tarayıcının varsayılan yükleme penceresini engelle
+      // Prevent browser's default prompt
       e.preventDefault();
-      // Olayı daha sonra kullanmak üzere sakla
+      // Store event to trigger it later
       setDeferredPrompt(e);
-      // Butonu görünür yap
+      // Show our custom button
       setIsVisible(true);
-      console.log('PWA: beforeinstallprompt fırlatıldı');
     };
 
     const handleAppInstalled = () => {
@@ -63,18 +62,14 @@ export function PwaInstallButton() {
       return;
     }
 
-    // Yükleme penceresini göster
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     
-    console.log(`PWA: Kullanıcı seçimi - ${outcome}`);
-    
-    // Olayı temizle
     setDeferredPrompt(null);
     setIsVisible(false);
   };
 
-  // Uygulama zaten yüklüyse veya tarayıcı henüz prompt vermediyse gösterme
+  // Hide if already installed or prompt not yet fired
   if (isStandalone || !isVisible) return null;
 
   return (
@@ -82,7 +77,7 @@ export function PwaInstallButton() {
       <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-full text-primary">
-            <Smartphone className="h-6 w-6" />
+            <Download className="h-6 w-6" />
           </div>
           <div className="text-left">
             <h3 className="font-bold text-sm leading-none">{t('pwa.title', 'Uygulamayı Yükle')}</h3>
