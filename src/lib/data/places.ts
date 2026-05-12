@@ -1,3 +1,4 @@
+
 import type { Place } from '@/lib/definitions';
 
 export const places: Place[] = [
@@ -74,7 +75,7 @@ Kompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorl
 The "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been restored to its former glory. It was not just a place for physical exercise, but also a cultural hub where philosophy and art were discussed.`,
             fr: `Le complexe romain Thermes-Gymnase, l'une des structures les plus grandioses de Sardes, était le centre de l'éducation, du sport et de la vie sociale dans l'Antiquité. Construit au IIe siècle de notre ère, ce bâtiment massif présente des exemples exceptionnels d'architecture romaine.`,
             de: `Der römische Bad-Gymnasium-Komplex, eines der prächtigsten Bauwerke in Sardes, war in der Antike das Zentrum für Bildung, Sport und soziales Leben. Er wurde im 2. Jahrhundert n. Chr. erbaut und zeigt feinste römische Architektur.`,
-            ja: `サルディスで最も壮大な建造物の一つであるローマ浴場・ギムナジウム・コンプレックスは、古代の教育、スポーツ、社会生活の中心地でした。西暦2世紀に建てられたこの巨大な建造物は、ローマ建築の優れた例を示しています。`
+            ja: `サルディスで最も壮大な建造物の一つであるローマ浴場・ギムナジウム・コンプレックスは、古代の教育、スポーツ、社会生活の中心地でした。西暦2世紀に建てられたこの巨大な建造物は、ローマ建築ের優れた例を示しています。`
         },
         category: 'history',
         coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
