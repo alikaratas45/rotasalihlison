@@ -18,7 +18,7 @@ export function PwaInstallButton() {
     const handleBeforeInstallPrompt = (e: Event) => {
       // Tarayıcının varsayılan yükleme penceresini engelle
       e.preventDefault();
-      // Olayı state içinde sakla
+      // Olayı sakla
       setDeferredPrompt(e);
       // Butonu görünür yap
       setIsVisible(true);
@@ -57,11 +57,8 @@ export function PwaInstallButton() {
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('Kullanıcı yüklemeyi kabul etti');
       setDeferredPrompt(null);
       setIsVisible(false);
-    } else {
-      console.log('Kullanıcı yüklemeyi reddetti');
     }
   };
 

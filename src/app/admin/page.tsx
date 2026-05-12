@@ -162,13 +162,10 @@ export default function AdminPage() {
 
     useEffect(() => {
         if (aboutSettings && !isSubmitting) {
-            const current = siteSettingsForm.getValues();
-            if (JSON.stringify(current.aboutTitle) !== JSON.stringify(aboutSettings.aboutTitle)) {
-                siteSettingsForm.reset({
-                    aboutTitle: aboutSettings.aboutTitle || { tr: '', en: '' },
-                    aboutContent: aboutSettings.aboutContent || { tr: '', en: '' },
-                });
-            }
+            siteSettingsForm.reset({
+                aboutTitle: aboutSettings.aboutTitle || { tr: '', en: '' },
+                aboutContent: aboutSettings.aboutContent || { tr: '', en: '' },
+            });
         }
     }, [aboutSettings, siteSettingsForm, isSubmitting]);
 
