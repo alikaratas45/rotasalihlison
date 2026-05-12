@@ -25,7 +25,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, Download } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, Download, PieChart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -296,23 +296,52 @@ export default function AdminPage() {
             return;
         }
 
+        const total = filteredFeedbacks.length;
+        const sumClean = filteredFeedbacks.reduce((acc, f) => acc + (f.cleanliness || 0), 0);
+        const sumAccess = filteredFeedbacks.reduce((acc, f) => acc + (f.accessibility || 0), 0);
+        const sumSatisfy = filteredFeedbacks.reduce((acc, f) => acc + (f.satisfaction || 0), 0);
+
+        const tourYesCount = filteredFeedbacks.filter(f => f.withTour === 'yes').length;
+        const guidedYesCount = filteredFeedbacks.filter(f => f.guided === 'yes').length;
+        const infoYesCount = filteredFeedbacks.filter(f => f.infoBoards === 'yes').length;
+
         const escapeCSV = (val: any) => {
             const stringVal = String(val ?? '');
             return `"${stringVal.replace(/"/g, '""')}"`;
         };
 
-        const headers = [
-            'Mekan Adı',
-            'Tarih',
-            'Temizlik (1-5)',
-            'Erişilebilirlik (1-5)',
-            'Genel Memnuniyet (1-5)',
-            'Turla mı geldi?',
-            'Rehber Desteği',
-            'Bilgi Panoları Yeterli mi?'
+        // Summary Section (Chic statistics at the top)
+        const summaryRows = [
+            ['GENEL ANKET İSTATİSTİK RAPORU', ''],
+            ['Rapor Tarihi', format(new Date(), 'dd.MM.yyyy HH:mm')],
+            ['Filtrelenen Mekan', feedbackPlaceFilter === 'all' ? 'Tüm Yerler' : (sortedPlaces.find(p => p.id === feedbackPlaceFilter)?.name.tr || 'Bilinmeyen')],
+            ['Toplam Katılımcı Sayısı', total],
+            ['', ''],
+            ['ORTALAMA PUANLAR (1-5 Arası)', ''],
+            ['Temizlik ve Düzen Ortalaması', (sumClean / total).toFixed(2)],
+            ['Erişilebilirlik Ortalaması', (sumAccess / total).toFixed(2)],
+            ['Genel Memnuniyet Ortalaması', (sumSatisfy / total).toFixed(2)],
+            ['', ''],
+            ['ORANSAL VERİLER (Yüzdelik)', ''],
+            ['Turla Gelen Ziyaretçi Oranı', `%${((tourYesCount / total) * 100).toFixed(1)}`],
+            ['Rehber Desteği Alan Oranı', `%${((guidedYesCount / total) * 100).toFixed(1)}`],
+            ['Bilgi Panolarını Yeterli Bulanlar', `%${((infoYesCount / total) * 100).toFixed(1)}`],
+            ['', ''],
+            ['DETAYLI ANKET LİSTESİ', ''],
         ];
 
-        const rows = filteredFeedbacks.map(f => [
+        const headers = [
+            'Mekan Adı',
+            'Anket Tarihi',
+            'Temizlik (1-5)',
+            'Erişilebilirlik (1-5)',
+            'Memnuniyet (1-5)',
+            'Turla mı Geldi?',
+            'Rehberli mi?',
+            'Bilgi Panosu Yeterli mi?'
+        ];
+
+        const dataRows = filteredFeedbacks.map(f => [
             f.placeName,
             f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yyyy HH:mm', { locale: trLocale }) : '---',
             f.cleanliness,
@@ -324,15 +353,17 @@ export default function AdminPage() {
         ]);
 
         const csvContent = [
+            ...summaryRows.map(row => row.map(escapeCSV).join(',')),
             headers.map(escapeCSV).join(','),
-            ...rows.map(row => row.map(escapeCSV).join(','))
+            ...dataRows.map(row => row.map(escapeCSV).join(','))
         ].join('\n');
 
+        // Added UTF-8 BOM for Excel to recognize Turkish characters correctly
         const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `Salihli_Rota_Anket_Raporu_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+        link.setAttribute('download', `Salihli_Rota_Analiz_Raporu_${format(new Date(), 'yyyy-MM-dd')}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -505,22 +536,64 @@ export default function AdminPage() {
                     </TabsContent>
 
                     <TabsContent value="feedbacks" className="mt-0">
-                        <div className="flex flex-col sm:flex-row gap-4 mb-6 items-end justify-between">
-                            <div className="w-full sm:w-64">
-                                <Label>Mekan Filtresi</Label>
-                                <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
-                                    <SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">Tüm Yerler</SelectItem>
-                                        {sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}
-                                    </SelectContent>
-                                </Select>
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                             <Card className="lg:col-span-1 p-6 border-primary/10 bg-primary/5">
+                                <div className="space-y-4">
+                                    <h3 className="font-bold flex items-center gap-2 text-primary">
+                                        <PieChart className="h-5 w-5" /> Veri Filtreleme
+                                    </h3>
+                                    <div className="space-y-2">
+                                        <Label>Mekan Seçimi</Label>
+                                        <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
+                                            <SelectTrigger className="bg-background"><SelectValue placeholder="Tüm Yerler" /></SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">Tüm Yerler</SelectItem>
+                                                {sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <Button onClick={handleDownloadCSV} variant="default" className="w-full gap-2 font-bold shadow-md">
+                                        <Download className="h-4 w-4" />
+                                        Analiz Raporunu İndir (Excel)
+                                    </Button>
+                                    <p className="text-[10px] text-muted-foreground italic text-center">
+                                        * İndirilen dosya istatistiksel özet ve detaylı listeyi içerir.
+                                    </p>
+                                </div>
+                            </Card>
+
+                            <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <Card className="p-4 flex flex-col items-center justify-center text-center">
+                                    <span className="text-xs text-muted-foreground uppercase font-bold">Toplam Anket</span>
+                                    <span className="text-3xl font-bold text-primary">{filteredFeedbacks.length}</span>
+                                </Card>
+                                <Card className="p-4 flex flex-col items-center justify-center text-center">
+                                    <span className="text-xs text-muted-foreground uppercase font-bold">Memnuniyet</span>
+                                    <span className="text-3xl font-bold text-orange-500">
+                                        {filteredFeedbacks.length > 0 
+                                            ? (filteredFeedbacks.reduce((acc, f) => acc + (f.satisfaction || 0), 0) / filteredFeedbacks.length).toFixed(1)
+                                            : '0'}
+                                    </span>
+                                </Card>
+                                <Card className="p-4 flex flex-col items-center justify-center text-center">
+                                    <span className="text-xs text-muted-foreground uppercase font-bold">Tur Oranı</span>
+                                    <span className="text-3xl font-bold text-blue-500">
+                                        {filteredFeedbacks.length > 0 
+                                            ? `%${((filteredFeedbacks.filter(f => f.withTour === 'yes').length / filteredFeedbacks.length) * 100).toFixed(0)}`
+                                            : '%0'}
+                                    </span>
+                                </Card>
+                                <Card className="p-4 flex flex-col items-center justify-center text-center">
+                                    <span className="text-xs text-muted-foreground uppercase font-bold">Bilgi Panosu</span>
+                                    <span className="text-3xl font-bold text-green-600">
+                                        {filteredFeedbacks.length > 0 
+                                            ? `%${((filteredFeedbacks.filter(f => f.infoBoards === 'yes').length / filteredFeedbacks.length) * 100).toFixed(0)}`
+                                            : '%0'}
+                                    </span>
+                                </Card>
                             </div>
-                            <Button onClick={handleDownloadCSV} variant="outline" className="w-full sm:w-auto gap-2 border-primary/20 hover:bg-primary/5">
-                                <Download className="h-4 w-4 text-primary" />
-                                CSV Olarak İndir (Excel)
-                            </Button>
                         </div>
+
                         <Card>
                             <CardContent className="p-0">
                                 <Table>
