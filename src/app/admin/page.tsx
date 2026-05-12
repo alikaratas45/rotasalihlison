@@ -456,7 +456,7 @@ export default function AdminPage() {
                     <DialogHeader className="p-6 border-b">
                         <DialogTitle>{managingSubPointsPlace?.name.tr} - Alt Başlık Yönetimi</DialogTitle>
                     </DialogHeader>
-                    <ScrollArea className="flex-1">
+                    <ScrollArea className="flex-1 overflow-y-auto">
                         <div className="p-6 space-y-8">
                             <div className="border p-4 rounded-lg bg-muted/20">
                                 <div className="flex justify-between items-center mb-4">
@@ -517,7 +517,7 @@ export default function AdminPage() {
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
                     <DialogHeader className="p-6 border-b"><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1">
+                    <ScrollArea className="flex-1 overflow-y-auto">
                         <div className="p-6">
                             <Form {...editPlaceForm}>
                                 <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
@@ -555,7 +555,7 @@ export default function AdminPage() {
             <Dialog open={!!editingExperience} onOpenChange={(open) => !open && setEditingExperience(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
                     <DialogHeader className="p-6 border-b"><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1">
+                    <ScrollArea className="flex-1 overflow-y-auto">
                         <div className="p-6">
                             <Form {...editExperienceForm}>
                                 <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6">
