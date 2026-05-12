@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -24,20 +25,21 @@ export default function AppWrapper({
   useEffect(() => {
     setMounted(true);
     
-    // PWA Service Worker Kaydı - Yükleme butonu için KRİTİK
+    // PWA Service Worker Kaydı - Uygulamayı İndir özelliği için KRİTİKTİR
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      // Önceki kayıtları temizle ve taze kaydet (Daha sağlıklı çalışma için)
+      // Önceki kayıtları temizleyip taze kaydetmek en sağlıklı yöntemdir
       navigator.serviceWorker.getRegistrations().then(registrations => {
         for (let registration of registrations) {
           registration.unregister();
         }
-        navigator.serviceWorker.register('/sw.js')
-          .then((reg) => console.log('PWA: Service Worker başarıyla yüklendi.'))
-          .catch((err) => console.warn('PWA: Service Worker hatası:', err));
+        // Modern tarayıcılar için fetch event'i içeren bir sw.js zorunludur
+        navigator.serviceWorker.register('/sw.js', { scope: '/' })
+          .then((reg) => console.log('PWA: Service Worker başarıyla kaydedildi.', reg))
+          .catch((err) => console.warn('PWA: Service Worker kayıt hatası:', err));
       });
     }
 
-    // Ziyaretçi Sayacı
+    // Ziyaretçi Sayacı - Tekrar eden istekleri önlemek için session kontrolü
     if (!hasTrackedRef.current) {
         const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
         if (!visitorTracked) {
@@ -47,6 +49,7 @@ export default function AppWrapper({
         hasTrackedRef.current = true;
     }
 
+    // Splash Screen Kontrolü
     const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
     if (!splashShown) {
       setIsFirstVisit(true);
@@ -64,6 +67,7 @@ export default function AppWrapper({
   }, [firestore]);
 
   const handleInteraction = useCallback(() => {
+    // Tarayıcıların ses kısıtlamasını aşmak için ilk kullanıcı etkileşimini kullanıyoruz
     if (typeof window !== 'undefined' && window.speechSynthesis && !(window as any)._audioUnlocked) {
         const utterance = new SpeechSynthesisUtterance('');
         utterance.volume = 0;

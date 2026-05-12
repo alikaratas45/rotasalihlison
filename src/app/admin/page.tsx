@@ -276,8 +276,13 @@ export default function AdminPage() {
         <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
             {languages.map((lang) => (
                 <AccordionItem value={lang} key={`lang-acc-${lang}`}>
-                    <AccordionTrigger>{languageNames[lang]}</AccordionTrigger>
-                    <AccordionContent className="space-y-4">
+                    <AccordionTrigger className="hover:no-underline py-2">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold bg-muted px-2 py-0.5 rounded">{lang.toUpperCase()}</span>
+                            <span>{languageNames[lang]}</span>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-2 border-t mt-2">
                         {fieldNames.includes('name') && <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>İsim ({lang})</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />}
@@ -300,7 +305,7 @@ export default function AdminPage() {
     );
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-20 overflow-hidden">
+        <div className="space-y-8 max-w-7xl mx-auto pb-20">
             <Tabs defaultValue="places" className="w-full">
                 <div className="flex justify-center sticky top-0 z-40 bg-background/95 backdrop-blur-md py-4 border-b">
                     <TabsList className="flex-wrap h-auto">
@@ -312,8 +317,7 @@ export default function AdminPage() {
                     </TabsList>
                 </div>
                 
-                <ScrollArea className="h-[calc(100vh-140px)] w-full">
-                  <div className="p-4 space-y-8">
+                <div className="p-4 space-y-8">
                     <TabsContent value="places" className="mt-0 space-y-8">
                         <Card>
                             <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
@@ -337,7 +341,7 @@ export default function AdminPage() {
                             <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
                             <CardContent className="p-0">
                                 <Table>
-                                    <TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
+                                    <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
                                         {placesLoading ? (<TableRow><TableCell colSpan={3}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : sortedPlaces.map((place) => (
                                             <TableRow key={place.id}>
@@ -408,7 +412,7 @@ export default function AdminPage() {
                             <CardHeader><CardTitle>Deneyim Menüsü Sıralaması</CardTitle><CardDescription>Menü öğeleri 'order' değerine göre ana sayfada listelenir.</CardDescription></CardHeader>
                             <CardContent className="p-0">
                                 <Table>
-                                    <TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>Link</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
+                                    <TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead>Link</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
                                         {experienceLoading ? (<TableRow><TableCell colSpan={4}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : sortedExperienceItems?.map((item) => (
                                             <TableRow key={item.id}>
@@ -434,7 +438,7 @@ export default function AdminPage() {
 
                     <TabsContent value="feedbacks" className="mt-0">
                         <div className="flex gap-4 mb-4"><div className="w-full sm:w-64"><Label>Mekan Filtresi</Label><Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}><SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Yerler</SelectItem>{sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}</SelectContent></Select></div></div>
-                        <Card><CardContent className="p-0"><Table><TableHeader className="sticky top-0 bg-background z-10"><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell className="font-medium">{f.placeName}</TableCell><TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell><Badge>{f.satisfaction}/5</Badge></TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
+                        <Card><CardContent className="p-0"><Table><TableHeader><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell className="font-medium">{f.placeName}</TableCell><TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell><Badge>{f.satisfaction}/5</Badge></TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
                     </TabsContent>
 
                     <TabsContent value="database" className="mt-0">
@@ -444,74 +448,78 @@ export default function AdminPage() {
                             <Card className="md:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle><CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription></CardHeader><CardContent className="flex justify-center"><Button onClick={handleUndoAction} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button></CardContent></Card>
                         </div>
                     </TabsContent>
-                  </div>
-                </ScrollArea>
+                </div>
             </Tabs>
 
             {/* --- MODALS --- */}
             
             <Dialog open={!!managingSubPointsPlace} onOpenChange={(o) => { if(!o) { setManagingSubPointsPlace(null); setEditingSubPoint(null); } }}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-                    <DialogHeader><DialogTitle>{managingSubPointsPlace?.name.tr} - Alt Başlık Yönetimi</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1 pr-4">
-                        <div className="space-y-8 py-4">
-                            <div className="border p-4 rounded-lg bg-muted/20">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="font-bold flex items-center gap-2">
-                                        {editingSubPoint ? <FilePenLine className="h-4 w-4" /> : <Plus className="h-4 w-4" />} 
-                                        {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık'}
-                                    </h3>
-                                    {editingSubPoint && <Button variant="ghost" size="sm" onClick={() => setEditingSubPoint(null)}><X className="h-4 w-4 mr-1" /> İptal</Button>}
-                                </div>
-                                <Form {...subPointForm}>
-                                    <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4">
-                                        {renderLocalizedFields(subPointForm, ['name', 'description'])}
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                            <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                        </div>
-                                        <Button type="submit" disabled={isSubmitting} className="w-full">
-                                            {isSubmitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
-                                            {editingSubPoint ? 'Güncelle' : 'Kaydet'}
-                                        </Button>
-                                    </form>
-                                </Form>
+                <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0">
+                    <DialogHeader className="p-6 border-b">
+                        <DialogTitle>{managingSubPointsPlace?.name.tr} - Alt Başlık Yönetimi</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                        <div className="border p-4 rounded-lg bg-muted/20">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="font-bold flex items-center gap-2">
+                                    {editingSubPoint ? <FilePenLine className="h-4 w-4" /> : <Plus className="h-4 w-4" />} 
+                                    {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık'}
+                                </h3>
+                                {editingSubPoint && <Button variant="ghost" size="sm" onClick={() => setEditingSubPoint(null)}><X className="h-4 w-4 mr-1" /> İptal</Button>}
                             </div>
-                            <div>
-                                <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
-                                <div className="space-y-2">
-                                    {managingSubPointsPlace?.subPoints?.map((s) => (
-                                        <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
-                                            <div>
-                                                <p className="font-bold">{s.name.tr}</p>
-                                                <p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <Button variant="ghost" size="icon" className="text-primary" onClick={() => setEditingSubPoint(s)}>
-                                                    <FilePenLine />
-                                                </Button>
-                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); }}>
-                                                    <Trash2 />
-                                                </Button>
-                                            </div>
+                            <Form {...subPointForm}>
+                                <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4">
+                                    {renderLocalizedFields(subPointForm, ['name', 'description'])}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                        <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                    </div>
+                                    <Button type="submit" disabled={isSubmitting} className="w-full">
+                                        {isSubmitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+                                        {editingSubPoint ? 'Güncelle' : 'Kaydet'}
+                                    </Button>
+                                </form>
+                            </Form>
+                        </div>
+                        <div>
+                            <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
+                            <div className="space-y-2">
+                                {managingSubPointsPlace?.subPoints?.map((s) => (
+                                    <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
+                                        <div>
+                                            <p className="font-bold">{s.name.tr}</p>
+                                            <p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p>
                                         </div>
-                                    ))}
-                                    {(!managingSubPointsPlace?.subPoints || managingSubPointsPlace.subPoints.length === 0) && (
-                                        <p className="text-center py-4 text-muted-foreground text-sm italic">Henüz alt başlık eklenmemiş.</p>
-                                    )}
-                                </div>
+                                        <div className="flex gap-2">
+                                            <Button variant="ghost" size="icon" className="text-primary" onClick={() => setEditingSubPoint(s)}>
+                                                <FilePenLine />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { 
+                                                if(confirm('Silmek istediğinize emin misiniz?')) {
+                                                    const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; 
+                                                    updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); 
+                                                }
+                                            }}>
+                                                <Trash2 />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {(!managingSubPointsPlace?.subPoints || managingSubPointsPlace.subPoints.length === 0) && (
+                                    <p className="text-center py-4 text-muted-foreground text-sm italic">Henüz alt başlık eklenmemiş.</p>
+                                )}
                             </div>
                         </div>
-                    </ScrollArea>
+                    </div>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-                    <DialogHeader><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1 pr-4">
+                <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
+                    <DialogHeader className="p-6 border-b"><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
+                    <div className="flex-1 overflow-y-auto p-6">
                         <Form {...editPlaceForm}>
-                            <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6 py-4">
+                            <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
                                 {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
                                 
                                 <div className="space-y-6 pt-6 border-t">
@@ -530,20 +538,24 @@ export default function AdminPage() {
                                         <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Görsel İpucu</FormLabel><FormControl><Input placeholder="landmark" {...field} /></FormControl></FormItem>)}/>
                                     </div>
                                 </div>
-
-                                <DialogFooter className="sticky bottom-0 bg-background py-4 border-t"><Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle</Button></DialogFooter>
                             </form>
                         </Form>
-                    </ScrollArea>
+                    </div>
+                    <DialogFooter className="p-6 border-t bg-muted/20">
+                        <Button type="button" variant="outline" onClick={() => setEditingPlace(null)}>İptal</Button>
+                        <Button type="button" onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting}>
+                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={!!editingExperience} onOpenChange={(open) => !open && setEditingExperience(null)}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-                    <DialogHeader><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1 pr-4">
+                <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
+                    <DialogHeader className="p-6 border-b"><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
+                    <div className="flex-1 overflow-y-auto p-6">
                         <Form {...editExperienceForm}>
-                            <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6 py-4">
+                            <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6">
                                 {renderLocalizedFields(editExperienceForm, ['name'])}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
@@ -556,10 +568,15 @@ export default function AdminPage() {
                                         <FormItem><FormLabel>Sıralama</FormLabel><Input type="number" {...field} /></FormItem>
                                     )} />
                                 </div>
-                                <DialogFooter><Button type="submit" disabled={isSubmitting}>Güncelle</Button></DialogFooter>
                             </form>
                         </Form>
-                    </ScrollArea>
+                    </div>
+                    <DialogFooter className="p-6 border-t bg-muted/20">
+                        <Button type="button" variant="outline" onClick={() => setEditingExperience(null)}>İptal</Button>
+                        <Button type="button" onClick={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} disabled={isSubmitting}>
+                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 
