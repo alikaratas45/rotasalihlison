@@ -27,19 +27,14 @@ export default function AppWrapper({
     
     // PWA Service Worker Kaydı - Uygulamayı İndir özelliği için KRİTİKTİR
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      // Önceki kayıtları temizleyip taze kaydetmek en sağlıklı yöntemdir
-      navigator.serviceWorker.getRegistrations().then(registrations => {
-        for (let registration of registrations) {
-          registration.unregister();
-        }
-        // Modern tarayıcılar için fetch event'i içeren bir sw.js zorunludur
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then((reg) => console.log('PWA: Service Worker başarıyla kaydedildi.', reg))
-          .catch((err) => console.warn('PWA: Service Worker kayıt hatası:', err));
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => console.log('PWA: Service Worker Kaydedildi.', reg.scope))
+          .catch((err) => console.warn('PWA: Kayıt Hatası:', err));
       });
     }
 
-    // Ziyaretçi Sayacı - Tekrar eden istekleri önlemek için session kontrolü
+    // Ziyaretçi Sayacı
     if (!hasTrackedRef.current) {
         const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
         if (!visitorTracked) {
@@ -58,7 +53,6 @@ export default function AppWrapper({
       const timer = setTimeout(() => {
         setIsSplashLoading(false);
         sessionStorage.setItem('rota_salihli_splash_shown', 'true');
-        
         setTimeout(() => setIsFirstVisit(false), 1000);
       }, 2000);
 
@@ -67,7 +61,6 @@ export default function AppWrapper({
   }, [firestore]);
 
   const handleInteraction = useCallback(() => {
-    // Tarayıcıların ses kısıtlamasını aşmak için ilk kullanıcı etkileşimini kullanıyoruz
     if (typeof window !== 'undefined' && window.speechSynthesis && !(window as any)._audioUnlocked) {
         const utterance = new SpeechSynthesisUtterance('');
         utterance.volume = 0;

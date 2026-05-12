@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Smartphone, Download } from 'lucide-react';
+import { Smartphone, Download, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -12,28 +13,17 @@ export function PwaInstallButton() {
   const { toast } = useToast();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // 1. Mevcut modun kontrolü
-    if (typeof window !== 'undefined') {
-      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
-        || (window.navigator as any).standalone;
-      setIsStandalone(isStandaloneMode);
-    }
-
-    // 2. Tarayıcı yükleme sinyalini yakala
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Tarayıcının varsayılan penceresini engelle
+      // Varsayılan tarayıcı penceresini engelle
       e.preventDefault();
-      // Olayı state içinde sakla
+      // Olayı sakla
       setDeferredPrompt(e);
       // Butonu göster
       setIsVisible(true);
-      console.log('PWA: Yükleme sinyali yakalandı.');
     };
 
-    // 3. Başarıyla yüklendiğinde butonu gizle
     const handleAppInstalled = () => {
       setDeferredPrompt(null);
       setIsVisible(false);
@@ -46,6 +36,11 @@ export function PwaInstallButton() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
+    // Eğer zaten "standalone" modundaysa gizle
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsVisible(false);
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
@@ -55,26 +50,29 @@ export function PwaInstallButton() {
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
       toast({
-        title: "Bilgi",
-        description: "Uygulama şu an yüklenebilir durumda değil veya zaten yüklü.",
+        variant: "destructive",
+        title: t('pwa.errorTitle', 'Yükleme Hatası'),
+        description: t('pwa.errorDescription', 'Yükleme şu an başlatılamıyor. Lütfen tarayıcı menüsünü kullanın.'),
       });
       return;
     }
 
-    // Sistemin yükleme penceresini aç
+    // Yükleme penceresini aç
     deferredPrompt.prompt();
     
-    // Kullanıcının kararını bekle
+    // Kullanıcı seçimini bekle
     const { outcome } = await deferredPrompt.userChoice;
-    console.log(`PWA: Kullanıcı seçimi - ${outcome}`);
     
-    // İşlem bittiğinde her durumda temizle
+    if (outcome === 'accepted') {
+      console.log('Kullanıcı yüklemeyi kabul etti');
+    }
+    
+    // Temizle
     setDeferredPrompt(null);
     setIsVisible(false);
   };
 
-  // Zaten "App" olarak açılmışsa veya tarayıcı henüz onay vermemişse gösterme
-  if (isStandalone || !isVisible) return null;
+  if (!isVisible) return null;
 
   return (
     <Card className="w-full max-w-md mx-auto border-primary/20 bg-primary/5 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700">
