@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -43,6 +42,15 @@ export function AudioProximityAlert() {
     // Sesli rehber kapalıysa veya yerler yüklenmediyse takip yapma
     if (!isAudioGuideEnabled || !places || places.length === 0) return;
 
+    // ÖNEMLİ: Iframe içinde (önizleme ortamlarında) veya güvensiz (HTTP) bağlamlarda konum takibini engelle
+    const isIframe = typeof window !== 'undefined' && window.self !== window.top;
+    const isSecure = typeof window !== 'undefined' && window.isSecureContext;
+
+    if (isIframe || !isSecure) {
+      console.log("Konum takibi güvenlik politikası veya önizleme ortamı nedeniyle devre dışı bırakıldı.");
+      return;
+    }
+
     if (!("geolocation" in navigator)) return;
 
     const watchId = navigator.geolocation.watchPosition(
@@ -51,15 +59,14 @@ export function AudioProximityAlert() {
         const longitude = position.coords.longitude;
 
         for (const place of places) {
+          if (!place.coordinates) continue;
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
           
-          // 20 metre sınırı ve daha önce uyarılmamış olma şartı
           if (dist <= 20 && !notifiedPlaceIds.has(place.id)) {
             setActiveAlertPlace(place);
             setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
             break; 
           } else if (dist > 100 && notifiedPlaceIds.has(place.id)) {
-            // Mekandan 100m uzaklaşınca listeyi temizle ki tekrar gelirse uyarı versin
             setNotifiedPlaceIds(prev => {
               const next = new Set(prev);
               next.delete(place.id);
@@ -68,7 +75,10 @@ export function AudioProximityAlert() {
           }
         }
       },
-      (error) => console.warn("Konum takibi hatası:", error.message),
+      (error) => {
+        // Hataları sessizce logla, kullanıcıya uyarı verme (özellikle yetki hataları için)
+        console.log("Konum servisi bilgisi:", error.message);
+      },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
 
@@ -78,8 +88,6 @@ export function AudioProximityAlert() {
   const handleConfirm = () => {
     if (!activeAlertPlace) return;
 
-    // "Priming": Kullanıcı etkileşimini korumak için sessiz bir ses parçası oynatıyoruz.
-    // Bu, yeni sayfadaki autoplay engellerini aşmamızı sağlar.
     if (typeof window !== 'undefined' && window.speechSynthesis) {
         const primingUtterance = new SpeechSynthesisUtterance('');
         primingUtterance.volume = 0;
@@ -90,7 +98,6 @@ export function AudioProximityAlert() {
     const slug = activeAlertPlace.slug[typedLanguage] || activeAlertPlace.slug.tr;
     
     setActiveAlertPlace(null);
-    // autoplay=true parametresi ile yönlendiriyoruz
     router.push(`/yerler/${slug}?autoplay=true`);
   };
 

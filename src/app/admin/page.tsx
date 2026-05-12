@@ -449,10 +449,10 @@ export default function AdminPage() {
             
             <Dialog open={!!managingSubPointsPlace} onOpenChange={(o) => { if(!o) { setManagingSubPointsPlace(null); setEditingSubPoint(null); } }}>
                 <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-                    <DialogHeader className="p-6 border-b">
+                    <DialogHeader className="p-6 border-b shrink-0">
                         <DialogTitle>{managingSubPointsPlace?.name.tr} - Alt Başlık Yönetimi</DialogTitle>
                     </DialogHeader>
-                    <ScrollArea className="flex-1 overflow-y-auto">
+                    <ScrollArea className="flex-1">
                         <div className="p-6 space-y-8">
                             <div className="border p-4 rounded-lg bg-muted/20">
                                 <div className="flex justify-between items-center mb-4">
@@ -478,7 +478,7 @@ export default function AdminPage() {
                             </div>
                             <div>
                                 <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
-                                <div className="space-y-2">
+                                <div className="space-y-2 pb-10">
                                     {managingSubPointsPlace?.subPoints?.map((s) => (
                                         <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
                                             <div>
@@ -512,14 +512,14 @@ export default function AdminPage() {
 
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-                    <DialogHeader className="p-6 border-b"><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1 overflow-y-auto">
+                    <DialogHeader className="p-6 border-b shrink-0"><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
+                    <ScrollArea className="flex-1">
                         <div className="p-6">
                             <Form {...editPlaceForm}>
                                 <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
                                     {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
                                     
-                                    <div className="space-y-6 pt-6 border-t">
+                                    <div className="space-y-6 pt-6 border-t pb-10">
                                         <h4 className="font-bold flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Genel Bilgiler</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
@@ -539,7 +539,7 @@ export default function AdminPage() {
                             </Form>
                         </div>
                     </ScrollArea>
-                    <DialogFooter className="p-6 border-t bg-muted/20">
+                    <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
                         <Button type="button" variant="outline" onClick={() => setEditingPlace(null)}>İptal</Button>
                         <Button type="button" onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
@@ -550,11 +550,11 @@ export default function AdminPage() {
 
             <Dialog open={!!editingExperience} onOpenChange={(open) => !open && setEditingExperience(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-                    <DialogHeader className="p-6 border-b"><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1 overflow-y-auto">
+                    <DialogHeader className="p-6 border-b shrink-0"><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
+                    <ScrollArea className="flex-1">
                         <div className="p-6">
                             <Form {...editExperienceForm}>
-                                <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6">
+                                <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6 pb-10">
                                     {renderLocalizedFields(editExperienceForm, ['name'])}
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
@@ -571,7 +571,7 @@ export default function AdminPage() {
                             </Form>
                         </div>
                     </ScrollArea>
-                    <DialogFooter className="p-6 border-t bg-muted/20">
+                    <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
                         <Button type="button" variant="outline" onClick={() => setEditingExperience(null)}>İptal</Button>
                         <Button type="button" onClick={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
