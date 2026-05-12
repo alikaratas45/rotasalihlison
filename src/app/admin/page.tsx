@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -25,7 +26,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, ArrowUpDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -55,6 +56,7 @@ const placeFormSchema = z.object({
   lng: z.coerce.number().min(-180).max(180),
   imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
   imageHint: z.string().optional(),
+  order: z.coerce.number().min(0).optional().or(z.literal(0)),
 });
 
 const experienceFormSchema = z.object({
@@ -102,7 +104,12 @@ export default function AdminPage() {
 
     const sortedPlaces = useMemo(() => {
         if (!places) return [];
-        return [...places].sort((a, b) => a.name.tr.localeCompare(b.name.tr, 'tr'));
+        return [...places].sort((a, b) => {
+            const orderA = a.order ?? 999;
+            const orderB = b.order ?? 999;
+            if (orderA !== orderB) return orderA - orderB;
+            return a.name.tr.localeCompare(b.name.tr, 'tr');
+        });
     }, [places]);
 
     const sortedExperienceItems = useMemo(() => {
@@ -110,7 +117,7 @@ export default function AdminPage() {
         return [...experienceItems].sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
     }, [experienceItems]);
 
-    const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14 } as any });
+    const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99 } as any });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
     const addExperienceForm = useForm({ resolver: zodResolver(experienceFormSchema), defaultValues: { name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: 10 } as any });
     const editExperienceForm = useForm({ resolver: zodResolver(experienceFormSchema) });
@@ -130,7 +137,8 @@ export default function AdminPage() {
                 lat: editingPlace.coordinates?.lat || 0, 
                 lng: editingPlace.coordinates?.lng || 0,
                 imageUrl: editingPlace.imageUrl || '',
-                imageHint: editingPlace.imageHint || ''
+                imageHint: editingPlace.imageHint || '',
+                order: editingPlace.order ?? 99
             }); 
         }
     }, [editingPlace, editPlaceForm]);
@@ -319,12 +327,13 @@ export default function AdminPage() {
                                 <Form {...addPlaceForm}>
                                     <form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-8">
                                         {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
-                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
                                             <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
                                                 <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
                                             )}/>
                                             <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
                                             <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                            <FormField control={addPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>)}/>
                                         </div>
                                         <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle</Button>
                                     </form>
@@ -335,10 +344,11 @@ export default function AdminPage() {
                             <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
                             <CardContent className="p-0">
                                 <Table>
-                                    <TableHeader><TableRow><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
+                                    <TableHeader><TableRow><TableHead className="w-16">Sıra</TableHead><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                                     <TableBody>
-                                        {placesLoading ? (<TableRow><TableCell colSpan={3}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : sortedPlaces.map((place) => (
+                                        {placesLoading ? (<TableRow><TableCell colSpan={4}><Skeleton className="h-20 w-full" /></TableCell></TableRow>) : sortedPlaces.map((place) => (
                                             <TableRow key={place.id}>
+                                                <TableCell className="font-bold text-primary">{place.order ?? '-'}</TableCell>
                                                 <TableCell className="font-medium">{place.name.tr}</TableCell>
                                                 <TableCell><Badge variant="secondary">{categoryLabels[place.category]}</Badge></TableCell>
                                                 <TableCell className="text-right">
@@ -530,9 +540,10 @@ export default function AdminPage() {
                                                 <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng (Boylam)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>Görsel URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl></FormItem>)}/>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem className="md:col-span-1"><FormLabel>Görsel URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl></FormItem>)}/>
                                             <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Görsel İpucu</FormLabel><FormControl><Input placeholder="landmark" {...field} /></FormControl></FormItem>)}/>
+                                            <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>)}/>
                                         </div>
                                     </div>
                                 </form>

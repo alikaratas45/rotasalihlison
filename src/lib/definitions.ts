@@ -29,6 +29,7 @@ export type Place = {
     imageUrl?: string;
     imageHint?: string;
     subPoints?: SubPoint[];
+    order?: number;
 };
 
 export type Route = {

@@ -64,9 +64,17 @@ function YerlerContent() {
   const { data: places, loading } = useCollection<Place>(placesQuery);
   
   // Salihli Odun Köftesi'ni (ID: 3) bu listeden çıkarıyoruz çünkü artık Lezzetler sayfasında özel olarak yer alıyor.
+  // Mekanları admin panelinden belirlenen 'order' değerine göre sıralıyoruz.
   const filteredPlaces = useMemo(() => {
-      return (places || []).filter(place => place.id !== '3');
-  }, [places]);
+      return (places || [])
+        .filter(place => place.id !== '3')
+        .sort((a, b) => {
+            const orderA = a.order ?? 999;
+            const orderB = b.order ?? 999;
+            if (orderA !== orderB) return orderA - orderB;
+            return a.name[typedLanguage].localeCompare(b.name[typedLanguage], language);
+        });
+  }, [places, typedLanguage, language]);
 
   const pageInfo: { [key: string]: { title: string, description: string } } = {
     history: {
