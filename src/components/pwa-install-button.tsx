@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Smartphone, Download } from 'lucide-react';
+import { Smartphone, Download, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -16,8 +16,11 @@ export function PwaInstallButton() {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
+      // Tarayıcının varsayılan yükleme penceresini engelle
       e.preventDefault();
+      // Olayı state içinde sakla
       setDeferredPrompt(e);
+      // Butonu görünür yap
       setIsVisible(true);
     };
 
@@ -33,6 +36,7 @@ export function PwaInstallButton() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
+    // Eğer zaten uygulama modundaysa butonu gizle
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsVisible(false);
     }
@@ -46,12 +50,18 @@ export function PwaInstallButton() {
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
 
+    // Yükleme penceresini göster
     deferredPrompt.prompt();
+    
+    // Kullanıcının seçimini bekle
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
+      console.log('Kullanıcı yüklemeyi kabul etti');
       setDeferredPrompt(null);
       setIsVisible(false);
+    } else {
+      console.log('Kullanıcı yüklemeyi reddetti');
     }
   };
 
@@ -61,8 +71,9 @@ export function PwaInstallButton() {
     <Card className="w-full max-w-md mx-auto border-primary/20 bg-primary/5 shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-700">
       <CardContent className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-primary/10 rounded-2xl text-primary ring-4 ring-primary/5">
+          <div className="p-3 bg-primary/10 rounded-2xl text-primary ring-4 ring-primary/5 relative">
             <Smartphone className="h-7 w-7" />
+            <PlusCircle className="h-4 w-4 absolute -top-1 -right-1 bg-background rounded-full" />
           </div>
           <div className="text-left">
             <h3 className="font-bold text-base leading-tight">

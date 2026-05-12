@@ -1,5 +1,5 @@
 
-// Rota Salihli Service Worker
+// Rota Salihli - PWA Service Worker
 const CACHE_NAME = 'rota-salihli-v1';
 
 self.addEventListener('install', (event) => {
@@ -11,6 +11,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // PWA kriterleri için boş bir fetch dinleyicisi yeterlidir
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+  // PWA yüklenebilirliği için en az bir fetch listener zorunludur
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
