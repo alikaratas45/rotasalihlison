@@ -114,7 +114,9 @@
         "maxLimitToastTitle": "Limite atteinte",
         "maxLimitToastDescription": "Vous pouvez sélectionner un maximum de 10 lieux.",
         "startPlanning": "Sélectionnez des lieux pour commencer à planifier",
-        "routeMap": "Carte de l'itinéraire"
+        "routeMap": "Carte de l'itinéraire",
+        "locationActive": "Localisation active : l'itinéraire est ordonné en commençant par le lieu le plus proche de vous.",
+        "locationInactive": "Si vous autorisez l'accès à la localisation, l'itinéraire sera optimisé pour commencer au point le plus proche de vous."
     },
     "aroundMe": {
         "title": "Qu'y a-t-il autour de moi ?",

@@ -122,7 +122,9 @@
         "maxLimitToastTitle": "上限を超えました",
         "maxLimitToastDescription": "最大10か所まで選択できます。",
         "startPlanning": "計画を開始する場所を選択してください",
-        "routeMap": "ルートマップ"
+        "routeMap": "ルートマップ",
+        "locationActive": "位置情報が有効です：ルートはあなたに最も近い場所から順に並べ替えられます。",
+        "locationInactive": "位置情報へのアクセスを許可すると、ルートはあなたに最も近い地点から開始するように最適化されます。"
     },
     "bicycleRoutes": {
         "title": "自転車ルート",

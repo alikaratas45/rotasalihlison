@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -157,10 +158,10 @@ export default function RotaOlusturPage() {
                 {userLocation ? (
                     <Badge variant="outline" className="mt-4 gap-1 py-1 px-3 border-primary/30 text-primary">
                         <Navigation className="h-3 w-3 fill-primary/20" />
-                        Konumunuz aktif: Rota size en yakın yerden başlayacak şekilde sıralanır.
+                        {t('routePlanner.locationActive')}
                     </Badge>
                 ) : (
-                    <p className="text-xs text-muted-foreground mt-2 italic">Konum erişimine izin verirseniz rota size en yakın noktadan başlayacak şekilde optimize edilir.</p>
+                    <p className="text-xs text-muted-foreground mt-2 italic">{t('routePlanner.locationInactive')}</p>
                 )}
             </div>
 

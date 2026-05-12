@@ -122,7 +122,9 @@
         "maxLimitToastTitle": "Limit überschritten",
         "maxLimitToastDescription": "Sie können maximal 10 Orte auswählen.",
         "startPlanning": "Wählen Sie Orte aus, um mit der Planung zu beginnen",
-        "routeMap": "Routenkarte"
+        "routeMap": "Routenkarte",
+        "locationActive": "Standort aktiv: Die Route wird beginnend mit dem Ort in Ihrer Nähe sortiert.",
+        "locationInactive": "Wenn Sie den Standortzugriff erlauben, wird die Route so optimiert, dass sie an dem Punkt beginnt, der Ihnen am nächsten liegt."
     },
     "bicycleRoutes": {
         "title": "Fahrradrouten",

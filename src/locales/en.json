@@ -115,7 +115,9 @@
         "maxLimitToastTitle": "Limit Exceeded",
         "maxLimitToastDescription": "You can select a maximum of 10 places.",
         "startPlanning": "Select Places to Start Planning",
-        "routeMap": "Route Map"
+        "routeMap": "Route Map",
+        "locationActive": "Location active: The route is ordered starting from the place closest to you.",
+        "locationInactive": "If you allow location access, the route will be optimized to start from the point closest to you."
     },
     "aroundMe": {
         "title": "What's Around Me?",
