@@ -7,7 +7,7 @@ import tr from '@/locales/tr.json';
 import fr from '@/locales/fr.json';
 import de from '@/locales/de.json';
 import ja from '@/locales/ja.json';
-import { type Language, languages } from '@/lib/language-config';
+import { type Language } from '@/lib/language-config';
 
 interface LanguageContextType {
   language: Language;
@@ -23,14 +23,11 @@ export const LanguageContext = createContext<LanguageContextType | undefined>(un
 const translations: Record<Language, any> = { en, tr, fr, de, ja };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Hydration hatasını önlemek için varsayılan olarak sunucu tarafı dili 'tr' kabul edilir
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    
     // Sadece mount olduktan sonra tarayıcı ayarlarını oku
     const savedLang = localStorage.getItem('language') as Language;
     if (savedLang && translations[savedLang]) {
@@ -46,6 +43,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (savedAudioPreference !== null) {
       setIsAudioGuideEnabled(JSON.parse(savedAudioPreference));
     }
+    
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -57,8 +56,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
-    // Dil değiştiğinde tüm sayfayı tazelemek en temiz yöntemdir
-    window.location.reload();
+    // window.location.reload() kaldırıldı. React state değişikliği yeterlidir ve titremeyi önler.
   }, []);
 
   const toggleAudioGuide = useCallback(() => {
@@ -76,7 +74,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   const t = useCallback((key: string, ...args: any[]): string => {
-    // ÖNEMLİ: Hydration sırasında (mounted false iken) her zaman 'tr' dönerek sunucu çıktısıyla eşleşmeyi sağlarız
+    // Hydration sırasında sunucu çıktısıyla eşleşmek için 'tr' default kalır, 
+    // ancak mount olduktan sonra anında seçili dile geçer.
     const activeLanguage = mounted ? language : 'tr';
     
     const keys = key.split('.');
@@ -96,14 +95,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     }
     
-    // Çoğul ekleri yönetimi (count parametresi varsa)
+    // Çoğul ekleri yönetimi
     if (typeof result === 'string' && args.length > 0 && args[0].count !== undefined) {
        if (activeLanguage === 'tr') return result;
        const count = args[0].count;
        return count === 1 ? result : (translations[activeLanguage][key + '_plural'] || `${result}s`);
     }
 
-    // Değişken yerleştirme ( {0}, {1} vb. )
+    // Değişken yerleştirme
     if (typeof result === 'string' && args.length > 0) {
       return result.replace(/{(\d+)}/g, (match, number) => {
         return typeof args[number] !== 'undefined' ? args[number] : match;
