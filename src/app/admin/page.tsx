@@ -785,7 +785,7 @@ export default function AdminPage() {
                                             <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
                                                 <FormItem><FormLabel>İkon</FormLabel><Input {...field} /></FormItem>
                                             )} />
-                                            <FormField control={editExperienceForm.control} name="link" render={({ field }) => (
+                                            <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
                                                 <FormItem><FormLabel>Link</FormLabel><Input {...field} /></FormItem>
                                             )} />
                                             <FormField control={editExperienceForm.control} name="order" render={({ field }) => (
