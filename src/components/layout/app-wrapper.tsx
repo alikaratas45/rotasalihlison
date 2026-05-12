@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -25,16 +24,16 @@ export default function AppWrapper({
   useEffect(() => {
     setMounted(true);
     
-    // PWA Service Worker Kaydı - Uygulamayı İndir özelliği için KRİTİKTİR
+    // PWA Service Worker Registration - CRITICAL for Install Button
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then((reg) => console.log('PWA: Service Worker Kaydedildi.', reg.scope))
-          .catch((err) => console.warn('PWA: Kayıt Hatası:', err));
+          .then((reg) => console.log('PWA Service Worker registered.', reg.scope))
+          .catch((err) => console.warn('PWA Service Worker registration failed:', err));
       });
     }
 
-    // Ziyaretçi Sayacı
+    // Visitor Tracking with Session Storage to prevent loop
     if (!hasTrackedRef.current) {
         const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
         if (!visitorTracked) {
@@ -44,7 +43,7 @@ export default function AppWrapper({
         hasTrackedRef.current = true;
     }
 
-    // Splash Screen Kontrolü
+    // Splash Screen Check
     const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
     if (!splashShown) {
       setIsFirstVisit(true);

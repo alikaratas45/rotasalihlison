@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -16,11 +15,11 @@ export function PwaInstallButton() {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Varsayılan tarayıcı penceresini engelle
+      // Prevents the browser's default bar from appearing
       e.preventDefault();
-      // Olayı sakla
+      // Stashes the event so it can be triggered later
       setDeferredPrompt(e);
-      // Butonu göster
+      // Updates UI to notify user that the app can be installed
       setIsVisible(true);
     };
 
@@ -36,7 +35,7 @@ export function PwaInstallButton() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // Eğer zaten "standalone" modundaysa gizle
+    // If already in standalone mode, don't show the button
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsVisible(false);
     }
@@ -57,17 +56,17 @@ export function PwaInstallButton() {
       return;
     }
 
-    // Yükleme penceresini aç
+    // Shows the installation prompt
     deferredPrompt.prompt();
     
-    // Kullanıcı seçimini bekle
+    // Waits for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('Kullanıcı yüklemeyi kabul etti');
+      console.log('User accepted the install prompt');
     }
     
-    // Temizle
+    // We've used the prompt, and can't use it again, throw it away
     setDeferredPrompt(null);
     setIsVisible(false);
   };
