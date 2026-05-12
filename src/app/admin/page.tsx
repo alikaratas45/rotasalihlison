@@ -305,12 +305,13 @@ export default function AdminPage() {
         const guidedYesCount = filteredFeedbacks.filter(f => f.guided === 'yes').length;
         const infoYesCount = filteredFeedbacks.filter(f => f.infoBoards === 'yes').length;
 
+        // Use semicolon for better Turkish Excel compatibility
+        const delimiter = ';';
         const escapeCSV = (val: any) => {
             const stringVal = String(val ?? '');
             return `"${stringVal.replace(/"/g, '""')}"`;
         };
 
-        // Summary Section (Chic statistics at the top)
         const summaryRows = [
             ['GENEL ANKET İSTATİSTİK RAPORU', ''],
             ['Rapor Tarihi', format(new Date(), 'dd.MM.yyyy HH:mm')],
@@ -353,9 +354,10 @@ export default function AdminPage() {
         ]);
 
         const csvContent = [
-            ...summaryRows.map(row => row.map(escapeCSV).join(',')),
-            headers.map(escapeCSV).join(','),
-            ...dataRows.map(row => row.map(escapeCSV).join(','))
+            `sep=${delimiter}`, // Hint for Excel to use semicolon
+            ...summaryRows.map(row => row.map(escapeCSV).join(delimiter)),
+            headers.map(escapeCSV).join(delimiter),
+            ...dataRows.map(row => row.map(escapeCSV).join(delimiter))
         ].join('\n');
 
         // Added UTF-8 BOM for Excel to recognize Turkish characters correctly
@@ -806,11 +808,11 @@ export default function AdminPage() {
                 </DialogContent>
             </Dialog>
 
-            <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setDeletingPlace(null)}>
+            <AlertDialog open={!!deletingPlace} onOpenChange={(o) => !o && setEditingPlace(null)}>
                 <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingPlace?.name.tr}" silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingPlace?.id) deletePlace(firestore, deletingPlace.id, { onSuccess: () => setDeletingPlace(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={!!deletingExperience} onOpenChange={(o) => !o && setDeletingExperience(null)}>
+            <AlertDialog open={!!deletingExperience} onOpenChange={(o) => !o && setEditingExperience(null)}>
                 <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperience?.name.tr}" menü öğesi silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingExperience?.id) deleteExperienceItem(firestore, deletingExperience.id, { onSuccess: () => setDeletingExperience(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
 
