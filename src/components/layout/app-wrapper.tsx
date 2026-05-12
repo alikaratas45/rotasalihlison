@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -24,7 +25,7 @@ export default function AppWrapper({
   useEffect(() => {
     setMounted(true);
     
-    // PWA Service Worker Registration - CRITICAL for Install Button
+    // PWA Service Worker Registration
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -33,7 +34,7 @@ export default function AppWrapper({
       });
     }
 
-    // Visitor Tracking with Session Storage to prevent loop
+    // Visitor Tracking
     if (!hasTrackedRef.current) {
         const visitorTracked = sessionStorage.getItem('rota_salihli_visitor_tracked');
         if (!visitorTracked) {

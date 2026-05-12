@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -28,7 +29,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -214,14 +215,12 @@ export default function AdminPage() {
         let updatedSubPoints = [...(managingSubPointsPlace.subPoints || [])];
         
         if (editingSubPoint) {
-            // Düzenleme modu
             updatedSubPoints = updatedSubPoints.map(s => 
                 s.id === editingSubPoint.id 
                 ? { ...s, name: values.name, description: values.description, coordinates: { lat: values.lat, lng: values.lng } }
                 : s
             );
         } else {
-            // Ekleme modu
             const newSubPoint: SubPoint = { 
                 id: Math.random().toString(36).substring(7), 
                 name: values.name, 
@@ -457,89 +456,93 @@ export default function AdminPage() {
                     <DialogHeader className="p-6 border-b">
                         <DialogTitle>{managingSubPointsPlace?.name.tr} - Alt Başlık Yönetimi</DialogTitle>
                     </DialogHeader>
-                    <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                        <div className="border p-4 rounded-lg bg-muted/20">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="font-bold flex items-center gap-2">
-                                    {editingSubPoint ? <FilePenLine className="h-4 w-4" /> : <Plus className="h-4 w-4" />} 
-                                    {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık'}
-                                </h3>
-                                {editingSubPoint && <Button variant="ghost" size="sm" onClick={() => setEditingSubPoint(null)}><X className="h-4 w-4 mr-1" /> İptal</Button>}
-                            </div>
-                            <Form {...subPointForm}>
-                                <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4">
-                                    {renderLocalizedFields(subPointForm, ['name', 'description'])}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                        <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                    </div>
-                                    <Button type="submit" disabled={isSubmitting} className="w-full">
-                                        {isSubmitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
-                                        {editingSubPoint ? 'Güncelle' : 'Kaydet'}
-                                    </Button>
-                                </form>
-                            </Form>
-                        </div>
-                        <div>
-                            <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
-                            <div className="space-y-2">
-                                {managingSubPointsPlace?.subPoints?.map((s) => (
-                                    <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
-                                        <div>
-                                            <p className="font-bold">{s.name.tr}</p>
-                                            <p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p>
+                    <ScrollArea className="flex-1 overflow-y-auto">
+                        <div className="p-6 space-y-8">
+                            <div className="border p-4 rounded-lg bg-muted/20">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="font-bold flex items-center gap-2">
+                                        {editingSubPoint ? <FilePenLine className="h-4 w-4" /> : <Plus className="h-4 w-4" />} 
+                                        {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık'}
+                                    </h3>
+                                    {editingSubPoint && <Button variant="ghost" size="sm" onClick={() => setEditingSubPoint(null)}><X className="h-4 w-4 mr-1" /> İptal</Button>}
+                                </div>
+                                <Form {...subPointForm}>
+                                    <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4">
+                                        {renderLocalizedFields(subPointForm, ['name', 'description'])}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                            <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <Button variant="ghost" size="icon" className="text-primary" onClick={() => setEditingSubPoint(s)}>
-                                                <FilePenLine />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { 
-                                                if(confirm('Silmek istediğinize emin misiniz?')) {
-                                                    const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; 
-                                                    updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); 
-                                                }
-                                            }}>
-                                                <Trash2 />
-                                            </Button>
+                                        <Button type="submit" disabled={isSubmitting} className="w-full">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
+                                            {editingSubPoint ? 'Güncelle' : 'Kaydet'}
+                                        </Button>
+                                    </form>
+                                </Form>
+                            </div>
+                            <div>
+                                <h3 className="font-bold mb-4 flex items-center gap-2"><Layers className="h-4 w-4" /> Mevcut Alt Başlıklar</h3>
+                                <div className="space-y-2">
+                                    {managingSubPointsPlace?.subPoints?.map((s) => (
+                                        <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
+                                            <div>
+                                                <p className="font-bold">{s.name.tr}</p>
+                                                <p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Button variant="ghost" size="icon" className="text-primary" onClick={() => setEditingSubPoint(s)}>
+                                                    <FilePenLine />
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { 
+                                                    if(confirm('Silmek istediğinize emin misiniz?')) {
+                                                        const updated = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; 
+                                                        updateSubPoints(firestore, managingSubPointsPlace.id, updated, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updated }) }); 
+                                                    }
+                                                }}>
+                                                    <Trash2 />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                                {(!managingSubPointsPlace?.subPoints || managingSubPointsPlace.subPoints.length === 0) && (
-                                    <p className="text-center py-4 text-muted-foreground text-sm italic">Henüz alt başlık eklenmemiş.</p>
-                                )}
+                                    ))}
+                                    {(!managingSubPointsPlace?.subPoints || managingSubPointsPlace.subPoints.length === 0) && (
+                                        <p className="text-center py-4 text-muted-foreground text-sm italic">Henüz alt başlık eklenmemiş.</p>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </ScrollArea>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
                     <DialogHeader className="p-6 border-b"><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <div className="flex-1 overflow-y-auto p-6">
-                        <Form {...editPlaceForm}>
-                            <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
-                                {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
-                                
-                                <div className="space-y-6 pt-6 border-t">
-                                    <h4 className="font-bold flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Genel Bilgiler</h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
-                                            <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
-                                        )}/>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat (Enlem)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
-                                            <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng (Boylam)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                    <ScrollArea className="flex-1 overflow-y-auto">
+                        <div className="p-6">
+                            <Form {...editPlaceForm}>
+                                <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
+                                    {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
+                                    
+                                    <div className="space-y-6 pt-6 border-t">
+                                        <h4 className="font-bold flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Genel Bilgiler</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
+                                                <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="shopping">Alışveriş</option><option value="poi">Önemli Nokta</option></select></FormItem>
+                                            )}/>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat (Enlem)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                                <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng (Boylam)</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>Görsel URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl></FormItem>)}/>
+                                            <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Görsel İpucu</FormLabel><FormControl><Input placeholder="landmark" {...field} /></FormControl></FormItem>)}/>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (<FormItem><FormLabel>Görsel URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl></FormItem>)}/>
-                                        <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (<FormItem><FormLabel>Görsel İpucu</FormLabel><FormControl><Input placeholder="landmark" {...field} /></FormControl></FormItem>)}/>
-                                    </div>
-                                </div>
-                            </form>
-                        </Form>
-                    </div>
+                                </form>
+                            </Form>
+                        </div>
+                    </ScrollArea>
                     <DialogFooter className="p-6 border-t bg-muted/20">
                         <Button type="button" variant="outline" onClick={() => setEditingPlace(null)}>İptal</Button>
                         <Button type="button" onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting}>
@@ -552,24 +555,26 @@ export default function AdminPage() {
             <Dialog open={!!editingExperience} onOpenChange={(open) => !open && setEditingExperience(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0">
                     <DialogHeader className="p-6 border-b"><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
-                    <div className="flex-1 overflow-y-auto p-6">
-                        <Form {...editExperienceForm}>
-                            <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6">
-                                {renderLocalizedFields(editExperienceForm, ['name'])}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
-                                        <FormItem><FormLabel>İkon</FormLabel><Input {...field} /></FormItem>
-                                    )} />
-                                    <FormField control={editExperienceForm.control} name="link" render={({ field }) => (
-                                        <FormItem><FormLabel>Link</FormLabel><Input {...field} /></FormItem>
-                                    )} />
-                                    <FormField control={editExperienceForm.control} name="order" render={({ field }) => (
-                                        <FormItem><FormLabel>Sıralama</FormLabel><Input type="number" {...field} /></FormItem>
-                                    )} />
-                                </div>
-                            </form>
-                        </Form>
-                    </div>
+                    <ScrollArea className="flex-1 overflow-y-auto">
+                        <div className="p-6">
+                            <Form {...editExperienceForm}>
+                                <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6">
+                                    {renderLocalizedFields(editExperienceForm, ['name'])}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
+                                            <FormItem><FormLabel>İkon</FormLabel><Input {...field} /></FormItem>
+                                        )} />
+                                        <FormField control={editExperienceForm.control} name="link" render={({ field }) => (
+                                            <FormItem><FormLabel>Link</FormLabel><Input {...field} /></FormItem>
+                                        )} />
+                                        <FormField control={editExperienceForm.control} name="order" render={({ field }) => (
+                                            <FormItem><FormLabel>Sıralama</FormLabel><Input type="number" {...field} /></FormItem>
+                                        )} />
+                                    </div>
+                                </form>
+                            </Form>
+                        </div>
+                    </ScrollArea>
                     <DialogFooter className="p-6 border-t bg-muted/20">
                         <Button type="button" variant="outline" onClick={() => setEditingExperience(null)}>İptal</Button>
                         <Button type="button" onClick={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} disabled={isSubmitting}>

@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Smartphone, Download, PlusCircle } from 'lucide-react';
+import { Smartphone, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
@@ -15,11 +16,8 @@ export function PwaInstallButton() {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevents the browser's default bar from appearing
       e.preventDefault();
-      // Stashes the event so it can be triggered later
       setDeferredPrompt(e);
-      // Updates UI to notify user that the app can be installed
       setIsVisible(true);
     };
 
@@ -35,7 +33,6 @@ export function PwaInstallButton() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // If already in standalone mode, don't show the button
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsVisible(false);
     }
@@ -47,28 +44,15 @@ export function PwaInstallButton() {
   }, [toast, t]);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) {
-      toast({
-        variant: "destructive",
-        title: t('pwa.errorTitle', 'Yükleme Hatası'),
-        description: t('pwa.errorDescription', 'Yükleme şu an başlatılamıyor. Lütfen tarayıcı menüsünü kullanın.'),
-      });
-      return;
-    }
+    if (!deferredPrompt) return;
 
-    // Shows the installation prompt
     deferredPrompt.prompt();
-    
-    // Waits for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+      setDeferredPrompt(null);
+      setIsVisible(false);
     }
-    
-    // We've used the prompt, and can't use it again, throw it away
-    setDeferredPrompt(null);
-    setIsVisible(false);
   };
 
   if (!isVisible) return null;
