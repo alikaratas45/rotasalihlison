@@ -523,10 +523,10 @@ export default function AdminPage() {
             <Dialog open={!!editingPlace} onOpenChange={(open) => !open && setEditingPlace(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
                     <DialogHeader className="p-6 border-b shrink-0"><DialogTitle>Yeri Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1">
-                        <div className="p-6">
-                            <Form {...editPlaceForm}>
-                                <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
+                    <Form {...editPlaceForm}>
+                        <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="flex flex-col flex-1 overflow-hidden">
+                            <ScrollArea className="flex-1">
+                                <div className="p-6 space-y-6">
                                     {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
                                     
                                     <div className="space-y-6 pt-6 border-t pb-10">
@@ -546,28 +546,28 @@ export default function AdminPage() {
                                             <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>)}/>
                                         </div>
                                     </div>
-                                </form>
-                            </Form>
-                        </div>
-                    </ScrollArea>
-                    <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
-                        <Button type="button" variant="outline" onClick={() => setEditingPlace(null)}>İptal</Button>
-                        <Button type="button" onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting}>
-                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
-                        </Button>
-                    </DialogFooter>
+                                </div>
+                            </ScrollArea>
+                            <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
+                                <Button type="button" variant="outline" onClick={() => setEditingPlace(null)}>İptal</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </Form>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={!!editingExperience} onOpenChange={(open) => !open && setEditingExperience(null)}>
                 <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
                     <DialogHeader className="p-6 border-b shrink-0"><DialogTitle>Menü Öğesini Düzenle</DialogTitle></DialogHeader>
-                    <ScrollArea className="flex-1">
-                        <div className="p-6">
-                            <Form {...editExperienceForm}>
-                                <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="space-y-6 pb-10">
+                    <Form {...editExperienceForm}>
+                        <form onSubmit={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} className="flex flex-col flex-1 overflow-hidden">
+                            <ScrollArea className="flex-1">
+                                <div className="p-6 space-y-6">
                                     {renderLocalizedFields(editExperienceForm, ['name'])}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-10">
                                         <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
                                             <FormItem><FormLabel>İkon</FormLabel><Input {...field} /></FormItem>
                                         )} />
@@ -578,16 +578,16 @@ export default function AdminPage() {
                                             <FormItem><FormLabel>Sıralama</FormLabel><Input type="number" {...field} /></FormItem>
                                         )} />
                                     </div>
-                                </form>
-                            </Form>
-                        </div>
-                    </ScrollArea>
-                    <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
-                        <Button type="button" variant="outline" onClick={() => setEditingExperience(null)}>İptal</Button>
-                        <Button type="button" onClick={editExperienceForm.handleSubmit(handleEditExperienceSubmit)} disabled={isSubmitting}>
-                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
-                        </Button>
-                    </DialogFooter>
+                                </div>
+                            </ScrollArea>
+                            <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
+                                <Button type="button" variant="outline" onClick={() => setEditingExperience(null)}>İptal</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </Form>
                 </DialogContent>
             </Dialog>
 
