@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useMemo, useEffect } from 'react';
 import { useCollection, useFirestore, useDoc } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { collection, orderBy, query, doc, setDoc } from 'firebase/firestore';
+import { collection, orderBy, query, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { tr as trLocale } from 'date-fns/locale';
 
@@ -91,6 +91,7 @@ export default function AdminPage() {
 
     const [editingPlace, setEditingPlace] = useState<Place | null>(null);
     const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
+    const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
     const [managingSubPointsPlace, setManagingSubPointsPlace] = useState<Place | null>(null);
     const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
     const [editingExperience, setEditingExperience] = useState<ExperienceItem | null>(null);
@@ -276,6 +277,17 @@ export default function AdminPage() {
         try { await undoLastOperation(firestore); toast({ title: 'Geri Alındı' }); } 
         catch (error: any) { toast({ variant: 'destructive', title: 'Hata', description: error.message }); }
         setIsDatabaseActionLoading(false);
+    };
+
+    const handleDeleteFeedback = async () => {
+        if (!deletingFeedback) return;
+        try {
+            await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id));
+            toast({ title: 'Anket Silindi' });
+            setDeletingFeedback(null);
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Anket silinirken bir sorun oluştu.' });
+        }
     };
 
     const handleDownloadCSV = () => {
@@ -517,16 +529,22 @@ export default function AdminPage() {
                                             <TableHead>Mekan</TableHead>
                                             <TableHead>Tarih</TableHead>
                                             <TableHead>Puan</TableHead>
+                                            <TableHead className="text-right">Eylemler</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {filteredFeedbacks.length === 0 ? (
-                                            <TableRow><TableCell colSpan={3} className="text-center py-10 text-muted-foreground">Eşleşen anket bulunamadı.</TableCell></TableRow>
+                                            <TableRow><TableCell colSpan={4} className="text-center py-10 text-muted-foreground">Eşleşen anket bulunamadı.</TableCell></TableRow>
                                         ) : filteredFeedbacks.map((f) => (
                                             <TableRow key={f.id}>
                                                 <TableCell className="font-medium">{f.placeName}</TableCell>
                                                 <TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell>
                                                 <TableCell><Badge>{f.satisfaction}/5</Badge></TableCell>
+                                                <TableCell className="text-right">
+                                                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeletingFeedback(f)}>
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -721,6 +739,21 @@ export default function AdminPage() {
 
             <AlertDialog open={!!deletingExperience} onOpenChange={(o) => !o && setDeletingExperience(null)}>
                 <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperience?.name.tr}" menü öğesi silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingExperience?.id) deleteExperienceItem(firestore, deletingExperience.id, { onSuccess: () => setDeletingExperience(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={!!deletingFeedback} onOpenChange={(o) => !o && setDeletingFeedback(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Anketi Sil</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Bu anket kaydını kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>İptal</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteFeedback} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Sil</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
             </AlertDialog>
         </div>
     );
