@@ -25,7 +25,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -110,6 +110,11 @@ export default function AdminPage() {
             return a.name.tr.localeCompare(b.name.tr, 'tr');
         });
     }, [places]);
+
+    const filteredFeedbacks = useMemo(() => {
+        if (!feedbacks) return [];
+        return feedbacks.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter);
+    }, [feedbacks, feedbackPlaceFilter]);
 
     const sortedExperienceItems = useMemo(() => {
         if (!experienceItems) return [];
@@ -271,6 +276,54 @@ export default function AdminPage() {
         try { await undoLastOperation(firestore); toast({ title: 'Geri Alındı' }); } 
         catch (error: any) { toast({ variant: 'destructive', title: 'Hata', description: error.message }); }
         setIsDatabaseActionLoading(false);
+    };
+
+    const handleDownloadCSV = () => {
+        if (!filteredFeedbacks || filteredFeedbacks.length === 0) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'İndirilecek veri bulunamadı.' });
+            return;
+        }
+
+        const escapeCSV = (val: any) => {
+            const stringVal = String(val ?? '');
+            return `"${stringVal.replace(/"/g, '""')}"`;
+        };
+
+        const headers = [
+            'Mekan Adı',
+            'Tarih',
+            'Temizlik (1-5)',
+            'Erişilebilirlik (1-5)',
+            'Genel Memnuniyet (1-5)',
+            'Turla mı geldi?',
+            'Rehber Desteği',
+            'Bilgi Panoları Yeterli mi?'
+        ];
+
+        const rows = filteredFeedbacks.map(f => [
+            f.placeName,
+            f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yyyy HH:mm', { locale: trLocale }) : '---',
+            f.cleanliness,
+            f.accessibility,
+            f.satisfaction,
+            f.withTour === 'yes' ? 'Evet' : 'Hayır',
+            f.guided === 'yes' ? 'Evet' : 'Hayır',
+            f.infoBoards === 'yes' ? 'Evet' : 'Hayır'
+        ]);
+
+        const csvContent = [
+            headers.map(escapeCSV).join(','),
+            ...rows.map(row => row.map(escapeCSV).join(','))
+        ].join('\n');
+
+        const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Salihli_Rota_Anket_Raporu_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     const renderLocalizedFields = (form: any, fieldNames: string[], prefix = "") => (
@@ -440,15 +493,77 @@ export default function AdminPage() {
                     </TabsContent>
 
                     <TabsContent value="feedbacks" className="mt-0">
-                        <div className="flex gap-4 mb-4"><div className="w-full sm:w-64"><Label>Mekan Filtresi</Label><Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}><SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger><SelectContent><SelectItem value="all">Tüm Yerler</SelectItem>{sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}</SelectContent></Select></div></div>
-                        <Card><CardContent className="p-0"><Table><TableHeader><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead></TableRow></TableHeader><TableBody>{feedbacks?.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter).map((f) => (<TableRow key={f.id}><TableCell className="font-medium">{f.placeName}</TableCell><TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell><TableCell><Badge>{f.satisfaction}/5</Badge></TableCell></TableRow>))}</TableBody></Table></CardContent></Card>
+                        <div className="flex flex-col sm:flex-row gap-4 mb-6 items-end justify-between">
+                            <div className="w-full sm:w-64">
+                                <Label>Mekan Filtresi</Label>
+                                <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
+                                    <SelectTrigger><SelectValue placeholder="Tüm Yerler" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Tüm Yerler</SelectItem>
+                                        {sortedPlaces.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <Button onClick={handleDownloadCSV} variant="outline" className="w-full sm:w-auto gap-2 border-primary/20 hover:bg-primary/5">
+                                <Download className="h-4 w-4 text-primary" />
+                                CSV Olarak İndir (Excel)
+                            </Button>
+                        </div>
+                        <Card>
+                            <CardContent className="p-0">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Mekan</TableHead>
+                                            <TableHead>Tarih</TableHead>
+                                            <TableHead>Puan</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {filteredFeedbacks.length === 0 ? (
+                                            <TableRow><TableCell colSpan={3} className="text-center py-10 text-muted-foreground">Eşleşen anket bulunamadı.</TableCell></TableRow>
+                                        ) : filteredFeedbacks.map((f) => (
+                                            <TableRow key={f.id}>
+                                                <TableCell className="font-medium">{f.placeName}</TableCell>
+                                                <TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'd MMM HH:mm', { locale: trLocale }) : '---'}</TableCell>
+                                                <TableCell><Badge>{f.satisfaction}/5</Badge></TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
                     </TabsContent>
 
                     <TabsContent value="database" className="mt-0">
                         <div className="grid gap-6 md:grid-cols-2">
-                            <Card><CardHeader><CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle><CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button></CardContent></Card>
-                            <Card className="border-orange-200 bg-orange-50/10"><CardHeader><CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle><CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription></CardHeader><CardContent><Button onClick={() => handleSeedAction('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button></CardContent></Card>
-                            <Card className="md:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle><CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription></CardHeader><CardContent className="flex justify-center"><Button onClick={handleUndoAction} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button></CardContent></Card>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-primary flex items-center gap-2"><RefreshCw /> Güvenli Mod</CardTitle>
+                                    <CardDescription>Sadece veritabanında olmayan yeni yerleri ekler.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Button onClick={() => handleSeedAction('SAFE')} disabled={isDatabaseActionLoading} className="w-full" variant="secondary">Eksikleri Tamamla</Button>
+                                </CardContent>
+                            </Card>
+                            <Card className="border-orange-200 bg-orange-50/10">
+                                <CardHeader>
+                                    <CardTitle className="text-orange-600 flex items-center gap-2"><RefreshCw /> Akıllı Güncelleme</CardTitle>
+                                    <CardDescription>Sıralama ve yeni özellikler gibi kod güncellemelerini mevcut verilerle birleştirir.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Button onClick={() => handleSeedAction('UPDATE')} disabled={isDatabaseActionLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white">Verileri Kod ile Güncelle</Button>
+                                </CardContent>
+                            </Card>
+                            <Card className="md:col-span-2">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2"><History /> Geri Yükle</CardTitle>
+                                    <CardDescription>Son işlemi geri alarak verileri önceki haline döndürün.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex justify-center">
+                                    <Button onClick={handleUndoAction} disabled={isDatabaseActionLoading} variant="outline" size="lg">Son İşlemi Geri Al (Undo)</Button>
+                                </CardContent>
+                            </Card>
                         </div>
                     </TabsContent>
                 </div>
@@ -476,8 +591,8 @@ export default function AdminPage() {
                                         <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4">
                                             {renderLocalizedFields(subPointForm, ['name', 'description'])}
                                             <div className="grid grid-cols-2 gap-4">
-                                                <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
-                                                <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
+                                                <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
+                                                <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
                                             </div>
                                             <Button type="submit" disabled={isSubmitting} className="w-full">
                                                 {isSubmitting && <Loader2 className="animate-spin mr-2 h-4 w-4" />}
@@ -605,7 +720,7 @@ export default function AdminPage() {
             </AlertDialog>
 
             <AlertDialog open={!!deletingExperience} onOpenChange={(o) => !o && setDeletingExperience(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AccordionTrigger className="sr-only">Detay</AccordionTrigger><AlertDialogDescription>"{deletingExperience?.name.tr}" menü öğesi silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingExperience?.id) deleteExperienceItem(firestore, deletingExperience.id, { onSuccess: () => setDeletingExperience(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>"{deletingExperience?.name.tr}" menü öğesi silinecek.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if (deletingExperience?.id) deleteExperienceItem(firestore, deletingExperience.id, { onSuccess: () => setDeletingExperience(null) }); }}>Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
         </div>
     );
