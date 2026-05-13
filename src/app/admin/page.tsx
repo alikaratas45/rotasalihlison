@@ -8,7 +8,6 @@ import { useCollection, useFirestore, useDoc, useFirebaseApp } from '@/firebase'
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { firebaseConfig } from '@/firebase/config';
 import { format } from 'date-fns';
 
 // Services
@@ -144,7 +143,7 @@ export default function AdminPage() {
         if (!file) return;
         setIsUploadingAudio(true);
         try {
-            const storage = getStorage(firebaseApp, `gs://${firebaseConfig.projectId}.firebasestorage.app`);
+            const storage = getStorage(firebaseApp);
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
             const path = type === 'place' ? `audio/places/${fileName}` : `audio/subpoints/${fileName}`;
             const storageRef = ref(storage, path);
@@ -154,7 +153,8 @@ export default function AdminPage() {
             else subPointForm.setValue('audioUrlTr', url);
             toast({ title: 'Ses Yüklendi', description: 'Değişiklikleri kaydetmeyi unutmayın.' });
         } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Yükleme Hatası', description: 'Storage kuralı veya bağlantı hatası.' });
+            console.error("Audio upload error:", error);
+            toast({ variant: 'destructive', title: 'Yükleme Hatası', description: 'Storage bağlantı hatası veya yetki eksikliği.' });
         } finally { setIsUploadingAudio(false); }
     };
 
@@ -269,7 +269,13 @@ export default function AdminPage() {
                             {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
-                                    <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-10 rounded-md border border-input px-3 text-sm"><option value="poi">Önemli Nokta</option><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option></select></FormItem>
+                                    <FormItem><FormLabel>Kategori</FormLabel>
+                                    <select {...field} className="w-full h-10 rounded-md border border-input px-3 text-sm">
+                                        <option value="poi">Önemli Nokta</option>
+                                        <option value="history">Tarih</option>
+                                        <option value="nature">Doğa</option>
+                                        <option value="food">Lezzet</option>
+                                    </select></FormItem>
                                 )}/>
                                 <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
                                 <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
