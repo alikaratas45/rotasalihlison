@@ -64,7 +64,7 @@ export default function Home() {
           alt="Sardes Salihli" 
           data-ai-hint="ancient ruins" 
           fill 
-          className="object-cover scale-105 animate-pulse-slow" 
+          className="object-cover scale-105" 
           priority 
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-background" />
@@ -138,8 +138,8 @@ export default function Home() {
             <PwaInstallButton />
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-3 sm:gap-4 lg:gap-3 auto-rows-[120px] md:auto-rows-[160px]">
-            {experienceLoading ? Array.from({length: 9}).map((_, i) => (
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:gap-3 auto-rows-[120px] md:auto-rows-[160px]">
+            {experienceLoading ? Array.from({length: 10}).map((_, i) => (
                 <div key={`skeleton-exp-${i}`} className="col-span-1 bg-muted/30 rounded-3xl animate-pulse" />
             )) : displayExperienceItems.map((item, index) => (
               <Link 

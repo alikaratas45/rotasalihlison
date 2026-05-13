@@ -41,6 +41,18 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
+      tr: 'Tematik Rotalar',
+      en: 'Thematic Routes',
+      fr: 'Itinéraires Thématiques',
+      de: 'Thematische Routen',
+      ja: 'テーマ別ルート'
+    },
+    icon: 'Map',
+    link: '/rotalar',
+    order: 4
+  },
+  {
+    name: {
       tr: 'Rota Oluştur',
       en: 'Create Route',
       fr: 'Créer un Itinéraire',
@@ -49,7 +61,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'MapPinned',
     link: '/rota-olustur',
-    order: 4
+    order: 5
   },
   {
     name: {
@@ -61,7 +73,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'BookOpen',
     link: '/hikayeler',
-    order: 5
+    order: 6
   },
   {
     name: {
@@ -73,7 +85,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'MessageSquare',
     link: '/ziyaretci-defteri',
-    order: 6
+    order: 7
   },
   {
     name: {
@@ -85,7 +97,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Bike',
     link: '/bisiklet-rotalari',
-    order: 7
+    order: 8
   },
   {
     name: {
@@ -97,7 +109,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'Footprints',
     link: '/yuruyus-rotalari',
-    order: 8
+    order: 9
   },
   {
     name: {
@@ -109,6 +121,6 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     },
     icon: 'LocateFixed',
     link: '/cevremde-ne-var',
-    order: 9
+    order: 10
   }
 ];
