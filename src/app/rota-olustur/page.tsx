@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -44,7 +43,7 @@ export default function RotaOlusturPage() {
 
     // Get user location on mount
     useEffect(() => {
-        if ("geolocation" in navigator) {
+        if (typeof window !== 'undefined' && "geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setUserLocation({
@@ -266,21 +265,21 @@ export default function RotaOlusturPage() {
                                     key={place.id}
                                     htmlFor={place.id}
                                     className={cn(
-                                        "group relative flex items-center gap-5 p-5 rounded-[1.5rem] border-2 transition-all duration-500 cursor-pointer shadow-sm hover:shadow-xl",
+                                        "group relative flex items-center gap-4 p-4 md:p-5 rounded-[1.5rem] border-2 transition-all duration-500 cursor-pointer shadow-sm hover:shadow-xl",
                                         isSelected 
                                             ? "bg-primary/5 border-primary ring-4 ring-primary/10" 
                                             : "bg-white border-transparent hover:border-primary/20",
                                         isDisabled && "opacity-40 cursor-not-allowed grayscale"
                                     )}
                                 >
-                                    <div className="relative h-24 w-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-inner">
+                                    <div className="relative h-20 w-20 md:h-24 md:w-24 flex-shrink-0 rounded-2xl overflow-hidden shadow-inner">
                                         <Image
                                              src={place.imageUrl || `https://picsum.photos/seed/${place.id}/300/300`}
                                              alt={place.name[typedLanguage]}
                                              data-ai-hint={place.imageHint || 'landmark'}
                                              fill
                                              className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                             sizes="96px"
+                                             sizes="(max-width: 768px) 80px, 96px"
                                         />
                                         <div className={cn(
                                             "absolute inset-0 bg-primary/20 transition-opacity duration-500",
@@ -288,25 +287,25 @@ export default function RotaOlusturPage() {
                                         )} />
                                     </div>
                                     
-                                    <div className="flex-1 min-w-0 pr-4">
+                                    <div className="flex-1 min-w-0 pr-2 md:pr-4">
                                         <h3 className={cn(
-                                            "font-black text-lg truncate mb-1",
+                                            "font-black text-sm md:text-base line-clamp-2 leading-tight mb-1",
                                             isSelected ? "text-primary" : "text-slate-800"
                                         )}>
                                             {place.name[typedLanguage]}
                                         </h3>
-                                        <p className="text-xs text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                        <p className="text-[10px] md:text-xs text-muted-foreground font-medium line-clamp-2 leading-relaxed">
                                             {place.description[typedLanguage]}
                                         </p>
                                     </div>
 
-                                    <div className="relative">
+                                    <div className="relative shrink-0">
                                         <Checkbox
                                             id={place.id}
                                             checked={isSelected}
                                             onCheckedChange={() => { if(!isDisabled) handlePlaceToggle(place.id) }}
                                             disabled={isDisabled}
-                                            className="h-7 w-7 rounded-lg border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                            className="h-6 w-6 md:h-7 md:w-7 rounded-lg border-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                         />
                                     </div>
                                 </label>
