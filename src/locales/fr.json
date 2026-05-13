@@ -82,7 +82,7 @@
     },
     "history": {
         "title": "Voyage dans l'Histoire",
-        "description": "Salihli abrite un riche patrimoine historique qui s'étend de l'Antiquité à nos jours. Sardes, la capitale du royaume de Lydie où la monnaie a été inventée, est le trésor le plus précieux de ces terres. Métropole importante sous l'Empire romain, la ville a accueilli l'une des sept premières églises du christianisme. Pendant la période byzantine, elle a conservé son importance en tant que centre épiscopal stratégique. Ce voyage vous invite à suivre les traces de milliers d'années de civilisations."
+        "description": "Salihli abrite un riche patrimoine historique qui s'étend de lS'Antiquité à nos jours. Sardes, la capitale du royaume de Lydie où la monnaie a été inventée, est le trésor le plus précieux de ces terres. Métropole importante sous l'Empire romain, la ville a accueilli l'une des sept premières églises du christianisme. Pendant la période byzantine, elle a conservé son importance en tant que centre épiscopal stratégique. Ce voyage vous invite à suivre les traces de milliers d'années de civilisations."
     },
     "nature": {
         "title": "Nature et Paix",
@@ -116,7 +116,8 @@
         "startPlanning": "Sélectionnez des lieux pour commencer à planifier",
         "routeMap": "Carte de l'itinéraire",
         "locationActive": "Localisation active : l'itinéraire est ordonné en commençant par le lieu le plus proche de vous.",
-        "locationInactive": "Si vous autorisez l'accès à la localisation, l'itinéraire sera optimisé pour commencer au point le plus proche de vous."
+        "locationInactive": "Si vous autorisez l'accès à la localisation, l'itinéraire sera optimisé pour commencer au point le plus proche de vous.",
+        "totalPlaces": "{0} Lieux au total"
     },
     "aroundMe": {
         "title": "Qu'y a-t-il autour de moi ?",

@@ -46,12 +46,12 @@
         "naturePeace": "Nature und Frieden",
         "flavorStops": "Geschmacksstopps",
         "aroundMe": "Was ist um mich herum?",
-        "shopping": "Einkaufen",
+        "shopping": "Shopping",
         "thematicRoutesTitle": "Thematische Routen",
         "thematicRoutesSubtitle": "Entdecken Sie die Reichtümer von Salihli mit speziell vorbereiteten Routen.",
         "allRoutes": "Alle Routen ansehen",
         "stops": "Stopp",
-        "stops_plural": "Stopps"
+        "stops_plural": "Stops"
     },
     "about": {
         "title": "Geschichte von Salihli",
@@ -124,7 +124,8 @@
         "startPlanning": "Wählen Sie Orte aus, um mit der Planung zu beginnen",
         "routeMap": "Routenkarte",
         "locationActive": "Standort aktiv: Die Route wird beginnend mit dem Ort in Ihrer Nähe sortiert.",
-        "locationInactive": "Wenn Sie den Standortzugriff erlauben, wird die Route so optimiert, dass sie an dem Punkt beginnt, der Ihnen am nächsten liegt."
+        "locationInactive": "Wenn Sie den Standortzugriff erlauben, wird die Route so optimiert, dass sie an dem Punkt beginnt, der Ihnen am nächsten liegt.",
+        "totalPlaces": "{0} Orte insgesamt"
     },
     "bicycleRoutes": {
         "title": "Fahrradrouten",
@@ -139,19 +140,19 @@
         "noPoisFound": "Keine registrierten Orte für diese Route gefunden.",
         "routes": {
             "lidya_yolu": {
-                "name": "Lydischer Weg Fahrradroute",
+                "name": "Lydischer Weg Fahrrad route",
                 "description": "Ein Weg voller Geschichte und Natur, der den Spuren der alten lydischen Zivilisation folgt, beginnend in der antiken Stadt Sardes und bis zu den Ausläufern des Bozdağ-Gebirges reichend."
             },
             "salihli_alasehir": {
-                "name": "Salihli-Alaşehir Fahrradroute",
+                "name": "Salihli-Alaşehir Fahrrad route",
                 "description": "Ein angenehmer Weg, der in Salihli beginnt und bis nach Alaşehir führt, vorbei an den fruchtbaren landwirtschaftlichen Flächen der Region und den weltberühmten Weinbergen."
             },
             "kursunlu_marmara": {
-                "name": "Kurşunlu-Marmara Fahrradroute",
+                "name": "Kurşunlu-Marmara Fahrrad route",
                 "description": "Ein umfassender Fahrradweg, der von den Kurşunlu-Thermalquellen bis zum Ufer des Marmara-Sees führt und einzigartige Naturerlebnisse bietet."
             },
             "kula_salihli_geopark": {
-                "name": "Kula-Salihli Geopark Fahrradroute",
+                "name": "Kula-Salihli Geopark Fahrrad route",
                 "description": "Ein faszinierender Weg durch die einzigartigen geologischen Formationen des UNESCO Global Geoparks Kula-Salihli, begleitet von Vulkankegeln und Lavaströmen."
             }
         }

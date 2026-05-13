@@ -246,7 +246,9 @@ export default function RotaOlusturPage() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between border-b-2 border-primary/10 pb-4">
                     <h2 className="text-3xl font-black font-headline text-primary uppercase tracking-tight">{t('routePlanner.selectPlaces')}</h2>
-                    <Badge variant="secondary" className="font-black text-sm uppercase px-4 py-1">{sortedPlacesForList.length} Toplam Mekan</Badge>
+                    <Badge variant="secondary" className="font-black text-sm uppercase px-4 py-1">
+                        {t('routePlanner.totalPlaces', sortedPlacesForList.length)}
+                    </Badge>
                 </div>
 
                 {placesLoading ? (

@@ -175,7 +175,8 @@
         "startPlanning": "Planlamaya başlamak için yer seçin",
         "routeMap": "Rota Haritası",
         "locationActive": "Konumunuz aktif: Rota size en yakın yerden başlayacak şekilde sıralanır.",
-        "locationInactive": "Konum erişimine izin verirseniz rota size en yakın noktadan başlayacak şekilde optimize edilir."
+        "locationInactive": "Konum erişimine izin verirseniz rota size en yakın noktadan başlayacak şekilde optimize edilir.",
+        "totalPlaces": "{0} Toplam Mekan"
     },
     "survey": {
         "title": "Deneyiminizi Puanlayın",
