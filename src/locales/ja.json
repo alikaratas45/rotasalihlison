@@ -38,6 +38,7 @@
     "home": {
         "heroTitle": "サリフリを発見",
         "heroSubtitle": "サルディスの遺産、お金の中心",
+        "heroDescription": "サルディスの遺産であり、お金の中心地でもある古代の土地を私たちと一緒に発見してください。",
         "getStarted": "すべての場所を表示",
         "aboutSalihli": "サリフリについて",
         "experienceTitle": "サリフリでの一日",
@@ -70,6 +71,7 @@
         "viewAllStories": "すべての物語を見る",
         "readMore": "続きを読む →",
         "backToStories": "物語に戻る",
+        "backToPlaces": "場所に戻る",
         "discoverPlace": "場所を発見",
         "close": "閉じる"
     },
@@ -173,7 +175,7 @@
             },
             "kursunlu_allahdiyen": {
                 "name": "クルシュンル・アッラーディイェン",
-                "description": "クルシュンル温泉からアッラーディイェン村まで続く、松の木と小川のせせらぎに包まれた中級レベルの自然散策コースです。"
+                "description": "クルシュンル温泉からアッラーディイェン村まで続く、松の木と小川のせせらぎに包まれた中級レベル의自然散策コースです。"
             },
             "kayabasi": {
                 "name": "サリフリ・カヤバシュ",
@@ -202,7 +204,7 @@
         "errorDescription": "すべての項目に入力してください。",
         "successTitle": "送信済み",
         "successDescription": "フィードバックありがとうございます！",
-        "submitErrorTitle": "エラー",
+        "submitErrorTitle": "Error",
         "submitErrorDescription": "フィードバックの送信中に問題が発生しました。"
     },
     "proximity": {

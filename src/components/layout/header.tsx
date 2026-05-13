@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -41,7 +42,7 @@ export function Header() {
       "sticky top-0 z-50 w-full transition-all duration-500",
       scrolled 
         ? "h-16 bg-background/95 backdrop-blur-xl border-b shadow-md" 
-        : "h-20 bg-background/80 backdrop-blur-md border-b border-primary/10 shadow-sm"
+        : "h-20 bg-background/90 backdrop-blur-md border-b border-primary/10 shadow-sm"
     )}>
       <div className="container h-full flex items-center justify-between">
         <Link href="/" className="flex items-center group shrink-0">
@@ -63,11 +64,11 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Always visible options: Language & Audio */}
+          {/* Always visible options: Audio Guide, Language & Theme */}
           <div className="flex items-center gap-1.5 md:gap-2">
-            <AudioGuideToggle isScrolled={true} />
-            <LanguageSwitcher isScrolled={true} />
-            <ThemeToggle isScrolled={true} />
+            <AudioGuideToggle />
+            <LanguageSwitcher />
+            <ThemeToggle />
           </div>
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -108,7 +109,7 @@ export function Header() {
   );
 }
 
-function ThemeToggle({ isScrolled }: { isScrolled?: boolean }) {
+function ThemeToggle() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -137,7 +138,7 @@ const languagesList: { code: Language; name: string; flag: React.FC<any> }[] = [
     { code: 'ja', name: '日本語', flag: JapaneseFlagIcon },
 ];
 
-function LanguageSwitcher({ isScrolled }: { isScrolled?: boolean }) {
+function LanguageSwitcher() {
     const { language, setLanguage, mounted } = useLanguage();
     
     if (!mounted) return <div className="h-8 w-8" />;
@@ -163,25 +164,34 @@ function LanguageSwitcher({ isScrolled }: { isScrolled?: boolean }) {
     );
 }
 
-function AudioGuideToggle({ isScrolled, className }: { isScrolled?: boolean, className?: string }) {
+function AudioGuideToggle() {
     const { isAudioGuideEnabled, toggleAudioGuide, t, mounted } = useLanguage();
     
-    if (!mounted) return <div className="h-8 w-8" />;
+    if (!mounted) return <div className="h-8 w-24" />;
 
     return (
       <Button
         variant={isAudioGuideEnabled ? "default" : "outline"}
-        size="icon"
+        size="sm"
         onClick={toggleAudioGuide}
         className={cn(
-          "rounded-full h-8 w-8 md:h-10 md:w-10 transition-all duration-500",
+          "rounded-xl h-8 md:h-10 px-3 md:px-4 transition-all duration-500 font-bold text-[10px] md:text-xs uppercase tracking-tighter",
           isAudioGuideEnabled 
             ? "bg-accent border-accent text-accent-foreground shadow-sm ring-2 ring-accent/20" 
-            : "text-slate-600 border-slate-200 hover:bg-primary/5 hover:text-primary",
-          className
+            : "text-slate-600 border-slate-200 hover:bg-primary/5 hover:text-primary"
         )}
       >
-        {isAudioGuideEnabled ? <Volume2 className="h-4 w-4 animate-pulse" /> : <VolumeX className="h-4 w-4" />}
+        {isAudioGuideEnabled ? (
+            <div className="flex items-center gap-1.5">
+                <Volume2 className="h-3 w-3 animate-pulse" />
+                <span>{t('header.audioGuide')}</span>
+            </div>
+        ) : (
+            <div className="flex items-center gap-1.5">
+                <VolumeX className="h-3 w-3" />
+                <span>{t('header.audioGuide')}</span>
+            </div>
+        )}
       </Button>
     );
   }

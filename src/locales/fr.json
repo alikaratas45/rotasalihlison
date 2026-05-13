@@ -38,6 +38,7 @@
     "home": {
         "heroTitle": "Découvrez Salihli",
         "heroSubtitle": "Héritage de Sardes, centre de la monnaie",
+        "heroDescription": "Découvrez avec nous les terres ancestrales, l'héritage de Sardes et le centre de la monnaie.",
         "getStarted": "Voir tous les lieux",
         "aboutSalihli": "À propos de Salihli",
         "experienceTitle": "Une journée à Salihli",
@@ -70,6 +71,7 @@
         "viewAllStories": "Voir toutes les histoires",
         "readMore": "Lire la suite →",
         "backToStories": "Retour aux histoires",
+        "backToPlaces": "Retour aux lieux",
         "discoverPlace": "Découvrir le lieu",
         "close": "Fermer"
     },

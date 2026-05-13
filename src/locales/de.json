@@ -38,6 +38,7 @@
     "home": {
         "heroTitle": "Entdecken Sie Salihli",
         "heroSubtitle": "Erbe von Sardes, Zentrum des Geldes",
+        "heroDescription": "Entdecken Sie mit uns die alten Länder, das Erbe von Sardes und das Zentrum des Geldes.",
         "getStarted": "Alle Orte ansehen",
         "aboutSalihli": "Über Salihli",
         "experienceTitle": "Ein Tag in Salihli",
@@ -70,6 +71,7 @@
         "viewAllStories": "Alle Geschichten ansehen",
         "readMore": "Weiterlesen →",
         "backToStories": "Zurück zu den Geschichten",
+        "backToPlaces": "Zurück zu den Orten",
         "discoverPlace": "Ort entdecken",
         "close": "Schließen"
     },
@@ -82,7 +84,7 @@
     },
     "history": {
         "title": "Reise in die Geschichte",
-        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geld emirfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum bei. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
+        "description": "Salihli beherbergt ein reiches historisches Erbe, das von der Antike bis heute reicht. Sardes, die Hauptstadt des Lydischen Königreichs, in der das Geldes erfunden wurde, ist der wertvollste Schatz dieser Länder. Als wichtige Metropole während des Römischen Reiches beherbergte die Stadt eine der ersten sieben Kirchen des Christentums. Während der byzantinischen Zeit behielt sie ihre Bedeutung als strategisches Bischofszentrum bei. Diese Reise lädt Sie ein, den Spuren von Jahrtausenden von Zivilisationen zu folgen."
     },
     "nature": {
         "title": "Natur und Frieden",
@@ -206,7 +208,7 @@
         "submitErrorDescription": "Beim Senden des Feedbacks ist ein Problem aufgetreten."
     },
     "proximity": {
-        "alert": "Sie befinden sich derzeit in {0}. Möchten Sie, dass ich Ihnen davon erzähle?",
+        "alert": "Befinden Sie sich gerade in {0}? Soll ich Ihnen etwas darüber erzählen?",
         "yes": "Ja, zuhören",
         "no": "Nein, danke"
     },

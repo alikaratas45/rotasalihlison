@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -77,7 +78,7 @@ export default function Home() {
               {t('home.heroTitle')}
             </h1>
             <p className="text-lg md:text-2xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic">
-              "Sardes'in mirası, paranın merkezi olan kadim toprakları bizimle keşfedin."
+              "{t('home.heroDescription')}"
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 animate-in fade-in zoom-in-95 duration-700 delay-500">
