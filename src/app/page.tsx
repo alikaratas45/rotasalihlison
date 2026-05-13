@@ -46,7 +46,10 @@ export default function Home() {
 
     const uniqueMap = new Map();
     rawItems.forEach(item => {
-        uniqueMap.set(item.link, item);
+        // Uygulamayı indir butonu menünün üstünde zaten olduğu için menü içinden eliyoruz
+        if (item.link !== '/install') {
+            uniqueMap.set(item.link, item);
+        }
     });
 
     return Array.from(uniqueMap.values()).sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
@@ -80,7 +83,6 @@ export default function Home() {
           <h2 className="text-3xl font-bold font-headline mb-2">{t('home.experienceTitle')}</h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">{t('home.experienceSubtitle')}</p>
           
-          {/* UYGULAMAYI İNDİR BUTONU - TAM OLARAK BURADA */}
           <div className="mb-12 px-4 max-w-2xl mx-auto">
             <PwaInstallButton />
           </div>
