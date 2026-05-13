@@ -102,18 +102,6 @@
         "by": "Von:",
         "relatedPlace": "Verwandter Ort"
     },
-    "aroundMe": {
-        "title": "Was ist um mich herum?",
-        "description": "Entdecken Sie historische und natürliche Schönheiten im Umkreis von 15 km um Ihren Standort.",
-        "searching": "Standort wird abgerufen und nach Orten in der Nähe gesucht...",
-        "noPlaces": "Keine registrierten Orte im Umkreis von 15 km gefunden.",
-        "locationDenied": "Standortzugriff verweigert. Bitte erlauben Sie den Zugriff.",
-        "distance": "{0} km entfernt"
-    },
-    "cuisine": {
-        "title": "Salihlis Geschmackskarte",
-        "description": "Wir zeigen Ihnen die besten Restaurants in Salihli auf der Karte. Guten Appetit!"
-    },
     "routePlanner": {
         "title": "Erstellen Sie Ihre eigene Route",
         "description": "Erstellen Sie Ihre persönliche Route, indem Sie die Orte auswählen, die Sie besuchen möchten (max. 10 Orte).",
@@ -127,7 +115,26 @@
         "routeMap": "Routenkarte",
         "locationActive": "Standort aktiv: Die Route wird beginnend mit dem Ort in Ihrer Nähe sortiert.",
         "locationInactive": "Wenn Sie den Standortzugriff erlauben, wird die Route so optimiert, dass sie an dem Punkt beginnt, der Ihnen am nächsten liegt.",
-        "totalPlaces": "{0} Orte insgesamt"
+        "totalPlaces": "{0} Orte insgesamt",
+        "sortingInfo": "Sortiert nach der geringsten Entfernung zu Ihnen.",
+        "stopsSelected": "Stopps Ausgewählt"
+    },
+    "cuisine": {
+        "title": "Salihli Geschmacksstopps",
+        "description": "Entdecken Sie die weltberühmten Aromen von Salihli.",
+        "famousTitle": "Berühmter Geschmack",
+        "kofteDescription": "Der erste Geschmack, der einem in den Sinn kommt, wenn man an Salihli denkt. Gehen Sie nicht, ohne diese einzigartigen Fleischbällchen probiert zu haben, die über einem Eichenholzfeuer gekocht werden. Klicken Sie für detaillierte Informationen und Geschichten.",
+        "allRestaurantsTitle": "Alle Restaurants in Salihli",
+        "allRestaurantsDescription": "Klicken Sie auf die Schaltfläche, um alle Geschmacksstopps und Restaurants in Salihli auf Google Maps zu erkunden.",
+        "viewOnMap": "Auf der Karte anzeigen"
+    },
+    "aroundMe": {
+        "title": "Was ist um mich herum?",
+        "description": "Entdecken Sie historische und natürliche Schönheiten im Umkreis von 15 km um Ihren Standort.",
+        "searching": "Standort wird abgerufen und nach Orten in der Nähe gesucht...",
+        "noPlaces": "Keine registrierten Orte im Umkreis von 15 km gefunden.",
+        "locationDenied": "Standortzugriff verweigert. Bitte erlauben Sie den Zugriff.",
+        "distance": "{0} km entfernt"
     },
     "bicycleRoutes": {
         "title": "Fahrradrouten",
@@ -218,3 +225,5 @@
         "directions": "Anfahrt"
     }
 }
+
+    

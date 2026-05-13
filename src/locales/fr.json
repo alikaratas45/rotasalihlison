@@ -56,7 +56,7 @@
     },
     "about": {
         "title": "Histoire de Salihli",
-        "content": "Pour raconter l'histoire de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes a été fondée dans le bassin du Gediz, sur les pentes nord des collines à l'ouest de Bozdağ. Elle est devenue la capitale de l'État lydien aux VIIe et VIe siècles av. J.-C. Sardes est restée importante sous les périodes perse, romaine et byzantine."
+        "content": "Pour raconter l'history de Salihli, il faut commencer par l'ancienne ville de Sardes (SART). Sardes a été fondée dans le bassin du Gediz, sur les pentes nord des collines à l'ouest de Bozdağ. Elle est devenue la capitale de l'État lydien aux VIIe et VIe siècles av. J.-C. Sardes est restée importante sous les périodes perse, romaine et byzantine."
     },
     "actions": {
         "seeDetails": "Voir les détails →",
@@ -102,10 +102,6 @@
         "by": "Par :",
         "relatedPlace": "Lieu associé"
     },
-    "cuisine": {
-        "title": "Carte des saveurs de Salihli",
-        "description": "Nous vous montrons les meilleurs restaurants de Salihli sur la carte. Bon appétit !"
-    },
     "routePlanner": {
         "title": "Créez votre propre itinéraire",
         "description": "Créez votre itinéraire personnel en sélectionnant les lieux que vous souhaitez visiter (max 10 lieux).",
@@ -119,7 +115,18 @@
         "routeMap": "Carte de l'itinéraire",
         "locationActive": "Localisation active : l'itinéraire est ordonné en commençant par le lieu le plus proche de vous.",
         "locationInactive": "Si vous autorisez l'accès à la localisation, l'itinéraire sera optimisé pour commencer au point le plus proche de vous.",
-        "totalPlaces": "{0} Lieux au total"
+        "totalPlaces": "{0} Lieux au total",
+        "sortingInfo": "Classé du plus proche au plus éloigné de vous.",
+        "stopsSelected": "Arrêts Sélectionnés"
+    },
+    "cuisine": {
+        "title": "Escales Gourmandes de Salihli",
+        "description": "Découvrez les saveurs de renommée mondiale de Salihli.",
+        "famousTitle": "Saveur Célèbre",
+        "kofteDescription": "La première saveur qui vient à l'esprit quand on parle de Salihli. Ne partez pas sans avoir goûté ces boulettes de viande uniques cuites au feu de bois de chêne. Cliquez pour des informations détaillées et des histoires.",
+        "allRestaurantsTitle": "Tous les restaurants à Salihli",
+        "allRestaurantsDescription": "Cliquez sur le bouton pour explorer toutes les étapes gourmandes et les restaurants de Salihli sur Google Maps.",
+        "viewOnMap": "Voir sur la carte"
     },
     "aroundMe": {
         "title": "Qu'y a-t-il autour de moi ?",
@@ -218,3 +225,5 @@
         "directions": "Itinéraire"
     }
 }
+
+    

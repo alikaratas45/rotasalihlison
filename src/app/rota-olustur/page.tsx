@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -18,9 +19,8 @@ import { PlacesMap } from '@/components/places-map';
 
 const MAX_STOPS = 10;
 
-// Helper to calculate distance between two coordinates
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371; // Earth radius in km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -41,7 +41,6 @@ export default function RotaOlusturPage() {
     const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
     const [isMapLoading, setIsMapLoading] = useState(false);
 
-    // Get user location on mount
     useEffect(() => {
         if (typeof window !== 'undefined' && "geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
@@ -64,7 +63,6 @@ export default function RotaOlusturPage() {
         allPlaces?.slice().sort((a, b) => a.name[typedLanguage].localeCompare(b.name[typedLanguage], language)) || []
     , [allPlaces, language, typedLanguage]);
 
-    // Core Logic: Sort selected places by distance from user location
     const orderedSelectedPlaces = useMemo(() => {
         if (!allPlaces) return [];
         const selected = allPlaces.filter(p => selectedPlaceIds.includes(p.id));
@@ -150,7 +148,6 @@ export default function RotaOlusturPage() {
 
     return (
         <div className="container mx-auto px-4 py-8 md:py-12 space-y-10">
-            {/* Header */}
             <div className="text-center">
                 <h1 className="text-4xl md:text-5xl font-black font-headline mb-4 text-primary tracking-tight">{t('routePlanner.title')}</h1>
                 <p className="text-lg text-muted-foreground max-w-3xl mx-auto font-medium">{t('routePlanner.description')}</p>
@@ -164,7 +161,6 @@ export default function RotaOlusturPage() {
                 )}
             </div>
 
-            {/* 1. MAP AT THE TOP */}
             <Card className="rounded-[2rem] overflow-hidden shadow-2xl border-none ring-1 ring-black/5">
                 <CardHeader className="bg-primary/5 border-b border-primary/10">
                     <CardTitle className="flex items-center gap-2 font-headline font-black text-primary">
@@ -193,12 +189,11 @@ export default function RotaOlusturPage() {
                 </CardContent>
             </Card>
 
-            {/* 2. SELECTED SUMMARY & ACTION */}
             <div className="grid lg:grid-cols-3 gap-6">
                 <Card className="lg:col-span-2 rounded-[2rem] shadow-xl border-none bg-white">
                     <CardHeader>
                         <CardTitle className="text-xl font-black font-headline text-slate-800">{t('routePlanner.selectedPlaces')}</CardTitle>
-                        <CardDescription className="font-medium">Size en yakından en uzağa doğru sıralanmıştır.</CardDescription>
+                        <CardDescription className="font-medium">{t('routePlanner.sortingInfo')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {orderedSelectedPlaces.length > 0 ? (
@@ -227,7 +222,7 @@ export default function RotaOlusturPage() {
                         <div className="text-center">
                             <span className="text-4xl font-black">{selectedPlaceIds.length}</span>
                             <span className="text-xl opacity-80"> / {MAX_STOPS}</span>
-                            <p className="text-xs uppercase tracking-[0.2em] font-black mt-2 opacity-70">Durak Seçildi</p>
+                            <p className="text-xs uppercase tracking-[0.2em] font-black mt-2 opacity-70">{t('routePlanner.stopsSelected')}</p>
                         </div>
                         <Button 
                             onClick={handleOpenInMaps} 
@@ -241,7 +236,6 @@ export default function RotaOlusturPage() {
                 </Card>
             </div>
 
-            {/* 3. SELECTION LIST - LARGE GRID */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between border-b-2 border-primary/10 pb-4">
                     <h2 className="text-3xl font-black font-headline text-primary uppercase tracking-tight">{t('routePlanner.selectPlaces')}</h2>
@@ -317,3 +311,5 @@ export default function RotaOlusturPage() {
         </div>
     );
 }
+
+    

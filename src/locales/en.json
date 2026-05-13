@@ -102,10 +102,6 @@
         "by": "By:",
         "relatedPlace": "Related Place"
     },
-    "cuisine": {
-        "title": "Salihli's Flavor Map",
-        "description": "We are showing you the best dining places in Salihli on the map. Enjoy your meal!"
-    },
     "routePlanner": {
         "title": "Create Your Own Route",
         "description": "Create your personal route by selecting the places you want to visit (max 10 places).",
@@ -119,7 +115,18 @@
         "routeMap": "Route Map",
         "locationActive": "Location active: The route is ordered starting from the place closest to you.",
         "locationInactive": "If you allow location access, the route will be optimized to start from the point closest to you.",
-        "totalPlaces": "{0} Total Places"
+        "totalPlaces": "{0} Total Places",
+        "sortingInfo": "Ordered from nearest to farthest from you.",
+        "stopsSelected": "Stops Selected"
+    },
+    "cuisine": {
+        "title": "Salihli Flavor Stops",
+        "description": "Discover the world-famous flavors of Salihli.",
+        "famousTitle": "Famous Flavor",
+        "kofteDescription": "The first flavor that comes to mind when Salihli is mentioned. Don't leave without tasting these unique meatballs cooked over an oak wood fire. Click for detailed information and stories.",
+        "allRestaurantsTitle": "All Restaurants in Salihli",
+        "allRestaurantsDescription": "Click the button to explore all the flavor stops and restaurants in Salihli on Google Maps.",
+        "viewOnMap": "View on Map"
     },
     "aroundMe": {
         "title": "What's Around Me?",
@@ -227,3 +234,5 @@
         "errorDescription": "Installation could not be started. Please use the browser menu."
     }
 }
+
+    

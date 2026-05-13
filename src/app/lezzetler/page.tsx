@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -13,7 +14,6 @@ export default function LezzetlerPage() {
   const typedLanguage = language as Language;
 
   const handleOpenRestaurants = () => {
-    // Salihli'deki restoranları arayan Google Haritalar linki
     const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
     window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
   };
@@ -42,7 +42,6 @@ export default function LezzetlerPage() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-12">
-        {/* Salihli Odun Köftesi Ana Kartı */}
         <Link href={`/yerler/${odunKofteSlug[typedLanguage] || odunKofteSlug.tr}`} className="block group">
           <Card className="overflow-hidden border-primary/20 bg-card transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.01]">
             <div className="flex flex-col md:flex-row">
@@ -59,13 +58,13 @@ export default function LezzetlerPage() {
               <div className="p-8 md:p-10 flex flex-col justify-center flex-1">
                 <div className="flex items-center gap-2 text-primary mb-3">
                   <Utensils className="h-6 w-6" />
-                  <span className="text-sm font-bold uppercase tracking-widest">Meşhur Lezzet</span>
+                  <span className="text-sm font-bold uppercase tracking-widest">{t('cuisine.famousTitle')}</span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 group-hover:text-primary transition-colors">
                     {odunKofteTitle[typedLanguage] || odunKofteTitle.tr}
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  Salihli denince akla gelen ilk lezzet. Meşe odunu ateşinde pişen bu eşsiz köftenin tadına bakmadan dönmeyin. Detaylı bilgi ve hikayesi için tıklayın.
+                  {t('cuisine.kofteDescription')}
                 </p>
                 <div className="mt-auto text-base font-bold text-primary flex items-center">
                   {t('actions.seeDetails')}
@@ -76,15 +75,14 @@ export default function LezzetlerPage() {
           </Card>
         </Link>
 
-        {/* Diğer Restaurantlar Kartı */}
         <Card className="hover:shadow-lg transition-shadow border-primary/10 bg-secondary/5 overflow-hidden">
           <CardHeader className="text-center pt-10">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="h-8 w-8 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-headline font-bold">Salihli'deki Tüm Restaurantlar</CardTitle>
+            <CardTitle className="text-2xl font-headline font-bold">{t('cuisine.allRestaurantsTitle')}</CardTitle>
             <CardDescription className="mt-2 text-base max-w-md mx-auto">
-                Salihli'deki tüm lezzet duraklarını ve restaurantları Google Haritalar üzerinde keşfetmek için butona tıklayın.
+                {t('cuisine.allRestaurantsDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center pb-10">
@@ -93,7 +91,7 @@ export default function LezzetlerPage() {
                 className="w-full sm:w-auto px-12 gap-3 h-14 text-lg font-bold shadow-md hover:scale-105 transition-transform" 
                 onClick={handleOpenRestaurants}
             >
-                Haritada Gör
+                {t('cuisine.viewOnMap')}
                 <ExternalLink className="h-4 w-4 opacity-70" />
             </Button>
           </CardContent>
@@ -102,3 +100,5 @@ export default function LezzetlerPage() {
     </div>
   );
 }
+
+    

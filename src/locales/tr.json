@@ -177,7 +177,18 @@
         "routeMap": "Rota Haritası",
         "locationActive": "Konumunuz aktif: Rota size en yakın yerden başlayacak şekilde sıralanır.",
         "locationInactive": "Konum erişimine izin verirseniz rota size en yakın noktadan başlayacak şekilde optimize edilir.",
-        "totalPlaces": "{0} Toplam Mekan"
+        "totalPlaces": "{0} Toplam Mekan",
+        "sortingInfo": "Size en yakından en uzağa doğru sıralanmıştır.",
+        "stopsSelected": "Durak Seçildi"
+    },
+    "cuisine": {
+        "title": "Salihli Lezzet Durakları",
+        "description": "Salihli'nin dünyaca ünlü lezzetlerini keşfedin.",
+        "famousTitle": "Meşhur Lezzet",
+        "kofteDescription": "Salihli denince akla gelen ilk lezzet. Meşe odunu ateşinde pişen bu eşsiz köftenin tadına bakmadan dönmeyin. Detaylı bilgi ve hikayesi için tıklayın.",
+        "allRestaurantsTitle": "Salihli'deki Tüm Restaurantlar",
+        "allRestaurantsDescription": "Salihli'deki tüm lezzet duraklarını ve restaurantları Google Haritalar üzerinde keşfetmek için butona tıklayın.",
+        "viewOnMap": "Haritada Gör"
     },
     "survey": {
         "title": "Deneyiminizi Puanlayın",
@@ -224,3 +235,5 @@
         "errorDescription": "Yükleme başlatılamadı. Lütfen tarayıcı menüsünü kullanın."
     }
 }
+
+    
