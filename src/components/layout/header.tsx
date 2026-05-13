@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Volume2, VolumeX, Smartphone } from 'lucide-react';
+import { Menu, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 import { Logo } from '@/components/icons/logo';
@@ -39,85 +39,70 @@ export function Header() {
   return (
     <header className={cn(
       "sticky top-0 z-50 w-full transition-all duration-500",
-      scrolled ? "h-20 glass border-b shadow-lg" : "h-24 bg-transparent border-transparent"
+      scrolled 
+        ? "h-16 bg-background/95 backdrop-blur-xl border-b shadow-md" 
+        : "h-20 bg-background/80 backdrop-blur-md border-b border-primary/10 shadow-sm"
     )}>
       <div className="container h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="bg-white/90 p-1.5 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">
-            <Logo className="h-10 w-10" />
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
+          <div className="bg-white p-1 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-500 border border-primary/5">
+            <Logo className="h-8 w-8 md:h-9 md:w-9" />
           </div>
-          <span className={cn(
-            "font-black text-xl md:text-2xl font-headline tracking-tighter uppercase transition-colors",
-            scrolled ? "text-primary" : "text-primary md:text-white"
-          )}>
+          <span className="font-black text-lg md:text-xl font-headline tracking-tighter uppercase text-primary">
             Rota Salihli
           </span>
         </Link>
         
-        <nav className="hidden items-center gap-1 text-sm font-bold md:flex">
+        <nav className="hidden items-center gap-1 text-xs font-black md:flex lg:gap-2">
           {navLinks.map((link) => (
             <Link 
               key={link.href} 
               href={link.href} 
-              className={cn(
-                "px-4 py-2 rounded-xl transition-all duration-300",
-                scrolled 
-                  ? "text-slate-600 hover:bg-primary/5 hover:text-primary" 
-                  : "text-white/80 hover:bg-white/10 hover:text-white"
-              )}
+              className="px-3 py-2 rounded-xl transition-all duration-300 text-slate-600 hover:bg-primary/5 hover:text-primary uppercase tracking-tight"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2">
-            <AudioGuideToggle isScrolled={scrolled} />
-            <LanguageSwitcher isScrolled={scrolled} />
-            <ThemeToggle isScrolled={scrolled} />
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Always visible options: Language & Audio */}
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <AudioGuideToggle isScrolled={true} />
+            <LanguageSwitcher isScrolled={true} />
+            <ThemeToggle isScrolled={true} />
           </div>
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className={scrolled ? "text-primary" : "text-white"}>
+              <Button variant="ghost" size="icon" className="text-primary rounded-full hover:bg-primary/5">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l-primary/10 p-0">
+            <SheetContent side="right" className="w-[300px] border-l-primary/10 p-0">
                 <SheetTitle className="sr-only">Menu</SheetTitle>
                 <div className="flex flex-col h-full bg-background">
-                  <div className="p-8 border-b bg-primary/5">
+                  <div className="p-6 border-b bg-primary/5">
                       <Link href="/" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Logo className="h-12 w-12" />
-                        <span className="font-black font-headline text-2xl tracking-tighter text-primary">ROTA SALİHLİ</span>
+                        <Logo className="h-10 w-10" />
+                        <span className="font-black font-headline text-xl tracking-tighter text-primary">ROTA SALİHLİ</span>
                       </Link>
                   </div>
                   <nav className="flex-grow overflow-y-auto py-6 px-4">
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                         {navLinks.map((link) => (
                         <Link
                             key={link.href}
                             href={link.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center gap-4 p-4 rounded-2xl text-lg font-bold text-slate-700 hover:bg-primary/5 hover:text-primary transition-all"
+                            className="flex items-center gap-4 p-4 rounded-xl text-base font-bold text-slate-700 hover:bg-primary/5 hover:text-primary transition-all"
                         >
-                            <span className="w-2 h-2 rounded-full bg-primary/20 group-hover:bg-primary" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary/30" />
                             {link.label}
                         </Link>
                         ))}
                     </div>
                   </nav>
-                  <div className="p-8 border-t bg-muted/20 flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                          <span className="font-bold text-sm text-slate-500 uppercase">Araçlar</span>
-                          <div className="flex gap-2">
-                            <ThemeToggle />
-                            <LanguageSwitcher />
-                          </div>
-                      </div>
-                      <AudioGuideToggle className="w-full h-12" />
-                  </div>
                 </div>
             </SheetContent>
           </Sheet>
@@ -133,17 +118,17 @@ function ThemeToggle({ isScrolled }: { isScrolled?: boolean }) {
 
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) return <div className="h-10 w-10" />;
+  if (!mounted) return <div className="h-8 w-8" />;
 
   return (
     <Button 
       variant="ghost" 
       size="icon" 
-      className={cn("rounded-full transition-colors", isScrolled ? "text-primary hover:bg-primary/5" : "text-white hover:bg-white/10")} 
+      className="rounded-full h-8 w-8 md:h-10 md:w-10 text-primary hover:bg-primary/5" 
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <Sun className="h-4 w-4 md:h-5 md:w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-4 w-4 md:h-5 md:w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
     </Button>
   );
 }
@@ -159,15 +144,15 @@ const languagesList: { code: Language; name: string; flag: React.FC<any> }[] = [
 function LanguageSwitcher({ isScrolled }: { isScrolled?: boolean }) {
     const { language, setLanguage, mounted } = useLanguage();
     
-    if (!mounted) return <div className="h-10 w-10" />;
+    if (!mounted) return <div className="h-8 w-8" />;
 
     const selectedLanguage = languagesList.find(lang => lang.code === language);
     
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className={cn("rounded-full overflow-hidden transition-colors", isScrolled ? "text-primary hover:bg-primary/5" : "text-white hover:bg-white/10")}>
-            {selectedLanguage && <selectedLanguage.flag className="h-5 w-5 rounded-sm object-cover shadow-sm" />}
+          <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 md:h-10 md:w-10 overflow-hidden text-primary hover:bg-primary/5">
+            {selectedLanguage && <selectedLanguage.flag className="h-4 w-4 md:h-5 md:w-5 rounded-sm object-cover shadow-sm" />}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="p-2 rounded-2xl min-w-[160px]">
@@ -185,23 +170,22 @@ function LanguageSwitcher({ isScrolled }: { isScrolled?: boolean }) {
 function AudioGuideToggle({ isScrolled, className }: { isScrolled?: boolean, className?: string }) {
     const { isAudioGuideEnabled, toggleAudioGuide, t, mounted } = useLanguage();
     
-    if (!mounted) return <div className="h-10 w-24" />;
+    if (!mounted) return <div className="h-8 w-8" />;
 
     return (
       <Button
         variant={isAudioGuideEnabled ? "default" : "outline"}
-        size="sm"
+        size="icon"
         onClick={toggleAudioGuide}
         className={cn(
-          "rounded-full gap-2 px-4 transition-all duration-500 font-bold uppercase text-[10px] tracking-widest h-10 shadow-sm",
+          "rounded-full h-8 w-8 md:h-10 md:w-10 transition-all duration-500",
           isAudioGuideEnabled 
-            ? "bg-accent border-accent text-accent-foreground ring-4 ring-accent/20" 
-            : isScrolled ? "text-slate-600 border-slate-200" : "text-white border-white/30 glass",
+            ? "bg-accent border-accent text-accent-foreground shadow-sm ring-2 ring-accent/20" 
+            : "text-slate-600 border-slate-200 hover:bg-primary/5 hover:text-primary",
           className
         )}
       >
         {isAudioGuideEnabled ? <Volume2 className="h-4 w-4 animate-pulse" /> : <VolumeX className="h-4 w-4" />}
-        <span>{t('header.audioGuide')}</span>
       </Button>
     );
   }
