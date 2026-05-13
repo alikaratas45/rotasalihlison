@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -211,10 +210,8 @@ export default function AdminPage() {
 
             if (type === 'place') {
                 editPlaceForm.setValue('audioUrlTr', url);
-                setEditingPlace(prev => prev ? { ...prev, audioUrlTr: url } : null);
             } else {
                 subPointForm.setValue('audioUrlTr', url);
-                setEditingSubPoint(prev => prev ? { ...prev, audioUrlTr: url } : null);
             }
             
             toast({ title: 'Başarılı', description: 'Ses dosyası yüklendi. Değişiklikleri kaydetmeyi unutmayın.' });
@@ -351,7 +348,6 @@ export default function AdminPage() {
         const guidedYesCount = filteredFeedbacks.filter(f => f.guided === 'yes').length;
         const infoYesCount = filteredFeedbacks.filter(f => f.infoBoards === 'yes').length;
 
-        // Use semicolon for better Turkish Excel compatibility
         const delimiter = ';';
         const escapeCSV = (val: any) => {
             const stringVal = String(val ?? '');
@@ -400,13 +396,12 @@ export default function AdminPage() {
         ]);
 
         const csvContent = [
-            `sep=${delimiter}`, // Hint for Excel to use semicolon
+            `sep=${delimiter}`,
             ...summaryRows.map(row => row.map(escapeCSV).join(delimiter)),
             headers.map(escapeCSV).join(delimiter),
             ...dataRows.map(row => row.map(escapeCSV).join(delimiter))
         ].join('\n');
 
-        // Added UTF-8 BOM for Excel to recognize Turkish characters correctly
         const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -898,7 +893,7 @@ export default function AdminPage() {
                                             <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
                                                 <FormItem><FormLabel>İkon</FormLabel><Input {...field} /></FormItem>
                                             )} />
-                                            <FormField control={editExperienceForm.control} name="icon" render={({ field }) => (
+                                            <FormField control={editExperienceForm.control} name="link" render={({ field }) => (
                                                 <FormItem><FormLabel>Link</FormLabel><Input {...field} /></FormItem>
                                             )} />
                                             <FormField control={editExperienceForm.control} name="order" render={({ field }) => (
