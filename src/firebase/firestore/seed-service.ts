@@ -50,7 +50,7 @@ export async function undoLastOperation(firestore: Firestore) {
   await deleteDoc(snap.docs[0].ref);
 }
 
-async function seedCollection<T extends { id: string }>(
+async function seedCollection<T extends { id?: string }>(
   firestore: Firestore,
   collectionName: string,
   staticData: T[],
@@ -60,21 +60,25 @@ async function seedCollection<T extends { id: string }>(
   const collectionRef = collection(firestore, collectionName);
 
   for (const item of staticData) {
-    let docRef = doc(collectionRef, item.id);
+    // If no ID provided, try to find by link (for exp items) or generate one
+    let targetId = (item as any).id;
+    let docRef: any = targetId ? doc(collectionRef, targetId) : null;
+    
     try {
-      let docSnap = await getDoc(docRef);
+      let docSnap = docRef ? await getDoc(docRef) : null;
 
-      // Deneyim menüsü için mükerrer kayıt kontrolü (Link üzerinden)
-      if (!docSnap.exists() && collectionName === 'experience-items') {
+      // Handle experience-items specially to avoid duplicates based on link
+      if ((!docSnap || !docSnap.exists()) && collectionName === 'experience-items') {
           const q = query(collectionRef, where('link', '==', (item as any).link));
           const existing = await getDocs(q);
           if (!existing.empty) {
-              docRef = doc(collectionRef, existing.docs[0].id);
-              docSnap = await getDoc(docRef);
+              docRef = existing.docs[0].ref;
+              docSnap = existing.docs[0];
+              targetId = docRef.id;
           }
       }
 
-      if (docSnap.exists()) {
+      if (docSnap && docSnap.exists()) {
         if (mode === 'SAFE') continue;
 
         const currentData = docSnap.data();
@@ -82,11 +86,13 @@ async function seedCollection<T extends { id: string }>(
         
         let mergedData;
         if (collectionName === 'experience-items') {
-            // Sıralamayı (order) KODDAN GÜNCELLE ama mevcut veriyi koru
-            mergedData = { ...staticPayload, ...currentData, order: staticPayload.order };
+            // Update order and names from code, but keep user changes if necessary
+            // Here we prioritize code values for order to fix menu layout
+            mergedData = { ...currentData, ...staticPayload, order: staticPayload.order };
         } else {
-            // Mevcut dökümanı bozma, sadece kodda varsa yeni alanları merge et
+            // Standard merge
             mergedData = { ...staticPayload, ...currentData };
+            // Ensure subPoints from code are added if Firestore version is empty
             if (staticPayload.subPoints && (!currentData.subPoints || currentData.subPoints.length === 0)) {
                 mergedData.subPoints = staticPayload.subPoints;
             }
@@ -96,7 +102,12 @@ async function seedCollection<T extends { id: string }>(
         updated++;
       } else {
         const { id, ...data } = item as any;
-        await setDoc(docRef, data);
+        if (targetId) {
+            await setDoc(doc(collectionRef, targetId), data);
+        } else {
+            const newDoc = doc(collectionRef);
+            await setDoc(newDoc, data);
+        }
         added++;
       }
     } catch (serverError) {
@@ -116,7 +127,7 @@ export async function seedDatabase(firestore: Firestore, mode: 'SAFE' | 'UPDATE'
 
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, mode);
   const routesResult = await seedCollection<Route>(firestore, 'routes', staticRoutes, mode);
-  const experienceResult = await seedCollection<ExperienceItem>(firestore, 'experience-items', staticExperienceItems.map((item, index) => ({ ...item, id: `exp${index + 1}` })), mode);
+  const experienceResult = await seedCollection<Omit<ExperienceItem, 'id'>>(firestore, 'experience-items', staticExperienceItems, mode);
 
   return {
     places: { added: placesResult.added, updated: placesResult.updated },

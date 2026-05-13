@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 // Services
 import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/firestore/places-service';
 import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
+import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -33,7 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Definitions
-import type { Place, Feedback, SubPoint } from '@/lib/definitions';
+import type { Place, Feedback, SubPoint, ExperienceItem } from '@/lib/definitions';
 
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
@@ -65,6 +66,13 @@ const subPointFormSchema = z.object({
     audioUrlTr: z.string().optional().or(z.literal('')),
 });
 
+const experienceItemSchema = z.object({
+    name: localizedStringSchema,
+    icon: z.string().min(1, 'İkon adı gereklidir.'),
+    link: z.string().min(1, 'Link gereklidir.'),
+    order: z.coerce.number().min(0),
+});
+
 const settingsFormSchema = z.object({
     aboutTitle: localizedStringSchema,
     aboutContent: localizedStringSchema,
@@ -79,6 +87,7 @@ export default function AdminPage() {
     const { toast } = useToast();
     
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSeeding, setIsSeeding] = useState(false);
     const [isUploadingAudio, setIsUploadingAudio] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
@@ -88,8 +97,12 @@ export default function AdminPage() {
     const [managingSubPointsPlace, setManagingSubPointsPlace] = useState<Place | null>(null);
     const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
     
+    const [editingExpItem, setEditingExpItem] = useState<ExperienceItem | null>(null);
+    const [deletingExpItem, setDeletingExpItem] = useState<ExperienceItem | null>(null);
+
     const { data: places, loading: placesLoading } = useCollection<Place>(useMemo(() => query(collection(firestore, 'places')), [firestore]));
     const { data: feedbacks } = useCollection<Feedback>(useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]));
+    const { data: expItems, loading: expLoading } = useCollection<ExperienceItem>(useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]));
     const { data: aboutSettings } = useDoc<any>(useMemo(() => doc(firestore, 'settings', 'about'), [firestore]));
 
     const sortedPlaces = useMemo(() => {
@@ -110,6 +123,7 @@ export default function AdminPage() {
     const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '' } as any });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
     const subPointForm = useForm({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '' } as any });
+    const expItemForm = useForm({ resolver: zodResolver(experienceItemSchema), defaultValues: { name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: 0 } as any });
     const siteSettingsForm = useForm({ resolver: zodResolver(settingsFormSchema) });
 
     useEffect(() => { 
@@ -128,6 +142,19 @@ export default function AdminPage() {
             }); 
         }
     }, [editingPlace, editPlaceForm]);
+
+    useEffect(() => {
+        if (editingExpItem) {
+            expItemForm.reset({
+                name: editingExpItem.name,
+                icon: editingExpItem.icon,
+                link: editingExpItem.link,
+                order: editingExpItem.order
+            });
+        } else {
+            expItemForm.reset({ name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: (expItems?.length || 0) + 1 });
+        }
+    }, [editingExpItem, expItemForm, expItems]);
 
     useEffect(() => {
         if (aboutSettings) {
@@ -182,11 +209,38 @@ export default function AdminPage() {
         updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, { onSuccess: () => { toast({ title: 'Kaydedildi' }); setEditingSubPoint(null); subPointForm.reset(); setIsSubmitting(false); setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updatedSubPoints }); }, onError: () => setIsSubmitting(false) });
     };
 
+    const handleExpItemSubmit = (values: any) => {
+        setIsSubmitting(true);
+        if (editingExpItem) {
+            updateExperienceItem(firestore, editingExpItem.id, values, {
+                onSuccess: () => { toast({ title: 'Güncellendi' }); setEditingExpItem(null); setIsSubmitting(false); },
+                onError: () => setIsSubmitting(false)
+            });
+        } else {
+            addExperienceItem(firestore, values, {
+                onSuccess: () => { toast({ title: 'Eklendi' }); expItemForm.reset(); setIsSubmitting(false); },
+                onError: () => setIsSubmitting(false)
+            });
+        }
+    };
+
     const handleSettingsSubmit = (values: any) => {
         setIsSubmitting(true);
         setDoc(doc(firestore, 'settings', 'about'), values, { merge: true })
             .then(() => { toast({ title: 'Ayarlar Kaydedildi' }); setIsSubmitting(false); })
             .catch(() => setIsSubmitting(false));
+    };
+
+    const handleSeedDatabase = async () => {
+        setIsSeeding(true);
+        try {
+            await seedDatabase(firestore, 'UPDATE');
+            toast({ title: 'Başarılı', description: 'Veriler koddan başarıyla güncellendi.' });
+        } catch (error) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Güncelleme sırasında bir sorun oluştu.' });
+        } finally {
+            setIsSeeding(false);
+        }
     };
 
     const handleDownloadCSV = () => {
@@ -256,8 +310,9 @@ export default function AdminPage() {
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-20">
             <Tabs defaultValue="places" className="w-full">
-                <TabsList className="flex justify-center sticky top-0 z-40 glass py-4 border-b">
+                <TabsList className="flex justify-center sticky top-0 z-40 glass py-4 border-b overflow-x-auto">
                     <TabsTrigger value="places">Yerler</TabsTrigger>
+                    <TabsTrigger value="experience">Salihli'de Bir Gün</TabsTrigger>
                     <TabsTrigger value="general">Genel Bilgiler</TabsTrigger>
                     <TabsTrigger value="feedbacks">Anketler</TabsTrigger>
                     <TabsTrigger value="database">Veritabanı</TabsTrigger>
@@ -299,6 +354,79 @@ export default function AdminPage() {
                     </CardContent></Card>
                 </TabsContent>
 
+                <TabsContent value="experience" className="p-4 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <Card className="rounded-[2rem] shadow-xl border-none">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <LayoutGrid className="h-5 w-5 text-primary" />
+                                {editingExpItem ? 'Menü Öğesini Düzenle' : 'Yeni Menü Öğesi Ekle'}
+                            </CardTitle>
+                            <CardDescription>Ana sayfadaki "Salihli'de Bir Gün" bölümünü yönetin.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Form {...expItemForm}>
+                                <form onSubmit={expItemForm.handleSubmit(handleExpItemSubmit)} className="space-y-6">
+                                    {renderLocalizedFields(expItemForm, ['name'])}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <FormField control={expItemForm.control} name="icon" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>İkon (Lucide Adı)</FormLabel>
+                                                <FormControl><Input placeholder="Mountain, Utensils..." {...field} className="rounded-xl" /></FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={expItemForm.control} name="link" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Link (Sayfa Yolu)</FormLabel>
+                                                <FormControl><Input placeholder="/yerler, /lezzetler..." {...field} className="rounded-xl" /></FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={expItemForm.control} name="order" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Sıralama</FormLabel>
+                                                <FormControl><Input type="number" {...field} className="rounded-xl" /></FormControl>
+                                            </FormItem>
+                                        )} />
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <Button type="submit" disabled={isSubmitting} className="rounded-xl px-12 h-12 font-bold shadow-lg">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} {editingExpItem ? 'Güncelle' : 'Ekle'}
+                                        </Button>
+                                        {editingExpItem && (
+                                            <Button variant="ghost" onClick={() => setEditingExpItem(null)} className="h-12 rounded-xl">İptal</Button>
+                                        )}
+                                    </div>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
+                        <CardHeader><CardTitle>Mevcut Menü Öğeleri</CardTitle></CardHeader>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="w-20 pl-6">Sıra</TableHead><TableHead>İsim (TR)</TableHead><TableHead>Link</TableHead><TableHead className="text-right pr-6">Eylemler</TableHead></TableRow></TableHeader>
+                                <TableBody>
+                                    {expLoading ? (
+                                        <TableRow><TableCell colSpan={4} className="p-6"><Skeleton className="h-12 w-full rounded-xl" /></TableCell></TableRow>
+                                    ) : expItems?.map(item => (
+                                        <TableRow key={item.id} className="hover:bg-muted/30">
+                                            <TableCell className="pl-6"><Badge variant="outline">{item.order}</Badge></TableCell>
+                                            <TableCell className="font-bold">{item.name.tr}</TableCell>
+                                            <TableCell className="text-muted-foreground text-sm">{item.link}</TableCell>
+                                            <TableCell className="text-right pr-6">
+                                                <div className="flex justify-end gap-2">
+                                                    <Button variant="ghost" size="icon" onClick={() => setEditingExpItem(item)} className="rounded-xl"><FilePenLine className="h-4 w-4" /></Button>
+                                                    <Button variant="ghost" size="icon" onClick={() => setDeletingExpItem(item)} className="text-destructive rounded-xl"><Trash2 className="h-4 w-4" /></Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 <TabsContent value="general" className="p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <Card className="rounded-[2rem] shadow-xl border-none"><CardHeader><CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5 text-primary" /> Hakkımızda / Tanıtım Metni</CardTitle><CardDescription>Ana sayfadaki 'Salihli Hakkında' butonuna basıldığında açılan pencere içeriği.</CardDescription></CardHeader>
                     <CardContent>
@@ -334,7 +462,14 @@ export default function AdminPage() {
 
                 <TabsContent value="database" className="p-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="grid md:grid-cols-2 gap-8">
-                        <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden"><CardHeader><CardTitle>Kod Güncelleme</CardTitle><CardDescription>Statik verilerdeki (kod içindeki) güncellemeleri veritabanına yansıtır.</CardDescription></CardHeader><CardContent><Button onClick={() => seedDatabase(firestore, 'UPDATE')} className="w-full h-14 rounded-2xl font-bold" variant="secondary">Verileri Koddan Güncelle</Button></CardContent></Card>
+                        <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
+                            <CardHeader><CardTitle>Kod Güncelleme</CardTitle><CardDescription>Statik verilerdeki (kod içindeki) güncellemeleri veritabanına yansıtır.</CardDescription></CardHeader>
+                            <CardContent>
+                                <Button onClick={handleSeedDatabase} disabled={isSeeding} className="w-full h-14 rounded-2xl font-bold" variant="secondary">
+                                    {isSeeding ? <Loader2 className="animate-spin mr-2" /> : null} Verileri Koddan Güncelle
+                                </Button>
+                            </CardContent>
+                        </Card>
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden"><CardHeader><CardTitle>Geri Yükle</CardTitle><CardDescription>Hatalı bir işlem sonrası veritabanını son yedek haline döndürür.</CardDescription></CardHeader><CardContent><Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button></CardContent></Card>
                     </div>
                 </TabsContent>
@@ -418,6 +553,11 @@ export default function AdminPage() {
             <AlertDialog open={!!deletingPlace} onOpenChange={o => !o && setDeletingPlace(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8"><AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Mekanı Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlace(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={!!deletingExpItem} onOpenChange={o => !o && setDeletingExpItem(null)}>
+                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8"><AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Menü Öğesini Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingExpItem?.name.tr}' menü öğesi kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItem(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
         </div>
     );
