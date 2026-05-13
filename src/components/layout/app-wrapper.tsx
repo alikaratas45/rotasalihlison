@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { SplashScreen } from '@/components/splash-screen';
 import { AudioProximityAlert } from '@/components/audio-proximity-alert';
 import { cn } from '@/lib/utils';
 import { useFirestore } from '@/firebase';
@@ -17,8 +16,6 @@ export default function AppWrapper({
   children: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
-  const [isSplashLoading, setIsSplashLoading] = useState(false);
   const firestore = useFirestore();
   const hasTrackedRef = useRef(false);
 
@@ -43,21 +40,6 @@ export default function AppWrapper({
         }
         hasTrackedRef.current = true;
     }
-
-    // Splash Screen Check
-    const splashShown = sessionStorage.getItem('rota_salihli_splash_shown');
-    if (!splashShown) {
-      setIsFirstVisit(true);
-      setIsSplashLoading(true);
-      
-      const timer = setTimeout(() => {
-        setIsSplashLoading(false);
-        sessionStorage.setItem('rota_salihli_splash_shown', 'true');
-        setTimeout(() => setIsFirstVisit(false), 1000);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
   }, [firestore]);
 
   const handleInteraction = useCallback(() => {
@@ -69,21 +51,15 @@ export default function AppWrapper({
     }
   }, []);
 
-  const showSplash = mounted && isFirstVisit;
-
   return (
     <div 
       onClick={handleInteraction} 
       onTouchStart={handleInteraction}
       className="min-h-screen flex flex-col"
     >
-      {showSplash && <SplashScreen isLoading={isSplashLoading} />}
-      {mounted && !isSplashLoading && <AudioProximityAlert />}
+      {mounted && <AudioProximityAlert />}
       
-      <div className={cn(
-        "flex flex-col flex-1 transition-opacity duration-700",
-        mounted && showSplash && isSplashLoading ? 'opacity-0' : 'opacity-100'
-      )}>
+      <div className="flex flex-col flex-1">
           <Header />
           <main className="flex-grow">{children}</main>
           <Footer />
