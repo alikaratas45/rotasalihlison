@@ -75,7 +75,7 @@ export default function Home() {
             {/* BELEDİYE LOGOSU */}
             <div className="relative h-28 w-28 md:h-36 md:w-36 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
                 <Image 
-                  src="/Salihli Belediyesi logo.png" 
+                  src="/salihli.png" 
                   alt="Salihli Belediyesi" 
                   fill 
                   className="object-contain drop-shadow-2xl"
