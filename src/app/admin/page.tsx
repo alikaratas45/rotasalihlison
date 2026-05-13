@@ -10,7 +10,6 @@ import { collection, orderBy, query, doc, setDoc, deleteDoc } from 'firebase/fir
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firebaseConfig } from '@/firebase/config';
 import { format } from 'date-fns';
-import { tr as trLocale } from 'date-fns/locale';
 
 // Services
 import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/firestore/places-service';
@@ -214,7 +213,8 @@ export default function AdminPage() {
             ['Mekan;Tarih;Temizlik;Erisim;Memnuniyet;Tur;Rehber;Pano']
         ];
         filteredFeedbacks.forEach(f => {
-            rows.push([`${f.placeName}${d}${f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yyyy') : ''}${d}${f.cleanliness}${d}${f.accessibility}${d}${f.satisfaction}${d}${f.withTour}${d}${f.guided}${d}${f.infoBoards}`]);
+            const dateStr = f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yyyy') : '';
+            rows.push([`${f.placeName}${d}${dateStr}${d}${f.cleanliness}${d}${f.accessibility}${d}${f.satisfaction}${d}${f.withTour}${d}${f.guided}${d}${f.infoBoards}`]);
         });
         const blob = new Blob(['\ufeff' + rows.map(r => r.join('')).join('\n')], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -263,7 +263,7 @@ export default function AdminPage() {
                     <TabsTrigger value="database">Veritabanı</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="places" className="p-4 space-y-8 animate-in fade-in">
+                <TabsContent value="places" className="p-4 space-y-8">
                     <Card><CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader><CardContent>
                         <Form {...addPlaceForm}><form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-6">
                             {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}

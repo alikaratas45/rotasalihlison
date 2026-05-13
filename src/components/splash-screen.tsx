@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/icons/logo';
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useEffect } from 'react';
 
@@ -27,17 +26,21 @@ export function SplashScreen({ isLoading }: SplashScreenProps) {
       )}
     >
       <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in-95 duration-700">
-        <div className="relative w-32 h-32 md:w-40 md:h-40 drop-shadow-xl">
-            <Logo className="w-full h-full" />
-        </div>
         <div className="flex flex-col items-center text-center px-4">
-            <h1 className="text-3xl font-bold text-primary font-headline tracking-[0.2em] uppercase">
+            <h1 className="text-4xl md:text-5xl font-bold text-primary font-headline tracking-[0.2em] uppercase">
                 ROTA SALİHLİ
             </h1>
-            <div className="h-0.5 w-16 bg-primary/20 my-3 rounded-full" />
-            <p className="text-muted-foreground text-sm font-medium tracking-wide italic">
+            <div className="h-1 w-24 bg-primary/20 my-4 rounded-full" />
+            <p className="text-muted-foreground text-base font-medium tracking-wide italic">
                 {t('splash.slogan')}
             </p>
+        </div>
+        
+        {/* Zarif bir yükleme animasyonu (Logo yerine) */}
+        <div className="mt-8 flex gap-2">
+            <div className="h-3 w-3 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <div className="h-3 w-3 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.15s]" />
+            <div className="h-3 w-3 bg-primary/40 rounded-full animate-bounce" />
         </div>
       </div>
     </div>
