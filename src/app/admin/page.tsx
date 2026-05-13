@@ -300,7 +300,7 @@ export default function AdminPage() {
                             {renderLocalizedFields(siteSettingsForm, ['title', 'content'])}
                             <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet</Button>
                         </form></Form>
-                    </CardContent></Card>
+                    </CardContent>
                 </TabsContent>
 
                 <TabsContent value="feedbacks" className="p-4 space-y-6">

@@ -36,7 +36,7 @@ export function SplashScreen({ isLoading }: SplashScreenProps) {
             </p>
         </div>
         
-        {/* Zarif bir yükleme animasyonu (Logo yerine) */}
+        {/* Zarif bir yükleme animasyonu */}
         <div className="mt-8 flex gap-2">
             <div className="h-3 w-3 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]" />
             <div className="h-3 w-3 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.15s]" />
