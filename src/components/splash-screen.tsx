@@ -1,4 +1,3 @@
-
 "use client";
 
 import { cn } from '@/lib/utils';
@@ -18,23 +17,25 @@ export function SplashScreen({ isLoading }: SplashScreenProps) {
     setMounted(true);
   }, []);
 
-  // Çevirilerin hydration hatasına yol açmaması için mount olana kadar bekliyoruz
   if (!mounted) return null;
 
   return (
     <div
       className={cn(
-        'fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background transition-opacity duration-1000 ease-in-out',
+        'fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#FDFCE6] transition-opacity duration-1000 ease-in-out',
         !isLoading && 'opacity-0 pointer-events-none'
       )}
     >
-      <div className="flex flex-col items-center gap-4">
-        <Logo className="w-24 h-24 text-primary" />
-        <div className="flex flex-col items-center">
-            <h1 className="text-2xl font-bold text-primary font-headline tracking-wider">
+      <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in-95 duration-700">
+        <div className="relative w-32 h-32 md:w-40 md:h-40 drop-shadow-xl">
+            <Logo className="w-full h-full" />
+        </div>
+        <div className="flex flex-col items-center text-center px-4">
+            <h1 className="text-3xl font-bold text-primary font-headline tracking-[0.2em] uppercase">
                 ROTA SALİHLİ
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <div className="h-0.5 w-16 bg-primary/20 my-3 rounded-full" />
+            <p className="text-muted-foreground text-sm font-medium tracking-wide italic">
                 {t('splash.slogan')}
             </p>
         </div>

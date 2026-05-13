@@ -14,7 +14,6 @@ import { tr as trLocale } from 'date-fns/locale';
 
 // Services
 import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/firestore/places-service';
-import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
 import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
 
 // UI Components
@@ -27,17 +26,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, Download, PieChart, Upload, Headphones } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Definitions
-import type { Place, ExperienceItem, Feedback, SubPoint } from '@/lib/definitions';
+import type { Place, Feedback, SubPoint } from '@/lib/definitions';
 
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
@@ -61,13 +59,6 @@ const placeFormSchema = z.object({
   audioUrlTr: z.string().optional().or(z.literal('')),
 });
 
-const experienceFormSchema = z.object({
-  name: localizedStringSchema,
-  icon: z.string().min(1, 'İkon adı gereklidir.'),
-  link: z.string().min(1, 'Link gereklidir.'),
-  order: z.coerce.number().min(1),
-});
-
 const subPointFormSchema = z.object({
     name: localizedStringSchema,
     description: localizedStringSchema,
@@ -83,7 +74,6 @@ const settingsFormSchema = z.object({
 
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
-const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğa', food: 'Lezzet', shopping: 'Alışveriş', poi: 'Önemli Nokta' };
 
 export default function AdminPage() {
     const firestore = useFirestore();
@@ -92,7 +82,6 @@ export default function AdminPage() {
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isUploadingAudio, setIsUploadingAudio] = useState(false);
-    const [isDatabaseActionLoading, setIsDatabaseActionLoading] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
     const [editingPlace, setEditingPlace] = useState<Place | null>(null);
@@ -100,11 +89,8 @@ export default function AdminPage() {
     const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
     const [managingSubPointsPlace, setManagingSubPointsPlace] = useState<Place | null>(null);
     const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
-    const [editingExperience, setEditingExperience] = useState<ExperienceItem | null>(null);
-    const [deletingExperience, setDeletingExperience] = useState<ExperienceItem | null>(null);
     
     const { data: places, loading: placesLoading } = useCollection<Place>(useMemo(() => query(collection(firestore, 'places')), [firestore]));
-    const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]));
     const { data: feedbacks } = useCollection<Feedback>(useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]));
     const { data: aboutSettings } = useDoc<any>(useMemo(() => doc(firestore, 'settings', 'about'), [firestore]));
 
@@ -125,13 +111,8 @@ export default function AdminPage() {
 
     const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '' } as any });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
-    const addExperienceForm = useForm({ resolver: zodResolver(experienceFormSchema), defaultValues: { name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: 10 } as any });
-    const editExperienceForm = useForm({ resolver: zodResolver(experienceFormSchema) });
     const subPointForm = useForm({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '' } as any });
-    const siteSettingsForm = useForm({ 
-        resolver: zodResolver(settingsFormSchema),
-        defaultValues: { aboutTitle: { tr: '', en: '' }, aboutContent: { tr: '', en: '' } }
-    });
+    const siteSettingsForm = useForm({ resolver: zodResolver(settingsFormSchema) });
 
     useEffect(() => { 
         if (editingPlace) {
@@ -150,12 +131,21 @@ export default function AdminPage() {
         }
     }, [editingPlace, editPlaceForm]);
 
+    useEffect(() => {
+        if (aboutSettings) {
+            siteSettingsForm.reset({
+                aboutTitle: aboutSettings.aboutTitle || { tr: '', en: '' },
+                aboutContent: aboutSettings.aboutContent || { tr: '', en: '' }
+            });
+        }
+    }, [aboutSettings, siteSettingsForm]);
+
     const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'place' | 'subpoint') => {
         const file = e.target.files?.[0];
         if (!file) return;
         setIsUploadingAudio(true);
         try {
-            const storage = getStorage(firebaseApp, firebaseConfig.storageBucket);
+            const storage = getStorage(firebaseApp, `gs://${firebaseConfig.projectId}.firebasestorage.app`);
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
             const path = type === 'place' ? `audio/places/${fileName}` : `audio/subpoints/${fileName}`;
             const storageRef = ref(storage, path);
@@ -163,9 +153,9 @@ export default function AdminPage() {
             const url = await getDownloadURL(snapshot.ref);
             if (type === 'place') editPlaceForm.setValue('audioUrlTr', url);
             else subPointForm.setValue('audioUrlTr', url);
-            toast({ title: 'Ses Yüklendi', description: 'Kaydetmeyi unutmayın.' });
+            toast({ title: 'Ses Yüklendi', description: 'Değişiklikleri kaydetmeyi unutmayın.' });
         } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Hata', description: 'Yükleme başarısız. Storage kurallarını kontrol edin.' });
+            toast({ variant: 'destructive', title: 'Yükleme Hatası', description: 'Storage kuralı veya bağlantı hatası.' });
         } finally { setIsUploadingAudio(false); }
     };
 
@@ -191,6 +181,13 @@ export default function AdminPage() {
             updatedSubPoints.push({ id: Math.random().toString(36).substring(7), ...values, coordinates: { lat: values.lat, lng: values.lng } });
         }
         updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, { onSuccess: () => { toast({ title: 'Kaydedildi' }); setEditingSubPoint(null); subPointForm.reset(); setIsSubmitting(false); setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updatedSubPoints }); }, onError: () => setIsSubmitting(false) });
+    };
+
+    const handleSettingsSubmit = (values: any) => {
+        setIsSubmitting(true);
+        setDoc(doc(firestore, 'settings', 'about'), values, { merge: true })
+            .then(() => { toast({ title: 'Ayarlar Kaydedildi' }); setIsSubmitting(false); })
+            .catch(() => setIsSubmitting(false));
     };
 
     const handleDownloadCSV = () => {
@@ -231,15 +228,21 @@ export default function AdminPage() {
         <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
             {languages.map((lang) => (
                 <AccordionItem value={lang} key={`${prefix}${lang}`}>
-                    <AccordionTrigger className="py-2">
+                    <AccordionTrigger className="py-2 hover:no-underline">
                         <Badge variant="outline" className="mr-2">{lang.toUpperCase()}</Badge> {languageNames[lang]}
                     </AccordionTrigger>
-                    <AccordionContent className="space-y-4 pt-4">
+                    <AccordionContent className="space-y-4 pt-4 border-t mt-2">
                         {fieldNames.includes('name') && <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>İsim</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
                         )} />}
+                        {fieldNames.includes('title') && <FormField control={form.control} name={`${prefix}aboutTitle.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>Başlık</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
+                        )} />}
                         {fieldNames.includes('description') && <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>Açıklama</FormLabel><FormControl><Textarea rows={4} {...field} value={field.value || ''} /></FormControl></FormItem>
+                        )} />}
+                         {fieldNames.includes('content') && <FormField control={form.control} name={`${prefix}aboutContent.${lang}`} render={({ field }) => (
+                            <FormItem><FormLabel>İçerik</FormLabel><FormControl><Textarea rows={10} {...field} value={field.value || ''} /></FormControl></FormItem>
                         )} />}
                         {fieldNames.includes('slug') && <FormField control={form.control} name={`${prefix}slug.${lang}`} render={({ field }) => (
                             <FormItem><FormLabel>Link Metni (Slug)</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
@@ -260,13 +263,13 @@ export default function AdminPage() {
                     <TabsTrigger value="database">Veritabanı</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="places" className="p-4 space-y-8">
+                <TabsContent value="places" className="p-4 space-y-8 animate-in fade-in">
                     <Card><CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader><CardContent>
                         <Form {...addPlaceForm}><form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-6">
                             {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
-                                    <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-10 rounded-md border border-input px-3 text-sm"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option><option value="poi">Nokta</option></select></FormItem>
+                                    <FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-10 rounded-md border border-input px-3 text-sm"><option value="poi">Önemli Nokta</option><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option></select></FormItem>
                                 )}/>
                                 <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
                                 <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
@@ -276,9 +279,9 @@ export default function AdminPage() {
                         </form></Form>
                     </CardContent></Card>
                     <Card><CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader><CardContent className="p-0">
-                        <Table><TableHeader><TableRow><TableHead>Sıra</TableHead><TableHead>İsim</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
+                        <Table><TableHeader><TableRow><TableHead className="w-20">Sıra</TableHead><TableHead>İsim</TableHead><TableHead className="text-right">Eylemler</TableHead></TableRow></TableHeader>
                         <TableBody>{placesLoading ? <TableRow><TableCell colSpan={3}><Skeleton className="h-20" /></TableCell></TableRow> : sortedPlaces.map(p => (
-                            <TableRow key={p.id}><TableCell>{p.order}</TableCell><TableCell>{p.name.tr}</TableCell><TableCell className="text-right">
+                            <TableRow key={p.id}><TableCell><Badge variant="secondary">{p.order || '-'}</Badge></TableCell><TableCell className="font-medium">{p.name.tr}</TableCell><TableCell className="text-right">
                                 <DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal /></Button></DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => setEditingPlace(p)}><FilePenLine className="mr-2" /> Düzenle</DropdownMenuItem>
@@ -287,6 +290,16 @@ export default function AdminPage() {
                                 </DropdownMenuContent></DropdownMenu>
                             </TableCell></TableRow>
                         ))}</TableBody></Table>
+                    </CardContent></Card>
+                </TabsContent>
+
+                <TabsContent value="general" className="p-4 space-y-6">
+                    <Card><CardHeader><CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5" /> Hakkımızda / Tanıtım Metni</CardTitle><CardDescription>Ana sayfadaki 'Salihli Hakkında' butonuna basıldığında açılan pencere içeriği.</CardDescription></CardHeader>
+                    <CardContent>
+                        <Form {...siteSettingsForm}><form onSubmit={siteSettingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-6">
+                            {renderLocalizedFields(siteSettingsForm, ['title', 'content'])}
+                            <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet</Button>
+                        </form></Form>
                     </CardContent></Card>
                 </TabsContent>
 
@@ -300,14 +313,14 @@ export default function AdminPage() {
                             </Select>
                             <Button onClick={handleDownloadCSV} className="w-full"><Download className="mr-2" /> Rapor İndir</Button>
                         </Card>
-                        <Card className="p-4 flex flex-col items-center justify-center"><span className="text-xs text-muted-foreground">TOPLAM ANKET</span><span className="text-2xl font-bold">{filteredFeedbacks.length}</span></Card>
-                        <Card className="p-4 flex flex-col items-center justify-center"><span className="text-xs text-muted-foreground">ORT. MEMNUNİYET</span><span className="text-2xl font-bold text-orange-500">{filteredFeedbacks.length ? (filteredFeedbacks.reduce((a,f) => a+f.satisfaction,0)/filteredFeedbacks.length).toFixed(1) : 0}</span></Card>
-                        <Card className="p-4 flex flex-col items-center justify-center"><span className="text-xs text-muted-foreground">TUR ORANI</span><span className="text-2xl font-bold text-blue-500">%{filteredFeedbacks.length ? ((filteredFeedbacks.filter(f=>f.withTour==='yes').length/filteredFeedbacks.length)*100).toFixed(0) : 0}</span></Card>
+                        <Card className="p-4 flex flex-col items-center justify-center text-center"><span className="text-xs text-muted-foreground font-bold uppercase">Toplam Anket</span><span className="text-3xl font-bold text-primary">{filteredFeedbacks.length}</span></Card>
+                        <Card className="p-4 flex flex-col items-center justify-center text-center"><span className="text-xs text-muted-foreground font-bold uppercase">Ort. Memnuniyet</span><span className="text-3xl font-bold text-orange-500">{filteredFeedbacks.length ? (filteredFeedbacks.reduce((a,f) => a+f.satisfaction,0)/filteredFeedbacks.length).toFixed(1) : 0}/5</span></Card>
+                        <Card className="p-4 flex flex-col items-center justify-center text-center"><span className="text-xs text-muted-foreground font-bold uppercase">Turla Gelen</span><span className="text-3xl font-bold text-blue-500">%{filteredFeedbacks.length ? ((filteredFeedbacks.filter(f=>f.withTour==='yes').length/filteredFeedbacks.length)*100).toFixed(0) : 0}</span></Card>
                     </div>
                     <Card><CardContent className="p-0">
                         <Table><TableHeader><TableRow><TableHead>Mekan</TableHead><TableHead>Tarih</TableHead><TableHead>Puan</TableHead><TableHead className="text-right">Eylem</TableHead></TableRow></TableHeader>
                         <TableBody>{filteredFeedbacks.map(f => (
-                            <TableRow key={f.id}><TableCell>{f.placeName}</TableCell><TableCell className="text-xs">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yy') : '-'}</TableCell><TableCell><Badge>{f.satisfaction}/5</Badge></TableCell>
+                            <TableRow key={f.id}><TableCell className="font-medium">{f.placeName}</TableCell><TableCell className="text-xs text-muted-foreground">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yy HH:mm') : '-'}</TableCell><TableCell><Badge variant="outline" className="bg-yellow-50">{f.satisfaction}/5 Yıldız</Badge></TableCell>
                             <TableCell className="text-right"><Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeletingFeedback(f)}><Trash2 className="h-4 w-4" /></Button></TableCell></TableRow>
                         ))}</TableBody></Table>
                     </CardContent></Card>
@@ -315,8 +328,8 @@ export default function AdminPage() {
 
                 <TabsContent value="database" className="p-4">
                     <div className="grid md:grid-cols-2 gap-6">
-                        <Card><CardHeader><CardTitle>Kod Güncelleme</CardTitle></CardHeader><CardContent><Button onClick={() => seedDatabase(firestore, 'UPDATE')} className="w-full" variant="secondary">Verileri Koddan Güncelle</Button></CardContent></Card>
-                        <Card><CardHeader><CardTitle>Geri Yükle</CardTitle></CardHeader><CardContent><Button onClick={() => undoLastOperation(firestore)} className="w-full" variant="outline">Son İşlemi Geri Al</Button></CardContent></Card>
+                        <Card><CardHeader><CardTitle>Kod Güncelleme</CardTitle><CardDescription>Statik verilerdeki (kod içindeki) güncellemeleri veritabanına yansıtır.</CardDescription></CardHeader><CardContent><Button onClick={() => seedDatabase(firestore, 'UPDATE')} className="w-full" variant="secondary">Verileri Koddan Güncelle</Button></CardContent></Card>
+                        <Card><CardHeader><CardTitle>Geri Yükle</CardTitle><CardDescription>Hatalı bir işlem sonrası veritabanını son yedek haline döndürür.</CardDescription></CardHeader><CardContent><Button onClick={() => undoLastOperation(firestore)} className="w-full" variant="outline">Son İşlemi Geri Al</Button></CardContent></Card>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -329,17 +342,18 @@ export default function AdminPage() {
                         <Form {...editPlaceForm}><form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-6">
                             <div className="bg-primary/5 p-4 rounded-lg border space-y-4">
                                 <h4 className="font-bold flex items-center gap-2"><Headphones className="h-4 w-4" /> Türkçe Seslendirme (MP3)</h4>
+                                <p className="text-xs text-muted-foreground">Kendi seslendirmenizi yükleyerek yapay zeka sesini devre dışı bırakabilirsiniz.</p>
                                 <div className="flex items-center gap-3">
                                     <Input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'place')} className="hidden" id="audio-place" />
                                     <Button type="button" variant="outline" onClick={() => document.getElementById('audio-place')?.click()} disabled={isUploadingAudio}>
-                                        {isUploadingAudio ? <Loader2 className="animate-spin mr-2" /> : <Upload className="mr-2" />} {editPlaceForm.getValues('audioUrlTr') ? 'Sesi Güncelle' : 'Özel MP3 Yükle'}
+                                        {isUploadingAudio ? <Loader2 className="animate-spin mr-2" /> : <Upload className="mr-2" />} {editPlaceForm.getValues('audioUrlTr') ? 'Dosyayı Değiştir' : 'Özel MP3 Yükle'}
                                     </Button>
-                                    {editPlaceForm.getValues('audioUrlTr') && <Badge className="bg-green-500">Yüklü</Badge>}
+                                    {editPlaceForm.getValues('audioUrlTr') && <Badge className="bg-green-500 text-white border-none">MP3 Yüklü</Badge>}
                                 </div>
                             </div>
                             {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
-                            <div className="grid grid-cols-2 gap-4 pb-10">
-                                <FormField control={editPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-10 border rounded px-2"><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option></select></FormItem>)}/>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-10">
+                                <FormField control={editPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-10 border rounded px-2"><option value="poi">Önemli Nokta</option><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option></select></FormItem>)}/>
                                 <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıra</FormLabel><Input type="number" {...field} /></FormItem>)}/>
                                 <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
                                 <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/>
@@ -348,7 +362,7 @@ export default function AdminPage() {
                     </div></ScrollArea></div>
                     <DialogFooter className="p-6 border-t bg-muted/20 shrink-0">
                         <Button variant="outline" onClick={() => setEditingPlace(null)}>İptal</Button>
-                        <Button onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting}>Güncelle</Button>
+                        <Button onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
@@ -357,35 +371,47 @@ export default function AdminPage() {
                 <DialogContent className="max-w-3xl h-[90vh] flex flex-col p-0 overflow-hidden">
                     <DialogHeader className="p-6 border-b shrink-0"><DialogTitle>Alt Başlıklar: {managingSubPointsPlace?.name.tr}</DialogTitle></DialogHeader>
                     <div className="flex-1 min-h-0"><ScrollArea className="h-full"><div className="p-6 space-y-8">
-                        <Form {...subPointForm}><form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4 border p-4 rounded bg-muted/10">
-                            <h4 className="font-bold">{editingSubPoint ? 'Düzenle' : 'Yeni Ekle'}</h4>
+                        <Form {...subPointForm}><form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4 border p-4 rounded bg-muted/5 shadow-sm">
+                            <h4 className="font-bold flex items-center gap-2 text-primary">{editingSubPoint ? <FilePenLine className="h-4 w-4" /> : <Plus className="h-4 w-4" />} {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık Ekle'}</h4>
                             <div className="bg-primary/5 p-3 rounded border mb-4">
                                 <Input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'subpoint')} className="hidden" id="audio-sub" />
                                 <Button type="button" size="sm" variant="outline" onClick={() => document.getElementById('audio-sub')?.click()} disabled={isUploadingAudio}>
-                                    {isUploadingAudio ? <Loader2 className="animate-spin h-3 w-3 mr-2" /> : <Upload className="h-3 w-3 mr-2" />} MP3
+                                    {isUploadingAudio ? <Loader2 className="animate-spin h-3 w-3 mr-2" /> : <Upload className="h-3 w-3 mr-2" />} MP3 Yükle
                                 </Button>
-                                {subPointForm.getValues('audioUrlTr') && <Badge className="ml-2 bg-green-500">Ses Var</Badge>}
+                                {subPointForm.getValues('audioUrlTr') && <Badge className="ml-2 bg-green-500 text-white">Yüklü</Badge>}
                             </div>
                             {renderLocalizedFields(subPointForm, ['name', 'description'])}
-                            <div className="grid grid-cols-2 gap-4"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<Input type="number" step="any" {...field} />)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<Input type="number" step="any" {...field} />)}/></div>
-                            <Button type="submit" disabled={isSubmitting} className="w-full">{editingSubPoint ? 'Güncelle' : 'Ekle'}</Button>
+                            <div className="grid grid-cols-2 gap-4"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} /></FormItem>)}/></div>
+                            <div className="flex gap-2">
+                                <Button type="submit" disabled={isSubmitting} className="flex-1">{editingSubPoint ? 'Güncelle' : 'Ekle'}</Button>
+                                {editingSubPoint && <Button type="button" variant="ghost" onClick={() => { setEditingSubPoint(null); subPointForm.reset(); }}>Vazgeç</Button>}
+                            </div>
                         </form></Form>
                         <div className="space-y-2 pb-10">
+                            <h4 className="font-bold text-sm text-muted-foreground uppercase tracking-widest border-b pb-2">Ekli Alt Başlıklar</h4>
                             {managingSubPointsPlace?.subPoints?.map(s => (
-                                <div key={s.id} className="flex justify-between items-center p-3 border rounded bg-background">
-                                    <span>{s.name.tr}</span>
+                                <div key={s.id} className="flex justify-between items-center p-4 border rounded-xl bg-background shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex flex-col">
+                                        <span className="font-bold">{s.name.tr}</span>
+                                        <span className="text-xs text-muted-foreground">{s.coordinates.lat.toFixed(4)}, {s.coordinates.lng.toFixed(4)}</span>
+                                    </div>
                                     <div className="flex gap-1"><Button variant="ghost" size="icon" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}><FilePenLine className="h-4 w-4" /></Button>
-                                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { if(confirm('Silinsin mi?')) { const u = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; updateSubPoints(firestore, managingSubPointsPlace.id, u, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: u }) }); } }}><Trash2 className="h-4 w-4" /></Button></div>
+                                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { if(confirm('Bu alt başlık kalıcı olarak silinsin mi?')) { const u = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; updateSubPoints(firestore, managingSubPointsPlace.id, u, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: u }) }); } }}><Trash2 className="h-4 w-4" /></Button></div>
                                 </div>
-                            ))}
+                            )) || <p className="text-center py-10 text-muted-foreground italic">Henüz alt başlık eklenmemiş.</p>}
                         </div>
                     </div></ScrollArea></div>
                 </DialogContent>
             </Dialog>
 
             <AlertDialog open={!!deletingFeedback} onOpenChange={o => !o && setDeletingFeedback(null)}>
-                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Emin misiniz?</AlertDialogTitle><AlertDialogDescription>Bu anket kaydı kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                <AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingFeedback) { await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id)); toast({ title: 'Silindi' }); setDeletingFeedback(null); } }} className="bg-destructive">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Anket Kaydını Sil</AlertDialogTitle><AlertDialogDescription>Bu anket kaydı kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingFeedback) { await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id)); toast({ title: 'Silindi' }); setDeletingFeedback(null); } }} className="bg-destructive">Kalıcı Olarak Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={!!deletingPlace} onOpenChange={o => !o && setDeletingPlace(null)}>
+                <AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Mekanı Sil</AlertDialogTitle><AlertDialogDescription>'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter><AlertDialogCancel>İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlace(null); } }); }} className="bg-destructive">Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
             </AlertDialog>
         </div>
     );
