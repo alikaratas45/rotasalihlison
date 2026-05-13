@@ -63,13 +63,33 @@ Served traditionally with roasted peppers, fresh onions with sumac, and the loca
         imageHint: 'grilled meatballs'
     },
     {
+        id: '6',
+        slug: { tr: 'tabak-deresi-dev-kazanlari', en: 'tabak-creek-giant-cauldrons', fr: 'chaudrons-geants-du-ruisseau-tabak', de: 'tabak-bach-riesenkessel', ja: 'tabak-creek-giant-cauldrons-ja' },
+        name: { tr: 'Tabak Deresi Dev Kazanları', en: 'Tabak Creek Giant Cauldrons', fr: 'Chaudrons Géants du Ruisseau Tabak', de: 'Tabak-Bach Riesenkessel', ja: 'タバッククリークの巨大な大釜' },
+        description: { 
+            tr: `Salihli’nin doğal gizemlerinden biri olan Tabak Deresi Dev Kazanları, suyun binlerce yıl boyunca kayaları aşındırmasıyla oluşmuş muazzam doğal havuzlardır. Kral Midas efsanesine ev sahipliği yapan bu bölge, altın dokunuş lanetinden kurtulmak için Midas’ın yıkandığı yer olarak bilinir. 
+
+Doğa yürüyüşü ve fotoğraf meraklıları için saklı bir cennet niteliğindedir. Kayaların içindeki bu dairesel oyuklar, doğanın gücünü ve estetiğini en çıplak haliyle sergiler.`, 
+            en: `Tabak Creek Giant Cauldrons are magnificent natural pools formed by water eroding rocks over thousands of years. This region is home to the legend of King Midas, known as the place where he bathed to be freed from the golden touch curse. 
+
+It is a hidden paradise for hiking and photography enthusiasts. These circular hollows within the rocks display the power and aesthetics of nature in its purest form.`,
+            fr: `Les chaudrons géants du ruisseau Tabak sont de magnifiques bassins naturels formés par l'érosion des roches par l'eau. Berceau de la légende du roi Midas.`,
+            de: `Die Riesenkessel des Tabak-Bachs sind prächtige natürliche Becken, die durch die jahrtausendelange Erosion von Felsen durch Wasser entstanden sind. Heimat der Legende von König Midas.`,
+            ja: `タバッククリークの巨大な大釜は、数千年にわたって水が岩を侵食して形成された壮大な自然のプールです。ミダス王の伝説の地。`
+        },
+        category: 'nature',
+        coordinates: { lat: 38.4725, lng: 28.0288 },
+        imageUrl: 'https://i.imgur.com/aOjHCNC.jpeg',
+        imageHint: 'river rocks'
+    },
+    {
         id: '12',
         slug: { tr: 'gymnasium', en: 'gymnasium', fr: 'gymnase', de: 'gymnasium', ja: 'gymnasium-ja' },
         name: { tr: 'Gymnasium', en: 'Gymnasium', fr: 'Gymnase', de: 'Gymnasium', ja: 'ギムナジウム' },
         description: { 
             tr: `Sardes Antik Kenti'nin en görkemli yapılarından biri olan Roma Hamam-Gymnasium Kompleksi, antik çağın eğitim, spor ve sosyal yaşam merkezidir. MS 2. yüzyılda inşa edilen bu devasa yapı, mermer işçiliği ve abidevi sütunlarıyla Roma mimarisinin en güzel örneklerinden birini sunmaktadır. 
 
-Kompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorlara adanmış olup eşsiz bir restorasyon çalışmasıyla ayağa kaldırılmıştır. Burası sadece spor yapılan bir alan değil, aynı zamanda felsefe ve sanatın tartışıldığı kültürel bir odak noktasıydı.`, 
+Kompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorlara adanmış olup eşsiz bir restorasyon çalışmasıyla ayağa kaldırılmıştır. Burası sadece spor yapılan bir alan değil, Trials zamanda felsefe ve sanatın tartışıldığı kültürel bir odak noktasıydı.`, 
             en: `The Roman Bath-Gymnasium Complex, one of the most magnificent structures in Sardis, was the center of education, sports, and social life in antiquity. Built in the 2nd century AD, this massive structure showcases some of the finest examples of Roman architecture with its intricate marble work and monumental columns. 
 
 The "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been restored to its former glory. It was not just a place for physical exercise, but also a cultural hub where philosophy and art were discussed.`,

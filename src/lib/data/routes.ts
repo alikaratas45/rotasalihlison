@@ -1,3 +1,4 @@
+
 import type { Route } from '@/lib/definitions';
 
 export const routes: Route[] = [
@@ -49,6 +50,6 @@ export const routes: Route[] = [
             de: 'Begeben Sie sich auf eine Reise durch die fruchtbaren Länder des Gediz-Flusses. Diese Route führt Sie auf eine friedliche Reise von den heilenden Wassern von Kurşunlu zu vulkanischen Schluchten und historischen Brücken.',
             ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から火山の峡谷や歴史的な橋へと続く平和な旅にあなたを連れて行きます。'
         },
-        stops: ['2', '7', '9', '10']
+        stops: ['2', '6', '7']
     }
 ];
