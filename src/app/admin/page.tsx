@@ -143,7 +143,7 @@ export default function AdminPage() {
         if (!file) return;
         setIsUploadingAudio(true);
         try {
-            const storage = getStorage(firebaseApp);
+            const storage = getStorage(firebaseApp, "studio-4936508951-29568.firebasestorage.app");
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
             const path = type === 'place' ? `audio/places/${fileName}` : `audio/subpoints/${fileName}`;
             const storageRef = ref(storage, path);
@@ -154,7 +154,7 @@ export default function AdminPage() {
             toast({ title: 'Ses Yüklendi', description: 'Değişiklikleri kaydetmeyi unutmayın.' });
         } catch (error: any) {
             console.error("Audio upload error:", error);
-            toast({ variant: 'destructive', title: 'Yükleme Hatası', description: 'Storage bağlantı hatası veya yetki eksikliği.' });
+            toast({ variant: 'destructive', title: 'Yükleme Hatası', description: 'Storage kural hatası veya bağlantı sorunu.' });
         } finally { setIsUploadingAudio(false); }
     };
 
@@ -306,7 +306,7 @@ export default function AdminPage() {
                             {renderLocalizedFields(siteSettingsForm, ['title', 'content'])}
                             <Button type="submit" disabled={isSubmitting}>{isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet</Button>
                         </form></Form>
-                    </CardContent>
+                    </CardContent></Card>
                 </TabsContent>
 
                 <TabsContent value="feedbacks" className="p-4 space-y-6">
