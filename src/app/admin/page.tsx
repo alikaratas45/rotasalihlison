@@ -8,6 +8,7 @@ import { useCollection, useFirestore, useDoc, useFirebaseApp } from '@/firebase'
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { firebaseConfig } from '@/firebase/config';
 import { format } from 'date-fns';
 import { tr as trLocale } from 'date-fns/locale';
 
@@ -198,15 +199,24 @@ export default function AdminPage() {
         }
 
         setIsUploadingAudio(true);
+        console.log("Audio upload started for:", file.name);
+
         try {
-            const storage = getStorage(firebaseApp);
+            // Explicitly use the storage bucket from config to avoid initialization issues
+            const storage = getStorage(firebaseApp, firebaseConfig.storageBucket);
             const randomId = Math.random().toString(36).substring(7);
-            const fileName = `audio_${randomId}.mp3`;
+            const fileName = `${Date.now()}_${randomId}.mp3`;
             const path = type === 'place' ? `audio/places/${fileName}` : `audio/subpoints/${fileName}`;
             
+            console.log("Uploading to path:", path);
             const storageRef = ref(storage, path);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
+            
+            // Upload the bytes
+            const snapshot = await uploadBytes(storageRef, file);
+            console.log("Upload successful, getting download URL...");
+            
+            const url = await getDownloadURL(snapshot.ref);
+            console.log("Download URL obtained:", url);
 
             if (type === 'place') {
                 editPlaceForm.setValue('audioUrlTr', url);
@@ -216,10 +226,23 @@ export default function AdminPage() {
             
             toast({ title: 'Başarılı', description: 'Ses dosyası yüklendi. Değişiklikleri kaydetmeyi unutmayın.' });
         } catch (error: any) {
-            console.error("Upload error:", error);
-            toast({ variant: 'destructive', title: 'Hata', description: 'Ses dosyası yüklenirken bir sorun oluştu.' });
+            console.error("Upload error details:", error);
+            let errorMessage = 'Ses dosyası yüklenirken bir sorun oluştu.';
+            
+            if (error.code === 'storage/unauthorized') {
+                errorMessage = 'Depolama izni reddedildi. Firebase kurallarını kontrol edin.';
+            } else if (error.code === 'storage/no-default-bucket') {
+                errorMessage = 'Varsayılan depolama alanı bulunamadı.';
+            }
+
+            toast({ 
+                variant: 'destructive', 
+                title: 'Hata', 
+                description: errorMessage 
+            });
         } finally {
             setIsUploadingAudio(false);
+            console.log("Audio upload process finished.");
         }
     };
 
