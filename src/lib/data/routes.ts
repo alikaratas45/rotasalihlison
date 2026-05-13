@@ -50,30 +50,5 @@ export const routes: Route[] = [
             ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から火山の峡谷や歴史的な橋へと続く平和な旅にあなたを連れて行きます。'
         },
         stops: ['2', '7', '9', '10']
-    },
-    {
-        id: 'r3',
-        slug: { 
-            tr: 'salihli-lezzet-rotasi', 
-            en: 'salihli-flavors-route',
-            fr: 'route-des-saveurs-de-salihli',
-            de: 'geschmacksroute-salihli',
-            ja: 'salihli-flavors-route-ja'
-        },
-        name: { 
-            tr: 'Salihli Lezzet Rotası', 
-            en: 'Salihli Flavors Route',
-            fr: 'Route des Saveurs de Salihli',
-            de: 'Geschmacksroute Salihli',
-            ja: 'サリフリフレーバールート'
-        },
-        description: { 
-            tr: 'Salihli\'nin meşhur Odun Köftesi\'nden Sultaniye üzümüne, bu rota damak çatlatan lezzetleri keşfetmek isteyenler için birebir.',
-            en: 'From Salihli\'s famous Wood Meatballs to Sultaniye grapes, this route is perfect for those who want to discover mouth-watering flavors.',
-            fr: 'Des célèbres boulettes de viande au feu de bois de Salihli aux raisins Sultaniye, cet itinéraire est parfait pour ceux qui veulent découvrir des saveurs alléchantes.',
-            de: 'Von den berühmten Holz-Fleischbällchen von Salihli bis zu den Sultaniye-Trauben ist diese Route perfekt für diejenigen, die köstliche Aromen entdecken möchten.',
-            ja: 'サリフリの有名なウッドミートボールからスルタニエブドウまで、このルートは食欲をそそる味を発見したい人に最適です。'
-        },
-        stops: ['3']
     }
 ];

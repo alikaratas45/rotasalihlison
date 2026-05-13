@@ -24,10 +24,9 @@ function RotalarContent() {
   const { data: routes, loading } = useCollection<Route>(routesQuery);
 
   const displayRoutes = useMemo(() => {
-    if (routes && routes.length > 0) {
-      return routes;
-    }
-    return staticRoutes;
+    const rawRoutes = (routes && routes.length > 0) ? routes : staticRoutes;
+    // Filter out the deleted 'Salihli Flavors Route' (r3) to ensure it's gone even if seeded in Firestore
+    return rawRoutes.filter(route => route.id !== 'r3' && route.slug.en !== 'salihli-flavors-route');
   }, [routes]);
 
   if (loading) {
@@ -72,9 +71,6 @@ function RotalarContent() {
                 break;
               case 'nature-route':
                 imageId = 'adala-volcanic-canyon';
-                break;
-              case 'salihli-flavors-route':
-                imageId = 'salihli-wood-meatballs';
                 break;
               default:
                 imageId = route.id; // fallback
