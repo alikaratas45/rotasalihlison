@@ -67,7 +67,7 @@ export default function Home() {
           className="object-cover scale-105" 
           priority 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-background" />
         
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-12">
           <div className="max-w-4xl space-y-6">
@@ -91,7 +91,7 @@ export default function Home() {
               
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button size="lg" variant="outline" className="h-12 px-8 rounded-xl text-sm font-black bg-black/40 backdrop-blur-xl text-white hover:bg-black/60 border-white/20 shadow-2xl transition-all">
+                  <Button size="lg" variant="outline" className="h-12 px-8 rounded-xl text-sm font-black bg-black/50 backdrop-blur-xl text-white hover:bg-black/70 border-white/30 shadow-2xl transition-all">
                     <Info className="mr-2 h-5 w-5 text-accent" />
                     {t('home.aboutSalihli')}
                   </Button>
@@ -121,7 +121,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- EXPERIENCE GRID: 3 COLUMNS MOBILE, SINGLE ROW DESKTOP --- */}
+      {/* --- EXPERIENCE GRID: 3 COLUMNS MOBILE, SINGLE ROW DESKTOP (10 COLS) --- */}
       <section className="py-16 md:py-24 relative bg-background overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 space-y-3">
@@ -138,7 +138,7 @@ export default function Home() {
             <PwaInstallButton />
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:gap-3 auto-rows-[120px] md:auto-rows-[160px]">
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:gap-3 auto-rows-[110px] md:auto-rows-[140px]">
             {experienceLoading ? Array.from({length: 10}).map((_, i) => (
                 <div key={`skeleton-exp-${i}`} className="col-span-1 bg-muted/30 rounded-3xl animate-pulse" />
             )) : displayExperienceItems.map((item, index) => (
@@ -147,16 +147,16 @@ export default function Home() {
                 key={item.id || `exp-item-${index}`} 
                 className="group block h-full w-full col-span-1"
               >
-                <Card className="h-full w-full p-2 sm:p-4 flex flex-col items-center justify-center bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[2rem] border-none group-hover:-translate-y-1 ring-1 ring-black/5 overflow-hidden relative">
-                  <div className="p-2.5 sm:p-4 bg-primary/5 rounded-xl md:rounded-[1.5rem] mb-2 sm:mb-3 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
-                    <LucideIcon name={item.icon} className="w-5 h-5 sm:w-8 sm:h-8 md:w-10 md:h-10" />
+                <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-black/5 overflow-hidden relative">
+                  <div className="p-2 sm:p-3 bg-primary/5 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+                    <LucideIcon name={item.icon} className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
                   </div>
                   
-                  <h3 className="font-black text-center text-[9px] sm:text-xs md:text-sm group-hover:text-primary transition-colors px-1 leading-tight uppercase tracking-tight">
+                  <h3 className="font-black text-center text-[8px] sm:text-[10px] md:text-[11px] group-hover:text-primary transition-colors px-1 leading-tight uppercase tracking-tight">
                     {item.name[typedLanguage]}
                   </h3>
                   
-                  <div className="mt-2 opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-500 hidden md:flex items-center text-accent font-black text-[8px] uppercase tracking-[0.1em]">
+                  <div className="mt-1 opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-500 hidden md:flex items-center text-accent font-black text-[7px] uppercase tracking-[0.1em]">
                     Keşfet <ChevronRight className="h-2 w-2 ml-1" />
                   </div>
                 </Card>
