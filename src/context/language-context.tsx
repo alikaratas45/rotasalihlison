@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useState, useEffect, useCallback } from 'react';
@@ -22,6 +23,8 @@ export const LanguageContext = createContext<LanguageContextType | undefined>(un
 const translations: Record<Language, any> = { en, tr, fr, de, ja };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Sunucu tarafında veya ilk renderda varsayılan olarak 'tr' başlasın (Türkiye odaklı proje olduğu için)
+  // Ancak istemci tarafında anında cihaz diline göre güncellenecek.
   const [language, setLanguageState] = useState<Language>('tr');
   const [isAudioGuideEnabled, setIsAudioGuideEnabled] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -29,12 +32,19 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     // Sadece mount olduktan sonra tarayıcı ayarlarını oku
     const savedLang = localStorage.getItem('language') as Language;
-    if (savedLang && translations[savedLang]) {
+    const supportedLanguages: Language[] = ['en', 'tr', 'fr', 'de', 'ja'];
+    
+    if (savedLang && supportedLanguages.includes(savedLang)) {
       setLanguageState(savedLang);
     } else {
+      // Tarayıcı/Cihaz dilini al (en-US -> en)
       const browserLang = navigator.language.split('-')[0] as Language;
-      if (translations[browserLang]) {
+      
+      if (supportedLanguages.includes(browserLang)) {
         setLanguageState(browserLang);
+      } else {
+        // Eğer bu 5 dilin dışında bir dil ise İngilizce açılsın.
+        setLanguageState('en');
       }
     }
 
@@ -55,7 +65,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
-    // window.location.reload() kaldırıldı. React state değişikliği yeterlidir ve titremeyi önler.
   }, []);
 
   const toggleAudioGuide = useCallback(() => {
@@ -73,8 +82,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   const t = useCallback((key: string, ...args: any[]): string => {
-    // Hydration sırasında sunucu çıktısıyla eşleşmek için 'tr' default kalır, 
-    // ancak mount olduktan sonra anında seçili dile geçer.
+    // İstemci tarafında algılanan dil henüz yerleşmediyse TR, yerleştiyse algılanan dili kullan
     const activeLanguage = mounted ? language : 'tr';
     
     const keys = key.split('.');
