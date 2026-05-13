@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -66,11 +65,12 @@ function RotalarContent() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayRoutes.map(route => {
             let imageId = '';
+            // Match correct placeholder image based on route slug
             switch (route.slug.en) {
               case 'lydian-treasures-route':
                 imageId = 'gymnasium';
                 break;
-              case 'gediz-valley-nature-route':
+              case 'nature-route':
                 imageId = 'adala-volcanic-canyon';
                 break;
               case 'salihli-flavors-route':
