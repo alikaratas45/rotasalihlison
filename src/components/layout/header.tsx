@@ -56,7 +56,7 @@ export function Header() {
             <Link 
               key={link.href} 
               href={link.href} 
-              className="px-3 py-2 rounded-xl transition-all duration-300 text-slate-600 hover:bg-primary/5 hover:text-primary uppercase tracking-tight"
+              className="px-3 py-2 rounded-xl transition-all duration-300 text-foreground/80 hover:text-primary hover:bg-primary/5 uppercase tracking-tight"
             >
               {link.label}
             </Link>
@@ -92,7 +92,7 @@ export function Header() {
                             key={link.href}
                             href={link.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex items-center gap-4 p-4 rounded-xl text-base font-bold text-slate-700 hover:bg-primary/5 hover:text-primary transition-all"
+                            className="flex items-center gap-4 p-4 rounded-xl text-base font-bold text-foreground/80 hover:bg-primary/5 hover:text-primary transition-all"
                         >
                             <span className="w-1.5 h-1.5 rounded-full bg-primary/30" />
                             {link.label}
@@ -178,7 +178,7 @@ function AudioGuideToggle() {
           "rounded-xl h-8 md:h-10 px-3 md:px-4 transition-all duration-500 font-bold text-[10px] md:text-xs uppercase tracking-tighter",
           isAudioGuideEnabled 
             ? "bg-accent border-accent text-accent-foreground shadow-sm ring-2 ring-accent/20" 
-            : "text-slate-600 border-slate-200 hover:bg-primary/5 hover:text-primary"
+            : "text-foreground/80 border-border hover:bg-primary/5 hover:text-primary"
         )}
       >
         {isAudioGuideEnabled ? (

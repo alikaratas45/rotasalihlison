@@ -104,7 +104,7 @@ export default function Home() {
                       </DialogTitle>
                     </DialogHeader>
                     <div className="prose prose-slate max-w-none">
-                        <p className="text-slate-700 leading-relaxed whitespace-pre-line text-base text-justify font-medium">
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line text-base text-justify font-medium">
                           {aboutContent}
                         </p>
                     </div>
@@ -121,7 +121,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- EXPERIENCE GRID: 3 COLUMNS MOBILE, SINGLE ROW DESKTOP (10 COLS) --- */}
+      {/* --- EXPERIENCE GRID: 10 COLS PC, 3 COLS MOBILE --- */}
       <section className="py-16 md:py-24 relative bg-background overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 space-y-3">
@@ -147,12 +147,12 @@ export default function Home() {
                 key={item.id || `exp-item-${index}`} 
                 className="group block h-full w-full col-span-1"
               >
-                <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-white shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-black/5 overflow-hidden relative">
-                  <div className="p-2 sm:p-3 bg-primary/5 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+                <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-card shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-primary/5 dark:ring-white/10 overflow-hidden relative">
+                  <div className="p-2 sm:p-3 bg-primary/5 dark:bg-primary/10 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
                     <LucideIcon name={item.icon} className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
                   </div>
                   
-                  <h3 className="font-black text-center text-[8px] sm:text-[10px] md:text-[11px] group-hover:text-primary transition-colors px-1 leading-tight uppercase tracking-tight">
+                  <h3 className="font-black text-center text-[8px] sm:text-[10px] md:text-[11px] text-foreground group-hover:text-primary transition-colors px-1 leading-tight uppercase tracking-tight">
                     {item.name[typedLanguage]}
                   </h3>
                   
@@ -167,13 +167,13 @@ export default function Home() {
       </section>
 
       {/* --- GUESTBOOK --- */}
-      <section className="py-20 bg-primary/5 border-y border-primary/10 relative">
+      <section className="py-20 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center p-4 bg-white shadow-xl rounded-[1.5rem] mb-6 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
+            <div className="inline-flex items-center justify-center p-4 bg-background shadow-xl rounded-[1.5rem] mb-6 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
               <MessageSquare className="h-8 w-8" />
             </div>
-            <h2 className="text-3xl md:text-5xl font-black font-headline text-slate-900 mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-black font-headline text-foreground mb-4 tracking-tight">
                 {t('guestbook.diaryTitle')}
             </h2>
             <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto font-medium">
