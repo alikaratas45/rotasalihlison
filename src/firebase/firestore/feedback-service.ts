@@ -1,6 +1,6 @@
 
 'use client';
-import { collection, addDoc, doc, updateDoc, increment, arrayUnion, type Firestore, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, increment, arrayUnion, type Firestore, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -70,6 +70,24 @@ export function addFeedbackReply(
         path: docRef.path,
         operation: 'update',
         requestResourceData: { replies: 'arrayUnion' },
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      callbacks?.onError?.(err);
+    });
+}
+
+export function deleteFeedbackComment(
+  firestore: Firestore,
+  feedbackId: string,
+  callbacks?: { onSuccess?: () => void; onError?: (error: any) => void }
+) {
+  const docRef = doc(firestore, 'feedback', feedbackId);
+  deleteDoc(docRef)
+    .then(() => callbacks?.onSuccess?.())
+    .catch((err) => {
+      const permissionError = new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'delete',
       });
       errorEmitter.emit('permission-error', permissionError);
       callbacks?.onError?.(err);

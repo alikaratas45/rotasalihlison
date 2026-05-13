@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -14,6 +15,7 @@ import { format } from 'date-fns';
 import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/firestore/places-service';
 import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
 import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
+import { deleteFeedbackComment } from '@/firebase/firestore/feedback-service';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -25,7 +27,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -34,7 +36,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Definitions
-import type { Place, Feedback, SubPoint, ExperienceItem } from '@/lib/definitions';
+import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback } from '@/lib/definitions';
 
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
@@ -94,6 +96,7 @@ export default function AdminPage() {
     const [editingPlace, setEditingPlace] = useState<Place | null>(null);
     const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
     const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
+    const [deletingGuestbookComment, setDeletingGuestbookComment] = useState<CommentFeedback | null>(null);
     const [managingSubPointsPlace, setManagingSubPointsPlace] = useState<Place | null>(null);
     const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
     
@@ -102,6 +105,7 @@ export default function AdminPage() {
 
     const { data: places, loading: placesLoading } = useCollection<Place>(useMemo(() => query(collection(firestore, 'places')), [firestore]));
     const { data: feedbacks } = useCollection<Feedback>(useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]));
+    const { data: guestbookComments, loading: guestbookLoading } = useCollection<CommentFeedback>(useMemo(() => query(collection(firestore, 'feedback'), orderBy('createdAt', 'desc')), [firestore]));
     const { data: expItems, loading: expLoading } = useCollection<ExperienceItem>(useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]));
     const { data: aboutSettings } = useDoc<any>(useMemo(() => doc(firestore, 'settings', 'about'), [firestore]));
 
@@ -315,6 +319,7 @@ export default function AdminPage() {
                     <TabsTrigger value="experience">Salihli'de Bir Gün</TabsTrigger>
                     <TabsTrigger value="general">Genel Bilgiler</TabsTrigger>
                     <TabsTrigger value="feedbacks">Anketler</TabsTrigger>
+                    <TabsTrigger value="guestbook">Ziyaretçi Defteri</TabsTrigger>
                     <TabsTrigger value="database">Veritabanı</TabsTrigger>
                 </TabsList>
                 
@@ -460,6 +465,48 @@ export default function AdminPage() {
                     </CardContent></Card>
                 </TabsContent>
 
+                <TabsContent value="guestbook" className="p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <MessageSquare className="h-5 w-5 text-primary" />
+                                Ziyaretçi Defteri Yorumları
+                            </CardTitle>
+                            <CardDescription>Ziyaretçiler tarafından paylaşılan tüm mesajları yönetin.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className="bg-muted/50 hover:bg-muted/50">
+                                        <TableHead className="pl-6">İsim</TableHead>
+                                        <TableHead>Mesaj</TableHead>
+                                        <TableHead>Tarih</TableHead>
+                                        <TableHead className="text-right pr-6">Eylemler</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {guestbookLoading ? (
+                                        <TableRow><TableCell colSpan={4} className="p-6"><Skeleton className="h-12 w-full rounded-xl" /></TableCell></TableRow>
+                                    ) : guestbookComments?.map(comment => (
+                                        <TableRow key={comment.id} className="hover:bg-muted/30 transition-colors">
+                                            <TableCell className="pl-6 font-bold">{comment.name || 'Ziyaretçi'}</TableCell>
+                                            <TableCell className="max-w-md truncate">{comment.message}</TableCell>
+                                            <TableCell className="text-xs text-muted-foreground">
+                                                {comment.createdAt?.toDate ? format(comment.createdAt.toDate(), 'dd.MM.yy HH:mm') : '-'}
+                                            </TableCell>
+                                            <TableCell className="text-right pr-6">
+                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl" onClick={() => setDeletingGuestbookComment(comment)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 <TabsContent value="database" className="p-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="grid md:grid-cols-2 gap-8">
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
@@ -470,12 +517,12 @@ export default function AdminPage() {
                                 </Button>
                             </CardContent>
                         </Card>
-                        <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden"><CardHeader><CardTitle>Geri Yükle</CardTitle><CardDescription>Hatalı bir işlem sonrası veritabanını son yedek haline döndürür.</CardDescription></CardHeader><CardContent><Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button></CardContent></Card>
+                        <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden"><CardHeader><CardTitle>Geri Yükle</CardTitle><CardDescription>Hatalı bir işlem sonrası veritabanını son yedek haline döndürür.</CardDescription></CardHeader><CardContent><Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button></CardContent>
                     </div>
                 </TabsContent>
             </Tabs>
 
-            {/* MODALS: SCROLL FIXED & STYLED */}
+            {/* MODALS */}
             <Dialog open={!!editingPlace} onOpenChange={o => !o && setEditingPlace(null)}>
                 <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
                     <DialogHeader className="p-8 border-b shrink-0 bg-primary/5"><DialogTitle className="text-2xl font-black font-headline text-primary">Yeri Düzenle: {editingPlace?.name.tr}</DialogTitle></DialogHeader>
@@ -548,6 +595,19 @@ export default function AdminPage() {
             <AlertDialog open={!!deletingFeedback} onOpenChange={o => !o && setDeletingFeedback(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8"><AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Anket Kaydını Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">Bu anket kaydı kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader>
                 <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingFeedback) { await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id)); toast({ title: 'Silindi' }); setDeletingFeedback(null); } }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Kalıcı Olarak Sil</AlertDialogAction></AlertDialogFooter></AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={!!deletingGuestbookComment} onOpenChange={o => !o && setDeletingGuestbookComment(null)}>
+                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-2xl font-black">Yorumu Sil</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg">Bu ziyaretçi yorumu kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="pt-6">
+                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => { if(deletingGuestbookComment) deleteFeedbackComment(firestore, deletingGuestbookComment.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingGuestbookComment(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Yorumu Sil</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
             </AlertDialog>
 
             <AlertDialog open={!!deletingPlace} onOpenChange={o => !o && setDeletingPlace(null)}>
