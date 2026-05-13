@@ -4,47 +4,51 @@
 
 @layer base {
   :root {
-    --background: 60 56% 91%;
-    --foreground: 240 10% 3.9%;
-    --card: 60 56% 91%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 60 56% 91%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 140 56% 36%;
-    --primary-foreground: 60 56% 91%;
-    --secondary: 140 20% 85%;
-    --secondary-foreground: 140 56% 20%;
-    --muted: 140 10% 90%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 51 100% 50%;
-    --accent-foreground: 60 10% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* Rota Salihli Premium Palette */
+    --background: 48 40% 98%;    /* Off-white, soft cream */
+    --foreground: 220 20% 15%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+    
+    --primary: 142 35% 25%;      /* Deep Heritage Green */
+    --primary-foreground: 48 40% 98%;
+    
+    --secondary: 142 15% 94%;
+    --secondary-foreground: 142 35% 20%;
+    
+    --muted: 142 10% 92%;
+    --muted-foreground: 220 10% 45%;
+    
+    --accent: 42 75% 55%;       /* Lydian Gold */
+    --accent-foreground: 42 10% 10%;
+    
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 10% 80%;
-    --input: 140 10% 85%;
-    --ring: 140 56% 36%;
-    --radius: 0.5rem;
+    
+    --border: 142 15% 88%;
+    --input: 142 15% 88%;
+    --ring: 142 35% 25%;
+    
+    --radius: 1rem;
   }
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 0 0% 98%;
-    --card: 224 71% 4%;
-    --card-foreground: 0 0% 98%;
-    --popover: 224 71% 4%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 140 56% 45%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 51 100% 50%;
-    --accent-foreground: 60 10% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 140 56% 45%;
+    --background: 220 25% 8%;
+    --foreground: 48 20% 96%;
+    
+    --card: 220 25% 10%;
+    --card-foreground: 48 20% 96%;
+    
+    --primary: 142 30% 45%;
+    --primary-foreground: 220 25% 5%;
+    
+    --accent: 42 70% 50%;
+    --accent-foreground: 220 25% 5%;
+    
+    --border: 220 25% 15%;
   }
 }
 
@@ -57,18 +61,18 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   }
 }
 
 @layer utilities {
-    .perspective-1000 {
-        perspective: 1000px;
-    }
-    .transform-style-3d {
-        transform-style: preserve-3d;
-    }
-    .backface-hidden {
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-    }
+  .glass {
+    @apply bg-background/70 backdrop-blur-md border-white/20 shadow-xl;
+  }
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .text-shadow-strong {
+    text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  }
 }
