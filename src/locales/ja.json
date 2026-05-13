@@ -38,7 +38,7 @@
     "home": {
         "heroTitle": "サリフリを発見",
         "heroSubtitle": "サルディスの遺産、お金の中心",
-        "heroDescription": "サルディスの遺産であり、お金の中心地でもある古代の土地を私たちと一緒に発見してください。",
+        "heroDescription": "サルディスの遺産とお金の中心地、これらの古代の土地を私たちと一緒に発見してください。",
         "getStarted": "すべての場所を表示",
         "aboutSalihli": "サリフリについて",
         "experienceTitle": "サリフリでの一日",
@@ -223,7 +223,14 @@
         "title": "場所のセクション",
         "listen": "聞く",
         "directions": "ルート"
+    },
+    "pwa": {
+        "title": "アプリをインストール",
+        "description": "Rota Salihliをホーム画面に追加して、より高速でオフラインのアクセスを可能にします。",
+        "installButton": "今すぐインストール",
+        "installedTitle": "インストール済み",
+        "installedDescription": "アプリケーションがデバイスに正常に追加されました。",
+        "errorTitle": "インストールエラー",
+        "errorDescription": "インストールを開始できませんでした。ブラウザメニューを使用してください。"
     }
 }
-
-    

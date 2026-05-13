@@ -38,7 +38,7 @@
     "home": {
         "heroTitle": "Discover Salihli",
         "heroSubtitle": "Heritage of Sardis, center of money",
-        "heroDescription": "Discover the ancient lands, the heritage of Sardis and the center of money, with us.",
+        "heroDescription": "Discover the heritage of Sardis and the center of money with us on these ancient lands.",
         "getStarted": "View All Places",
         "aboutSalihli": "About Salihli",
         "experienceTitle": "A Day in Salihli",
@@ -234,5 +234,3 @@
         "errorDescription": "Installation could not be started. Please use the browser menu."
     }
 }
-
-    

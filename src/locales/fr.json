@@ -38,7 +38,7 @@
     "home": {
         "heroTitle": "Découvrez Salihli",
         "heroSubtitle": "Héritage de Sardes, centre de la monnaie",
-        "heroDescription": "Découvrez avec nous les terres ancestrales, l'héritage de Sardes et le centre de la monnaie.",
+        "heroDescription": "Découvrez avec nous l'héritage de Sardes et le centre de la monnaie sur ces terres ancestrales.",
         "getStarted": "Voir tous les lieux",
         "aboutSalihli": "À propos de Salihli",
         "experienceTitle": "Une journée à Salihli",
@@ -223,7 +223,14 @@
         "title": "Sections du lieu",
         "listen": "Écouter",
         "directions": "Itinéraire"
+    },
+    "pwa": {
+        "title": "Installer l'application",
+        "description": "Ajoutez Rota Salihli à votre écran d'accueil pour un accès plus rapide et hors ligne.",
+        "installButton": "Installer maintenant",
+        "installedTitle": "Installé",
+        "installedDescription": "L'application a été ajoutée avec succès à votre appareil.",
+        "errorTitle": "Erreur d'installation",
+        "errorDescription": "L'installation n'a pas pu être lancée. Veuillez utiliser le menu du navigateur."
     }
 }
-
-    

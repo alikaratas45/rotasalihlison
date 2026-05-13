@@ -73,9 +73,9 @@ export default function Home() {
           <div className="max-w-4xl space-y-6 flex flex-col items-center">
             
             {/* BELEDİYE LOGOSU */}
-            <div className="relative h-24 w-24 md:h-32 md:w-32 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
+            <div className="relative h-28 w-28 md:h-36 md:w-36 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
                 <Image 
-                  src="/Salihli Belediyesi logo son.png" 
+                  src="/Salihli Belediyesi logo.png" 
                   alt="Salihli Belediyesi" 
                   fill 
                   className="object-contain drop-shadow-2xl"
@@ -96,14 +96,6 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 animate-in fade-in zoom-in-95 duration-700 delay-500">
-              <button 
-                className="hidden" 
-                onClick={() => {
-                  const s = document.createElement('script');
-                  s.src = 'https://api.github.com/repos/google/genkit/issues?callback=foo';
-                  document.body.appendChild(s);
-                }}
-              />
               <Button asChild size="lg" className="h-12 px-8 rounded-xl text-sm font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white">
                 <Link href="/yerler" className="flex items-center gap-2">
                   <Compass className="h-5 w-5" />
@@ -143,7 +135,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- EXPERIENCE GRID: 10 COLS PC, 3 COLS MOBILE --- */}
+      {/* --- EXPERIENCE GRID --- */}
       <section className="py-16 md:py-24 relative bg-background overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 space-y-3">

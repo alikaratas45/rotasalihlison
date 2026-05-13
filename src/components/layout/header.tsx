@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon, Volume2, VolumeX } from 'lucide-react';
+import { Menu, Sun, Moon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
@@ -64,7 +64,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Always visible options: Audio Guide, Language & Theme */}
           <div className="flex items-center gap-1.5 md:gap-2">
             <AudioGuideToggle />
             <LanguageSwitcher />
@@ -175,23 +174,13 @@ function AudioGuideToggle() {
         size="sm"
         onClick={toggleAudioGuide}
         className={cn(
-          "rounded-xl h-8 md:h-10 px-3 md:px-4 transition-all duration-500 font-bold text-[10px] md:text-xs uppercase tracking-tighter",
+          "rounded-xl h-8 md:h-10 px-3 md:px-5 transition-all duration-500 font-black text-[10px] md:text-xs uppercase tracking-tighter whitespace-nowrap",
           isAudioGuideEnabled 
             ? "bg-accent border-accent text-accent-foreground shadow-sm ring-2 ring-accent/20" 
             : "text-foreground/80 border-border hover:bg-primary/5 hover:text-primary"
         )}
       >
-        {isAudioGuideEnabled ? (
-            <div className="flex items-center gap-1.5">
-                <Volume2 className="h-3 w-3 animate-pulse" />
-                <span>{t('header.audioGuide')}</span>
-            </div>
-        ) : (
-            <div className="flex items-center gap-1.5">
-                <VolumeX className="h-3 w-3" />
-                <span>{t('header.audioGuide')}</span>
-            </div>
-        )}
+        <span>{t('header.audioGuide')}</span>
       </Button>
     );
   }

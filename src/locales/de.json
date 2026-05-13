@@ -38,7 +38,7 @@
     "home": {
         "heroTitle": "Entdecken Sie Salihli",
         "heroSubtitle": "Erbe von Sardes, Zentrum des Geldes",
-        "heroDescription": "Entdecken Sie mit uns die alten Länder, das Erbe von Sardes und das Zentrum des Geldes.",
+        "heroDescription": "Entdecken Sie mit uns das Erbe von Sardes und das Zentrum des Geldes in diesen alten Ländern.",
         "getStarted": "Alle Orte ansehen",
         "aboutSalihli": "Über Salihli",
         "experienceTitle": "Ein Tag in Salihli",
@@ -113,7 +113,7 @@
         "maxLimitToastDescription": "Sie können maximal 10 Orte auswählen.",
         "startPlanning": "Wählen Sie Orte aus, um mit der Planung zu beginnen",
         "routeMap": "Routenkarte",
-        "locationActive": "Standort aktiv: Die Route wird beginnend mit dem Ort in Ihrer Nähe sortiert.",
+        "locationActive": "Standort aktiv: Die Route wird beginnend with dem Ort in Ihrer Nähe sortiert.",
         "locationInactive": "Wenn Sie den Standortzugriff erlauben, wird die Route so optimiert, dass sie an dem Punkt beginnt, der Ihnen am nächsten liegt.",
         "totalPlaces": "{0} Orte insgesamt",
         "sortingInfo": "Sortiert nach der geringsten Entfernung zu Ihnen.",
@@ -223,7 +223,14 @@
         "title": "Abschnitte des Ortes",
         "listen": "Anhören",
         "directions": "Anfahrt"
+    },
+    "pwa": {
+        "title": "App installieren",
+        "description": "Fügen Sie Rota Salihli zu Ihrem Startbildschirm hinzu, um einen schnelleren und Offline-Zugriff zu erhalten.",
+        "installButton": "Jetzt installieren",
+        "installedTitle": "Installiert",
+        "installedDescription": "Die Anwendung wurde erfolgreich zu Ihrem Gerät hinzugefügt.",
+        "errorTitle": "Installationsfehler",
+        "errorDescription": "Die Installation konnte nicht gestartet werden. Bitte verwenden Sie das Browsermenü."
     }
 }
-
-    
