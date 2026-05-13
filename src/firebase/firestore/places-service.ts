@@ -59,7 +59,8 @@ export async function updatePlace(
       coordinates: { lat: formData.lat, lng: formData.lng },
       imageUrl: formData.imageUrl,
       imageHint: formData.imageHint,
-      order: formData.order !== undefined ? Number(formData.order) : (currentData.order ?? 99)
+      order: formData.order !== undefined ? Number(formData.order) : (currentData.order ?? 99),
+      audioUrlTr: formData.audioUrlTr !== undefined ? formData.audioUrlTr : (currentData.audioUrlTr || null)
     };
 
     // SubPoints alanını kaybetmemek için mevcut veriyi koru veya formdan geleni al

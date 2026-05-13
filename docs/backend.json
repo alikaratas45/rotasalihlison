@@ -27,6 +27,8 @@
         "coordinates": { "$ref": "#/backend/entities/Coordinates" },
         "imageUrl": { "type": "string", "format": "uri" },
         "imageHint": { "type": "string" },
+        "audioUrlTr": { "type": "string", "format": "uri", "description": "Custom MP3 URL for Turkish audio guide." },
+        "order": { "type": "number" },
         "subPoints": {
           "type": "array",
           "items": { "$ref": "#/backend/entities/SubPoint" }
@@ -42,7 +44,8 @@
         "id": { "type": "string" },
         "name": { "$ref": "#/backend/entities/LocalizedString" },
         "description": { "$ref": "#/backend/entities/LocalizedString" },
-        "coordinates": { "$ref": "#/backend/entities/Coordinates" }
+        "coordinates": { "$ref": "#/backend/entities/Coordinates" },
+        "audioUrlTr": { "type": "string", "format": "uri", "description": "Custom MP3 URL for Turkish audio guide." }
       },
       "required": ["id", "name", "description", "coordinates"]
     },
@@ -58,9 +61,10 @@
         "satisfaction": { "type": "number" },
         "withTour": { "type": "string", "enum": ["yes", "no"] },
         "guided": { "type": "string", "enum": ["yes", "no"] },
+        "infoBoards": { "type": "string", "enum": ["yes", "no"] },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["placeId", "cleanliness", "accessibility", "satisfaction", "withTour", "guided"]
+      "required": ["placeId", "cleanliness", "accessibility", "satisfaction", "withTour", "guided", "infoBoards"]
     },
     "CommentFeedback": {
       "title": "Comment Feedback",

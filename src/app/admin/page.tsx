@@ -1,12 +1,14 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useMemo, useEffect } from 'react';
-import { useCollection, useFirestore, useDoc } from '@/firebase';
+import { useCollection, useFirestore, useDoc, useFirebaseApp } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { collection, orderBy, query, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { format } from 'date-fns';
 import { tr as trLocale } from 'date-fns/locale';
 
@@ -25,7 +27,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, Download, PieChart } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, History, RefreshCw, Plus, Layers, Info, LayoutGrid, MapPin, X, Download, PieChart, Upload, Headphones } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -56,6 +58,7 @@ const placeFormSchema = z.object({
   imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
   imageHint: z.string().optional(),
   order: z.coerce.number().min(0).optional().or(z.literal(0)),
+  audioUrlTr: z.string().optional().or(z.literal('')),
 });
 
 const experienceFormSchema = z.object({
@@ -70,6 +73,7 @@ const subPointFormSchema = z.object({
     description: localizedStringSchema,
     lat: z.coerce.number().min(-90).max(90),
     lng: z.coerce.number().min(-180).max(180),
+    audioUrlTr: z.string().optional().or(z.literal('')),
 });
 
 const settingsFormSchema = z.object({
@@ -83,9 +87,11 @@ const categoryLabels: Record<string, string> = { history: 'Tarih', nature: 'Doğ
 
 export default function AdminPage() {
     const firestore = useFirestore();
+    const firebaseApp = useFirebaseApp();
     const { toast } = useToast();
     
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isUploadingAudio, setIsUploadingAudio] = useState(false);
     const [isDatabaseActionLoading, setIsDatabaseActionLoading] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
@@ -122,11 +128,11 @@ export default function AdminPage() {
         return [...experienceItems].sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
     }, [experienceItems]);
 
-    const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99 } as any });
+    const addPlaceForm = useForm({ resolver: zodResolver(placeFormSchema), defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '' } as any });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
     const addExperienceForm = useForm({ resolver: zodResolver(experienceFormSchema), defaultValues: { name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: 10 } as any });
     const editExperienceForm = useForm({ resolver: zodResolver(experienceFormSchema) });
-    const subPointForm = useForm({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 } as any });
+    const subPointForm = useForm({ resolver: zodResolver(subPointFormSchema), defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '' } as any });
     const siteSettingsForm = useForm({ 
         resolver: zodResolver(settingsFormSchema),
         defaultValues: { aboutTitle: { tr: '', en: '' }, aboutContent: { tr: '', en: '' } }
@@ -143,7 +149,8 @@ export default function AdminPage() {
                 lng: editingPlace.coordinates?.lng || 0,
                 imageUrl: editingPlace.imageUrl || '',
                 imageHint: editingPlace.imageHint || '',
-                order: editingPlace.order ?? 99
+                order: editingPlace.order ?? 99,
+                audioUrlTr: editingPlace.audioUrlTr || ''
             }); 
         }
     }, [editingPlace, editPlaceForm]);
@@ -165,10 +172,11 @@ export default function AdminPage() {
                 name: editingSubPoint.name,
                 description: editingSubPoint.description,
                 lat: editingSubPoint.coordinates.lat,
-                lng: editingSubPoint.coordinates.lng
+                lng: editingSubPoint.coordinates.lng,
+                audioUrlTr: editingSubPoint.audioUrlTr || ''
             });
         } else {
-            subPointForm.reset({ name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14 });
+            subPointForm.reset({ name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '' });
         }
     }, [editingSubPoint, subPointForm]);
 
@@ -180,6 +188,43 @@ export default function AdminPage() {
             });
         }
     }, [aboutSettings, siteSettingsForm, isSubmitting]);
+
+    const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'place' | 'subpoint') => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.type !== 'audio/mpeg' && !file.name.endsWith('.mp3')) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Lütfen sadece .mp3 dosyası yükleyin.' });
+            return;
+        }
+
+        setIsUploadingAudio(true);
+        try {
+            const storage = getStorage(firebaseApp);
+            const randomId = Math.random().toString(36).substring(7);
+            const fileName = `audio_${randomId}.mp3`;
+            const path = type === 'place' ? `audio/places/${fileName}` : `audio/subpoints/${fileName}`;
+            
+            const storageRef = ref(storage, path);
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+
+            if (type === 'place') {
+                editPlaceForm.setValue('audioUrlTr', url);
+                setEditingPlace(prev => prev ? { ...prev, audioUrlTr: url } : null);
+            } else {
+                subPointForm.setValue('audioUrlTr', url);
+                setEditingSubPoint(prev => prev ? { ...prev, audioUrlTr: url } : null);
+            }
+            
+            toast({ title: 'Başarılı', description: 'Ses dosyası yüklendi. Değişiklikleri kaydetmeyi unutmayın.' });
+        } catch (error: any) {
+            console.error("Upload error:", error);
+            toast({ variant: 'destructive', title: 'Hata', description: 'Ses dosyası yüklenirken bir sorun oluştu.' });
+        } finally {
+            setIsUploadingAudio(false);
+        }
+    };
 
     const handleAddPlaceSubmit = (values: any) => {
         setIsSubmitting(true);
@@ -226,7 +271,7 @@ export default function AdminPage() {
         if (editingSubPoint) {
             updatedSubPoints = updatedSubPoints.map(s => 
                 s.id === editingSubPoint.id 
-                ? { ...s, name: values.name, description: values.description, coordinates: { lat: values.lat, lng: values.lng } }
+                ? { ...s, name: values.name, description: values.description, coordinates: { lat: values.lat, lng: values.lng }, audioUrlTr: values.audioUrlTr }
                 : s
             );
         } else {
@@ -234,7 +279,8 @@ export default function AdminPage() {
                 id: Math.random().toString(36).substring(7), 
                 name: values.name, 
                 description: values.description, 
-                coordinates: { lat: values.lat, lng: values.lng } 
+                coordinates: { lat: values.lat, lng: values.lng },
+                audioUrlTr: values.audioUrlTr
             };
             updatedSubPoints.push(newSubPoint);
         }
@@ -683,6 +729,37 @@ export default function AdminPage() {
                                     <Form {...subPointForm}>
                                         <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-4">
                                             {renderLocalizedFields(subPointForm, ['name', 'description'])}
+                                            
+                                            <div className="bg-primary/5 p-4 rounded-lg border border-primary/10 mt-6 space-y-4">
+                                                <h4 className="font-bold flex items-center gap-2 text-primary">
+                                                    <Headphones className="h-4 w-4" /> 
+                                                    Sesli Rehber (Türkçe)
+                                                </h4>
+                                                <div className="flex items-center gap-4">
+                                                    <Input 
+                                                        type="file" 
+                                                        accept="audio/mpeg" 
+                                                        onChange={(e) => handleAudioUpload(e, 'subpoint')} 
+                                                        className="hidden" 
+                                                        id="audio-upload-subpoint"
+                                                    />
+                                                    <Button 
+                                                        type="button" 
+                                                        variant="outline" 
+                                                        size="sm"
+                                                        onClick={() => document.getElementById('audio-upload-subpoint')?.click()}
+                                                        disabled={isUploadingAudio}
+                                                    >
+                                                        {isUploadingAudio ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Upload className="mr-2 h-4 w-4" />}
+                                                        {subPointForm.getValues('audioUrlTr') ? 'Sesi Güncelle' : 'Özel Türkçe MP3 Yükle'}
+                                                    </Button>
+                                                    {subPointForm.getValues('audioUrlTr') && (
+                                                        <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">MP3 Hazır</Badge>
+                                                    )}
+                                                </div>
+                                                <p className="text-[10px] text-muted-foreground">Eğer MP3 yüklerseniz, Türkçe dilde yapay zeka yerine bu dosya çalınacaktır.</p>
+                                            </div>
+
                                             <div className="grid grid-cols-2 gap-4">
                                                 <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
                                                 <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl></FormItem>)}/>
@@ -700,7 +777,10 @@ export default function AdminPage() {
                                         {managingSubPointsPlace?.subPoints?.map((s) => (
                                             <div key={s.id} className="flex justify-between items-center p-3 border rounded-lg bg-background">
                                                 <div>
-                                                    <p className="font-bold">{s.name.tr}</p>
+                                                    <p className="font-bold flex items-center gap-2">
+                                                        {s.name.tr}
+                                                        {s.audioUrlTr && <Headphones className="h-3 w-3 text-primary" />}
+                                                    </p>
                                                     <p className="text-xs text-muted-foreground">{s.coordinates.lat}, {s.coordinates.lng}</p>
                                                 </div>
                                                 <div className="flex gap-2">
@@ -745,6 +825,37 @@ export default function AdminPage() {
                                                 )}/>
                                                 <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel className="font-bold text-primary">Sıralama (Küçükten Büyüğe)</FormLabel><FormControl><Input type="number" className="border-primary" {...field} /></FormControl></FormItem>)}/>
                                             </div>
+                                        </div>
+
+                                        <div className="bg-primary/5 p-4 rounded-lg border border-primary/10 space-y-4">
+                                            <h4 className="font-bold flex items-center gap-2 text-primary">
+                                                <Headphones className="h-4 w-4" /> 
+                                                Sesli Rehber (Türkçe)
+                                            </h4>
+                                            <div className="flex items-center gap-4">
+                                                <Input 
+                                                    type="file" 
+                                                    accept="audio/mpeg" 
+                                                    onChange={(e) => handleAudioUpload(e, 'place')} 
+                                                    className="hidden" 
+                                                    id="audio-upload-place"
+                                                />
+                                                <Button 
+                                                    type="button" 
+                                                    variant="outline" 
+                                                    onClick={() => document.getElementById('audio-upload-place')?.click()}
+                                                    disabled={isUploadingAudio}
+                                                >
+                                                    {isUploadingAudio ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Upload className="mr-2 h-4 w-4" />}
+                                                    {editPlaceForm.getValues('audioUrlTr') ? 'Sesi Güncelle' : 'Özel Türkçe MP3 Yükle'}
+                                                </Button>
+                                                {editPlaceForm.getValues('audioUrlTr') && (
+                                                    <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">MP3 Hazır</Badge>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground italic">
+                                                Türkçe seslendirme hoşunuza gitmiyorsa buradan kendi MP3 dosyanızı yükleyebilirsiniz. Yüklendiğinde ziyaretçiler yapay zeka sesi yerine bu kaydı dinler.
+                                            </p>
                                         </div>
 
                                         {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}

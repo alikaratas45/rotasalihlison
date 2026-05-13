@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation, Utensils, ExternalLink, Info, MapPinned } from 'lucide-react';
+import { MapPin, Volume2, Pause, Loader2, ArrowLeft, Navigation, Utensils, ExternalLink, Info, MapPinned, Headphones } from 'lucide-react';
 import Link from 'next/link';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
@@ -56,6 +56,7 @@ function PlaceDetailContent() {
   
   const hasAutoplayedRef = useRef(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   const typedLanguage = language as Language;
   const firestore = useFirestore();
@@ -64,8 +65,14 @@ function PlaceDetailContent() {
   const place = useMemo(() => places?.find(p => Object.values(p.slug).includes(slug as string)), [places, slug]);
 
   const stopAudio = useCallback(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+    if (typeof window !== 'undefined') {
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        if (audioPlayerRef.current) {
+            audioPlayerRef.current.pause();
+            audioPlayerRef.current.currentTime = 0;
+        }
     }
     setIsPlaying(false);
     setIsGenerating(false);
@@ -221,12 +228,44 @@ function PlaceDetailContent() {
     }
   }, []);
 
-  const handlePlayPause = useCallback((id: string, text: string) => {
+  const handlePlayPause = useCallback((id: string, text: string, customAudioUrl?: string) => {
     if (isGenerating) return;
+    
     if (isPlaying && playingId === id) {
       stopAudio();
+      return;
+    }
+
+    // Başka bir şey çalıyorsa durdur
+    stopAudio();
+
+    // Eğer dil Türkçe ise ve özel MP3 yüklüyse MP3'ü çal
+    if (typedLanguage === 'tr' && customAudioUrl) {
+        if (!audioPlayerRef.current) {
+            audioPlayerRef.current = new Audio();
+        }
+        audioPlayerRef.current.src = customAudioUrl;
+        
+        audioPlayerRef.current.onplay = () => {
+            setIsPlaying(true);
+            setPlayingId(id);
+        };
+        audioPlayerRef.current.onended = () => {
+            setIsPlaying(false);
+            setPlayingId(null);
+        };
+        audioPlayerRef.current.onerror = () => {
+            console.warn("MP3 çalınamadı, yapay zekaya dönülüyor...");
+            speak(text, typedLanguage, id);
+        };
+
+        audioPlayerRef.current.play().catch(err => {
+            console.error("Audio playback error:", err);
+            speak(text, typedLanguage, id);
+        });
     } else {
-      speak(text, typedLanguage, id);
+        // Aksi halde yapay zeka seslendirmesi (TTS) kullan
+        speak(text, typedLanguage, id);
     }
   }, [isGenerating, isPlaying, playingId, typedLanguage, speak, stopAudio]);
 
@@ -244,17 +283,19 @@ function PlaceDetailContent() {
             ? activeSubPoint.description[typedLanguage] 
             : place.description[typedLanguage];
           const id = activeSubPoint ? activeSubPoint.id : 'main';
-          speak(textToSpeak, typedLanguage, id);
+          const audioUrl = activeSubPoint ? activeSubPoint.audioUrlTr : place.audioUrlTr;
+          handlePlayPause(id, textToSpeak, audioUrl);
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [autoplay, place, placesLoading, speak, typedLanguage, mounted, activeSubPoint]);
+  }, [autoplay, place, placesLoading, handlePlayPause, typedLanguage, mounted, activeSubPoint]);
   
   if (placesLoading || !mounted) return <PlaceDetailSkeleton />;
   if (!place) return <div className="container mx-auto px-4 py-12 text-center"><h1 className="text-4xl font-bold">{t('places.notFoundTitle')}</h1><Button asChild className="mt-8"><Link href="/yerler">{t('actions.viewAllPlaces')}</Link></Button></div>;
 
   const currentDisplayName = activeSubPoint ? activeSubPoint.name[typedLanguage] : place.name[typedLanguage];
   const currentDescription = activeSubPoint ? activeSubPoint.description[typedLanguage] : place.description[typedLanguage];
+  const currentAudioUrl = activeSubPoint ? activeSubPoint.audioUrlTr : place.audioUrlTr;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -305,11 +346,11 @@ function PlaceDetailContent() {
             <Button 
                 size="lg" 
                 variant="outline" 
-                onClick={() => handlePlayPause('main', currentDescription)} 
+                onClick={() => handlePlayPause('main', currentDescription, currentAudioUrl)} 
                 disabled={isGenerating && playingId !== 'main'} 
                 className={cn("flex-1 md:flex-none md:min-w-[200px]", activeSubPoint && "border-primary ring-1 ring-primary/20")}
             >
-              {isGenerating && playingId === 'main' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying && playingId === 'main' ? <Pause className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />}
+              {isGenerating && playingId === 'main' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying && playingId === 'main' ? <Pause className="mr-2 h-5 w-5" /> : (typedLanguage === 'tr' && currentAudioUrl ? <Headphones className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />)}
               {isGenerating && playingId === 'main' ? t('actions.loadingAudio') : isPlaying && playingId === 'main' ? t('actions.stopAudio') : t('actions.listenTo', currentDisplayName)}
             </Button>
             
@@ -359,11 +400,11 @@ function PlaceDetailContent() {
                                         <Button 
                                             variant="outline" 
                                             size="sm" 
-                                            onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage])}
+                                            onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage], sub.audioUrlTr)}
                                             disabled={isGenerating && playingId !== sub.id}
                                             className="flex-1 md:flex-none"
                                         >
-                                            {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />}
+                                            {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
                                             {t('subPoints.listen')}
                                         </Button>
                                         <Button 

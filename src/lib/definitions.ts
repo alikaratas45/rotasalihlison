@@ -17,6 +17,7 @@ export type SubPoint = {
     name: LocalizedString;
     description: LocalizedString;
     coordinates: Coordinates;
+    audioUrlTr?: string; // Custom MP3 URL for Turkish
 };
 
 export type Place = {
@@ -30,6 +31,7 @@ export type Place = {
     imageHint?: string;
     subPoints?: SubPoint[];
     order?: number;
+    audioUrlTr?: string; // Custom MP3 URL for Turkish
 };
 
 export type Route = {
