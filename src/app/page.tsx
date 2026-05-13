@@ -54,10 +54,26 @@ export default function Home() {
     return Array.from(uniqueMap.values()).sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
   }, [experienceItems]);
 
+  // Farklı boyutlar için sınıf ataması (Mosaic Layout)
+  const getGridSizeClasses = (index: number) => {
+    const sizes = [
+      "lg:col-span-6 lg:row-span-2", // 1. Büyük
+      "lg:col-span-3 lg:row-span-2", // 2. Uzun
+      "lg:col-span-3 lg:row-span-1", // 3. Küçük
+      "lg:col-span-3 lg:row-span-1", // 4. Küçük
+      "lg:col-span-4 lg:row-span-2", // 5. Orta
+      "lg:col-span-4 lg:row-span-1", // 6. Yatay
+      "lg:col-span-4 lg:row-span-1", // 7. Yatay
+      "lg:col-span-6 lg:row-span-1", // 8. Alt Geniş
+      "lg:col-span-6 lg:row-span-1", // 9. Alt Geniş
+    ];
+    return sizes[index % sizes.length];
+  };
+
   return (
     <div className="flex flex-col">
-      {/* --- HERO SECTION: MORE DRAMATIC --- */}
-      <section className="relative h-[75vh] md:h-[90vh] w-full overflow-hidden">
+      {/* --- HERO SECTION: ENHANCED READABILITY --- */}
+      <section className="relative h-[80vh] md:h-[95vh] w-full overflow-hidden">
         <Image 
           src="https://i.imgur.com/2deYxHC.png" 
           alt="Sardes Salihli" 
@@ -66,48 +82,54 @@ export default function Home() {
           className="object-cover scale-105 animate-pulse-slow" 
           priority 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-background" />
+        {/* Güçlendirilmiş Gradyan Katmanı */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-background" />
+        
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-12">
-          <div className="max-w-4xl space-y-6">
-            <span className="inline-block bg-accent/90 text-accent-foreground px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase animate-in fade-in slide-in-from-top-4 duration-700">
+          <div className="max-w-4xl space-y-8">
+            <span className="inline-block bg-accent/90 text-accent-foreground px-5 py-2 rounded-full text-xs md:text-sm font-black tracking-[0.3em] uppercase shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700">
                 {t('home.heroSubtitle')}
             </span>
-            <h1 className="text-5xl md:text-8xl font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <h1 className="text-6xl md:text-9xl font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
               {t('home.heroTitle')}
             </h1>
-            <p className="text-xl md:text-3xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-md animate-in fade-in duration-1000 delay-300">
-              Sardes'in mirası, paranın merkezi olan kadim toprakları bizimle keşfedin.
+            <p className="text-xl md:text-3xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic">
+              "Sardes'in mirası, paranın merkezi olan kadim toprakları bizimle keşfedin."
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8 animate-in fade-in zoom-in-95 duration-700 delay-500">
-              <Button asChild size="lg" className="h-16 px-10 rounded-2xl text-lg font-bold shadow-2xl hover:scale-105 transition-transform bg-primary text-white">
-                <Link href="/yerler" className="flex items-center gap-2">
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8 animate-in fade-in zoom-in-95 duration-700 delay-500">
+              <Button asChild size="lg" className="h-16 px-12 rounded-[1.25rem] text-lg font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white border-b-4 border-primary/20">
+                <Link href="/yerler" className="flex items-center gap-3">
                   <Compass className="h-6 w-6" />
                   {t('home.getStarted')}
                 </Link>
               </Button>
+              
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl text-lg font-bold glass text-white hover:bg-white/20 border-white/40">
-                    <Info className="mr-2 h-6 w-6" />
+                  <Button size="lg" variant="outline" className="h-16 px-12 rounded-[1.25rem] text-lg font-black bg-black/40 backdrop-blur-xl text-white hover:bg-black/60 border-white/20 shadow-2xl transition-all">
+                    <Info className="mr-3 h-6 w-6 text-accent" />
                     {t('home.aboutSalihli')}
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto rounded-[2rem]">
-                  <DialogHeader>
-                    <DialogTitle className="text-3xl font-headline font-black text-primary border-b pb-4">
-                        {aboutTitle}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="py-6">
-                      <p className="text-foreground/80 leading-relaxed whitespace-pre-line text-lg text-justify italic font-medium">
-                        {aboutContent}
-                      </p>
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto rounded-[2.5rem] border-none shadow-2xl p-0 overflow-hidden">
+                  <div className="p-8 md:p-12">
+                    <DialogHeader>
+                      <DialogTitle className="text-4xl font-headline font-black text-primary border-b-2 border-primary/10 pb-6 mb-6">
+                          {aboutTitle}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="prose prose-slate max-w-none">
+                        <p className="text-slate-700 leading-relaxed whitespace-pre-line text-lg text-justify font-medium">
+                          {aboutContent}
+                        </p>
+                    </div>
+                    <DialogFooter className="mt-10">
+                      <Button variant="secondary" className="rounded-xl px-10 h-12 font-bold" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>
+                          {t('actions.close')}
+                      </Button>
+                    </DialogFooter>
                   </div>
-                  <DialogFooter>
-                    <Button variant="secondary" className="rounded-xl px-8" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>
-                        {t('actions.close')}
-                    </Button>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
@@ -115,40 +137,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- EXPERIENCE GRID: CLEANER & PREMIUM --- */}
-      <section className="py-24 relative bg-background">
+      {/* --- EXPERIENCE GRID: DYNAMIC MOSAIC --- */}
+      <section className="py-32 relative bg-background overflow-hidden">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-black font-headline text-primary tracking-tight">
+          <div className="text-center mb-20 space-y-4">
+            <h2 className="text-5xl md:text-6xl font-black font-headline text-primary tracking-tight">
                 {t('home.experienceTitle')}
             </h2>
-            <p className="text-muted-foreground text-xl max-w-2xl mx-auto font-medium">
+            <p className="text-muted-foreground text-xl max-w-2xl mx-auto font-medium opacity-80">
                 {t('home.experienceSubtitle')}
             </p>
-            <div className="w-24 h-1 bg-accent mx-auto rounded-full mt-4" />
+            <div className="w-32 h-1.5 bg-accent mx-auto rounded-full mt-6" />
           </div>
           
-          <div className="mb-16">
+          <div className="mb-20">
             <PwaInstallButton />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8">
-            {experienceLoading ? Array.from({length: 5}).map((_, i) => (
-                <Card key={`skeleton-exp-${i}`} className="p-10 flex flex-col items-center justify-center aspect-square bg-muted/30 rounded-[2rem] border-none">
-                    <Skeleton className="w-16 h-16 rounded-full mb-6" />
-                    <Skeleton className="h-6 w-full" />
-                </Card>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 auto-rows-[220px]">
+            {experienceLoading ? Array.from({length: 6}).map((_, i) => (
+                <div key={`skeleton-exp-${i}`} className="lg:col-span-4 bg-muted/30 rounded-[2.5rem] animate-pulse" />
             )) : displayExperienceItems.map((item, index) => (
-              <Link href={item.link} key={item.id || `exp-item-${index}`} className="group block">
-                <Card className="p-8 md:p-10 flex flex-col items-center justify-center aspect-square bg-white shadow-sm hover:shadow-2xl transition-all duration-500 rounded-[2.5rem] border-none group-hover:-translate-y-2 ring-1 ring-black/5">
-                  <div className="p-6 bg-primary/5 rounded-[1.5rem] mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-500">
-                    <LucideIcon name={item.icon} className="w-10 h-10 md:w-12 md:h-12" />
+              <Link href={item.link} key={item.id || `exp-item-${index}`} className={cn("group block h-full w-full", getGridSizeClasses(index))}>
+                <Card className="h-full w-full p-8 flex flex-col items-center justify-center bg-white shadow-sm hover:shadow-2xl transition-all duration-500 rounded-[2.5rem] border-none group-hover:-translate-y-2 ring-1 ring-black/5 overflow-hidden relative">
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <LucideIcon name={item.icon} className="w-24 h-24 -rotate-12 translate-x-8 -translate-y-8" />
                   </div>
-                  <h3 className="font-bold text-center text-lg md:text-xl group-hover:text-primary transition-colors">
+                  
+                  <div className="p-6 bg-primary/5 rounded-[2rem] mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+                    <LucideIcon name={item.icon} className="w-12 h-12 md:w-16 md:h-16" />
+                  </div>
+                  
+                  <h3 className="font-black text-center text-xl md:text-2xl group-hover:text-primary transition-colors px-4 leading-tight uppercase tracking-tight">
                     {item.name[typedLanguage]}
                   </h3>
-                  <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center text-accent font-bold text-xs uppercase tracking-widest">
-                    Keşfet <ChevronRight className="h-3 w-3 ml-1" />
+                  
+                  <div className="mt-6 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center text-accent font-black text-xs uppercase tracking-[0.2em]">
+                    Hemen Keşfet <ChevronRight className="h-4 w-4 ml-2" />
                   </div>
                 </Card>
               </Link>
@@ -157,17 +183,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- GUESTBOOK: THEMATIC BACKGROUND --- */}
-      <section className="py-24 bg-primary/5 border-y border-primary/10">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center p-5 bg-white shadow-xl rounded-[2rem] mb-6 text-primary ring-1 ring-primary/10">
-              <MessageSquare className="h-10 w-10" />
+      {/* --- GUESTBOOK: PREMIUM THEMATIC --- */}
+      <section className="py-32 bg-primary/5 border-y border-primary/10 relative">
+        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none overflow-hidden">
+            <MessageSquare className="absolute -top-10 -left-10 w-64 h-64 rotate-12" />
+            <MessageSquare className="absolute -bottom-10 -right-10 w-64 h-64 -rotate-12" />
+        </div>
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center justify-center p-6 bg-white shadow-2xl rounded-[2.5rem] mb-8 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
+              <MessageSquare className="h-12 w-12" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-black font-headline text-slate-900 mb-4 tracking-tight">
+            <h2 className="text-5xl md:text-6xl font-black font-headline text-slate-900 mb-6 tracking-tight">
                 {t('guestbook.diaryTitle')}
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-medium">
+            <p className="text-muted-foreground text-xl max-w-2xl mx-auto font-medium">
               {t('guestbook.description')}
             </p>
           </div>
