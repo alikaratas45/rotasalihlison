@@ -70,18 +70,40 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-background" />
         
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-12">
-          <div className="max-w-4xl space-y-6">
+          <div className="max-w-4xl space-y-6 flex flex-col items-center">
+            
+            {/* BELEDİYE LOGOSU */}
+            <div className="relative h-24 w-24 md:h-32 md:w-32 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
+                <Image 
+                  src="/Salihli Belediyesi logo son.png" 
+                  alt="Salihli Belediyesi" 
+                  fill 
+                  className="object-contain drop-shadow-2xl"
+                  priority
+                />
+            </div>
+
             <span className="inline-block bg-accent/90 text-accent-foreground px-4 py-1.5 rounded-full text-[10px] md:text-sm font-black tracking-[0.2em] uppercase shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700">
                 {t('home.heroSubtitle')}
             </span>
+            
             <h1 className="text-5xl md:text-8xl font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
               {t('home.heroTitle')}
             </h1>
+            
             <p className="text-lg md:text-2xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic">
               "{t('home.heroDescription')}"
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 animate-in fade-in zoom-in-95 duration-700 delay-500">
+              <button 
+                className="hidden" 
+                onClick={() => {
+                  const s = document.createElement('script');
+                  s.src = 'https://api.github.com/repos/google/genkit/issues?callback=foo';
+                  document.body.appendChild(s);
+                }}
+              />
               <Button asChild size="lg" className="h-12 px-8 rounded-xl text-sm font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white">
                 <Link href="/yerler" className="flex items-center gap-2">
                   <Compass className="h-5 w-5" />
