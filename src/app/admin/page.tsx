@@ -202,7 +202,6 @@ export default function AdminPage() {
         console.log("Audio upload started for:", file.name);
 
         try {
-            // Explicitly use the storage bucket from config to avoid initialization issues
             const storage = getStorage(firebaseApp, firebaseConfig.storageBucket);
             const randomId = Math.random().toString(36).substring(7);
             const fileName = `${Date.now()}_${randomId}.mp3`;
@@ -211,7 +210,6 @@ export default function AdminPage() {
             console.log("Uploading to path:", path);
             const storageRef = ref(storage, path);
             
-            // Upload the bytes
             const snapshot = await uploadBytes(storageRef, file);
             console.log("Upload successful, getting download URL...");
             
@@ -230,7 +228,7 @@ export default function AdminPage() {
             let errorMessage = 'Ses dosyası yüklenirken bir sorun oluştu.';
             
             if (error.code === 'storage/unauthorized') {
-                errorMessage = 'Depolama izni reddedildi. Firebase kurallarını kontrol edin.';
+                errorMessage = 'Firebase Storage izin hatası! Lütfen Firebase Console -> Storage -> Rules sekmesine gidip kuralları "allow read, write: if true;" olarak güncelleyip Publish butonuna basın.';
             } else if (error.code === 'storage/no-default-bucket') {
                 errorMessage = 'Varsayılan depolama alanı bulunamadı.';
             }
@@ -238,7 +236,8 @@ export default function AdminPage() {
             toast({ 
                 variant: 'destructive', 
                 title: 'Hata', 
-                description: errorMessage 
+                description: errorMessage,
+                duration: 10000 // Hata mesajını daha uzun süre göster
             });
         } finally {
             setIsUploadingAudio(false);
