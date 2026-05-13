@@ -44,13 +44,10 @@ export function Header() {
         : "h-20 bg-background/80 backdrop-blur-md border-b border-primary/10 shadow-sm"
     )}>
       <div className="container h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group shrink-0">
+        <Link href="/" className="flex items-center group shrink-0">
           <div className="bg-white p-1 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-500 border border-primary/5">
-            <Logo className="h-8 w-8 md:h-9 md:w-9" />
+            <Logo className="h-8 w-8 md:h-10 md:w-10" />
           </div>
-          <span className="font-black text-lg md:text-xl font-headline tracking-tighter uppercase text-primary">
-            Rota Salihli
-          </span>
         </Link>
         
         <nav className="hidden items-center gap-1 text-xs font-black md:flex lg:gap-2">
@@ -83,9 +80,8 @@ export function Header() {
                 <SheetTitle className="sr-only">Menu</SheetTitle>
                 <div className="flex flex-col h-full bg-background">
                   <div className="p-6 border-b bg-primary/5">
-                      <Link href="/" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Logo className="h-10 w-10" />
-                        <span className="font-black font-headline text-xl tracking-tighter text-primary">ROTA SALİHLİ</span>
+                      <Link href="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Logo className="h-12 w-12" />
                       </Link>
                   </div>
                   <nav className="flex-grow overflow-y-auto py-6 px-4">
