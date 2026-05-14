@@ -140,7 +140,7 @@ export default function Home() {
       {/* --- EXPERIENCE GRID --- */}
       <section className="-mt-16 md:-mt-24 relative z-20 overflow-hidden">
         <div className="bg-background rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
-          <div className="container mx-auto px-4 sm:px-6 pt-10 pb-12 md:pt-12 md:pb-20">
+          <div className="container mx-auto px-4 sm:px-6 pt-10 pb-8 md:pt-12 md:pb-12">
             <div className="text-center mb-8 md:mb-10 space-y-3">
               <h2 className="text-3xl md:text-5xl font-black font-headline text-primary tracking-tight">
                   {t('home.experienceTitle')}
@@ -185,10 +185,10 @@ export default function Home() {
       </section>
 
       {/* --- GUESTBOOK --- */}
-      <section className="py-10 md:py-14 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
+      <section className="py-8 md:py-10 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
         <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center mb-8 md:mb-12">
-            <div className="inline-flex items-center justify-center p-4 bg-background shadow-xl rounded-[1.5rem] mb-6 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
+          <div className="text-center mb-6 md:mb-8">
+            <div className="inline-flex items-center justify-center p-4 bg-background shadow-xl rounded-[1.5rem] mb-4 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
               <MessageSquare className="h-8 w-8" />
             </div>
             <h2 className="text-3xl md:text-5xl font-black font-headline text-foreground mb-4 tracking-tight">
