@@ -105,7 +105,7 @@ export default function AdminPage() {
     const [isUploadingAudio, setIsUploadingAudio] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
-    // ID based tracking for active items in dialogs
+    // ID tabanlı takip - En güvenli yöntem
     const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
     const [deletingPlaceId, setDeletingPlaceId] = useState<string | null>(null);
     const [managingSubPointsPlaceId, setManagingSubPointsPlaceId] = useState<string | null>(null);
@@ -117,7 +117,7 @@ export default function AdminPage() {
     const [editingExpItemId, setEditingExpItemId] = useState<string | null>(null);
     const [deletingExpItemId, setDeletingExpItemId] = useState<string | null>(null);
 
-    // Memoized queries to prevent re-renders
+    // Ana verileri Firestore'dan dinliyoruz
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
     const feedbacksQuery = useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]);
     const guestbookQuery = useMemo(() => query(collection(firestore, 'feedback'), orderBy('createdAt', 'desc')), [firestore]);
@@ -130,7 +130,7 @@ export default function AdminPage() {
     const { data: expItems, loading: expLoading } = useCollection<ExperienceItem>(experienceQuery);
     const { data: aboutSettings } = useDoc<any>(aboutDocRef);
 
-    // Derived active items from main data arrays
+    // ID üzerinden aktif nesneleri süzüyoruz
     const editingPlace = useMemo(() => places?.find(p => p.id === editingPlaceId) || null, [places, editingPlaceId]);
     const deletingPlace = useMemo(() => places?.find(p => p.id === deletingPlaceId) || null, [places, deletingPlaceId]);
     const managingSubPointsPlace = useMemo(() => places?.find(p => p.id === managingSubPointsPlaceId) || null, [places, managingSubPointsPlaceId]);
@@ -273,10 +273,21 @@ export default function AdminPage() {
     };
 
     const handleDeleteSubPoint = (subId: string) => {
-        if (!managingSubPointsPlace || !confirm('Bu alt başlık kalıcı olarak silinsin mi?')) return;
-        const updatedSubPoints = managingSubPointsPlace.subPoints?.filter(x => x.id !== subId) || [];
-        updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, {
-            onSuccess: () => toast({ title: 'Alt başlık silindi' })
+        if (!managingSubPointsPlaceId || !places) return;
+        const place = places.find(p => p.id === managingSubPointsPlaceId);
+        if (!place || !confirm('Bu alt başlık kalıcı olarak silinsin mi?')) return;
+        
+        setIsSubmitting(true);
+        const updatedSubPoints = place.subPoints?.filter(x => x.id !== subId) || [];
+        
+        updateSubPoints(firestore, place.id, updatedSubPoints, {
+            onSuccess: () => {
+                toast({ title: 'Alt başlık silindi' });
+                setIsSubmitting(false);
+            },
+            onError: () => {
+                setIsSubmitting(false);
+            }
         });
     };
 
@@ -777,7 +788,10 @@ export default function AdminPage() {
                                         {renderLocalizedFields(subPointForm, ['name', 'description'])}
                                         <div className="grid grid-cols-2 gap-6"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/></div>
                                         <div className="flex gap-4 pt-4">
-                                            <Button type="submit" disabled={isSubmitting} className="flex-1 h-12 rounded-xl font-bold shadow-md">{editingSubPoint ? 'Güncelle' : 'Ekle'}</Button>
+                                            <Button type="submit" disabled={isSubmitting} className="flex-1 h-12 rounded-xl font-bold shadow-md">
+                                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                {editingSubPoint ? 'Güncelle' : 'Ekle'}
+                                            </Button>
                                             {editingSubPoint && <Button type="button" variant="ghost" onClick={() => { setEditingSubPoint(null); subPointForm.reset(); }} className="h-12 rounded-xl">Vazgeç</Button>}
                                         </div>
                                     </form>
@@ -799,7 +813,9 @@ export default function AdminPage() {
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}><FilePenLine className="h-5 w-5" /></Button>
-                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => handleDeleteSubPoint(s.id)}><Trash2 className="h-5 w-5" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => handleDeleteSubPoint(s.id)} disabled={isSubmitting}>
+                                                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+                                                </Button>
                                             </div>
                                         </div>
                                     )) || <p className="text-center py-20 text-muted-foreground italic bg-muted/20 rounded-[2rem]">Henüz alt başlık eklenmemiş.</p>}
