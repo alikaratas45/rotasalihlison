@@ -46,16 +46,6 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    if (values.username !== 'salihli_belediye') {
-        toast({
-            variant: 'destructive',
-            title: 'Giriş Başarısız',
-            description: 'Kullanıcı adı veya şifre geçersiz.',
-        });
-        setIsSubmitting(false);
-        return;
-    }
-
     try {
       const user = await signInWithUsername(auth, firestore, values.username, values.password);
       if (user) {
@@ -66,11 +56,19 @@ export default function LoginPage() {
         router.push('/admin');
       }
     } catch (error: any) {
-      let description = 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.';
-       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-         description =
-           'Kimlik bilgileri geçersiz. Lütfen bilgilerinizi kontrol edin.';
-       }
+      let description = 'Giriş sırasında bir hata oluştu. Lütfen bilgilerinizi kontrol edin.';
+      
+      // Firebase hata kodlarına göre özel mesajlar
+      if (
+        error.code === 'auth/invalid-credential' || 
+        error.code === 'auth/user-not-found' || 
+        error.code === 'auth/wrong-password' ||
+        error.message === 'auth/invalid-credential'
+      ) {
+        description = 'Kullanıcı adı veya şifre geçersiz. Lütfen tekrar deneyin.';
+      } else if (error.code === 'auth/too-many-requests') {
+        description = 'Çok fazla başarısız deneme yapıldı. Lütfen biraz bekleyip tekrar deneyin.';
+      }
 
       toast({
         variant: 'destructive',
@@ -83,15 +81,15 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
+      <Card className="w-full max-w-sm border-none shadow-2xl rounded-[2rem] overflow-hidden">
+        <CardHeader className="text-center bg-primary/5 pb-8 pt-10">
           <div className="mb-4 flex justify-center">
-            <Logo className="h-12 w-12 text-primary" />
+            <Logo className="h-16 w-16" />
           </div>
-          <CardTitle className="text-2xl">Admin Paneli</CardTitle>
-          <CardDescription>Yönetim paneline erişmek için giriş yapın.</CardDescription>
+          <CardTitle className="text-2xl font-black font-headline text-primary">Admin Paneli</CardTitle>
+          <CardDescription className="font-medium text-slate-500">Yönetim paneline erişmek için bilgilerinizi girin.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-8 px-8 pb-10">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -99,9 +97,13 @@ export default function LoginPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Kullanıcı Adı</FormLabel>
+                    <FormLabel className="font-bold text-slate-700">Kullanıcı Adı</FormLabel>
                     <FormControl>
-                      <Input placeholder="Kullanıcı adınızı girin" {...field} />
+                      <Input 
+                        placeholder="" 
+                        {...field} 
+                        className="rounded-xl h-12 focus:ring-2 focus:ring-primary/20 border-slate-200" 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,16 +114,27 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Şifre</FormLabel>
+                    <FormLabel className="font-bold text-slate-700">Şifre</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="rounded-xl h-12 focus:ring-2 focus:ring-primary/20 border-slate-200" 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button 
+                type="submit" 
+                className="w-full h-14 rounded-xl font-black text-lg shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : null}
                 Giriş Yap
               </Button>
             </form>
