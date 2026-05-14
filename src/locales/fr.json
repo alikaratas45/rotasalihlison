@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Accueil",
@@ -176,6 +175,10 @@
         "legendText": "* La ligne bleu foncé sur la carte représente {0}.",
         "wikilocDetailTitle": "Détail de l'Itinéraire Wikiloc : {0}",
         "routes": {
+            "adala": {
+                "name": "Randonnée du Canyon Volcanique d'Adala",
+                "description": "Une marche inoubliable au cœur du Géoparc mondial UNESCO Kula-Salihli, parmi d'immenses formations de lave sculptées par le fleuve Gediz."
+            },
             "kursunlu": {
                 "name": "Itinéraire de randonnée de Kurşunlu",
                 "description": "Un sentier agréable dans la nature unique des sources thermales de Kurşunlu, s'étendant le long de la vallée où vous sentirez la fraîcheur des eaux curatives."

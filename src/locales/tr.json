@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Ana Sayfa",
@@ -150,6 +149,10 @@
         "legendText": "* Harita üzerinde koyu mavi çizgi ile gösterilen rota {0}'nı temsil eder.",
         "wikilocDetailTitle": "Wikiloc Rota Detayı: {0}",
         "routes": {
+            "adala": {
+                "name": "Adala Volkanik Kanyon Yürüyüşü",
+                "description": "Kula-Salihli UNESCO Küresel Jeoparkı'nın kalbinde, Gediz Nehri'nin şekillendirdiği muazzam lav oluşumları arasında unutulmaz bir doğa yürüyüşü."
+            },
             "kursunlu": {
                 "name": "Kurşunlu Yürüyüş Rotası",
                 "description": "Kurşunlu Kaplıcaları'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur."

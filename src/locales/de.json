@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Startseite",
@@ -176,6 +175,10 @@
         "legendText": "* Die dunkelblaue Linie auf der Karte stellt die {0} dar.",
         "wikilocDetailTitle": "Wikiloc Routen-Detail: {0}",
         "routes": {
+            "adala": {
+                "name": "Adala Vulkancanyon-Wanderung",
+                "description": "Eine unvergessliche Naturwanderung inmitten der riesigen Lavaformationen, die der Fluss Gediz im Herzen des Kula-Salihli UNESCO Global Geoparks geformt hat."
+            },
             "kursunlu": {
                 "name": "Kurşunlu Wanderweg",
                 "description": "Ein angenehmer Weg in der einzigartigen Natur der Kurşunlu Thermalquellen, der sich entlang des Tals erstreckt, wo Sie die Kühle des heilenden Wassers spüren werden."

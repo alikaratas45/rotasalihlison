@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -42,6 +41,14 @@ export default function YuruyusRotalariPage() {
   
   const routes: RouteDetail[] = useMemo(() => [
     {
+      id: 'adala-walking-1',
+      name: t('hikingRoutes.routes.adala.name'),
+      distance: '7,20 km',
+      description: t('hikingRoutes.routes.adala.description'),
+      kmlUrl: '/adl.kml',
+      wikilocId: '257310763'
+    },
+    {
       id: 'kursunlu-walking-1',
       name: t('hikingRoutes.routes.kursunlu.name'),
       distance: '12,40 km',
@@ -82,7 +89,7 @@ export default function YuruyusRotalariPage() {
       try {
         const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
         const filtered = allPlaces.filter(place => {
-          // 200 meters proximity threshold (updated from 2000m)
+          // 200 meters proximity threshold
           return isPointNearRoute(place.coordinates, kmlPoints, 200);
         });
         setRoutePois(filtered);
