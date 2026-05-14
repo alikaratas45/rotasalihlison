@@ -58,7 +58,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* --- HERO SECTION --- */}
-      <section className="relative h-[80vh] md:h-[85vh] w-full overflow-hidden">
+      <section className="relative h-[75vh] md:h-[80vh] w-full overflow-hidden">
         <Image 
           src="https://i.imgur.com/2deYxHC.png" 
           alt="Sardes Salihli" 
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="max-w-4xl space-y-6 flex flex-col items-center">
             
             {/* BELEDİYE LOGOSU */}
-            <div className="relative h-28 w-28 md:h-36 md:w-36 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
+            <div className="relative h-24 w-24 md:h-32 md:w-32 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
                 <Image 
                   src="/salihli.png" 
                   alt="Salihli Belediyesi" 
@@ -89,15 +89,15 @@ export default function Home() {
                 {t('home.heroSubtitle')}
             </span>
             
-            <h1 className="text-5xl md:text-8xl font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <h1 className="text-4xl md:text-7xl font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
               {t('home.heroTitle')}
             </h1>
             
-            <p className="text-lg md:text-2xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic">
+            <p className="text-base md:text-xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic">
               "{t('home.heroDescription')}"
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in zoom-in-95 duration-700 delay-500">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in zoom-in-95 duration-700 delay-500 pb-20">
               <Button asChild size="lg" className="h-12 px-8 rounded-xl text-sm font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white">
                 <Link href="/yerler" className="flex items-center gap-2">
                   <Compass className="h-5 w-5" />
@@ -139,9 +139,9 @@ export default function Home() {
 
       {/* --- EXPERIENCE GRID --- */}
       <section className="-mt-16 md:-mt-24 relative z-20 overflow-hidden">
-        <div className="bg-background rounded-t-[2.5rem] md:rounded-t-[4rem] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
-          <div className="container mx-auto px-4 sm:px-6 pt-12 pb-16 md:pt-16 md:pb-24">
-            <div className="text-center mb-10 md:mb-12 space-y-3">
+        <div className="bg-background rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
+          <div className="container mx-auto px-4 sm:px-6 pt-10 pb-12 md:pt-12 md:pb-20">
+            <div className="text-center mb-8 md:mb-10 space-y-3">
               <h2 className="text-3xl md:text-5xl font-black font-headline text-primary tracking-tight">
                   {t('home.experienceTitle')}
               </h2>
@@ -151,7 +151,7 @@ export default function Home() {
               <div className="w-20 h-1 bg-accent mx-auto rounded-full mt-4" />
             </div>
             
-            <div className="mb-12">
+            <div className="mb-10">
               <PwaInstallButton />
             </div>
 
@@ -185,9 +185,9 @@ export default function Home() {
       </section>
 
       {/* --- GUESTBOOK --- */}
-      <section className="py-12 md:py-16 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
+      <section className="py-10 md:py-14 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
         <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center mb-10 md:mb-16">
+          <div className="text-center mb-8 md:mb-12">
             <div className="inline-flex items-center justify-center p-4 bg-background shadow-xl rounded-[1.5rem] mb-6 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
               <MessageSquare className="h-8 w-8" />
             </div>
