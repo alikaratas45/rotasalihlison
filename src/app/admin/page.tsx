@@ -26,7 +26,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare, ImageIcon } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare, ImageIcon, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -37,6 +37,10 @@ import Image from 'next/image';
 
 // Definitions
 import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback } from '@/lib/definitions';
+
+// Constants
+const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
+const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
 
 // Helper to fix common URL mistakes
 const sanitizeImageUrl = (url: string | undefined) => {
@@ -92,8 +96,47 @@ const settingsFormSchema = z.object({
     aboutContent: localizedStringSchema,
 });
 
-const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
-const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
+// Helper Component for Localized Fields
+const LocalizedFields = ({ form, fieldNames, prefix = "" }: { form: any, fieldNames: string[], prefix?: string }) => {
+    return (
+        <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
+            {languages.map((lang) => (
+                <AccordionItem value={lang} key={`${prefix}${lang}`}>
+                    <AccordionTrigger className="py-2 hover:no-underline">
+                        <Badge variant="outline" className="mr-2">{lang.toUpperCase()}</Badge> {languageNames[lang]}
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4 border-t mt-2">
+                        {fieldNames.includes('name') && (
+                            <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>İsim</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
+                            )} />
+                        )}
+                        {fieldNames.includes('title') && (
+                            <FormField control={form.control} name={`${prefix}aboutTitle.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>Başlık</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
+                            )} />
+                        )}
+                        {fieldNames.includes('description') && (
+                            <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>Açıklama</FormLabel><FormControl><Textarea rows={4} {...field} value={field.value || ''} /></FormControl></FormItem>
+                            )} />
+                        )}
+                        {fieldNames.includes('content') && (
+                            <FormField control={form.control} name={`${prefix}aboutContent.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>İçerik</FormLabel><FormControl><Textarea rows={10} {...field} value={field.value || ''} /></FormControl></FormItem>
+                            )} />
+                        )}
+                        {fieldNames.includes('slug') && (
+                            <FormField control={form.control} name={`${prefix}slug.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>Link Metni (Slug)</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
+                            )} />
+                        )}
+                    </AccordionContent>
+                </AccordionItem>
+            ))}
+        </Accordion>
+    );
+};
 
 export default function AdminPage() {
     const firestore = useFirestore();
@@ -105,7 +148,7 @@ export default function AdminPage() {
     const [isUploadingAudio, setIsUploadingAudio] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
-    // ID tabanlı takip - En güvenli yöntem
+    // ID tracking states
     const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
     const [deletingPlaceId, setDeletingPlaceId] = useState<string | null>(null);
     const [managingSubPointsPlaceId, setManagingSubPointsPlaceId] = useState<string | null>(null);
@@ -113,11 +156,12 @@ export default function AdminPage() {
     const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
     const [deletingGuestbookComment, setDeletingGuestbookComment] = useState<CommentFeedback | null>(null);
     const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
-    
+    const [subPointIndexToDelete, setSubPointIndexToDelete] = useState<number | null>(null);
+
     const [editingExpItemId, setEditingExpItemId] = useState<string | null>(null);
     const [deletingExpItemId, setDeletingExpItemId] = useState<string | null>(null);
 
-    // Ana verileri Firestore'dan dinliyoruz
+    // Data queries
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
     const feedbacksQuery = useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]);
     const guestbookQuery = useMemo(() => query(collection(firestore, 'feedback'), orderBy('createdAt', 'desc')), [firestore]);
@@ -130,7 +174,7 @@ export default function AdminPage() {
     const { data: expItems, loading: expLoading } = useCollection<ExperienceItem>(experienceQuery);
     const { data: aboutSettings } = useDoc<any>(aboutDocRef);
 
-    // ID üzerinden aktif nesneleri süzüyoruz
+    // Derived active objects
     const editingPlace = useMemo(() => places?.find(p => p.id === editingPlaceId) || null, [places, editingPlaceId]);
     const deletingPlace = useMemo(() => places?.find(p => p.id === deletingPlaceId) || null, [places, deletingPlaceId]);
     const managingSubPointsPlace = useMemo(() => places?.find(p => p.id === managingSubPointsPlaceId) || null, [places, managingSubPointsPlaceId]);
@@ -152,6 +196,7 @@ export default function AdminPage() {
         return feedbacks.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter);
     }, [feedbacks, feedbackPlaceFilter]);
 
+    // Forms
     const addPlaceForm = useForm({ 
         resolver: zodResolver(placeFormSchema), 
         defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '', imageUrl: '' } as any 
@@ -206,6 +251,7 @@ export default function AdminPage() {
         }
     }, [aboutSettings, siteSettingsForm]);
 
+    // Action Handlers
     const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'place' | 'subpoint') => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -259,7 +305,8 @@ export default function AdminPage() {
         if (editingSubPoint) {
             updatedSubPoints = updatedSubPoints.map(s => s.id === editingSubPoint.id ? { ...s, ...values, coordinates: { lat: values.lat, lng: values.lng } } : s);
         } else {
-            updatedSubPoints.push({ id: Math.random().toString(36).substring(7), ...values, coordinates: { lat: values.lat, lng: values.lng } });
+            const newId = `sp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+            updatedSubPoints.push({ id: newId, ...values, coordinates: { lat: values.lat, lng: values.lng } });
         }
         updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, { 
             onSuccess: () => { 
@@ -272,20 +319,26 @@ export default function AdminPage() {
         });
     };
 
-    const handleDeleteSubPoint = (subId: string) => {
-        if (!managingSubPointsPlaceId || !places) return;
+    const handleConfirmDeleteSubPoint = () => {
+        if (subPointIndexToDelete === null || !managingSubPointsPlaceId || !places) return;
+        
         const place = places.find(p => p.id === managingSubPointsPlaceId);
-        if (!place || !confirm('Bu alt başlık kalıcı olarak silinsin mi?')) return;
+        if (!place || !place.subPoints) return;
         
         setIsSubmitting(true);
-        const updatedSubPoints = place.subPoints?.filter(x => x.id !== subId) || [];
+        const updatedSubPoints = [...place.subPoints];
+        updatedSubPoints.splice(subPointIndexToDelete, 1);
         
         updateSubPoints(firestore, place.id, updatedSubPoints, {
             onSuccess: () => {
                 toast({ title: 'Alt başlık silindi' });
+                setSubPointIndexToDelete(null);
                 setIsSubmitting(false);
             },
-            onError: () => {
+            onError: (err) => {
+                console.error("Silme hatası:", err);
+                toast({ variant: 'destructive', title: 'Hata', description: 'Silme işlemi başarısız oldu.' });
+                setSubPointIndexToDelete(null);
                 setIsSubmitting(false);
             }
         });
@@ -371,47 +424,6 @@ export default function AdminPage() {
         link.click();
     };
 
-    const renderLocalizedFields = (form: any, fieldNames: string[], prefix = "") => {
-        return (
-            <Accordion type="multiple" defaultValue={['tr', 'en']} className="w-full space-y-4">
-                {languages.map((lang) => (
-                    <AccordionItem value={lang} key={`${prefix}${lang}`}>
-                        <AccordionTrigger className="py-2 hover:no-underline">
-                            <Badge variant="outline" className="mr-2">{lang.toUpperCase()}</Badge> {languageNames[lang]}
-                        </AccordionTrigger>
-                        <AccordionContent className="space-y-4 pt-4 border-t mt-2">
-                            {fieldNames.includes('name') && (
-                                <FormField control={form.control} name={`${prefix}name.${lang}`} render={({ field }) => (
-                                    <FormItem><FormLabel>İsim</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
-                                )} />
-                            )}
-                            {fieldNames.includes('title') && (
-                                <FormField control={form.control} name={`${prefix}aboutTitle.${lang}`} render={({ field }) => (
-                                    <FormItem><FormLabel>Başlık</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
-                                )} />
-                            )}
-                            {fieldNames.includes('description') && (
-                                <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
-                                    <FormItem><FormLabel>Açıklama</FormLabel><FormControl><Textarea rows={4} {...field} value={field.value || ''} /></FormControl></FormItem>
-                                )} />
-                            )}
-                            {fieldNames.includes('content') && (
-                                <FormField control={form.control} name={`${prefix}aboutContent.${lang}`} render={({ field }) => (
-                                    <FormItem><FormLabel>İçerik</FormLabel><FormControl><Textarea rows={10} {...field} value={field.value || ''} /></FormControl></FormItem>
-                                )} />
-                            )}
-                            {fieldNames.includes('slug') && (
-                                <FormField control={form.control} name={`${prefix}slug.${lang}`} render={({ field }) => (
-                                    <FormItem><FormLabel>Link Metni (Slug)</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
-                                )} />
-                            )}
-                        </AccordionContent>
-                    </AccordionItem>
-                ))}
-            </Accordion>
-        );
-    };
-
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-20">
             <Tabs defaultValue="places" className="w-full">
@@ -424,13 +436,13 @@ export default function AdminPage() {
                     <TabsTrigger value="database">Veritabanı</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="places" className="p-4 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TabsContent value="places" className="p-4 space-y-8">
                     <Card className="rounded-[2rem] shadow-xl border-none">
                         <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
                         <CardContent>
                             <Form {...addPlaceForm}>
                                 <form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-6">
-                                    {renderLocalizedFields(addPlaceForm, ['name', 'slug', 'description'])}
+                                    <LocalizedFields form={addPlaceForm} fieldNames={['name', 'slug', 'description']} />
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
                                             <FormItem>
@@ -494,7 +506,7 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="experience" className="p-4 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TabsContent value="experience" className="p-4 space-y-8">
                     <Card className="rounded-[2rem] shadow-xl border-none">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -506,7 +518,7 @@ export default function AdminPage() {
                         <CardContent>
                             <Form {...expItemForm}>
                                 <form onSubmit={expItemForm.handleSubmit(handleExpItemSubmit)} className="space-y-6">
-                                    {renderLocalizedFields(expItemForm, ['name'])}
+                                    <LocalizedFields form={expItemForm} fieldNames={['name']} />
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <FormField control={expItemForm.control} name="icon" render={({ field }) => (
                                             <FormItem>
@@ -574,7 +586,7 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="general" className="p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TabsContent value="general" className="p-4 space-y-6">
                     <Card className="rounded-[2rem] shadow-xl border-none">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5 text-primary" /> Hakkımızda / Tanıtım Metni</CardTitle>
@@ -583,7 +595,7 @@ export default function AdminPage() {
                         <CardContent>
                             <Form {...siteSettingsForm}>
                                 <form onSubmit={siteSettingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-6">
-                                    {renderLocalizedFields(siteSettingsForm, ['title', 'content'])}
+                                    <LocalizedFields form={siteSettingsForm} fieldNames={['title', 'content']} />
                                     <Button type="submit" disabled={isSubmitting} className="rounded-xl px-12 h-12 font-bold shadow-lg">
                                         {isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet
                                     </Button>
@@ -593,7 +605,7 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="feedbacks" className="p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TabsContent value="feedbacks" className="p-4 space-y-6">
                     <div className="grid md:grid-cols-4 gap-6">
                         <Card className="p-6 rounded-[2rem] bg-primary shadow-xl border-none text-white flex flex-col gap-4">
                             <h3 className="font-bold flex items-center gap-2"><PieChart className="h-5 w-5" /> Filtrele</h3>
@@ -638,7 +650,7 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="guestbook" className="p-4 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TabsContent value="guestbook" className="p-4 space-y-6">
                     <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -680,7 +692,7 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="database" className="p-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <TabsContent value="database" className="p-4">
                     <div className="grid md:grid-cols-2 gap-8">
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
                             <CardHeader><CardTitle>Kod Güncelleme</CardTitle><CardDescription>Statik verilerdeki (kod içindeki) güncellemeleri veritabanına yansıtır.</CardDescription></CardHeader>
@@ -720,7 +732,7 @@ export default function AdminPage() {
                                                 {editPlaceForm.getValues('audioUrlTr') && <Badge className="bg-green-600 text-white border-none rounded-lg font-bold px-4 py-1.5">MP3 Yüklü</Badge>}
                                             </div>
                                         </div>
-                                        {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
+                                        <LocalizedFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (
                                                 <FormItem>
@@ -785,7 +797,7 @@ export default function AdminPage() {
                                                 )} />
                                             </div>
                                         </div>
-                                        {renderLocalizedFields(subPointForm, ['name', 'description'])}
+                                        <LocalizedFields form={subPointForm} fieldNames={['name', 'description']} />
                                         <div className="grid grid-cols-2 gap-6"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/></div>
                                         <div className="flex gap-4 pt-4">
                                             <Button type="submit" disabled={isSubmitting} className="flex-1 h-12 rounded-xl font-bold shadow-md">
@@ -798,8 +810,8 @@ export default function AdminPage() {
                                 </Form>
                                 <div className="space-y-4">
                                     <h4 className="font-black text-sm text-muted-foreground uppercase tracking-widest border-b-2 border-primary/10 pb-4">Ekli Alt Başlıklar</h4>
-                                    {managingSubPointsPlace?.subPoints?.map(s => (
-                                        <div key={s.id} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
+                                    {managingSubPointsPlace?.subPoints?.map((s, index) => (
+                                        <div key={`${s.id}-${index}`} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
                                             <div className="flex items-center gap-4">
                                                 {s.imageUrl && (
                                                     <div className="relative h-12 w-12 rounded-lg overflow-hidden shrink-0 border border-muted">
@@ -813,7 +825,7 @@ export default function AdminPage() {
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}><FilePenLine className="h-5 w-5" /></Button>
-                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => handleDeleteSubPoint(s.id)} disabled={isSubmitting}>
+                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => setSubPointIndexToDelete(index)} disabled={isSubmitting}>
                                                     {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
                                                 </Button>
                                             </div>
@@ -825,6 +837,31 @@ export default function AdminPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            {/* CONFIRM DELETE SUBPOINT ALERT DIALOG */}
+            <AlertDialog open={subPointIndexToDelete !== null} onOpenChange={o => !o && setSubPointIndexToDelete(null)}>
+                <AlertDialogContent className="rounded-[2.5rem] border-none shadow-2xl p-10 max-w-md">
+                    <AlertDialogHeader className="flex flex-col items-center text-center">
+                        <div className="h-20 w-20 bg-destructive/10 rounded-full flex items-center justify-center mb-6">
+                            <AlertCircle className="h-10 w-10 text-destructive" />
+                        </div>
+                        <AlertDialogTitle className="text-2xl font-black font-headline">Alt Başlığı Sil</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg font-medium text-slate-600 mt-2">
+                            Bu alt başlık kalıcı olarak silinecektir. Bu işlem geri alınamaz.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex flex-col sm:flex-row gap-3 mt-10">
+                        <AlertDialogCancel className="rounded-xl h-12 px-8 flex-1 border-slate-200">Vazgeç</AlertDialogCancel>
+                        <AlertDialogAction 
+                            onClick={handleConfirmDeleteSubPoint} 
+                            disabled={isSubmitting}
+                            className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-black flex-1 shadow-lg shadow-destructive/20"
+                        >
+                            {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Evet, Kalıcı Olarak Sil'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
             <AlertDialog open={!!deletingFeedback} onOpenChange={o => !o && setDeletingFeedback(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">

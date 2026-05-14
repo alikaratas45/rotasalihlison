@@ -87,7 +87,9 @@ export function updateSubPoints(
 ) {
   if (!firestore || !placeId) return;
   const docRef = doc(firestore, 'places', placeId);
-  updateDoc(docRef, { subPoints })
+  
+  // Array data update is better handled by replacing the field
+  updateDoc(docRef, { subPoints: subPoints })
     .then(() => callbacks?.onSuccess?.())
     .catch(async (err) => {
       const permissionError = new FirestorePermissionError({
