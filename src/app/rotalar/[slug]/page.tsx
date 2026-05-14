@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -132,6 +133,7 @@ export default function RouteDetailPage() {
                             <Image
                                 src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
                                 alt={place.name[typedLanguage]} data-ai-hint={place.imageHint || 'landmark'} fill className="object-cover"
+                                sizes="400px"
                             />
                         </div>
                         <CardContent className="p-6 flex-1 flex flex-col justify-center">

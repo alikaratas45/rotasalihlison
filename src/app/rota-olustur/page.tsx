@@ -273,7 +273,7 @@ export default function RotaOlusturPage() {
                                              data-ai-hint={place.imageHint || 'landmark'}
                                              fill
                                              className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                             sizes="(max-width: 768px) 80px, 96px"
+                                             sizes="100px"
                                         />
                                         <div className={cn(
                                             "absolute inset-0 bg-primary/20 transition-opacity duration-500",
@@ -311,5 +311,3 @@ export default function RotaOlusturPage() {
         </div>
     );
 }
-
-    

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -224,6 +225,7 @@ export default function YuruyusRotalariPage() {
                                     data-ai-hint={place.imageHint || 'landmark'}
                                     fill
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    sizes="400px"
                                 />
                                 <div className="absolute top-4 left-4">
                                     <Badge className="bg-white/90 text-primary hover:bg-white font-bold backdrop-blur-sm border-none shadow-sm">

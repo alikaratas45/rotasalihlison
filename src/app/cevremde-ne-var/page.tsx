@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -147,6 +148,7 @@ export default function AroundMePage() {
                                             data-ai-hint={place.imageHint || 'landmark'}
                                             fill
                                             className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                            sizes="100px"
                                         />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -197,6 +199,7 @@ export default function AroundMePage() {
                                     data-ai-hint={place.imageHint || 'landmark'}
                                     fill
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    sizes="400px"
                                 />
                                 <div className="absolute top-4 left-4">
                                     <Badge className="bg-white/90 text-primary hover:bg-white font-bold backdrop-blur-sm border-none shadow-sm">

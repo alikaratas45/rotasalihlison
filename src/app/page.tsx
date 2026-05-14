@@ -65,6 +65,7 @@ export default function Home() {
           data-ai-hint="ancient ruins" 
           fill 
           className="object-cover scale-105" 
+          sizes="100vw"
           priority 
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-background" />
@@ -79,6 +80,7 @@ export default function Home() {
                   alt="Salihli Belediyesi" 
                   fill 
                   className="object-contain drop-shadow-2xl"
+                  sizes="150px"
                   priority
                 />
             </div>

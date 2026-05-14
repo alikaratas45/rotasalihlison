@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -86,6 +87,7 @@ export default function StoryDetailPage() {
                   data-ai-hint={relatedPlace.imageHint || 'landscape'}
                   fill
                   className="object-cover"
+                  sizes="500px"
                 />
               </div>
               <div className="p-6 flex flex-col justify-center">

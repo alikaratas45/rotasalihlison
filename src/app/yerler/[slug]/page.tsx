@@ -324,6 +324,7 @@ function PlaceDetailContent() {
                     data-ai-hint={place.imageHint || 'landmark'} 
                     fill 
                     className="object-cover transition-opacity duration-500" 
+                    sizes="800px"
                     priority 
                 />
                 {activeSubPoint && (

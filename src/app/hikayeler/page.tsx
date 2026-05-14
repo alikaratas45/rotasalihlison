@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -79,6 +80,7 @@ function HikayelerContent() {
                       data-ai-hint={story.placeholder?.imageHint || 'story cover'}
                       fill
                       className="object-cover"
+                      sizes="400px"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                      <div className="absolute bottom-0 p-6 text-white">

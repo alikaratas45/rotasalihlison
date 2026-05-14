@@ -52,6 +52,7 @@ export default function LezzetlerPage() {
                   fill 
                   className="object-cover"
                   data-ai-hint="grilled meatballs"
+                  sizes="500px"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden" />
               </div>
@@ -100,5 +101,3 @@ export default function LezzetlerPage() {
     </div>
   );
 }
-
-    

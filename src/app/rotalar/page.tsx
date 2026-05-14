@@ -88,6 +88,7 @@ function RotalarContent() {
                         data-ai-hint={placeholder?.imageHint || 'route map'}
                         fill
                         className="object-cover"
+                        sizes="400px"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     </div>

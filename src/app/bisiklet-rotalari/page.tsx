@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -234,6 +235,7 @@ export default function BisikletRotalariPage() {
                                     data-ai-hint={place.imageHint || 'landmark'}
                                     fill
                                     className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    sizes="400px"
                                 />
                                 <div className="absolute top-4 left-4">
                                     <Badge className="bg-white/90 text-primary hover:bg-white font-bold backdrop-blur-sm border-none shadow-sm">
@@ -282,7 +284,7 @@ export default function BisikletRotalariPage() {
                             height="500" 
                             frameBorder="0" 
                             scrolling="no"
-                            title={`${t(`bicycleRoutes.routes.${activeRoute.key}.name`)} Wikiloc Detayı`}
+                            title={`${t(`bicycleRoutes.routes.${route.key}.name`)} Wikiloc Detayı`}
                             className="w-full"
                         ></iframe>
                     </div>

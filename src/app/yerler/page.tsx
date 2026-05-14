@@ -136,6 +136,7 @@ function YerlerContent() {
                         data-ai-hint={place.imageHint || 'landmark'}
                         fill
                         className="object-cover"
+                        sizes="400px"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                     </div>
