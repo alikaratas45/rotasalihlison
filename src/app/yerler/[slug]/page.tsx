@@ -99,7 +99,11 @@ function PlaceDetailContent() {
 
           if (place.subPoints && place.subPoints.length > 0) {
               let nearestSub: SubPoint | null = null;
-              let minDistance = 30;
+              
+              // Gymnasium (ID: 12) ve Artemis Tapınağı (ID: 13) için alt başlık algılama mesafesi 15m.
+              // Diğer yerler için standart 30m.
+              const detectionThreshold = (place.id === '12' || place.id === '13') ? 15 : 30;
+              let minDistance = detectionThreshold;
 
               for (const sub of place.subPoints) {
                   const dist = calculateDistance(lat, lng, sub.coordinates.lat, sub.coordinates.lng);
