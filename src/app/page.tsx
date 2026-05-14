@@ -97,7 +97,7 @@ export default function Home() {
               "{t('home.heroDescription')}"
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in zoom-in-95 duration-700 delay-500 pb-20">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in zoom-in-95 duration-700 delay-500 pb-10">
               <Button asChild size="lg" className="h-12 px-8 rounded-xl text-sm font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white">
                 <Link href="/yerler" className="flex items-center gap-2">
                   <Compass className="h-5 w-5" />
@@ -112,19 +112,21 @@ export default function Home() {
                     {t('home.aboutSalihli')}
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none shadow-2xl p-0">
-                  <div className="p-8 md:p-10">
-                    <DialogHeader>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col rounded-[2rem] border-none shadow-2xl p-0">
+                  <div className="p-8 md:p-10 flex flex-col h-full">
+                    <DialogHeader className="shrink-0">
                       <DialogTitle className="text-3xl font-headline font-black text-primary border-b-2 border-primary/10 pb-4 mb-6">
                           {aboutTitle}
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="prose prose-slate max-w-none">
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line text-base text-justify font-medium">
-                          {aboutContent}
-                        </p>
+                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="prose prose-slate max-w-none">
+                            <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line text-base text-justify font-medium">
+                            {aboutContent}
+                            </p>
+                        </div>
                     </div>
-                    <DialogFooter className="mt-8">
+                    <DialogFooter className="mt-8 shrink-0">
                       <Button variant="secondary" className="rounded-xl px-8 h-11 font-bold" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>
                           {t('actions.close')}
                       </Button>
@@ -140,7 +142,7 @@ export default function Home() {
       {/* --- EXPERIENCE GRID --- */}
       <section className="-mt-16 md:-mt-24 relative z-20 overflow-hidden">
         <div className="bg-background rounded-t-[3rem] md:rounded-t-[4rem] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
-          <div className="container mx-auto px-4 sm:px-6 pt-10 pb-8 md:pt-12 md:pb-12">
+          <div className="container mx-auto px-4 sm:px-6 pt-6 pb-6 md:pt-10 md:pb-10">
             <div className="text-center mb-8 md:mb-10 space-y-3">
               <h2 className="text-3xl md:text-5xl font-black font-headline text-primary tracking-tight">
                   {t('home.experienceTitle')}
@@ -185,7 +187,7 @@ export default function Home() {
       </section>
 
       {/* --- GUESTBOOK --- */}
-      <section className="py-8 md:py-10 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
+      <section className="py-6 md:py-8 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-6 md:mb-8">
             <div className="inline-flex items-center justify-center p-4 bg-background shadow-xl rounded-[1.5rem] mb-4 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">

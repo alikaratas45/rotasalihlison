@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Ana Sayfa",
@@ -130,8 +131,8 @@
                 "description": "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur."
             },
             "kursunlu_marmara": {
-                "name": "Kurşunlu-Marmara Bisiklet Rotası",
-                "description": "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına kadar uzanan, eşsiz doğa manzaraları sunan geniş kapsamlı bir bisiklet parkuru."
+                "name": "Kurşunlu - Gölmarmara - Kemerdamları",
+                "description": "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına ve Kemerdamları'na uzanan, eşsiz doğa manzaraları sunan kapsamlı bir bisiklet parkuru."
             },
             "kula_salihli_geopark": {
                 "name": "Kula-Salihli Geopark Bisiklet Rotası",

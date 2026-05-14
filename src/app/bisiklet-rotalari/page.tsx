@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -57,7 +58,7 @@ export default function BisikletRotalariPage() {
       id: 'kursunlu-marmara-1',
       key: 'kursunlu_marmara',
       distance: '45,80 km',
-      kmlUrl: '/kursunlu-marmara.kml',
+      kmlUrl: '/kursunlu-golmarmara-kemerdamlari.kml',
       wikilocId: '35690357'
     },
     {
