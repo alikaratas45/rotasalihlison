@@ -46,7 +46,7 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     
-    if (values.username !== 'admin') {
+    if (values.username !== 'salihli_belediye') {
         toast({
             variant: 'destructive',
             title: 'Giriş Başarısız',
@@ -67,9 +67,9 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       let description = 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.';
-       if (error.code === 'auth/invalid-credential') {
+       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
          description =
-           'Kimlik bilgileri geçersiz. Şifrenizin yanlış olmadığından ve Firebase projenizde yönetici kullanıcısının (alikarataskula@gmail.com) doğru şifreyle (salihliadmin) oluşturulduğundan emin olun.';
+           'Kimlik bilgileri geçersiz. Şifrenizin yanlış olmadığından ve Firebase projenizde yönetici kullanıcısının (alikarataskula@gmail.com) yeni şifreyle (2177581A) güncellendiğinden emin olun.';
        }
 
       toast({
@@ -101,7 +101,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Kullanıcı Adı</FormLabel>
                     <FormControl>
-                      <Input placeholder="admin" {...field} />
+                      <Input placeholder="salihli_belediye" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

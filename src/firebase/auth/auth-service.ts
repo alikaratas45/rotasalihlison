@@ -12,7 +12,7 @@ import { getFirestore, type Firestore } from 'firebase/firestore';
 const ADMIN_EMAIL = 'alikarataskula@gmail.com';
 
 export const signInWithUsername = async (auth: Auth, firestore: Firestore, username: string, password: string): Promise<User | null> => {
-  if (username.toLowerCase() !== 'admin') {
+  if (username.toLowerCase() !== 'salihli_belediye') {
     throw new Error('Invalid username');
   }
   
