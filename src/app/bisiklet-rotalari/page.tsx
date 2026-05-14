@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -284,7 +283,7 @@ export default function BisikletRotalariPage() {
                             height="500" 
                             frameBorder="0" 
                             scrolling="no"
-                            title={`${t(`bicycleRoutes.routes.${route.key}.name`)} Wikiloc Detayı`}
+                            title={`${t(`bicycleRoutes.routes.${activeRoute.key}.name`)} Wikiloc Detayı`}
                             className="w-full"
                         ></iframe>
                     </div>
