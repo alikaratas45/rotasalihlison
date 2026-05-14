@@ -58,7 +58,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* --- HERO SECTION --- */}
-      <section className="relative h-[80vh] md:h-[90vh] w-full overflow-hidden">
+      <section className="relative h-[80vh] md:h-[85vh] w-full overflow-hidden">
         <Image 
           src="https://i.imgur.com/2deYxHC.png" 
           alt="Sardes Salihli" 
@@ -68,7 +68,7 @@ export default function Home() {
           sizes="100vw"
           priority 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent" />
         
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-12">
           <div className="max-w-4xl space-y-6 flex flex-col items-center">
@@ -97,7 +97,7 @@ export default function Home() {
               "{t('home.heroDescription')}"
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 animate-in fade-in zoom-in-95 duration-700 delay-500">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in zoom-in-95 duration-700 delay-500">
               <Button asChild size="lg" className="h-12 px-8 rounded-xl text-sm font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white">
                 <Link href="/yerler" className="flex items-center gap-2">
                   <Compass className="h-5 w-5" />
@@ -138,54 +138,56 @@ export default function Home() {
       </section>
 
       {/* --- EXPERIENCE GRID --- */}
-      <section className="pt-8 pb-16 md:pt-12 md:pb-24 relative bg-background overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 md:mb-12 space-y-3">
-            <h2 className="text-3xl md:text-5xl font-black font-headline text-primary tracking-tight">
-                {t('home.experienceTitle')}
-            </h2>
-            <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto font-medium opacity-80">
-                {t('home.experienceSubtitle')}
-            </p>
-            <div className="w-20 h-1 bg-accent mx-auto rounded-full mt-4" />
-          </div>
-          
-          <div className="mb-12">
-            <PwaInstallButton />
-          </div>
+      <section className="-mt-16 md:-mt-24 relative z-20 overflow-hidden">
+        <div className="bg-background rounded-t-[2.5rem] md:rounded-t-[4rem] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
+          <div className="container mx-auto px-4 sm:px-6 pt-12 pb-16 md:pt-16 md:pb-24">
+            <div className="text-center mb-10 md:mb-12 space-y-3">
+              <h2 className="text-3xl md:text-5xl font-black font-headline text-primary tracking-tight">
+                  {t('home.experienceTitle')}
+              </h2>
+              <p className="text-muted-foreground text-sm md:text-lg max-w-2xl mx-auto font-medium opacity-80">
+                  {t('home.experienceSubtitle')}
+              </p>
+              <div className="w-20 h-1 bg-accent mx-auto rounded-full mt-4" />
+            </div>
+            
+            <div className="mb-12">
+              <PwaInstallButton />
+            </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:grid-cols-10 lg:gap-3 auto-rows-[110px] md:auto-rows-[140px]">
-            {experienceLoading ? Array.from({length: 10}).map((_, i) => (
-                <div key={`skeleton-exp-${i}`} className="col-span-1 bg-muted/30 rounded-3xl animate-pulse" />
-            )) : displayExperienceItems.map((item, index) => (
-              <Link 
-                href={item.link} 
-                key={item.id || `exp-item-${index}`} 
-                className="group block h-full w-full col-span-1"
-              >
-                <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-card shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-primary/5 dark:ring-white/10 overflow-hidden relative">
-                  <div className="p-2 sm:p-3 bg-primary/5 dark:bg-primary/10 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
-                    <LucideIcon name={item.icon} className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
-                  </div>
-                  
-                  <h3 className="font-black text-center text-[8px] sm:text-[10px] md:text-[11px] text-foreground group-hover:text-primary transition-colors px-1 leading-tight uppercase tracking-tight">
-                    {item.name[typedLanguage]}
-                  </h3>
-                  
-                  <div className="mt-1 opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-500 hidden md:flex items-center text-accent font-black text-[7px] uppercase tracking-[0.1em]">
-                    Keşfet <ChevronRight className="h-2 w-2 ml-1" />
-                  </div>
-                </Card>
-              </Link>
-            ))}
+            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:grid-cols-10 lg:gap-3 auto-rows-[110px] md:auto-rows-[140px]">
+              {experienceLoading ? Array.from({length: 10}).map((_, i) => (
+                  <div key={`skeleton-exp-${i}`} className="col-span-1 bg-muted/30 rounded-3xl animate-pulse" />
+              )) : displayExperienceItems.map((item, index) => (
+                <Link 
+                  href={item.link} 
+                  key={item.id || `exp-item-${index}`} 
+                  className="group block h-full w-full col-span-1"
+                >
+                  <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-card shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-primary/5 dark:ring-white/10 overflow-hidden relative">
+                    <div className="p-2 sm:p-3 bg-primary/5 dark:bg-primary/10 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+                      <LucideIcon name={item.icon} className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
+                    </div>
+                    
+                    <h3 className="font-black text-center text-[8px] sm:text-[10px] md:text-[11px] text-foreground group-hover:text-primary transition-colors px-1 leading-tight uppercase tracking-tight">
+                      {item.name[typedLanguage]}
+                    </h3>
+                    
+                    <div className="mt-1 opacity-0 group-hover:opacity-100 transform translate-y-1 group-hover:translate-y-0 transition-all duration-500 hidden md:flex items-center text-accent font-black text-[7px] uppercase tracking-[0.1em]">
+                      Keşfet <ChevronRight className="h-2 w-2 ml-1" />
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* --- GUESTBOOK --- */}
-      <section className="py-20 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
+      <section className="py-12 md:py-16 bg-primary/5 dark:bg-primary/10 border-y border-primary/10 relative">
         <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-16">
             <div className="inline-flex items-center justify-center p-4 bg-background shadow-xl rounded-[1.5rem] mb-6 text-primary ring-1 ring-primary/10 border-b-4 border-primary/5">
               <MessageSquare className="h-8 w-8" />
             </div>
