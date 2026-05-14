@@ -112,7 +112,7 @@ export default function Home() {
                     {t('home.aboutSalihli')}
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none shadow-2xl p-0">
                   <div className="p-8 md:p-10">
                     <DialogHeader>
                       <DialogTitle className="text-3xl font-headline font-black text-primary border-b-2 border-primary/10 pb-4 mb-6">
@@ -154,7 +154,7 @@ export default function Home() {
             <PwaInstallButton />
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:gap-3 auto-rows-[110px] md:auto-rows-[140px]">
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 gap-3 sm:gap-4 lg:grid-cols-10 lg:gap-3 auto-rows-[110px] md:auto-rows-[140px]">
             {experienceLoading ? Array.from({length: 10}).map((_, i) => (
                 <div key={`skeleton-exp-${i}`} className="col-span-1 bg-muted/30 rounded-3xl animate-pulse" />
             )) : displayExperienceItems.map((item, index) => (
