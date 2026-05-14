@@ -20,12 +20,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: route === '' ? 1 : 0.8,
   }))
 
   const placePages = places.flatMap((p) => 
     Object.values(p.slug).map((slug) => ({
       url: `${baseUrl}/yerler/${slug}`,
       lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
     }))
   )
 
@@ -33,6 +37,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     Object.values(r.slug).map((slug) => ({
       url: `${baseUrl}/rotalar/${slug}`,
       lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
     }))
   )
 
@@ -40,6 +46,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     Object.values(s.slug).map((slug) => ({
       url: `${baseUrl}/hikayeler/${slug}`,
       lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
     }))
   )
 
