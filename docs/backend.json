@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "UserProfile": {
@@ -45,7 +44,8 @@
         "name": { "$ref": "#/backend/entities/LocalizedString" },
         "description": { "$ref": "#/backend/entities/LocalizedString" },
         "coordinates": { "$ref": "#/backend/entities/Coordinates" },
-        "audioUrlTr": { "type": "string", "format": "uri", "description": "Custom MP3 URL for Turkish audio guide." }
+        "audioUrlTr": { "type": "string", "format": "uri", "description": "Custom MP3 URL for Turkish audio guide." },
+        "imageUrl": { "type": "string", "format": "uri" }
       },
       "required": ["id", "name", "description", "coordinates"]
     },
@@ -130,7 +130,7 @@
         "author": { "$ref": "#/backend/entities/LocalizedString" },
         "content": { "$ref": "#/backend/entities/LocalizedString" },
         "placeId": { "type": "string" }
-      },
+            },
       "required": ["id", "slug", "title", "author", "content"]
     },
     "MenuItem": {

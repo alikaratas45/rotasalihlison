@@ -26,13 +26,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare, ImageIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import Image from 'next/image';
 
 // Definitions
 import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback } from '@/lib/definitions';
@@ -65,6 +66,7 @@ const subPointFormSchema = z.object({
     lat: z.coerce.number().min(-90).max(90),
     lng: z.coerce.number().min(-180).max(180),
     audioUrlTr: z.string().optional().or(z.literal('')),
+    imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
 });
 
 const experienceItemSchema = z.object({
@@ -132,12 +134,12 @@ export default function AdminPage() {
 
     const addPlaceForm = useForm({ 
         resolver: zodResolver(placeFormSchema), 
-        defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '' } as any 
+        defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '', imageUrl: '' } as any 
     });
     const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
     const subPointForm = useForm({ 
         resolver: zodResolver(subPointFormSchema), 
-        defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '' } as any 
+        defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '', imageUrl: '' } as any 
     });
     const expItemForm = useForm({ 
         resolver: zodResolver(experienceItemSchema), 
@@ -673,7 +675,7 @@ export default function AdminPage() {
                                             <h4 className="font-bold flex items-center gap-2 text-primary"><Headphones className="h-5 w-5" /> Türkçe Seslendirme (MP3)</h4>
                                             <p className="text-sm text-muted-foreground font-medium">Kendi seslendirmenizi yükleyerek yapay zeka sesini devre dışı bırakabilirsiniz.</p>
                                             <div className="flex items-center gap-4">
-                                                <Input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'place')} className="hidden" id="audio-place" />
+                                                <input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'place')} className="hidden" id="audio-place" />
                                                 <Button type="button" variant="outline" className="rounded-xl px-6 font-bold" onClick={() => document.getElementById('audio-place')?.click()} disabled={isUploadingAudio}>
                                                     {isUploadingAudio ? <Loader2 className="animate-spin mr-2" /> : <Upload className="mr-2" />} {editPlaceForm.getValues('audioUrlTr') ? 'Dosyayı Değiştir' : 'Özel MP3 Yükle'}
                                                 </Button>
@@ -681,6 +683,20 @@ export default function AdminPage() {
                                             </div>
                                         </div>
                                         {renderLocalizedFields(editPlaceForm, ['name', 'slug', 'description'])}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Görsel URL</FormLabel>
+                                                    <FormControl><Input placeholder="https://..." {...field} className="rounded-xl" /></FormControl>
+                                                </FormItem>
+                                            )} />
+                                            <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Görsel İpucu (Hint)</FormLabel>
+                                                    <FormControl><Input placeholder="antik kent, manzara..." {...field} className="rounded-xl" /></FormControl>
+                                                </FormItem>
+                                            )} />
+                                        </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                             <FormField control={editPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-11 border rounded-xl px-4 focus:ring-2 focus:ring-primary"><option value="poi">Önemli Nokta</option><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option></select></FormItem>)}/>
                                             <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıra</FormLabel><Input type="number" {...field} className="rounded-xl h-11" /></FormItem>)}/>
@@ -708,12 +724,28 @@ export default function AdminPage() {
                                 <Form {...subPointForm}>
                                     <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-6 border-2 border-primary/10 p-8 rounded-[2rem] bg-muted/5 shadow-sm">
                                         <h4 className="font-black text-lg flex items-center gap-2 text-primary uppercase tracking-tight">{editingSubPoint ? <FilePenLine className="h-5 w-5" /> : <Plus className="h-5 w-5" />} {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık Ekle'}</h4>
-                                        <div className="bg-primary/5 p-5 rounded-2xl border-2 border-primary/10 mb-4 flex items-center gap-4">
-                                            <Input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'subpoint')} className="hidden" id="audio-sub" />
-                                            <Button type="button" size="sm" variant="outline" className="rounded-xl px-4 font-bold" onClick={() => document.getElementById('audio-sub')?.click()} disabled={isUploadingAudio}>
-                                                {isUploadingAudio ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : <Upload className="h-4 w-4 mr-2" />} MP3 Yükle
-                                            </Button>
-                                            {subPointForm.getValues('audioUrlTr') && <Badge className="bg-green-600 text-white px-3 py-1 rounded-lg">Yüklü</Badge>}
+                                        <div className="bg-primary/5 p-5 rounded-2xl border-2 border-primary/10 mb-4 flex flex-wrap items-center gap-4">
+                                            <div className="flex items-center gap-2">
+                                                <input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'subpoint')} className="hidden" id="audio-sub" />
+                                                <Button type="button" size="sm" variant="outline" className="rounded-xl px-4 font-bold" onClick={() => document.getElementById('audio-sub')?.click()} disabled={isUploadingAudio}>
+                                                    {isUploadingAudio ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : <Upload className="h-4 w-4 mr-2" />} MP3 Yükle
+                                                </Button>
+                                                {subPointForm.getValues('audioUrlTr') && <Badge className="bg-green-600 text-white px-3 py-1 rounded-lg">MP3 Yüklü</Badge>}
+                                            </div>
+                                            
+                                            <div className="flex-1 min-w-[200px]">
+                                                <FormField control={subPointForm.control} name="imageUrl" render={({ field }) => (
+                                                    <FormItem className="space-y-0">
+                                                        <FormControl>
+                                                            <div className="relative">
+                                                                <ImageIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                                <Input placeholder="Görsel Linki (https://...)" {...field} className="rounded-xl pl-9 h-9 text-xs" />
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage className="text-[10px]" />
+                                                    </FormItem>
+                                                )} />
+                                            </div>
                                         </div>
                                         {renderLocalizedFields(subPointForm, ['name', 'description'])}
                                         <div className="grid grid-cols-2 gap-6"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/></div>
@@ -727,9 +759,16 @@ export default function AdminPage() {
                                     <h4 className="font-black text-sm text-muted-foreground uppercase tracking-widest border-b-2 border-primary/10 pb-4">Ekli Alt Başlıklar</h4>
                                     {managingSubPointsPlace?.subPoints?.map(s => (
                                         <div key={s.id} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-lg text-slate-800">{s.name.tr}</span>
-                                                <span className="text-xs text-muted-foreground font-mono mt-1 opacity-70 group-hover:opacity-100">{s.coordinates.lat.toFixed(4)}, {s.coordinates.lng.toFixed(4)}</span>
+                                            <div className="flex items-center gap-4">
+                                                {s.imageUrl && (
+                                                    <div className="relative h-12 w-12 rounded-lg overflow-hidden shrink-0 border border-muted">
+                                                        <Image src={s.imageUrl} alt={s.name.tr} fill className="object-cover" />
+                                                    </div>
+                                                )}
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-lg text-slate-800">{s.name.tr}</span>
+                                                    <span className="text-xs text-muted-foreground font-mono mt-1 opacity-70 group-hover:opacity-100">{s.coordinates.lat.toFixed(4)}, {s.coordinates.lng.toFixed(4)}</span>
+                                                </div>
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}><FilePenLine className="h-5 w-5" /></Button>

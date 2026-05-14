@@ -1,4 +1,3 @@
-
 export type LocalizedString = {
     tr: string;
     en: string;
@@ -18,6 +17,7 @@ export type SubPoint = {
     description: LocalizedString;
     coordinates: Coordinates;
     audioUrlTr?: string; // Custom MP3 URL for Turkish
+    imageUrl?: string;
 };
 
 export type Place = {

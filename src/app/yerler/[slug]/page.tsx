@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo, Suspense } from 'react';
@@ -300,6 +299,7 @@ function PlaceDetailContent() {
   const currentDisplayName = activeSubPoint ? activeSubPoint.name[typedLanguage] : place.name[typedLanguage];
   const currentDescription = activeSubPoint ? activeSubPoint.description[typedLanguage] : place.description[typedLanguage];
   const currentAudioUrl = activeSubPoint ? activeSubPoint.audioUrlTr : place.audioUrlTr;
+  const currentImageUrl = (activeSubPoint && activeSubPoint.imageUrl) ? activeSubPoint.imageUrl : (place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -323,7 +323,7 @@ function PlaceDetailContent() {
             <Card className="overflow-hidden shadow-2xl border-none">
               <div className="relative h-[300px] md:h-[500px] w-full">
                 <Image 
-                    src={place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`} 
+                    src={currentImageUrl} 
                     alt={currentDisplayName} 
                     data-ai-hint={place.imageHint || 'landmark'} 
                     fill 
@@ -351,12 +351,12 @@ function PlaceDetailContent() {
             <Button 
                 size="lg" 
                 variant="outline" 
-                onClick={() => handlePlayPause('main', currentDescription, currentAudioUrl)} 
-                disabled={isGenerating && playingId !== 'main'} 
+                onClick={() => handlePlayPause(activeSubPoint ? activeSubPoint.id : 'main', currentDescription, currentAudioUrl)} 
+                disabled={isGenerating && playingId !== (activeSubPoint ? activeSubPoint.id : 'main')} 
                 className={cn("flex-1 md:flex-none md:min-w-[200px]", activeSubPoint && "border-primary ring-1 ring-primary/20")}
             >
-              {isGenerating && playingId === 'main' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying && playingId === 'main' ? <Pause className="mr-2 h-5 w-5" /> : (typedLanguage === 'tr' && currentAudioUrl ? <Headphones className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />)}
-              {isGenerating && playingId === 'main' ? t('actions.loadingAudio') : isPlaying && playingId === 'main' ? t('actions.stopAudio') : t('actions.listenTo', currentDisplayName)}
+              {isGenerating && playingId === (activeSubPoint ? activeSubPoint.id : 'main') ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isPlaying && playingId === (activeSubPoint ? activeSubPoint.id : 'main') ? <Pause className="mr-2 h-5 w-5" /> : (typedLanguage === 'tr' && currentAudioUrl ? <Headphones className="mr-2 h-5 w-5" /> : <Volume2 className="mr-2 h-5 w-5" />)}
+              {isGenerating && playingId === (activeSubPoint ? activeSubPoint.id : 'main') ? t('actions.loadingAudio') : isPlaying && playingId === (activeSubPoint ? activeSubPoint.id : 'main') ? t('actions.stopAudio') : t('actions.listenTo', currentDisplayName)}
             </Button>
             
             {place.id !== '3' ? (
@@ -389,42 +389,51 @@ function PlaceDetailContent() {
                             "overflow-hidden transition-all duration-500",
                             activeSubPoint?.id === sub.id ? "ring-2 ring-primary bg-primary/5 shadow-xl" : "bg-card"
                         )}>
-                            <CardContent className="p-6 md:p-8">
-                                <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
-                                    <div>
-                                        <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2">
-                                            {sub.name[typedLanguage]}
-                                            {activeSubPoint?.id === sub.id && <Badge variant="secondary">{t('subPoints.youAreHere', 'Şu an buradasınız')}</Badge>}
-                                        </h3>
-                                        <div className="flex items-center text-muted-foreground text-sm gap-1">
-                                            <MapPin className="h-3 w-3" />
-                                            {sub.coordinates.lat.toFixed(6)}, {sub.coordinates.lng.toFixed(6)}
+                            <CardContent className="p-0">
+                                <div className="flex flex-col md:flex-row">
+                                    {sub.imageUrl && (
+                                        <div className="relative h-64 md:h-auto md:w-1/3 shrink-0">
+                                            <Image src={sub.imageUrl} alt={sub.name[typedLanguage]} fill className="object-cover" sizes="400px" />
+                                        </div>
+                                    )}
+                                    <div className="p-6 md:p-8 flex-1">
+                                        <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+                                            <div>
+                                                <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2">
+                                                    {sub.name[typedLanguage]}
+                                                    {activeSubPoint?.id === sub.id && <Badge variant="secondary">{t('subPoints.youAreHere', 'Şu an buradasınız')}</Badge>}
+                                                </h3>
+                                                <div className="flex items-center text-muted-foreground text-sm gap-1">
+                                                    <MapPin className="h-3 w-3" />
+                                                    {sub.coordinates.lat.toFixed(6)}, {sub.coordinates.lng.toFixed(6)}
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2 w-full md:w-auto">
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage], sub.audioUrlTr)}
+                                                    disabled={isGenerating && playingId !== sub.id}
+                                                    className="flex-1 md:flex-none"
+                                                >
+                                                    {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
+                                                    {t('subPoints.listen')}
+                                                </Button>
+                                                <Button 
+                                                    variant="secondary" 
+                                                    size="sm" 
+                                                    onClick={() => handleGetDirections(sub.coordinates)}
+                                                    className="flex-1 md:flex-none"
+                                                >
+                                                    <Navigation className="h-4 w-4 mr-2" />
+                                                    {t('subPoints.directions')}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg">
+                                            {sub.description[typedLanguage]}
                                         </div>
                                     </div>
-                                    <div className="flex gap-2 w-full md:w-auto">
-                                        <Button 
-                                            variant="outline" 
-                                            size="sm" 
-                                            onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage], sub.audioUrlTr)}
-                                            disabled={isGenerating && playingId !== sub.id}
-                                            className="flex-1 md:flex-none"
-                                        >
-                                            {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
-                                            {t('subPoints.listen')}
-                                        </Button>
-                                        <Button 
-                                            variant="secondary" 
-                                            size="sm" 
-                                            onClick={() => handleGetDirections(sub.coordinates)}
-                                            className="flex-1 md:flex-none"
-                                        >
-                                            <Navigation className="h-4 w-4 mr-2" />
-                                            {t('subPoints.directions')}
-                                        </Button>
-                                    </div>
-                                </div>
-                                <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg">
-                                    {sub.description[typedLanguage]}
                                 </div>
                             </CardContent>
                         </Card>
