@@ -50,7 +50,7 @@ export default function LoginPage() {
         toast({
             variant: 'destructive',
             title: 'Giriş Başarısız',
-            description: 'Kullanıcı adı geçersiz.',
+            description: 'Kullanıcı adı veya şifre geçersiz.',
         });
         setIsSubmitting(false);
         return;
@@ -69,7 +69,7 @@ export default function LoginPage() {
       let description = 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.';
        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
          description =
-           'Kimlik bilgileri geçersiz. Şifrenizin yanlış olmadığından ve Firebase projenizde yönetici kullanıcısının (alikarataskula@gmail.com) yeni şifreyle (2177581A) güncellendiğinden emin olun.';
+           'Kimlik bilgileri geçersiz. Lütfen bilgilerinizi kontrol edin.';
        }
 
       toast({
@@ -101,7 +101,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Kullanıcı Adı</FormLabel>
                     <FormControl>
-                      <Input placeholder="salihli_belediye" {...field} />
+                      <Input placeholder="Kullanıcı adınızı girin" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
