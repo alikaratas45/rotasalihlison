@@ -9,6 +9,11 @@ import { GoogleMapsProvider } from '@/components/google-maps-provider';
 export const metadata: Metadata = {
   title: 'Rota Salihli',
   description: "Sardes'in mirası, paranın merkezi",
+  icons: {
+    icon: '/logos.png',
+    shortcut: '/logos.png',
+    apple: '/logos.png',
+  },
 };
 
 export default function RootLayout({
