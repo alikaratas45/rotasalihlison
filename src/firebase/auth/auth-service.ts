@@ -22,16 +22,16 @@ export const signInWithUsername = async (auth: Auth, firestore: Firestore, usern
   }
   
   try {
+    // Geliştirici için konsol bilgisi (Üretimde görünebilir, sadece hata ayıklama için)
+    console.log(`Giriş denemesi yapılıyor: ${ADMIN_EMAIL}`);
+    
     const result = await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
     const user = result.user;
     
-    // Kullanıcı profilinin Firestore'da olduğundan emin ol
     await createUserProfileDocument(firestore, user);
-    
     return user;
   } catch (error: any) {
-    // Hata dışarı fırlatılır, UI tarafında yakalanır. 
-    // Geliştirme modunda hata ekranını tetiklememesi için console.error kaldırıldı.
+    // Hata NextJS ekranını kilitlemesin diye burada yakalayıp dışarı fırlatıyoruz
     throw error;
   }
 };
