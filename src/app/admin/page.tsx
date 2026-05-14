@@ -105,15 +105,17 @@ export default function AdminPage() {
     const [isUploadingAudio, setIsUploadingAudio] = useState(false);
     const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
 
-    const [editingPlace, setEditingPlace] = useState<Place | null>(null);
-    const [deletingPlace, setDeletingPlace] = useState<Place | null>(null);
+    // ID based tracking for active items in dialogs
+    const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
+    const [deletingPlaceId, setDeletingPlaceId] = useState<string | null>(null);
+    const [managingSubPointsPlaceId, setManagingSubPointsPlaceId] = useState<string | null>(null);
+    
     const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
     const [deletingGuestbookComment, setDeletingGuestbookComment] = useState<CommentFeedback | null>(null);
-    const [managingSubPointsPlace, setManagingSubPointsPlace] = useState<Place | null>(null);
     const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
     
-    const [editingExpItem, setEditingExpItem] = useState<ExperienceItem | null>(null);
-    const [deletingExpItem, setDeletingExpItem] = useState<ExperienceItem | null>(null);
+    const [editingExpItemId, setEditingExpItemId] = useState<string | null>(null);
+    const [deletingExpItemId, setDeletingExpItemId] = useState<string | null>(null);
 
     // Memoized queries to prevent re-renders
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
@@ -127,6 +129,13 @@ export default function AdminPage() {
     const { data: guestbookComments, loading: guestbookLoading } = useCollection<CommentFeedback>(guestbookQuery);
     const { data: expItems, loading: expLoading } = useCollection<ExperienceItem>(experienceQuery);
     const { data: aboutSettings } = useDoc<any>(aboutDocRef);
+
+    // Derived active items from main data arrays
+    const editingPlace = useMemo(() => places?.find(p => p.id === editingPlaceId) || null, [places, editingPlaceId]);
+    const deletingPlace = useMemo(() => places?.find(p => p.id === deletingPlaceId) || null, [places, deletingPlaceId]);
+    const managingSubPointsPlace = useMemo(() => places?.find(p => p.id === managingSubPointsPlaceId) || null, [places, managingSubPointsPlaceId]);
+    const editingExpItem = useMemo(() => expItems?.find(i => i.id === editingExpItemId) || null, [expItems, editingExpItemId]);
+    const deletingExpItem = useMemo(() => expItems?.find(i => i.id === deletingExpItemId) || null, [expItems, deletingExpItemId]);
 
     const sortedPlaces = useMemo(() => {
         if (!places) return [];
@@ -236,7 +245,7 @@ export default function AdminPage() {
         updatePlace(firestore, editingPlace.id, values, { 
             onSuccess: () => { 
                 toast({ title: 'Güncellendi' }); 
-                setEditingPlace(null); 
+                setEditingPlaceId(null); 
                 setIsSubmitting(false); 
             }, 
             onError: () => setIsSubmitting(false) 
@@ -258,9 +267,16 @@ export default function AdminPage() {
                 setEditingSubPoint(null); 
                 subPointForm.reset(); 
                 setIsSubmitting(false); 
-                setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: updatedSubPoints }); 
             }, 
             onError: () => setIsSubmitting(false) 
+        });
+    };
+
+    const handleDeleteSubPoint = (subId: string) => {
+        if (!managingSubPointsPlace || !confirm('Bu alt başlık kalıcı olarak silinsin mi?')) return;
+        const updatedSubPoints = managingSubPointsPlace.subPoints?.filter(x => x.id !== subId) || [];
+        updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, {
+            onSuccess: () => toast({ title: 'Alt başlık silindi' })
         });
     };
 
@@ -270,7 +286,7 @@ export default function AdminPage() {
             updateExperienceItem(firestore, editingExpItem.id, values, {
                 onSuccess: () => { 
                     toast({ title: 'Güncellendi' }); 
-                    setEditingExpItem(null); 
+                    setEditingExpItemId(null); 
                     setIsSubmitting(false); 
                 },
                 onError: () => setIsSubmitting(false)
@@ -452,10 +468,10 @@ export default function AdminPage() {
                                                         <Button variant="ghost" size="icon" className="rounded-xl"><MoreHorizontal /></Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[180px]">
-                                                        <DropdownMenuItem onClick={() => setEditingPlace(p)} className="rounded-xl p-3"><FilePenLine className="mr-2 h-4 w-4" /> Düzenle</DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => setManagingSubPointsPlace(p)} className="rounded-xl p-3"><Layers className="mr-2 h-4 w-4" /> Alt Başlıklar</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => setEditingPlaceId(p.id)} className="rounded-xl p-3"><FilePenLine className="mr-2 h-4 w-4" /> Düzenle</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => setManagingSubPointsPlaceId(p.id)} className="rounded-xl p-3"><Layers className="mr-2 h-4 w-4" /> Alt Başlıklar</DropdownMenuItem>
                                                         <DropdownMenuSeparator />
-                                                        <DropdownMenuItem onClick={() => setDeletingPlace(p)} className="text-destructive rounded-xl p-3"><Trash2 className="mr-2 h-4 w-4" /> Sil</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => setDeletingPlaceId(p.id)} className="text-destructive rounded-xl p-3"><Trash2 className="mr-2 h-4 w-4" /> Sil</DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </TableCell>
@@ -505,7 +521,7 @@ export default function AdminPage() {
                                             {isSubmitting && <Loader2 className="animate-spin mr-2" />} {editingExpItem ? 'Güncelle' : 'Ekle'}
                                         </Button>
                                         {editingExpItem && (
-                                            <Button variant="ghost" onClick={() => setEditingExpItem(null)} className="h-12 rounded-xl">İptal</Button>
+                                            <Button variant="ghost" onClick={() => setEditingExpItemId(null)} className="h-12 rounded-xl">İptal</Button>
                                         )}
                                     </div>
                                 </form>
@@ -535,8 +551,8 @@ export default function AdminPage() {
                                             <TableCell className="text-muted-foreground text-sm">{item.link}</TableCell>
                                             <TableCell className="text-right pr-6">
                                                 <div className="flex justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" onClick={() => setEditingExpItem(item)} className="rounded-xl"><FilePenLine className="h-4 w-4" /></Button>
-                                                    <Button variant="ghost" size="icon" onClick={() => setDeletingExpItem(item)} className="text-destructive rounded-xl"><Trash2 className="h-4 w-4" /></Button>
+                                                    <Button variant="ghost" size="icon" onClick={() => setEditingExpItemId(item.id)} className="rounded-xl"><FilePenLine className="h-4 w-4" /></Button>
+                                                    <Button variant="ghost" size="icon" onClick={() => setDeletingExpItemId(item.id)} className="text-destructive rounded-xl"><Trash2 className="h-4 w-4" /></Button>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -674,7 +690,7 @@ export default function AdminPage() {
             </Tabs>
 
             {/* MODALS */}
-            <Dialog open={!!editingPlace} onOpenChange={o => !o && setEditingPlace(null)}>
+            <Dialog open={!!editingPlace} onOpenChange={o => !o && setEditingPlaceId(null)}>
                 <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
                     <DialogHeader className="p-8 border-b shrink-0 bg-primary/5"><DialogTitle className="text-2xl font-black font-headline text-primary">Yeri Düzenle: {editingPlace?.name.tr}</DialogTitle></DialogHeader>
                     <div className="flex-1 min-h-0">
@@ -720,13 +736,13 @@ export default function AdminPage() {
                         </ScrollArea>
                     </div>
                     <DialogFooter className="p-8 border-t bg-muted/20 shrink-0">
-                        <Button variant="ghost" onClick={() => setEditingPlace(null)} className="rounded-xl px-8 h-12">İptal</Button>
+                        <Button variant="ghost" onClick={() => setEditingPlaceId(null)} className="rounded-xl px-8 h-12">İptal</Button>
                         <Button onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting} className="rounded-xl px-12 h-12 font-black shadow-lg">{isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
-            <Dialog open={!!managingSubPointsPlace} onOpenChange={o => !o && setManagingSubPointsPlace(null)}>
+            <Dialog open={!!managingSubPointsPlaceId} onOpenChange={o => !o && setManagingSubPointsPlaceId(null)}>
                 <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
                     <DialogHeader className="p-8 border-b shrink-0 bg-primary/5"><DialogTitle className="text-2xl font-black font-headline text-primary">Alt Başlık Yönetimi: {managingSubPointsPlace?.name.tr}</DialogTitle></DialogHeader>
                     <div className="flex-1 min-h-0">
@@ -783,7 +799,7 @@ export default function AdminPage() {
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}><FilePenLine className="h-5 w-5" /></Button>
-                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => { if(confirm('Bu alt başlık kalıcı olarak silinsin mi?')) { const u = managingSubPointsPlace.subPoints?.filter(x => x.id !== s.id) || []; updateSubPoints(firestore, managingSubPointsPlace.id, u, { onSuccess: () => setManagingSubPointsPlace({ ...managingSubPointsPlace, subPoints: u }) }); } }}><Trash2 className="h-5 w-5" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => handleDeleteSubPoint(s.id)}><Trash2 className="h-5 w-5" /></Button>
                                             </div>
                                         </div>
                                     )) || <p className="text-center py-20 text-muted-foreground italic bg-muted/20 rounded-[2rem]">Henüz alt başlık eklenmemiş.</p>}
@@ -814,17 +830,17 @@ export default function AdminPage() {
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={!!deletingPlace} onOpenChange={o => !o && setDeletingPlace(null)}>
+            <AlertDialog open={!!deletingPlaceId} onOpenChange={o => !o && setDeletingPlaceId(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
                     <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Mekanı Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlace(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlaceId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={!!deletingExpItem} onOpenChange={o => !o && setDeletingExpItem(null)}>
+            <AlertDialog open={!!deletingExpItemId} onOpenChange={o => !o && setDeletingExpItemId(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
                     <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Menü Öğesini Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingExpItem?.name.tr}' menü öğesi kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItem(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItemId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
         </div>

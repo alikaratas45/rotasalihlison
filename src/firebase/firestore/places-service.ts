@@ -1,4 +1,3 @@
-
 'use client';
 import { collection, addDoc, doc, updateDoc, deleteDoc, type Firestore, getDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -63,11 +62,8 @@ export async function updatePlace(
       audioUrlTr: formData.audioUrlTr !== undefined ? formData.audioUrlTr : (currentData.audioUrlTr || null)
     };
 
-    // SubPoints alanını kaybetmemek için mevcut veriyi koru veya formdan geleni al
     if (formData.subPoints !== undefined) {
       updatedData.subPoints = formData.subPoints;
-    } else if (currentData.subPoints) {
-      updatedData.subPoints = currentData.subPoints;
     }
 
     await updateDoc(placeDocRef, updatedData);
@@ -83,7 +79,7 @@ export async function updatePlace(
   }
 }
 
-export async function updateSubPoints(
+export function updateSubPoints(
   firestore: Firestore,
   placeId: string,
   subPoints: SubPoint[],
@@ -93,7 +89,7 @@ export async function updateSubPoints(
   const docRef = doc(firestore, 'places', placeId);
   updateDoc(docRef, { subPoints })
     .then(() => callbacks?.onSuccess?.())
-    .catch((err) => {
+    .catch(async (err) => {
       const permissionError = new FirestorePermissionError({
         path: docRef.path,
         operation: 'update',
@@ -120,7 +116,7 @@ export function deletePlace(
     .then(() => {
       callbacks?.onSuccess?.();
     })
-    .catch((serverError) => {
+    .catch(async (serverError) => {
       const permissionError = new FirestorePermissionError({
         path: placeDocRef.path,
         operation: 'delete',
