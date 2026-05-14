@@ -397,8 +397,8 @@ function PlaceDetailContent() {
                             <CardContent className="p-0">
                                 <div className="flex flex-col md:flex-row min-h-[300px]">
                                     {sub.imageUrl && (
-                                        <div className="relative w-full h-64 md:h-auto md:w-1/3 shrink-0 bg-muted">
-                                            <Image src={sanitizeImageUrl(sub.imageUrl)} alt={sub.name[typedLanguage]} fill className="object-cover" sizes="400px" />
+                                        <div className="relative w-full aspect-video md:aspect-auto md:w-2/5 shrink-0 bg-muted">
+                                            <Image src={sanitizeImageUrl(sub.imageUrl)} alt={sub.name[typedLanguage]} fill className="object-cover" sizes="500px" />
                                         </div>
                                     )}
                                     <div className="p-6 md:p-8 flex-1 flex flex-col">
@@ -421,7 +421,7 @@ function PlaceDetailContent() {
                                                     disabled={isGenerating && playingId !== sub.id}
                                                     className="flex-1 md:flex-none rounded-xl"
                                                 >
-                                                    {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
+                                                    {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="mr-2 h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
                                                     {t('subPoints.listen')}
                                                 </Button>
                                                 <Button 

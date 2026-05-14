@@ -814,7 +814,7 @@ export default function AdminPage() {
                                         <div key={`${s.id}-${index}`} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
                                             <div className="flex items-center gap-4">
                                                 {s.imageUrl && (
-                                                    <div className="relative h-12 w-12 rounded-lg overflow-hidden shrink-0 border border-muted">
+                                                    <div className="relative h-12 w-20 rounded-lg overflow-hidden shrink-0 border border-muted">
                                                         <Image src={sanitizeImageUrl(s.imageUrl)} alt={s.name.tr} fill className="object-cover" />
                                                     </div>
                                                 )}
@@ -886,14 +886,14 @@ export default function AdminPage() {
             <AlertDialog open={!!deletingPlaceId} onOpenChange={o => !o && setDeletingPlaceId(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
                     <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Mekanı Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlaceId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlaceId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
             <AlertDialog open={!!deletingExpItemId} onOpenChange={o => !o && setDeletingExpItemId(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
                     <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Menü Öğesini Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingExpItem?.name.tr}' menü öğesi kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={() => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItemId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItemId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
         </div>
