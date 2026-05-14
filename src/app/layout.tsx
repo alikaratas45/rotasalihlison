@@ -10,7 +10,10 @@ export const metadata: Metadata = {
   title: 'Rota Salihli',
   description: "Sardes'in mirası, paranın merkezi",
   icons: {
-    icon: '/logos.png',
+    icon: [
+      { url: '/logos.png', type: 'image/png' },
+      { url: '/logos.png', sizes: '32x32', type: 'image/png' },
+    ],
     shortcut: '/logos.png',
     apple: '/logos.png',
   },
@@ -27,6 +30,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/logos.png" type="image/png" sizes="any" />
       </head>
       <body className="font-body antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
