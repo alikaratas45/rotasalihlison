@@ -17,6 +17,18 @@ import { Survey } from '@/components/survey';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
+// Helper to fix common URL mistakes (like Imgur page links instead of direct image links)
+const sanitizeImageUrl = (url: string | undefined) => {
+  if (!url) return '';
+  if (url.includes('imgur.com/') && !url.includes('i.imgur.com')) {
+    // Convert https://imgur.com/re1zINK to https://i.imgur.com/re1zINK.png
+    const parts = url.split('/');
+    const id = parts[parts.length - 1];
+    return `https://i.imgur.com/${id}.png`;
+  }
+  return url;
+};
+
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371000;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -99,8 +111,6 @@ function PlaceDetailContent() {
           if (place.subPoints && place.subPoints.length > 0) {
               let nearestSub: SubPoint | null = null;
               
-              // Gymnasium (ID: 12) ve Artemis Tapınağı (ID: 13) için alt başlık algılama mesafesi 15m.
-              // Diğer yerler için standart 30m.
               const detectionThreshold = (place.id === '12' || place.id === '13') ? 15 : 30;
               let minDistance = detectionThreshold;
 
@@ -239,10 +249,8 @@ function PlaceDetailContent() {
       return;
     }
 
-    // Başka bir şey çalıyorsa durdur
     stopAudio();
 
-    // Eğer dil Türkçe ise ve özel MP3 yüklüyse MP3'ü çal
     if (typedLanguage === 'tr' && customAudioUrl) {
         if (!audioPlayerRef.current) {
             audioPlayerRef.current = new Audio();
@@ -258,16 +266,13 @@ function PlaceDetailContent() {
             setPlayingId(null);
         };
         audioPlayerRef.current.onerror = () => {
-            console.warn("MP3 çalınamadı, yapay zekaya dönülüyor...");
             speak(text, typedLanguage, id);
         };
 
         audioPlayerRef.current.play().catch(err => {
-            console.error("Audio playback error:", err);
             speak(text, typedLanguage, id);
         });
     } else {
-        // Aksi halde yapay zeka seslendirmesi (TTS) kullan
         speak(text, typedLanguage, id);
     }
   }, [isGenerating, isPlaying, playingId, typedLanguage, speak, stopAudio]);
@@ -299,7 +304,7 @@ function PlaceDetailContent() {
   const currentDisplayName = activeSubPoint ? activeSubPoint.name[typedLanguage] : place.name[typedLanguage];
   const currentDescription = activeSubPoint ? activeSubPoint.description[typedLanguage] : place.description[typedLanguage];
   const currentAudioUrl = activeSubPoint ? activeSubPoint.audioUrlTr : place.audioUrlTr;
-  const currentImageUrl = (activeSubPoint && activeSubPoint.imageUrl) ? activeSubPoint.imageUrl : (place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`);
+  const currentImageUrl = sanitizeImageUrl(activeSubPoint?.imageUrl || place.imageUrl || `https://picsum.photos/seed/${place.id}/800/600`);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -321,7 +326,7 @@ function PlaceDetailContent() {
         <div className="relative block">
           <div className="md:float-left md:w-1/2 lg:w-3/5 md:mr-10 md:mb-8 mb-8 w-full">
             <Card className="overflow-hidden shadow-2xl border-none">
-              <div className="relative h-[300px] md:h-[500px] w-full">
+              <div className="relative h-[300px] md:h-[500px] w-full bg-muted">
                 <Image 
                     src={currentImageUrl} 
                     alt={currentDisplayName} 
@@ -386,20 +391,20 @@ function PlaceDetailContent() {
                 <div className="grid gap-8">
                     {place.subPoints.map((sub) => (
                         <Card key={sub.id} className={cn(
-                            "overflow-hidden transition-all duration-500",
-                            activeSubPoint?.id === sub.id ? "ring-2 ring-primary bg-primary/5 shadow-xl" : "bg-card"
+                            "overflow-hidden transition-all duration-500 border-none shadow-lg",
+                            activeSubPoint?.id === sub.id ? "ring-2 ring-primary bg-primary/5" : "bg-card"
                         )}>
                             <CardContent className="p-0">
-                                <div className="flex flex-col md:flex-row">
+                                <div className="flex flex-col md:flex-row min-h-[300px]">
                                     {sub.imageUrl && (
-                                        <div className="relative h-64 md:h-auto md:w-1/3 shrink-0">
-                                            <Image src={sub.imageUrl} alt={sub.name[typedLanguage]} fill className="object-cover" sizes="400px" />
+                                        <div className="relative w-full h-64 md:h-auto md:w-1/3 shrink-0 bg-muted">
+                                            <Image src={sanitizeImageUrl(sub.imageUrl)} alt={sub.name[typedLanguage]} fill className="object-cover" sizes="400px" />
                                         </div>
                                     )}
-                                    <div className="p-6 md:p-8 flex-1">
+                                    <div className="p-6 md:p-8 flex-1 flex flex-col">
                                         <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
-                                            <div>
-                                                <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2">
+                                            <div className="flex-1">
+                                                <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2 flex-wrap">
                                                     {sub.name[typedLanguage]}
                                                     {activeSubPoint?.id === sub.id && <Badge variant="secondary">{t('subPoints.youAreHere', 'Şu an buradasınız')}</Badge>}
                                                 </h3>
@@ -408,13 +413,13 @@ function PlaceDetailContent() {
                                                     {sub.coordinates.lat.toFixed(6)}, {sub.coordinates.lng.toFixed(6)}
                                                 </div>
                                             </div>
-                                            <div className="flex gap-2 w-full md:w-auto">
+                                            <div className="flex gap-2 w-full md:w-auto shrink-0">
                                                 <Button 
                                                     variant="outline" 
                                                     size="sm" 
                                                     onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage], sub.audioUrlTr)}
                                                     disabled={isGenerating && playingId !== sub.id}
-                                                    className="flex-1 md:flex-none"
+                                                    className="flex-1 md:flex-none rounded-xl"
                                                 >
                                                     {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
                                                     {t('subPoints.listen')}
@@ -423,14 +428,14 @@ function PlaceDetailContent() {
                                                     variant="secondary" 
                                                     size="sm" 
                                                     onClick={() => handleGetDirections(sub.coordinates)}
-                                                    className="flex-1 md:flex-none"
+                                                    className="flex-1 md:flex-none rounded-xl"
                                                 >
                                                     <Navigation className="h-4 w-4 mr-2" />
                                                     {t('subPoints.directions')}
                                                 </Button>
                                             </div>
                                         </div>
-                                        <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg">
+                                        <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg flex-1">
                                             {sub.description[typedLanguage]}
                                         </div>
                                     </div>

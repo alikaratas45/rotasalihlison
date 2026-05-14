@@ -38,6 +38,17 @@ import Image from 'next/image';
 // Definitions
 import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback } from '@/lib/definitions';
 
+// Helper to fix common URL mistakes
+const sanitizeImageUrl = (url: string | undefined) => {
+  if (!url) return '';
+  if (url.includes('imgur.com/') && !url.includes('i.imgur.com')) {
+    const parts = url.split('/');
+    const id = parts[parts.length - 1];
+    return `https://i.imgur.com/${id}.png`;
+  }
+  return url;
+};
+
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
   tr: z.string().min(1, 'Bu alan gereklidir.'),
@@ -762,7 +773,7 @@ export default function AdminPage() {
                                             <div className="flex items-center gap-4">
                                                 {s.imageUrl && (
                                                     <div className="relative h-12 w-12 rounded-lg overflow-hidden shrink-0 border border-muted">
-                                                        <Image src={s.imageUrl} alt={s.name.tr} fill className="object-cover" />
+                                                        <Image src={sanitizeImageUrl(s.imageUrl)} alt={s.name.tr} fill className="object-cover" />
                                                     </div>
                                                 )}
                                                 <div className="flex flex-col">
