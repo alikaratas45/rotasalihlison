@@ -16,6 +16,7 @@ import type { Place, Route } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { PlacesMap } from '@/components/places-map';
+import { calculateDistance } from '@/lib/geo-utils';
 
 function RouteDetailSkeleton() {
     return (
@@ -79,17 +80,48 @@ export default function RouteDetailPage() {
     
     setIsMapLoading(true);
 
-    const triggerMaps = (origin?: string) => {
-        const destination = routePlaces[routePlaces.length - 1];
+    const triggerMaps = (userLat?: number, userLng?: number) => {
+        let optimizedStops = [...routePlaces];
+
+        // "EN MANTIKLI ROTA" OPTİMİZASYONU:
+        // Kullanıcının konumundan başlayarak her durağı bir sonrakine en yakın olacak şekilde sıralarız.
+        if (userLat !== undefined && userLng !== undefined) {
+            const result: Place[] = [];
+            let currentLat = userLat;
+            let currentLng = userLng;
+            let remaining = [...routePlaces];
+
+            while (remaining.length > 0) {
+                let nearestIdx = 0;
+                let minDist = calculateDistance(currentLat, currentLng, remaining[0].coordinates.lat, remaining[0].coordinates.lng);
+
+                for (let i = 1; i < remaining.length; i++) {
+                    const dist = calculateDistance(currentLat, currentLng, remaining[i].coordinates.lat, remaining[i].coordinates.lng);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        nearestIdx = i;
+                    }
+                }
+
+                const nextStop = remaining.splice(nearestIdx, 1)[0];
+                result.push(nextStop);
+                currentLat = nextStop.coordinates.lat;
+                currentLng = nextStop.coordinates.lng;
+            }
+            optimizedStops = result;
+        }
+
+        const origin = userLat !== undefined ? `${userLat},${userLng}` : `${optimizedStops[0].coordinates.lat},${optimizedStops[0].coordinates.lng}`;
+        const destination = optimizedStops[optimizedStops.length - 1];
         const destinationCoords = `${destination.coordinates.lat},${destination.coordinates.lng}`;
         
-        let mapsUrl = `https://www.google.com/maps/dir/?api=1`;
-        if (origin) mapsUrl += `&origin=${origin}`;
-        mapsUrl += `&destination=${destinationCoords}`;
+        let mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destinationCoords}`;
 
-        if (routePlaces.length > 1) {
-            const waypoints = routePlaces.slice(0, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
-            mapsUrl += `&waypoints=${waypoints}`;
+        // Aradaki duraklar (waypointler)
+        const waypoints = optimizedStops.slice(userLat !== undefined ? 0 : 1, -1);
+        if (waypoints.length > 0) {
+            const waypointsStr = waypoints.map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
+            mapsUrl += `&waypoints=${waypointsStr}`;
         }
 
         window.open(mapsUrl, '_blank');
@@ -99,16 +131,14 @@ export default function RouteDetailPage() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const { latitude, longitude } = position.coords;
-                triggerMaps(`${latitude},${longitude}`);
+                triggerMaps(position.coords.latitude, position.coords.longitude);
             },
             () => {
-                // Konum izni yoksa rotadaki ilk duraktan başlat
-                const firstStop = routePlaces[0];
-                triggerMaps(`${firstStop.coordinates.lat},${firstStop.coordinates.lng}`);
+                // Konum izni yoksa direkt başlat
+                triggerMaps();
                 toast({
                     title: 'Konum Alınamadı',
-                    description: 'Mevcut konumunuza erişilemediği için rota ilk duraktan başlatıldı.',
+                    description: 'Mevcut konumunuza erişilemediği için rota standart sıralama ile başlatıldı.',
                 });
             },
             { enableHighAccuracy: true, timeout: 5000 }
