@@ -388,58 +388,62 @@ function PlaceDetailContent() {
                     <MapPinned className="h-6 w-6 text-primary" />
                     <h2 className="text-2xl font-bold font-headline">{t('subPoints.title')}</h2>
                 </div>
-                <div className="grid gap-8">
+                <div className="grid gap-12">
                     {place.subPoints.map((sub) => (
                         <Card key={sub.id} className={cn(
-                            "overflow-hidden transition-all duration-500 border-none shadow-lg",
+                            "overflow-hidden transition-all duration-500 border-none shadow-xl rounded-[2rem]",
                             activeSubPoint?.id === sub.id ? "ring-2 ring-primary bg-primary/5" : "bg-card"
                         )}>
-                            <CardContent className="p-0">
-                                <div className="flex flex-col md:flex-row min-h-[300px]">
-                                    {sub.imageUrl && (
-                                        <div className="relative w-full aspect-video md:aspect-auto md:w-2/5 shrink-0 bg-muted">
-                                            <Image src={sanitizeImageUrl(sub.imageUrl)} alt={sub.name[typedLanguage]} fill className="object-cover" sizes="500px" />
-                                        </div>
-                                    )}
-                                    <div className="p-6 md:p-8 flex-1 flex flex-col">
-                                        <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
-                                            <div className="flex-1">
-                                                <h3 className="text-2xl font-bold font-headline text-primary mb-2 flex items-center gap-2 flex-wrap">
-                                                    {sub.name[typedLanguage]}
-                                                    {activeSubPoint?.id === sub.id && <Badge variant="secondary">{t('subPoints.youAreHere', 'Şu an buradasınız')}</Badge>}
-                                                </h3>
-                                                <div className="flex items-center text-muted-foreground text-sm gap-1">
-                                                    <MapPin className="h-3 w-3" />
-                                                    {sub.coordinates.lat.toFixed(6)}, {sub.coordinates.lng.toFixed(6)}
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-2 w-full md:w-auto shrink-0">
-                                                <Button 
-                                                    variant="outline" 
-                                                    size="sm" 
-                                                    onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage], sub.audioUrlTr)}
-                                                    disabled={isGenerating && playingId !== sub.id}
-                                                    className="flex-1 md:flex-none rounded-xl"
-                                                >
-                                                    {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="mr-2 h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
-                                                    {t('subPoints.listen')}
-                                                </Button>
-                                                <Button 
-                                                    variant="secondary" 
-                                                    size="sm" 
-                                                    onClick={() => handleGetDirections(sub.coordinates)}
-                                                    className="flex-1 md:flex-none rounded-xl"
-                                                >
-                                                    <Navigation className="h-4 w-4 mr-2" />
-                                                    {t('subPoints.directions')}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg flex-1">
-                                            {sub.description[typedLanguage]}
+                            <CardContent className="p-8 md:p-10 space-y-8">
+                                <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+                                    <div className="flex-1">
+                                        <h3 className="text-3xl font-bold font-headline text-primary mb-2 flex items-center gap-3 flex-wrap">
+                                            {sub.name[typedLanguage]}
+                                            {activeSubPoint?.id === sub.id && <Badge variant="secondary" className="bg-accent text-accent-foreground">{t('subPoints.youAreHere', 'Şu an buradasınız')}</Badge>}
+                                        </h3>
+                                        <div className="flex items-center text-muted-foreground text-sm gap-2 font-medium">
+                                            <MapPin className="h-4 w-4" />
+                                            {sub.coordinates.lat.toFixed(6)}, {sub.coordinates.lng.toFixed(6)}
                                         </div>
                                     </div>
+                                    <div className="flex gap-3 w-full md:w-auto shrink-0">
+                                        <Button 
+                                            variant="outline" 
+                                            size="lg" 
+                                            onClick={() => handlePlayPause(sub.id, sub.description[typedLanguage], sub.audioUrlTr)}
+                                            disabled={isGenerating && playingId !== sub.id}
+                                            className="flex-1 md:flex-none rounded-2xl h-12 px-6 font-bold"
+                                        >
+                                            {isGenerating && playingId === sub.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : isPlaying && playingId === sub.id ? <Pause className="h-4 w-4 mr-2" /> : (typedLanguage === 'tr' && sub.audioUrlTr ? <Headphones className="mr-2 h-4 w-4 mr-2" /> : <Volume2 className="h-4 w-4 mr-2" />)}
+                                            {t('subPoints.listen')}
+                                        </Button>
+                                        <Button 
+                                            variant="secondary" 
+                                            size="lg" 
+                                            onClick={() => handleGetDirections(sub.coordinates)}
+                                            className="flex-1 md:flex-none rounded-2xl h-12 px-6 font-bold"
+                                        >
+                                            <Navigation className="h-4 w-4 mr-2" />
+                                            {t('subPoints.directions')}
+                                        </Button>
+                                    </div>
                                 </div>
+                                
+                                <div className="text-muted-foreground leading-relaxed text-justify whitespace-pre-line text-lg md:text-xl border-t pt-6">
+                                    {sub.description[typedLanguage]}
+                                </div>
+
+                                {sub.imageUrl && (
+                                    <div className="relative w-full aspect-video rounded-[1.5rem] overflow-hidden shadow-2xl border-4 border-white bg-muted ring-1 ring-black/5">
+                                        <Image 
+                                            src={sanitizeImageUrl(sub.imageUrl)} 
+                                            alt={sub.name[typedLanguage]} 
+                                            fill 
+                                            className="object-cover transition-transform duration-700 hover:scale-105" 
+                                            sizes="(max-width: 1024px) 100vw, 1000px" 
+                                        />
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     ))}
