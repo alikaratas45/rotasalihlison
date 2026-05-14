@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Info, MessageSquare, ChevronRight, Compass } from 'lucide-react';
 import { FeedbackSystem } from '@/components/feedback-system';
 import { PwaInstallButton } from '@/components/pwa-install-button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 export default function Home() {
@@ -112,22 +113,22 @@ export default function Home() {
                     {t('home.aboutSalihli')}
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col rounded-[2rem] border-none shadow-2xl p-0">
-                  <div className="p-8 md:p-10 flex flex-col h-full">
-                    <DialogHeader className="shrink-0">
-                      <DialogTitle className="text-3xl font-headline font-black text-primary border-b-2 border-primary/10 pb-4 mb-6">
+                <DialogContent className="max-w-2xl h-[85vh] flex flex-col rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
+                  <div className="flex flex-col h-full">
+                    <DialogHeader className="p-8 md:p-10 pb-4 shrink-0 bg-primary/5">
+                      <DialogTitle className="text-3xl font-headline font-black text-primary">
                           {aboutTitle}
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                        <div className="prose prose-slate max-w-none">
+                    <ScrollArea className="flex-1 px-8 md:px-10 pb-8">
+                        <div className="prose prose-slate max-w-none py-4">
                             <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line text-base text-justify font-medium">
                             {aboutContent}
                             </p>
                         </div>
-                    </div>
-                    <DialogFooter className="mt-8 shrink-0">
-                      <Button variant="secondary" className="rounded-xl px-8 h-11 font-bold" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>
+                    </ScrollArea>
+                    <DialogFooter className="p-8 md:p-10 pt-4 shrink-0 border-t bg-muted/20">
+                      <Button variant="secondary" className="rounded-xl px-8 h-11 font-bold" onClick={() => (document.querySelector('[data-dismiss="dialog"]') as any)?.click()}>
                           {t('actions.close')}
                       </Button>
                     </DialogFooter>
