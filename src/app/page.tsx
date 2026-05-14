@@ -138,9 +138,9 @@ export default function Home() {
       </section>
 
       {/* --- EXPERIENCE GRID --- */}
-      <section className="py-16 md:py-24 relative bg-background overflow-hidden">
+      <section className="pt-8 pb-16 md:pt-12 md:pb-24 relative bg-background overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12 space-y-3">
+          <div className="text-center mb-10 md:mb-12 space-y-3">
             <h2 className="text-3xl md:text-5xl font-black font-headline text-primary tracking-tight">
                 {t('home.experienceTitle')}
             </h2>
