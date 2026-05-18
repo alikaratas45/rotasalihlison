@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LucideIcon } from '@/components/icons/lucide-icon';
 import { experienceItems as staticExperienceItems } from '@/lib/data/experience-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Info, MessageSquare, ChevronRight, Compass } from 'lucide-react';
 import { FeedbackSystem } from '@/components/feedback-system';
 import { PwaInstallButton } from '@/components/pwa-install-button';
@@ -128,9 +128,11 @@ export default function Home() {
                         </div>
                     </ScrollArea>
                     <DialogFooter className="p-8 md:p-10 pt-4 shrink-0 border-t bg-muted/20">
-                      <Button variant="secondary" className="rounded-xl px-8 h-11 font-bold" onClick={() => (document.querySelector('[data-dismiss="dialog"]') as any)?.click()}>
-                          {t('actions.close')}
-                      </Button>
+                      <DialogClose asChild>
+                        <Button variant="secondary" className="rounded-xl px-8 h-11 font-bold">
+                            {t('actions.close')}
+                        </Button>
+                      </DialogClose>
                     </DialogFooter>
                   </div>
                 </DialogContent>
