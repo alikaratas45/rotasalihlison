@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Sun, Moon } from 'lucide-react';
+import { Menu, Sun, Moon, Home } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
@@ -45,11 +45,20 @@ export function Header() {
         : "h-20 bg-background/90 backdrop-blur-md border-b border-primary/10 shadow-sm"
     )}>
       <div className="container h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center group shrink-0">
-          <div className="bg-white p-1 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-500 border border-primary/5">
-            <Logo className="h-8 w-8 md:h-10 md:w-10" />
-          </div>
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link href="/" className="flex items-center group">
+            <div className="bg-white p-1 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-500 border border-primary/5">
+              <Logo className="h-8 w-8 md:h-10 md:w-10" />
+            </div>
+          </Link>
+          <Link 
+            href="/" 
+            className="flex items-center justify-center p-2 rounded-full text-primary hover:bg-primary/5 transition-all duration-300"
+            title={t('header.home')}
+          >
+            <Home className="h-5 w-5 md:h-6 md:w-6" />
+          </Link>
+        </div>
         
         <nav className="hidden items-center gap-1 text-xs font-black md:flex lg:gap-2">
           {navLinks.map((link) => (
