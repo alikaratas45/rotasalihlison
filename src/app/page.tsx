@@ -169,8 +169,8 @@ export default function Home() {
                   key={item.id || `exp-item-${index}`} 
                   className="group block h-full w-full col-span-1"
                 >
-                  <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-card shadow-sm hover:shadow-xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-primary/5 dark:ring-white/10 overflow-hidden relative">
-                    <div className="p-2 sm:p-3 bg-primary/5 dark:bg-primary/10 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+                  <Card className="h-full w-full p-2 sm:p-3 flex flex-col items-center justify-center bg-secondary/80 dark:bg-primary/5 shadow-md hover:shadow-2xl transition-all duration-500 rounded-[1.25rem] md:rounded-[1.5rem] border-none group-hover:-translate-y-1 ring-1 ring-primary/10 dark:ring-white/20 overflow-hidden relative">
+                    <div className="p-2 sm:p-3 bg-primary/10 dark:bg-primary/20 rounded-xl md:rounded-[1.25rem] mb-2 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
                       <LucideIcon name={item.icon} className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8" />
                     </div>
                     
