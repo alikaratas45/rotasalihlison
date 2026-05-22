@@ -8,10 +8,24 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Language } from '@/context/language-context';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query, where, orderBy } from 'firebase/firestore';
+import { useMemo } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import type { Place } from '@/lib/definitions';
 
 export default function LezzetlerPage() {
   const { t, language } = useLanguage();
   const typedLanguage = language as Language;
+  const firestore = useFirestore();
+
+  // Fetch food category places from Firestore
+  const foodQuery = useMemo(() => 
+    query(collection(firestore, 'places'), where('category', '==', 'food'), orderBy('order')), 
+    [firestore]
+  );
+  const { data: foodPlaces, loading } = useCollection<Place>(foodQuery);
 
   const handleOpenRestaurants = () => {
     const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
@@ -42,6 +56,7 @@ export default function LezzetlerPage() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-12">
+        {/* SABİT MEŞHUR LEZZET TANITIMI */}
         <Link href={`/yerler/${odunKofteSlug[typedLanguage] || odunKofteSlug.tr}`} className="block group">
           <Card className="overflow-hidden border-primary/20 bg-card transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.01]">
             <div className="flex flex-col md:flex-row">
@@ -75,6 +90,41 @@ export default function LezzetlerPage() {
             </div>
           </Card>
         </Link>
+
+        {/* DİNAMİK LEZZET DURAKLARI LİSTESİ */}
+        <div className="space-y-6 pt-10">
+            <h2 className="text-2xl font-black font-headline border-b pb-4">Diğer Lezzet Durakları</h2>
+            {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[1, 2].map(i => <Skeleton key={i} className="h-48 w-full rounded-2xl" />)}
+                </div>
+            ) : foodPlaces && foodPlaces.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {foodPlaces.filter(f => f.id !== '3').map((food) => (
+                        <Link href={`/yerler/${food.slug[typedLanguage]}`} key={food.id} className="group">
+                            <Card className="flex gap-4 p-4 items-center hover:shadow-lg transition-all rounded-2xl border-primary/5 group-hover:border-primary/20">
+                                <div className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden">
+                                    <Image
+                                        src={food.imageUrl || `https://picsum.photos/seed/${food.id}/200/200`}
+                                        alt={food.name[typedLanguage]}
+                                        fill
+                                        className="object-cover"
+                                        sizes="100px"
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-lg truncate group-hover:text-primary transition-colors">{food.name[typedLanguage]}</h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-1">{food.description[typedLanguage]}</p>
+                                    <div className="mt-2 text-xs font-black text-primary uppercase tracking-tighter flex items-center">
+                                        İncele <ChevronRight className="h-3 w-3 ml-0.5" />
+                                    </div>
+                                </div>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+            ) : null}
+        </div>
 
         <Card className="hover:shadow-lg transition-shadow border-primary/10 bg-secondary/5 overflow-hidden">
           <CardHeader className="text-center pt-10">

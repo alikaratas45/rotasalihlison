@@ -1,16 +1,30 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { Bed, MapPin, Phone, ExternalLink, ArrowLeft, Thermometer, Navigation, Info } from 'lucide-react';
+import { Bed, MapPin, Phone, ExternalLink, ArrowLeft, Thermometer, Navigation, Info, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Language } from '@/context/language-context';
+import { useCollection, useFirestore } from '@/firebase';
+import { collection, query, where, orderBy } from 'firebase/firestore';
+import { useMemo } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { Place } from '@/lib/definitions';
 
 export default function KonaklamaPage() {
   const { t, language } = useLanguage();
   const typedLanguage = language as Language;
+  const firestore = useFirestore();
+
+  // Fetch accommodation category places from Firestore
+  const accommodationQuery = useMemo(() => 
+    query(collection(firestore, 'places'), where('category', '==', 'accommodation'), orderBy('order')), 
+    [firestore]
+  );
+  const { data: dynamicHotels, loading } = useCollection<Place>(accommodationQuery);
 
   const handleOpenMaps = () => {
     const searchQuery = encodeURIComponent("Salihli'deki Oteller");
@@ -50,7 +64,7 @@ export default function KonaklamaPage() {
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto space-y-12">
+        <div className="max-w-5xl mx-auto space-y-20">
           
           {/* KURŞUNLU KAPLICALARI ÖZEL BÖLÜM */}
           <Card className="overflow-hidden border-none shadow-2xl rounded-[2.5rem] bg-white">
@@ -96,6 +110,56 @@ export default function KonaklamaPage() {
               </div>
             </div>
           </Card>
+
+          {/* DİNAMİK KONAKLAMA LİSTESİ */}
+          <div className="space-y-8">
+             <div className="flex items-center justify-between border-b pb-4">
+                <h2 className="text-3xl font-black font-headline text-slate-800">Öne Çıkan İşletmeler</h2>
+                {loading ? <Skeleton className="h-6 w-20" /> : <Badge variant="secondary" className="font-bold">{dynamicHotels?.length || 0} Tesis</Badge>}
+             </div>
+
+             {loading ? (
+                <div className="grid md:grid-cols-2 gap-8">
+                    {[1, 2].map(i => <Skeleton key={i} className="h-[400px] w-full rounded-[2rem]" />)}
+                </div>
+             ) : dynamicHotels && dynamicHotels.length > 0 ? (
+                <div className="grid md:grid-cols-2 gap-8">
+                    {dynamicHotels.map((hotel) => (
+                        <Link href={`/yerler/${hotel.slug[typedLanguage]}`} key={hotel.id} className="group">
+                            <Card className="h-full overflow-hidden transition-all duration-500 hover:shadow-2xl border-none ring-1 ring-black/5 rounded-[2rem]">
+                                <div className="relative h-56 w-full overflow-hidden">
+                                    <Image
+                                        src={hotel.imageUrl || `https://picsum.photos/seed/${hotel.id}/600/400`}
+                                        alt={hotel.name[typedLanguage]} 
+                                        data-ai-hint="hotel building" 
+                                        fill 
+                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                        sizes="500px"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <div className="absolute bottom-4 left-6">
+                                        <Badge className="bg-white/90 text-primary font-bold">{hotel.name[typedLanguage]}</Badge>
+                                    </div>
+                                </div>
+                                <CardContent className="p-6">
+                                    <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-6">
+                                        {hotel.description[typedLanguage]}
+                                    </p>
+                                    <div className="text-sm font-black text-primary flex items-center uppercase tracking-wider">
+                                        Detayları Gör
+                                        <ChevronRight className="ml-1 h-4 w-4 transform transition-transform group-hover:translate-x-1"/>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+             ) : (
+                <p className="text-center py-12 text-muted-foreground italic bg-white/50 rounded-2xl border-2 border-dashed">
+                    Henüz özel konaklama işletmesi eklenmemiş.
+                </p>
+             )}
+          </div>
 
           {/* DİĞER OTELLER GENEL KART */}
           <Card className="hover:shadow-xl transition-all duration-500 border-primary/10 bg-secondary/30 rounded-[2.5rem] overflow-hidden group">

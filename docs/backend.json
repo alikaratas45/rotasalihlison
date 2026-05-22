@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -22,7 +23,7 @@
         "slug": { "$ref": "#/backend/entities/LocalizedString" },
         "name": { "$ref": "#/backend/entities/LocalizedString" },
         "description": { "$ref": "#/backend/entities/LocalizedString" },
-        "category": { "type": "string", "enum": ["history", "nature", "food", "shopping", "poi"] },
+        "category": { "type": "string", "enum": ["history", "nature", "food", "shopping", "poi", "accommodation"] },
         "coordinates": { "$ref": "#/backend/entities/Coordinates" },
         "imageUrl": { "type": "string", "format": "uri" },
         "imageHint": { "type": "string" },

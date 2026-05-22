@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -66,7 +67,7 @@ const placeFormSchema = z.object({
   name: localizedStringSchema,
   slug: localizedStringSchema,
   description: localizedStringSchema,
-  category: z.enum(['history', 'nature', 'food', 'shopping', 'poi']),
+  category: z.enum(['history', 'nature', 'food', 'shopping', 'poi', 'accommodation']),
   lat: z.coerce.number().min(-90).max(90),
   lng: z.coerce.number().min(-180).max(180),
   imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
@@ -452,6 +453,7 @@ export default function AdminPage() {
                                                     <option value="history">Tarih</option>
                                                     <option value="nature">Doğa</option>
                                                     <option value="food">Lezzet</option>
+                                                    <option value="accommodation">Konaklama</option>
                                                 </select>
                                             </FormItem>
                                         )}/>
@@ -475,16 +477,22 @@ export default function AdminPage() {
                                     <TableRow className="bg-muted/50 hover:bg-muted/50">
                                         <TableHead className="w-20 pl-6">Sıra</TableHead>
                                         <TableHead>İsim</TableHead>
+                                        <TableHead>Kategori</TableHead>
                                         <TableHead className="text-right pr-6">Eylemler</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {placesLoading ? (
-                                        <TableRow><TableCell colSpan={3} className="p-6"><Skeleton className="h-20 w-full rounded-2xl" /></TableCell></TableRow>
+                                        <TableRow><TableCell colSpan={4} className="p-6"><Skeleton className="h-20 w-full rounded-2xl" /></TableCell></TableRow>
                                     ) : sortedPlaces.map(p => (
                                         <TableRow key={p.id} className="hover:bg-muted/30 transition-colors">
                                             <TableCell className="pl-6"><Badge variant="secondary" className="rounded-lg">{p.order || '-'}</Badge></TableCell>
                                             <TableCell className="font-bold text-slate-700">{p.name.tr}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className="capitalize">
+                                                    {p.category === 'accommodation' ? 'Konaklama' : p.category === 'food' ? 'Lezzet' : p.category}
+                                                </Badge>
+                                            </TableCell>
                                             <TableCell className="text-right pr-6">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
@@ -707,7 +715,7 @@ export default function AdminPage() {
                             <CardContent>
                                 <Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button>
                             </CardContent>
-                        </Card>
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -748,7 +756,18 @@ export default function AdminPage() {
                                             )} />
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                            <FormField control={editPlaceForm.control} name="category" render={({ field }) => (<FormItem><FormLabel>Kategori</FormLabel><select {...field} className="w-full h-11 border rounded-xl px-4 focus:ring-2 focus:ring-primary"><option value="poi">Önemli Nokta</option><option value="history">Tarih</option><option value="nature">Doğa</option><option value="food">Lezzet</option></select></FormItem>)}/>
+                                            <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Kategori</FormLabel>
+                                                    <select {...field} className="w-full h-11 border rounded-xl px-4 focus:ring-2 focus:ring-primary">
+                                                        <option value="poi">Önemli Nokta</option>
+                                                        <option value="history">Tarih</option>
+                                                        <option value="nature">Doğa</option>
+                                                        <option value="food">Lezzet</option>
+                                                        <option value="accommodation">Konaklama</option>
+                                                    </select>
+                                                </FormItem>
+                                            )}/>
                                             <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıra</FormLabel><Input type="number" {...field} className="rounded-xl h-11" /></FormItem>)}/>
                                             <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
                                             <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>

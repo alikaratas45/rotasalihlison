@@ -63,11 +63,11 @@ function YerlerContent() {
 
   const { data: places, loading } = useCollection<Place>(placesQuery);
   
-  // Salihli Odun Köftesi'ni (ID: 3) bu listeden çıkarıyoruz çünkü artık Lezzetler sayfasında özel olarak yer alıyor.
-  // Mekanları admin panelinden belirlenen 'order' değerine göre sıralıyoruz.
+  // ÖNEMLİ: Lezzet (food) ve Konaklama (accommodation) kategorileri genel listeden çıkarılır.
+  // Bu yerler kendi özel sayfalarında (/lezzetler ve /konaklama) listelenir.
   const filteredPlaces = useMemo(() => {
       return (places || [])
-        .filter(place => place.id !== '3')
+        .filter(place => place.category !== 'food' && place.category !== 'accommodation')
         .sort((a, b) => {
             const orderA = a.order ?? 999;
             const orderB = b.order ?? 999;

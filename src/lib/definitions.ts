@@ -1,3 +1,4 @@
+
 export type LocalizedString = {
     tr: string;
     en: string;
@@ -25,7 +26,7 @@ export type Place = {
     slug: LocalizedString;
     name: LocalizedString;
     description: LocalizedString;
-    category: 'history' | 'nature' | 'food' | 'shopping' | 'poi';
+    category: 'history' | 'nature' | 'food' | 'shopping' | 'poi' | 'accommodation';
     coordinates: Coordinates;
     imageUrl?: string;
     imageHint?: string;
