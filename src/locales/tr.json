@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Ana Sayfa",
@@ -237,5 +236,9 @@
         "installedDescription": "Uygulama başarıyla cihazınıza eklendi.",
         "errorTitle": "Yükleme Hatası",
         "errorDescription": "Yükleme başlatılamadı. Lütfen tarayıcı menüsünü kullanın."
+    },
+    "brochures": {
+        "title": "Dijital Broşürler",
+        "description": "Salihli'yi tanıtan dijital broşürlerimizi ve yayınlarımızı inceleyerek şehrimiz hakkında daha fazla bilgi sahibi olabilirsiniz."
     }
 }

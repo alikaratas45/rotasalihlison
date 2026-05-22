@@ -1,4 +1,3 @@
-
 import { ExperienceItem } from '@/lib/definitions';
 
 // Omit 'id' because it will be auto-generated during seeding
@@ -122,5 +121,17 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
     icon: 'LocateFixed',
     link: '/cevremde-ne-var',
     order: 10
+  },
+  {
+    name: {
+      tr: 'E-Broşür',
+      en: 'E-Brochure',
+      fr: 'E-Brochure',
+      de: 'E-Broschüre',
+      ja: '電子パンフレット'
+    },
+    icon: 'Library',
+    link: '/brosurler',
+    order: 11
   }
 ];

@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Home",
@@ -236,5 +235,9 @@
         "installedDescription": "The application has been successfully added to your device.",
         "errorTitle": "Installation Error",
         "errorDescription": "Installation could not be started. Please use the browser menu."
+    },
+    "brochures": {
+        "title": "Digital Brochures",
+        "description": "You can have more information about our city by examining our digital promotional brochures and publications introducing Salihli."
     }
 }
