@@ -19,7 +19,7 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
       tr: 'Doğa ve Huzur',
       en: 'Nature and Peace',
       fr: 'Nature et Paix',
-      de: 'Natur und Frieden',
+      de: 'Natur oder Frieden',
       ja: '自然と平和'
     },
     icon: 'Mountain',
@@ -88,23 +88,23 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Bisiklet Rotaları',
-      en: 'Bicycle Routes',
-      fr: 'Itinéraires Cyclables',
-      de: 'Fahrradrouten',
-      ja: '自転車ルート'
+      tr: 'Dijital Yayınlar',
+      en: 'Digital Publications',
+      fr: 'Publications Numériques',
+      de: 'Digitale Publikationen',
+      ja: '電子出版物'
     },
-    icon: 'Bike',
-    link: '/bisiklet-rotalari',
+    icon: 'Library',
+    link: '/dijital-yayinlar',
     order: 8
   },
   {
     name: {
-      tr: 'Yürüyüş Rotaları',
-      en: 'Hiking Routes',
-      fr: 'Itinéraires de Randonnée',
-      de: 'Wanderwege',
-      ja: 'ハイキングルート'
+      tr: 'Rotalar',
+      en: 'Tracks',
+      fr: 'Sentiers',
+      de: 'Pfade',
+      ja: 'トレイル'
     },
     icon: 'Footprints',
     link: '/yuruyus-rotalari',
@@ -112,26 +112,14 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Yakınımdakiler',
-      en: 'What\'s Around Me?',
-      fr: 'Qu\'y a-t-il autour de moi ?',
-      de: 'Was ist um mich herum?',
-      ja: '私の周りに何がある？'
+      tr: 'Konaklama',
+      en: 'Accommodation',
+      fr: 'Hébergement',
+      de: 'Unterkunft',
+      ja: '宿泊施設'
     },
-    icon: 'LocateFixed',
-    link: '/cevremde-ne-var',
+    icon: 'Bed',
+    link: '/konaklama',
     order: 10
-  },
-  {
-    name: {
-      tr: 'E-Broşür',
-      en: 'E-Brochure',
-      fr: 'E-Brochure',
-      de: 'E-Broschüre',
-      ja: '電子パンフレット'
-    },
-    icon: 'Library',
-    link: '/brosurler',
-    order: 11
   }
 ];

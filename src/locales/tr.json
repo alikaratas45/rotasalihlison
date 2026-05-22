@@ -238,7 +238,11 @@
         "errorDescription": "Yükleme başlatılamadı. Lütfen tarayıcı menüsünü kullanın."
     },
     "brochures": {
-        "title": "Dijital Broşürler",
+        "title": "Dijital Yayınlar",
         "description": "Salihli'yi tanıtan dijital broşürlerimizi ve yayınlarımızı inceleyerek şehrimiz hakkında daha fazla bilgi sahibi olabilirsiniz."
+    },
+    "accommodation": {
+        "title": "Konaklama",
+        "description": "Salihli seyahatinizde konaklayabileceğiniz konforlu oteller ve tesisler."
     }
 }
