@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -715,7 +714,7 @@ export default function AdminPage() {
                             <CardContent>
                                 <Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button>
                             </CardContent>
-                        </div>
+                        </Card>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -723,7 +722,9 @@ export default function AdminPage() {
             {/* MODALS */}
             <Dialog open={!!editingPlace} onOpenChange={o => !o && setEditingPlaceId(null)}>
                 <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
-                    <DialogHeader className="p-8 border-b shrink-0 bg-primary/5"><DialogTitle className="text-2xl font-black font-headline text-primary">Yeri Düzenle: {editingPlace?.name.tr}</DialogTitle></DialogHeader>
+                    <DialogHeader className="p-8 border-b shrink-0 bg-primary/5">
+                        <DialogTitle className="text-2xl font-black font-headline text-primary">Yeri Düzenle: {editingPlace?.name.tr}</DialogTitle>
+                    </DialogHeader>
                     <div className="flex-1 min-h-0">
                         <ScrollArea className="h-full">
                             <div className="p-8 space-y-8 pb-20">
@@ -779,20 +780,27 @@ export default function AdminPage() {
                     </div>
                     <DialogFooter className="p-8 border-t bg-muted/20 shrink-0">
                         <Button variant="ghost" onClick={() => setEditingPlaceId(null)} className="rounded-xl px-8 h-12">İptal</Button>
-                        <Button onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting} className="rounded-xl px-12 h-12 font-black shadow-lg">{isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle</Button>
+                        <Button onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting} className="rounded-xl px-12 h-12 font-black shadow-lg">
+                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={!!managingSubPointsPlaceId} onOpenChange={o => !o && setManagingSubPointsPlaceId(null)}>
                 <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
-                    <DialogHeader className="p-8 border-b shrink-0 bg-primary/5"><DialogTitle className="text-2xl font-black font-headline text-primary">Alt Başlık Yönetimi: {managingSubPointsPlace?.name.tr}</DialogTitle></DialogHeader>
+                    <DialogHeader className="p-8 border-b shrink-0 bg-primary/5">
+                        <DialogTitle className="text-2xl font-black font-headline text-primary">Alt Başlık Yönetimi: {managingSubPointsPlace?.name.tr}</DialogTitle>
+                    </DialogHeader>
                     <div className="flex-1 min-h-0">
                         <ScrollArea className="h-full">
                             <div className="p-8 space-y-12 pb-20">
                                 <Form {...subPointForm}>
                                     <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-6 border-2 border-primary/10 p-8 rounded-[2rem] bg-muted/5 shadow-sm">
-                                        <h4 className="font-black text-lg flex items-center gap-2 text-primary uppercase tracking-tight">{editingSubPoint ? <FilePenLine className="h-5 w-5" /> : <Plus className="h-5 w-5" />} {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık Ekle'}</h4>
+                                        <h4 className="font-black text-lg flex items-center gap-2 text-primary uppercase tracking-tight">
+                                            {editingSubPoint ? <FilePenLine className="h-5 w-5" /> : <Plus className="h-5 w-5" />} 
+                                            {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık Ekle'}
+                                        </h4>
                                         <div className="bg-primary/5 p-5 rounded-2xl border-2 border-primary/10 mb-4 flex flex-wrap items-center gap-4">
                                             <div className="flex items-center gap-2">
                                                 <input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'subpoint')} className="hidden" id="audio-sub" />
@@ -817,7 +825,10 @@ export default function AdminPage() {
                                             </div>
                                         </div>
                                         <LocalizedFields form={subPointForm} fieldNames={['name', 'description']} />
-                                        <div className="grid grid-cols-2 gap-6"><FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/><FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/></div>
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
+                                            <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
+                                        </div>
                                         <div className="flex gap-4 pt-4">
                                             <Button type="submit" disabled={isSubmitting} className="flex-1 h-12 rounded-xl font-bold shadow-md">
                                                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -829,27 +840,33 @@ export default function AdminPage() {
                                 </Form>
                                 <div className="space-y-4">
                                     <h4 className="font-black text-sm text-muted-foreground uppercase tracking-widest border-b-2 border-primary/10 pb-4">Ekli Alt Başlıklar</h4>
-                                    {managingSubPointsPlace?.subPoints?.map((s, index) => (
-                                        <div key={`${s.id}-${index}`} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
-                                            <div className="flex items-center gap-4">
-                                                {s.imageUrl && (
-                                                    <div className="relative h-12 w-20 rounded-lg overflow-hidden shrink-0 border border-muted">
-                                                        <Image src={sanitizeImageUrl(s.imageUrl)} alt={s.name.tr} fill className="object-cover" />
+                                    {(managingSubPointsPlace?.subPoints?.length ?? 0) > 0 ? (
+                                        managingSubPointsPlace?.subPoints?.map((s, index) => (
+                                            <div key={`${s.id}-${index}`} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
+                                                <div className="flex items-center gap-4">
+                                                    {s.imageUrl && (
+                                                        <div className="relative h-12 w-20 rounded-lg overflow-hidden shrink-0 border border-muted">
+                                                            <Image src={sanitizeImageUrl(s.imageUrl)} alt={s.name.tr} fill className="object-cover" />
+                                                        </div>
+                                                    )}
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-lg text-slate-800">{s.name.tr}</span>
+                                                        <span className="text-xs text-muted-foreground font-mono mt-1 opacity-70 group-hover:opacity-100">{s.coordinates.lat.toFixed(4)}, {s.coordinates.lng.toFixed(4)}</span>
                                                     </div>
-                                                )}
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-lg text-slate-800">{s.name.tr}</span>
-                                                    <span className="text-xs text-muted-foreground font-mono mt-1 opacity-70 group-hover:opacity-100">{s.coordinates.lat.toFixed(4)}, {s.coordinates.lng.toFixed(4)}</span>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}>
+                                                        <FilePenLine className="h-5 w-5" />
+                                                    </Button>
+                                                    <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => setSubPointIndexToDelete(index)} disabled={isSubmitting}>
+                                                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+                                                    </Button>
                                                 </div>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}><FilePenLine className="h-5 w-5" /></Button>
-                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => setSubPointIndexToDelete(index)} disabled={isSubmitting}>
-                                                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    )) || <p className="text-center py-20 text-muted-foreground italic bg-muted/20 rounded-[2rem]">Henüz alt başlık eklenmemiş.</p>}
+                                        ))
+                                    ) : (
+                                        <p className="text-center py-20 text-muted-foreground italic bg-muted/20 rounded-[2rem]">Henüz alt başlık eklenmemiş.</p>
+                                    )}
                                 </div>
                             </div>
                         </ScrollArea>
@@ -857,7 +874,6 @@ export default function AdminPage() {
                 </DialogContent>
             </Dialog>
 
-            {/* CONFIRM DELETE SUBPOINT ALERT DIALOG */}
             <AlertDialog open={subPointIndexToDelete !== null} onOpenChange={o => !o && setSubPointIndexToDelete(null)}>
                 <AlertDialogContent className="rounded-[2.5rem] border-none shadow-2xl p-10 max-w-md">
                     <AlertDialogHeader className="flex flex-col items-center text-center">
@@ -884,8 +900,14 @@ export default function AdminPage() {
 
             <AlertDialog open={!!deletingFeedback} onOpenChange={o => !o && setDeletingFeedback(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Anket Kaydını Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">Bu anket kaydı kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingFeedback) { await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id)); toast({ title: 'Silindi' }); setDeletingFeedback(null); } }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Kalıcı Olarak Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-2xl font-black">Anket Kaydını Sil</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg">Bu anket kaydı kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="pt-6">
+                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
+                        <AlertDialogAction onClick={async () => { if(deletingFeedback) { await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id)); toast({ title: 'Silindi' }); setDeletingFeedback(null); } }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Kalıcı Olarak Sil</AlertDialogAction>
+                    </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
@@ -904,15 +926,27 @@ export default function AdminPage() {
 
             <AlertDialog open={!!deletingPlaceId} onOpenChange={o => !o && setDeletingPlaceId(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Mekanı Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlaceId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-2xl font-black">Mekanı Sil</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg">'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="pt-6">
+                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
+                        <AlertDialogAction onClick={async () => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlaceId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction>
+                    </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
             <AlertDialog open={!!deletingExpItemId} onOpenChange={o => !o && setDeletingExpItemId(null)}>
                 <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader><AlertDialogTitle className="text-2xl font-black">Menü Öğesini Sil</AlertDialogTitle><AlertDialogDescription className="text-lg">'{deletingExpItem?.name.tr}' menü öğesi kalıcı olarak silinecektir.</AlertDialogDescription></AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6"><AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel><AlertDialogAction onClick={async () => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItemId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction></AlertDialogFooter>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-2xl font-black">Menü Öğesini Sil</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg">'{deletingExpItem?.name.tr}' menü öğesi kalıcı olarak silinecektir.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="pt-6">
+                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
+                        <AlertDialogAction onClick={async () => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItemId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction>
+                    </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
         </div>
