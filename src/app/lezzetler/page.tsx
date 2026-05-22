@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Place } from '@/lib/definitions';
@@ -19,11 +19,17 @@ export default function LezzetlerPage() {
   const firestore = useFirestore();
 
   // Fetch food category places from Firestore
+  // Note: orderBy removed from query to avoid index requirements, sorting done in memory
   const foodQuery = useMemo(() => 
-    query(collection(firestore, 'places'), where('category', '==', 'food'), orderBy('order')), 
+    query(collection(firestore, 'places'), where('category', '==', 'food')), 
     [firestore]
   );
-  const { data: foodPlaces, loading } = useCollection<Place>(foodQuery);
+  const { data: foodPlacesRaw, loading } = useCollection<Place>(foodQuery);
+
+  const foodPlaces = useMemo(() => {
+    if (!foodPlacesRaw) return [];
+    return [...foodPlacesRaw].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  }, [foodPlacesRaw]);
 
   const handleOpenRestaurants = () => {
     const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
@@ -98,6 +104,7 @@ export default function LezzetlerPage() {
                 </div>
             ) : foodPlaces && foodPlaces.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Filter out Odun Kofte if its ID matches '3' to avoid duplication */}
                     {foodPlaces.filter(f => f.id !== '3').map((food) => (
                         <Link href={`/yerler/${food.slug[typedLanguage]}`} key={food.id} className="group">
                             <Card className="flex gap-4 p-4 items-center hover:shadow-lg transition-all rounded-2xl border-primary/5 group-hover:border-primary/20">
@@ -121,7 +128,9 @@ export default function LezzetlerPage() {
                         </Link>
                     ))}
                 </div>
-            ) : null}
+            ) : (
+                <p className="text-center py-10 text-muted-foreground italic">Henüz başka lezzet durağı eklenmemiş.</p>
+            )}
         </div>
 
         <Card className="hover:shadow-lg transition-shadow border-primary/10 bg-secondary/5 overflow-hidden">

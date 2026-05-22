@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Language } from '@/context/language-context';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -20,11 +20,17 @@ export default function KonaklamaPage() {
   const firestore = useFirestore();
 
   // Fetch accommodation category places from Firestore
+  // Sorting is done in memory to avoid index requirements
   const accommodationQuery = useMemo(() => 
-    query(collection(firestore, 'places'), where('category', '==', 'accommodation'), orderBy('order')), 
+    query(collection(firestore, 'places'), where('category', '==', 'accommodation')), 
     [firestore]
   );
-  const { data: dynamicHotels, loading } = useCollection<Place>(accommodationQuery);
+  const { data: dynamicHotelsRaw, loading } = useCollection<Place>(accommodationQuery);
+
+  const dynamicHotels = useMemo(() => {
+    if (!dynamicHotelsRaw) return [];
+    return [...dynamicHotelsRaw].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  }, [dynamicHotelsRaw]);
 
   const handleOpenMaps = () => {
     const searchQuery = encodeURIComponent("Salihli'deki Oteller");
