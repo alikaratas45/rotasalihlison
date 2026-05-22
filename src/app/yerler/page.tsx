@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -43,7 +42,6 @@ function YerlerPageSkeleton() {
         </div>
     );
 }
-
 
 function YerlerContent() {
   const searchParams = useSearchParams();
@@ -157,7 +155,6 @@ function YerlerContent() {
     </div>
   );
 }
-
 
 export default function YerlerPage() {
     return (

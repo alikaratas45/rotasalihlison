@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
-import { Bed, MapPin, Phone, ExternalLink, ArrowLeft, Thermometer, Navigation, Info, ChevronRight } from 'lucide-react';
+import { Bed, MapPin, ExternalLink, ArrowLeft, Thermometer, Navigation, Info, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
@@ -12,6 +11,7 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where, orderBy } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import type { Place } from '@/lib/definitions';
 
 export default function KonaklamaPage() {

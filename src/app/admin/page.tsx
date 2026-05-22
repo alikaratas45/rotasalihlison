@@ -392,14 +392,14 @@ export default function AdminPage() {
     const handleDownloadCSV = () => {
         if (!filteredFeedbacks.length) return;
         const total = filteredFeedbacks.length;
-        const avg = (key: string) => (filteredFeedbacks.reduce((acc, f: any) => acc + (f[key] || 0), 0) / total).toFixed(2);
+        const avg = (key: string) => (filteredFeedbacks.reduce((acc: number, f: any) => acc + (f[key] || 0), 0) / total).toFixed(2);
         const ratio = (key: string) => `%${((filteredFeedbacks.filter((f: any) => f[key] === 'yes').length / total) * 100).toFixed(1)}`;
         const d = ';';
         const rows = [
             [`sep=${d}`],
             ['SALIHLI ROTA ANALIZ RAPORU'],
             ['Tarih', format(new Date(), 'dd.MM.yyyy HH:mm')],
-            ['Toplam Katilimci', total],
+            ['Toplam Katilimci', total.toString()],
             [''],
             ['ISTATISTIKSEL OZET'],
             ['Temizlik Ortalaması', avg('cleanliness')],

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -12,7 +11,6 @@ import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, where, orderBy } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
 import type { Place } from '@/lib/definitions';
 
 export default function LezzetlerPage() {
