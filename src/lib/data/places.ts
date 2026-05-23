@@ -63,6 +63,26 @@ Served traditionally with roasted peppers, fresh onions with sumac, and the loca
         imageHint: 'grilled meatballs'
     },
     {
+        id: 'bizim-ev-sosyal-tesis',
+        slug: { tr: 'bizim-ev-sosyal-tesisleri', en: 'bizim-ev-social-facilities', fr: 'installations-sociales-bizim-ev', de: 'bizim-ev-soziale-einrichtungen', ja: 'bizim-ev-social-facilities-ja' },
+        name: { tr: 'Bizim Ev Sosyal Tesisleri', en: 'Bizim Ev Social Facilities', fr: 'Installations Sociales Bizim Ev', de: 'Bizim Ev Soziale Einrichtungen', ja: 'ビジム・エヴ・ソーシャル・ファシリティーズ' },
+        description: { 
+            tr: `Salihli Belediyesi tarafından işletilen Bizim Ev Sosyal Tesisleri, Gediz Nehri'nin kıyısında, doğa ile iç içe huzurlu bir atmosfer sunmaktadır. Yerel lezzetlerin, özellikle de Salihli Odun Köftesi'nin en iyi örneklerinin sunulduğu tesis, hem aileler hem de gezginler için ideal bir dinlenme noktasıdır.
+
+Geniş bahçesi, çocuk oyun alanları ve nehir manzarası eşliğinde sunulan kaliteli hizmetiyle Salihli'nin misafirperverliğini en iyi yansıtan mekanlardan biridir.`, 
+            en: `Operated by Salihli Municipality, Bizim Ev Social Facilities offers a peaceful atmosphere intertwined with nature on the banks of the Gediz River. Serving the best examples of local flavors, especially Salihli Wood Meatballs, the facility is an ideal resting point for both families and travelers.
+
+With its large garden, children's playgrounds, and river views, it is one of the places that best reflects Salihli's hospitality through its high-quality service.`,
+            fr: `Géré par la municipalité de Salihli, Bizim Ev Social Facilities offre une atmosphère paisible au bord du fleuve Gediz. C'est un point de repos idéal proposant les meilleures saveurs locales.`,
+            de: `Die von der Stadtverwaltung Salihli betriebenen Bizim Ev Social Facilities bieten eine friedliche Atmosphäre am Ufer des Flusses Gediz. Ein idealer Ort zum Ausruhen mit lokalen Spezialitäten.`,
+            ja: `サリフリ市が運営するビジム・エヴ・ソーシャル・ファシリティーズは、ゲディズ川のほとりにあり、自然と調和した穏やかな雰囲気を提供しています。地元の味、特にサリフリ・ウッドミートボールを楽しめる、家族や旅行者にとって理想的な休憩所です。`
+        },
+        category: 'food',
+        coordinates: { lat: 38.5815, lng: 28.2710 },
+        imageUrl: 'https://picsum.photos/seed/bizimev/800/600',
+        imageHint: 'river side restaurant'
+    },
+    {
         id: '6',
         slug: { tr: 'tabak-deresi-dev-kazanlari', en: 'tabak-creek-giant-cauldrons', fr: 'chaudrons-geants-du-ruisseau-tabak', de: 'tabak-bach-riesenkessel', ja: 'tabak-creek-giant-cauldrons-ja' },
         name: { tr: 'Tabak Deresi Dev Kazanları', en: 'Tabak Creek Giant Cauldrons', fr: 'Chaudrons Géants du Ruisseau Tabak', de: 'Tabak-Bach Riesenkessel', ja: 'タバッククリークの巨大な大釜' },
@@ -113,7 +133,7 @@ The "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been resto
                 },
                 coordinates: { lat: 38.488307, lng: 28.040346 },
                 description: {
-                    tr: `Abidevi havra, Geç Roma döneminde, Musevi toplumunun dini merkezi olarak kullanılmaktaydı. 1962 yılında ortaya çıkarılan bina ve süslemeler kısmen restore edilmiştir. Bin kişiyi barındırabilecek büyüklükte ve uzunluğu 50 metreyi aşkın ana toplantı salonu yer almaktadır. 
+                    tr: `Abidevi havra, Geç Roma döneminde, Musevi toplumunun dini merkezi olarak kullanılmaktaydı. 1962 yılında ortaya çıkarılan bina ve süslemeler kısmen restore edilmiştir. Bin kişiyle barındırabilecek büyüklükte ve uzunluğu 50 metreyi aşkın ana toplantı salonu yer almaktadır. 
 
 Yerden 14 metre yükseklikteki çatı masif taş payelerle desteklenmiştir. Bina, birkaç kere yenilenmiştir. Önceleri, Roma Hamam-Gymnasium Kompleksinin bir parçası iken, daha sonraları, Musevi toplumunun ibadethanesi haline dönüşmüştür. Mozaik yer döşemeleri, mefruşatı ve mermer duvar bezemeleri, MS 4. ve 5. yüzyıldan kalan nadide eserlerdir.`,
                     en: `The monumental synagogue was used as the religious center of the Jewish community in the Late Roman period. Excavated in 1962, it features a main assembly hall large enough to accommodate a thousand people, exceeding 50 meters in length. 
