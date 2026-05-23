@@ -20,30 +20,30 @@ export default function KonaklamaPage() {
   const firestore = useFirestore();
 
   // Fetch accommodation category places from Firestore
-  // Sorting is done in memory to avoid index requirements
   const accommodationQuery = useMemo(() => 
     query(collection(firestore, 'places'), where('category', '==', 'accommodation')), 
     [firestore]
   );
   const { data: dynamicHotelsRaw, loading } = useCollection<Place>(accommodationQuery);
 
-  const dynamicHotels = useMemo(() => {
+  const hotels = useMemo(() => {
     if (!dynamicHotelsRaw) return [];
     return [...dynamicHotelsRaw].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [dynamicHotelsRaw]);
 
+  // Identify featured hotel (Kursunlu Thermal has ID '2' in seed data)
+  const famousHotel = useMemo(() => {
+    return hotels.find(h => h.id === '2') || null;
+  }, [hotels]);
+
+  // Other hotels excluding the featured one
+  const otherHotels = useMemo(() => {
+    return hotels.filter(h => h.id !== '2');
+  }, [hotels]);
+
   const handleOpenMaps = () => {
     const searchQuery = encodeURIComponent("Salihli'deki Oteller");
     window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
-  };
-
-  // Kurşunlu Kaplıcaları Slugları
-  const kursunluSlug: Record<string, string> = {
-    tr: 'kursunlu-kaplicalari',
-    en: 'kursunlu-thermal-springs',
-    fr: 'sources-thermales-de-kursunlu',
-    de: 'thermalquellen-von-kursunlu',
-    ja: 'kursunlu-thermal-springs-ja'
   };
 
   return (
@@ -72,67 +72,73 @@ export default function KonaklamaPage() {
 
         <div className="max-w-5xl mx-auto space-y-20">
           
-          {/* KURŞUNLU KAPLICALARI ÖZEL BÖLÜM */}
-          <Card className="overflow-hidden border-none shadow-2xl rounded-[2.5rem] bg-white">
-            <div className="grid md:grid-cols-2">
-              <div className="relative h-64 md:h-auto overflow-hidden">
-                <Image 
-                  src="https://i.imgur.com/n7fioom.jpeg" 
-                  alt="Kurşunlu Kaplıcaları" 
-                  fill 
-                  className="object-cover transition-transform duration-700 hover:scale-110"
-                  data-ai-hint="thermal hotel"
-                  sizes="600px"
-                />
-                <div className="absolute top-6 left-6">
-                  <span className="bg-primary/90 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-sm shadow-xl">
-                    Belediye İşletmesi
-                  </span>
+          {/* DYNAMIC KURŞUNLU KAPLICALARI SECTION */}
+          {loading ? (
+            <Skeleton className="h-[500px] w-full rounded-[2.5rem]" />
+          ) : famousHotel ? (
+            <Card className="overflow-hidden border-none shadow-2xl rounded-[2.5rem] bg-white">
+                <div className="grid md:grid-cols-2">
+                <div className="relative h-64 md:h-auto overflow-hidden">
+                    <Image 
+                    src={famousHotel.imageUrl || "https://i.imgur.com/n7fioom.jpeg"} 
+                    alt={famousHotel.name[typedLanguage]} 
+                    fill 
+                    className="object-cover transition-transform duration-700 hover:scale-110"
+                    data-ai-hint="thermal hotel"
+                    sizes="600px"
+                    />
+                    <div className="absolute top-6 left-6">
+                    <span className="bg-primary/90 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-sm shadow-xl">
+                        Belediye İşletmesi
+                    </span>
+                    </div>
                 </div>
-              </div>
-              <div className="p-8 md:p-12 flex flex-col justify-center bg-primary/5">
-                <div className="flex items-center gap-3 text-primary mb-4">
-                  <Thermometer className="h-6 w-6" />
-                  <span className="font-black text-sm uppercase tracking-tighter">Termal & Sağlık</span>
+                <div className="p-8 md:p-12 flex flex-col justify-center bg-primary/5">
+                    <div className="flex items-center gap-3 text-primary mb-4">
+                    <Thermometer className="h-6 w-6" />
+                    <span className="font-black text-sm uppercase tracking-tighter">Termal & Sağlık</span>
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-black font-headline text-slate-900 mb-4 leading-tight">
+                        {famousHotel.name[typedLanguage]}
+                    </h2>
+                    <p className="text-slate-600 font-medium text-lg leading-relaxed mb-8">
+                        {famousHotel.description[typedLanguage].substring(0, 200)}...
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                    <Button asChild size="lg" className="rounded-xl h-14 font-black text-base shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
+                        <Link href={`/yerler/${famousHotel.slug[typedLanguage]}`}>
+                            <Info className="mr-2 h-5 w-5" />
+                            Detayları İncele
+                        </Link>
+                    </Button>
+                    <Button variant="outline" size="lg" className="rounded-xl h-14 font-black text-base bg-white border-primary/20 text-primary" onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${famousHotel.coordinates.lat},${famousHotel.coordinates.lng}`, '_blank')}>
+                        <Navigation className="mr-2 h-5 w-5" />
+                        Yol Tarifi Al
+                    </Button>
+                    </div>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black font-headline text-slate-900 mb-4 leading-tight">
-                    Kurşunlu Kaplıcaları & Konaklama Tesisleri
-                </h2>
-                <p className="text-slate-600 font-medium text-lg leading-relaxed mb-8">
-                    Doğanın kalbinde, şifalı sular ve kuş sesleri eşliğinde huzurlu bir konaklama deneyimi. Apart evler ve otel seçenekleriyle Salihli'nin en gözde tesisi.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button asChild size="lg" className="rounded-xl h-14 font-black text-base shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]">
-                    <Link href={`/yerler/${kursunluSlug[typedLanguage] || kursunluSlug.tr}`}>
-                        <Info className="mr-2 h-5 w-5" />
-                        Detayları İncele
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="lg" className="rounded-xl h-14 font-black text-base bg-white border-primary/20 text-primary" onClick={() => window.open('https://www.google.com/maps/dir/?api=1&destination=38.4487,28.1144', '_blank')}>
-                    <Navigation className="mr-2 h-5 w-5" />
-                    Yol Tarifi Al
-                  </Button>
                 </div>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          ) : null}
 
-          {/* DİNAMİK KONAKLAMA LİSTESİ */}
+          {/* DYNAMIC ACCOMMODATION LIST */}
           <div className="space-y-8">
              <div className="flex items-center justify-between border-b pb-4">
-                <h2 className="text-3xl font-black font-headline text-slate-800">Öne Çıkan İşletmeler</h2>
-                {loading ? <Skeleton className="h-6 w-20" /> : <Badge variant="secondary" className="font-bold">{dynamicHotels?.length || 0} Tesis</Badge>}
+                <h2 className="text-3xl font-black font-headline text-slate-800">
+                    {famousHotel ? 'Diğer İşletmeler' : 'Konaklama İşletmeleri'}
+                </h2>
+                {loading ? <Skeleton className="h-6 w-20" /> : <Badge variant="secondary" className="font-bold">{otherHotels.length} Tesis</Badge>}
              </div>
 
              {loading ? (
                 <div className="grid md:grid-cols-2 gap-8">
-                    {[1, 2].map(i => <Skeleton key={i} className="h-[400px] w-full rounded-[2rem]" />)}
+                    {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-[400px] w-full rounded-[2rem]" />)}
                 </div>
-             ) : dynamicHotels && dynamicHotels.length > 0 ? (
+             ) : otherHotels.length > 0 ? (
                 <div className="grid md:grid-cols-2 gap-8">
-                    {dynamicHotels.map((hotel) => (
+                    {otherHotels.map((hotel) => (
                         <Link href={`/yerler/${hotel.slug[typedLanguage]}`} key={hotel.id} className="group">
-                            <Card className="h-full overflow-hidden transition-all duration-500 hover:shadow-2xl border-none ring-1 ring-black/5 rounded-[2rem]">
+                            <Card className="h-full overflow-hidden transition-all duration-500 hover:shadow-2xl border-none ring-1 ring-black/5 rounded-[2rem] bg-white">
                                 <div className="relative h-56 w-full overflow-hidden">
                                     <Image
                                         src={hotel.imageUrl || `https://picsum.photos/seed/${hotel.id}/600/400`}
@@ -161,13 +167,15 @@ export default function KonaklamaPage() {
                     ))}
                 </div>
              ) : (
-                <p className="text-center py-12 text-muted-foreground italic bg-white/50 rounded-2xl border-2 border-dashed">
-                    Henüz özel konaklama işletmesi eklenmemiş.
-                </p>
+                !loading && !famousHotel && (
+                    <p className="text-center py-12 text-muted-foreground italic bg-white/50 rounded-2xl border-2 border-dashed">
+                        Henüz özel konaklama işletmesi eklenmemiş.
+                    </p>
+                )
              )}
           </div>
 
-          {/* DİĞER OTELLER GENEL KART */}
+          {/* GENERAL MAP BUTTON */}
           <Card className="hover:shadow-xl transition-all duration-500 border-primary/10 bg-secondary/30 rounded-[2.5rem] overflow-hidden group">
             <CardHeader className="text-center pt-12">
               <div className="w-20 h-20 bg-background rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner transition-transform duration-500 group-hover:scale-110">

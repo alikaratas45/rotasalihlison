@@ -19,7 +19,6 @@ export default function LezzetlerPage() {
   const firestore = useFirestore();
 
   // Fetch food category places from Firestore
-  // Note: orderBy removed from query to avoid index requirements, sorting done in memory
   const foodQuery = useMemo(() => 
     query(collection(firestore, 'places'), where('category', '==', 'food')), 
     [firestore]
@@ -31,25 +30,19 @@ export default function LezzetlerPage() {
     return [...foodPlacesRaw].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [foodPlacesRaw]);
 
+  // Identify the featured place (Odun Kofte has ID '3' in seed data)
+  const famousPlace = useMemo(() => {
+    return foodPlaces.find(p => p.id === '3') || null;
+  }, [foodPlaces]);
+
+  // List of food places excluding the featured one
+  const otherFoodPlaces = useMemo(() => {
+    return foodPlaces.filter(p => p.id !== '3');
+  }, [foodPlaces]);
+
   const handleOpenRestaurants = () => {
     const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
     window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
-  };
-
-  const odunKofteSlug: Record<string, string> = {
-    tr: 'salihli-odun-kofte',
-    en: 'salihli-wood-meatballs',
-    fr: 'boulettes-de-viande-au-feu-de-bois-de-salihli',
-    de: 'salihli-holzfleischballchen',
-    ja: 'salihli-wood-meatballs-ja'
-  };
-
-  const odunKofteTitle: Record<string, string> = {
-    tr: 'Salihli Odun Köftesi',
-    en: 'Salihli Wood Meatballs',
-    fr: 'Boulettes de Viande au Feu de Bois',
-    de: 'Salihli Holz-Meatballs',
-    ja: 'サリフリ・ウッドミートボール'
   };
 
   return (
@@ -60,54 +53,59 @@ export default function LezzetlerPage() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-12">
-        {/* SABİT MEŞHUR LEZZET TANITIMI */}
-        <Link href={`/yerler/${odunKofteSlug[typedLanguage] || odunKofteSlug.tr}`} className="block group">
-          <Card className="overflow-hidden border-primary/20 bg-card transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.01]">
-            <div className="flex flex-col md:flex-row">
-              <div className="relative h-64 md:h-auto md:w-1/2 shrink-0">
-                <Image 
-                  src="https://i.imgur.com/IT6VuDV.jpeg" 
-                  alt="Salihli Odun Köftesi" 
-                  fill 
-                  className="object-cover"
-                  data-ai-hint="grilled meatballs"
-                  sizes="500px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden" />
-              </div>
-              <div className="p-8 md:p-10 flex flex-col justify-center flex-1">
-                <div className="flex items-center gap-2 text-primary mb-3">
-                  <Utensils className="h-6 w-6" />
-                  <span className="text-sm font-bold uppercase tracking-widest">{t('cuisine.famousTitle')}</span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 group-hover:text-primary transition-colors">
-                    {odunKofteTitle[typedLanguage] || odunKofteTitle.tr}
-                </h2>
-                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                  {t('cuisine.kofteDescription')}
-                </p>
-                <div className="mt-auto text-base font-bold text-primary flex items-center">
-                  {t('actions.seeDetails')}
-                  <ChevronRight className="ml-1 h-5 w-5 transform transition-transform group-hover:translate-x-1"/>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Link>
+        {/* DYNAMIC FAMOUS FLAVOR SECTION */}
+        {loading ? (
+            <Skeleton className="h-96 w-full rounded-[2.5rem]" />
+        ) : famousPlace ? (
+            <Link href={`/yerler/${famousPlace.slug[typedLanguage]}`} className="block group">
+                <Card className="overflow-hidden border-primary/20 bg-card transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.01] rounded-[2.5rem]">
+                    <div className="flex flex-col md:flex-row">
+                    <div className="relative h-64 md:h-auto md:w-1/2 shrink-0">
+                        <Image 
+                        src={famousPlace.imageUrl || "https://i.imgur.com/IT6VuDV.jpeg"} 
+                        alt={famousPlace.name[typedLanguage]} 
+                        fill 
+                        className="object-cover"
+                        data-ai-hint="grilled meatballs"
+                        sizes="500px"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden" />
+                    </div>
+                    <div className="p-8 md:p-10 flex flex-col justify-center flex-1">
+                        <div className="flex items-center gap-2 text-primary mb-3">
+                        <Utensils className="h-6 w-6" />
+                        <span className="text-sm font-bold uppercase tracking-widest">{t('cuisine.famousTitle')}</span>
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 group-hover:text-primary transition-colors">
+                            {famousPlace.name[typedLanguage]}
+                        </h2>
+                        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                            {famousPlace.description[typedLanguage].substring(0, 250)}...
+                        </p>
+                        <div className="mt-auto text-base font-bold text-primary flex items-center">
+                        {t('actions.seeDetails')}
+                        <ChevronRight className="ml-1 h-5 w-5 transform transition-transform group-hover:translate-x-1"/>
+                        </div>
+                    </div>
+                    </div>
+                </Card>
+            </Link>
+        ) : null}
 
-        {/* DİNAMİK LEZZET DURAKLARI LİSTESİ */}
+        {/* DYNAMIC FLAVOR STOPS LIST */}
         <div className="space-y-6 pt-10">
-            <h2 className="text-2xl font-black font-headline border-b pb-4">Diğer Lezzet Durakları</h2>
+            <h2 className="text-2xl font-black font-headline border-b pb-4">
+                {famousPlace ? 'Diğer Lezzet Durakları' : 'Lezzet Durakları'}
+            </h2>
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[1, 2].map(i => <Skeleton key={i} className="h-48 w-full rounded-2xl" />)}
+                    {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-48 w-full rounded-2xl" />)}
                 </div>
-            ) : foodPlaces && foodPlaces.length > 0 ? (
+            ) : otherFoodPlaces.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Filter out Odun Kofte if its ID matches '3' to avoid duplication */}
-                    {foodPlaces.filter(f => f.id !== '3').map((food) => (
+                    {otherFoodPlaces.map((food) => (
                         <Link href={`/yerler/${food.slug[typedLanguage]}`} key={food.id} className="group">
-                            <Card className="flex gap-4 p-4 items-center hover:shadow-lg transition-all rounded-2xl border-primary/5 group-hover:border-primary/20">
+                            <Card className="flex gap-4 p-4 items-center hover:shadow-lg transition-all rounded-2xl border-primary/5 group-hover:border-primary/20 bg-white">
                                 <div className="relative h-20 w-20 shrink-0 rounded-xl overflow-hidden">
                                     <Image
                                         src={food.imageUrl || `https://picsum.photos/seed/${food.id}/200/200`}
@@ -129,11 +127,15 @@ export default function LezzetlerPage() {
                     ))}
                 </div>
             ) : (
-                <p className="text-center py-10 text-muted-foreground italic">Henüz başka lezzet durağı eklenmemiş.</p>
+                !loading && !famousPlace && (
+                    <p className="text-center py-10 text-muted-foreground italic bg-muted/20 rounded-2xl border-2 border-dashed">
+                        Henüz lezzet durağı eklenmemiş.
+                    </p>
+                )
             )}
         </div>
 
-        <Card className="hover:shadow-lg transition-shadow border-primary/10 bg-secondary/5 overflow-hidden">
+        <Card className="hover:shadow-lg transition-shadow border-primary/10 bg-secondary/5 overflow-hidden rounded-[2.5rem]">
           <CardHeader className="text-center pt-10">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="h-8 w-8 text-primary" />
@@ -146,7 +148,7 @@ export default function LezzetlerPage() {
           <CardContent className="flex justify-center pb-10">
             <Button 
                 size="lg" 
-                className="w-full sm:w-auto px-12 gap-3 h-14 text-lg font-bold shadow-md hover:scale-105 transition-transform" 
+                className="w-full sm:w-auto px-12 gap-3 h-14 text-lg font-bold shadow-md hover:scale-105 transition-transform rounded-xl" 
                 onClick={handleOpenRestaurants}
             >
                 {t('cuisine.viewOnMap')}
