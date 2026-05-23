@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -22,13 +21,11 @@ function RotalarContent() {
   const firestore = useFirestore();
 
   const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
-  const { data: routes, loading } = useCollection<Route>(routesQuery);
+  const { data: dbRoutes, loading } = useCollection<Route>(routesQuery);
 
   const displayRoutes = useMemo(() => {
-    const rawRoutes = (routes && routes.length > 0) ? routes : staticRoutes;
-    // Filter out the deleted 'Salihli Flavors Route' (r3) to ensure it's gone even if seeded in Firestore
-    return rawRoutes.filter(route => route.id !== 'r3' && route.slug.en !== 'salihli-flavors-route');
-  }, [routes]);
+    return (dbRoutes && dbRoutes.length > 0) ? dbRoutes : staticRoutes;
+  }, [dbRoutes]);
 
   if (loading) {
       return (
@@ -66,25 +63,20 @@ function RotalarContent() {
         {displayRoutes.map(route => {
             let imageId = '';
             // Match correct placeholder image based on route slug
-            switch (route.slug.en) {
-              case 'lydian-treasures-route':
-                imageId = 'gymnasium';
-                break;
-              case 'nature-route':
-                imageId = 'adala-volcanic-canyon';
-                break;
-              default:
-                imageId = route.id; // fallback
-            }
+            const enSlug = route.slug.en || '';
+            if (enSlug.includes('lydian')) imageId = 'gymnasium';
+            else if (enSlug.includes('nature')) imageId = 'adala-volcanic-canyon';
+            else imageId = route.id;
+
             const placeholder = Placeholders.find(p => p.id === imageId);
             return (
-                <Link href={`/rotalar/${route.slug[typedLanguage]}`} key={route.id} className="group">
+                <Link href={`/rotalar/${route.slug[typedLanguage] || route.slug.tr}`} key={route.id} className="group">
                 <Card className="overflow-hidden h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl">
                     <CardContent className="p-0 flex flex-col h-full">
                     <div className="relative h-64 w-full">
                         <Image
                         src={placeholder?.imageUrl || `https://picsum.photos/seed/${route.id}/600/400`}
-                        alt={route.name[typedLanguage]}
+                        alt={route.name[typedLanguage] || route.name.tr}
                         data-ai-hint={placeholder?.imageHint || 'route map'}
                         fill
                         className="object-cover"
@@ -93,11 +85,11 @@ function RotalarContent() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
-                        <h3 className="text-2xl font-bold font-headline mb-2">{route.name[typedLanguage]}</h3>
-                        <p className="text-muted-foreground flex-grow text-sm">{route.description[typedLanguage]}</p>
+                        <h3 className="text-2xl font-bold font-headline mb-2">{route.name[typedLanguage] || route.name.tr}</h3>
+                        <p className="text-muted-foreground flex-grow text-sm">{route.description[typedLanguage] || route.description.tr}</p>
                         <div className="flex items-center text-sm text-primary font-semibold mt-4">
                             <MapPinned className="w-4 h-4 mr-2"/>
-                            <span>{route.stops.length} {t('home.stops', {count: route.stops.length})}</span>
+                            <span>{route.stops?.length || 0} {t('home.stops', {count: route.stops?.length || 0})}</span>
                         </div>
                     </div>
                     </CardContent>

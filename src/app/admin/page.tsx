@@ -15,10 +15,12 @@ import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/
 import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
 import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
 import { deleteFeedbackComment } from '@/firebase/firestore/feedback-service';
+import { addStory, updateStory, deleteStory } from '@/firebase/firestore/stories-service';
+import { addRoute, updateRoute, deleteRoute } from '@/firebase/firestore/routes-service';
 
 // UI Components
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,17 +28,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare, ImageIcon, AlertCircle } from 'lucide-react';
+import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare, ImageIcon, AlertCircle, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 
 // Definitions
-import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback } from '@/lib/definitions';
+import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback, Story, Route } from '@/lib/definitions';
 
 // Constants
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
@@ -75,13 +78,20 @@ const placeFormSchema = z.object({
   audioUrlTr: z.string().optional().or(z.literal('')),
 });
 
-const subPointFormSchema = z.object({
+const storyFormSchema = z.object({
+    title: localizedStringSchema,
+    slug: localizedStringSchema,
+    author: localizedStringSchema,
+    content: localizedStringSchema,
+    placeId: z.string().optional(),
+});
+
+const routeFormSchema = z.object({
     name: localizedStringSchema,
+    slug: localizedStringSchema,
     description: localizedStringSchema,
-    lat: z.coerce.number().min(-90).max(90),
-    lng: z.coerce.number().min(-180).max(180),
-    audioUrlTr: z.string().optional().or(z.literal('')),
-    imageUrl: z.string().url({ message: 'Lütfen geçerli bir URL girin.' }).optional().or(z.literal('')),
+    stops: z.array(z.string()).default([]),
+    kmlUrl: z.string().optional(),
 });
 
 const experienceItemSchema = z.object({
@@ -89,11 +99,6 @@ const experienceItemSchema = z.object({
     icon: z.string().min(1, 'İkon adı gereklidir.'),
     link: z.string().min(1, 'Link gereklidir.'),
     order: z.coerce.number().min(0),
-});
-
-const settingsFormSchema = z.object({
-    aboutTitle: localizedStringSchema,
-    aboutContent: localizedStringSchema,
 });
 
 // Helper Component for Localized Fields
@@ -112,18 +117,23 @@ const LocalizedFields = ({ form, fieldNames, prefix = "" }: { form: any, fieldNa
                             )} />
                         )}
                         {fieldNames.includes('title') && (
-                            <FormField control={form.control} name={`${prefix}aboutTitle.${lang}`} render={({ field }) => (
+                            <FormField control={form.control} name={`${prefix}title.${lang}`} render={({ field }) => (
                                 <FormItem><FormLabel>Başlık</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
+                            )} />
+                        )}
+                        {fieldNames.includes('author') && (
+                            <FormField control={form.control} name={`${prefix}author.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>Yazar / Kaynak</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
                             )} />
                         )}
                         {fieldNames.includes('description') && (
                             <FormField control={form.control} name={`${prefix}description.${lang}`} render={({ field }) => (
-                                <FormItem><FormLabel>Açıklama</FormLabel><FormControl><Textarea rows={4} {...field} value={field.value || ''} /></FormControl></FormItem>
+                                <FormItem><FormLabel>Açıklama / Kısa Özet</FormLabel><FormControl><Textarea rows={4} {...field} value={field.value || ''} /></FormControl></FormItem>
                             )} />
                         )}
                         {fieldNames.includes('content') && (
-                            <FormField control={form.control} name={`${prefix}aboutContent.${lang}`} render={({ field }) => (
-                                <FormItem><FormLabel>İçerik</FormLabel><FormControl><Textarea rows={10} {...field} value={field.value || ''} /></FormControl></FormItem>
+                            <FormField control={form.control} name={`${prefix}content.${lang}`} render={({ field }) => (
+                                <FormItem><FormLabel>İçerik / Metin</FormLabel><FormControl><Textarea rows={10} {...field} value={field.value || ''} /></FormControl></FormItem>
                             )} />
                         )}
                         {fieldNames.includes('slug') && (
@@ -145,324 +155,211 @@ export default function AdminPage() {
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSeeding, setIsSeeding] = useState(false);
-    const [isUploadingAudio, setIsUploadingAudio] = useState(false);
-    const [feedbackPlaceFilter, setFeedbackPlaceFilter] = useState('all');
-
-    // ID tracking states
-    const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
-    const [deletingPlaceId, setDeletingPlaceId] = useState<string | null>(null);
-    const [managingSubPointsPlaceId, setManagingSubPointsPlaceId] = useState<string | null>(null);
-    
-    const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
-    const [deletingGuestbookComment, setDeletingGuestbookComment] = useState<CommentFeedback | null>(null);
-    const [editingSubPoint, setEditingSubPoint] = useState<SubPoint | null>(null);
-    const [subPointIndexToDelete, setSubPointIndexToDelete] = useState<number | null>(null);
-
-    const [editingExpItemId, setEditingExpItemId] = useState<string | null>(null);
-    const [deletingExpItemId, setDeletingExpItemId] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [activeTab, setActiveTab] = useState('places');
 
     // Data queries
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
+    const storiesQuery = useMemo(() => query(collection(firestore, 'stories')), [firestore]);
+    const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
     const feedbacksQuery = useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]);
-    const guestbookQuery = useMemo(() => query(collection(firestore, 'feedback'), orderBy('createdAt', 'desc')), [firestore]);
     const experienceQuery = useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]);
-    const aboutDocRef = useMemo(() => doc(firestore, 'settings', 'about'), [firestore]);
 
     const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
+    const { data: stories, loading: storiesLoading } = useCollection<Story>(storiesQuery);
+    const { data: routes, loading: routesLoading } = useCollection<Route>(routesQuery);
     const { data: feedbacks } = useCollection<Feedback>(feedbacksQuery);
-    const { data: guestbookComments, loading: guestbookLoading } = useCollection<CommentFeedback>(guestbookQuery);
-    const { data: expItems, loading: expLoading } = useCollection<ExperienceItem>(experienceQuery);
-    const { data: aboutSettings } = useDoc<any>(aboutDocRef);
+    const { data: expItems } = useCollection<ExperienceItem>(experienceQuery);
 
-    // Derived active objects
-    const editingPlace = useMemo(() => places?.find(p => p.id === editingPlaceId) || null, [places, editingPlaceId]);
-    const deletingPlace = useMemo(() => places?.find(p => p.id === deletingPlaceId) || null, [places, deletingPlaceId]);
-    const managingSubPointsPlace = useMemo(() => places?.find(p => p.id === managingSubPointsPlaceId) || null, [places, managingSubPointsPlaceId]);
-    const editingExpItem = useMemo(() => expItems?.find(i => i.id === editingExpItemId) || null, [expItems, editingExpItemId]);
-    const deletingExpItem = useMemo(() => expItems?.find(i => i.id === deletingExpItemId) || null, [expItems, deletingExpItemId]);
+    // ID tracking states
+    const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
+    const [editingStoryId, setEditingStoryId] = useState<string | null>(null);
+    const [editingRouteId, setEditingRouteId] = useState<string | null>(null);
+    
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [deletingType, setDeletingType] = useState<'place' | 'story' | 'route' | null>(null);
 
     const sortedPlaces = useMemo(() => {
         if (!places) return [];
-        return [...places].sort((a, b) => {
-            const orderA = a.order ?? 999;
-            const orderB = b.order ?? 999;
-            if (orderA !== orderB) return orderA - orderB;
-            return a.name.tr.localeCompare(b.name.tr, 'tr');
-        });
+        return [...places].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
     }, [places]);
 
-    const filteredFeedbacks = useMemo(() => {
-        if (!feedbacks) return [];
-        return feedbacks.filter(f => feedbackPlaceFilter === 'all' || f.placeId === feedbackPlaceFilter);
-    }, [feedbacks, feedbackPlaceFilter]);
-
     // Forms
-    const addPlaceForm = useForm({ 
+    const placeForm = useForm({ 
         resolver: zodResolver(placeFormSchema), 
         defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '', imageUrl: '' } as any 
     });
-    const editPlaceForm = useForm({ resolver: zodResolver(placeFormSchema) });
-    const subPointForm = useForm({ 
-        resolver: zodResolver(subPointFormSchema), 
-        defaultValues: { name: { tr: '', en: '' }, description: { tr: '', en: '' }, lat: 38.48, lng: 28.14, audioUrlTr: '', imageUrl: '' } as any 
-    });
-    const expItemForm = useForm({ 
-        resolver: zodResolver(experienceItemSchema), 
-        defaultValues: { name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: 0 } as any 
-    });
-    const siteSettingsForm = useForm({ resolver: zodResolver(settingsFormSchema) });
 
-    useEffect(() => { 
-        if (editingPlace) {
-            editPlaceForm.reset({ 
-                name: editingPlace.name,
-                slug: editingPlace.slug,
-                description: editingPlace.description,
-                category: editingPlace.category,
-                lat: editingPlace.coordinates?.lat || 0, 
-                lng: editingPlace.coordinates?.lng || 0,
-                imageUrl: editingPlace.imageUrl || '',
-                imageHint: editingPlace.imageHint || '',
-                order: editingPlace.order ?? 99,
-                audioUrlTr: editingPlace.audioUrlTr || ''
-            }); 
+    const storyForm = useForm({
+        resolver: zodResolver(storyFormSchema),
+        defaultValues: { title: { tr: '', en: '' }, slug: { tr: '', en: '' }, author: { tr: '', en: '' }, content: { tr: '', en: '' }, placeId: '' } as any
+    });
+
+    const routeForm = useForm({
+        resolver: zodResolver(routeFormSchema),
+        defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, stops: [], kmlUrl: '' } as any
+    });
+
+    // Reset forms when editing
+    useEffect(() => {
+        if (editingPlaceId && places) {
+            const p = places.find(x => x.id === editingPlaceId);
+            if (p) placeForm.reset({ ...p, lat: p.coordinates.lat, lng: p.coordinates.lng });
+        } else if (!editingPlaceId) {
+            placeForm.reset({ name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'poi', lat: 38.48, lng: 28.14, order: 99, audioUrlTr: '', imageUrl: '' });
         }
-    }, [editingPlace, editPlaceForm]);
+    }, [editingPlaceId, places, placeForm]);
 
     useEffect(() => {
-        if (editingExpItem) {
-            expItemForm.reset({
-                name: editingExpItem.name,
-                icon: editingExpItem.icon,
-                link: editingExpItem.link,
-                order: editingExpItem.order
-            });
-        } else {
-            expItemForm.reset({ name: { tr: '', en: '' }, icon: 'HelpCircle', link: '/', order: (expItems?.length || 0) + 1 });
+        if (editingStoryId && stories) {
+            const s = stories.find(x => x.id === editingStoryId);
+            if (s) storyForm.reset(s);
+        } else if (!editingStoryId) {
+            storyForm.reset({ title: { tr: '', en: '' }, slug: { tr: '', en: '' }, author: { tr: '', en: '' }, content: { tr: '', en: '' }, placeId: '' });
         }
-    }, [editingExpItem, expItemForm, expItems]);
+    }, [editingStoryId, stories, storyForm]);
 
     useEffect(() => {
-        if (aboutSettings) {
-            siteSettingsForm.reset({
-                aboutTitle: aboutSettings.aboutTitle || { tr: '', en: '' },
-                aboutContent: aboutSettings.aboutContent || { tr: '', en: '' }
-            });
+        if (editingRouteId && routes) {
+            const r = routes.find(x => x.id === editingRouteId);
+            if (r) routeForm.reset(r);
+        } else if (!editingRouteId) {
+            routeForm.reset({ name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, stops: [], kmlUrl: '' });
         }
-    }, [aboutSettings, siteSettingsForm]);
+    }, [editingRouteId, routes, routeForm]);
 
     // Action Handlers
-    const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'place' | 'subpoint') => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, pathPrefix: string) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        setIsUploadingAudio(true);
+        setIsUploading(true);
         try {
-            const storage = getStorage(firebaseApp, "studio-4936508951-29568.firebasestorage.app");
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
-            const path = type === 'place' ? `audio/places/${fileName}` : `audio/subpoints/${fileName}`;
-            const storageRef = ref(storage, path);
+            const storage = getStorage(firebaseApp);
+            const fileName = `${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, `${pathPrefix}/${fileName}`);
             const snapshot = await uploadBytes(storageRef, file);
             const url = await getDownloadURL(snapshot.ref);
-            if (type === 'place') editPlaceForm.setValue('audioUrlTr', url);
-            else subPointForm.setValue('audioUrlTr', url);
-            toast({ title: 'Ses Yüklendi', description: 'Değişiklikleri kaydetmeyi unutmayın.' });
-        } catch (error: any) {
-            console.error("Audio upload error:", error);
-            toast({ variant: 'destructive', title: 'Yükleme Hatası', description: 'Depolama ayarlarınızı kontrol edin.' });
-        } finally { setIsUploadingAudio(false); }
-    };
-
-    const handleAddPlaceSubmit = (values: any) => {
-        setIsSubmitting(true);
-        const newPlace = { ...values, coordinates: { lat: values.lat, lng: values.lng }, subPoints: [] };
-        addPlace(firestore, newPlace, { 
-            onSuccess: () => { 
-                toast({ title: 'Eklendi' }); 
-                addPlaceForm.reset(); 
-                setIsSubmitting(false); 
-            }, 
-            onError: () => setIsSubmitting(false) 
-        });
-    };
-
-    const handleEditPlaceSubmit = (values: any) => {
-        if (!editingPlace?.id) return;
-        setIsSubmitting(true);
-        updatePlace(firestore, editingPlace.id, values, { 
-            onSuccess: () => { 
-                toast({ title: 'Güncellendi' }); 
-                setEditingPlaceId(null); 
-                setIsSubmitting(false); 
-            }, 
-            onError: () => setIsSubmitting(false) 
-        });
-    };
-
-    const handleSubPointSubmit = (values: any) => {
-        if (!managingSubPointsPlace) return;
-        setIsSubmitting(true);
-        let updatedSubPoints = [...(managingSubPointsPlace.subPoints || [])];
-        if (editingSubPoint) {
-            updatedSubPoints = updatedSubPoints.map(s => s.id === editingSubPoint.id ? { ...s, ...values, coordinates: { lat: values.lat, lng: values.lng } } : s);
-        } else {
-            const newId = `sp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-            updatedSubPoints.push({ id: newId, ...values, coordinates: { lat: values.lat, lng: values.lng } });
-        }
-        updateSubPoints(firestore, managingSubPointsPlace.id, updatedSubPoints, { 
-            onSuccess: () => { 
-                toast({ title: 'Kaydedildi' }); 
-                setEditingSubPoint(null); 
-                subPointForm.reset(); 
-                setIsSubmitting(false); 
-            }, 
-            onError: () => setIsSubmitting(false) 
-        });
-    };
-
-    const handleConfirmDeleteSubPoint = () => {
-        if (subPointIndexToDelete === null || !managingSubPointsPlaceId || !places) return;
-        
-        const place = places.find(p => p.id === managingSubPointsPlaceId);
-        if (!place || !place.subPoints) return;
-        
-        setIsSubmitting(true);
-        const updatedSubPoints = [...place.subPoints];
-        updatedSubPoints.splice(subPointIndexToDelete, 1);
-        
-        updateSubPoints(firestore, place.id, updatedSubPoints, {
-            onSuccess: () => {
-                toast({ title: 'Alt başlık silindi' });
-                setSubPointIndexToDelete(null);
-                setIsSubmitting(false);
-            },
-            onError: (err) => {
-                console.error("Silme hatası:", err);
-                toast({ variant: 'destructive', title: 'Hata', description: 'Silme işlemi başarısız oldu.' });
-                setSubPointIndexToDelete(null);
-                setIsSubmitting(false);
-            }
-        });
-    };
-
-    const handleExpItemSubmit = (values: any) => {
-        setIsSubmitting(true);
-        if (editingExpItem) {
-            updateExperienceItem(firestore, editingExpItem.id, values, {
-                onSuccess: () => { 
-                    toast({ title: 'Güncellendi' }); 
-                    setEditingExpItemId(null); 
-                    setIsSubmitting(false); 
-                },
-                onError: () => setIsSubmitting(false)
-            });
-        } else {
-            addExperienceItem(firestore, values, {
-                onSuccess: () => { 
-                    toast({ title: 'Eklendi' }); 
-                    expItemForm.reset(); 
-                    setIsSubmitting(false); 
-                },
-                onError: () => setIsSubmitting(false)
-            });
-        }
-    };
-
-    const handleSettingsSubmit = (values: any) => {
-        setIsSubmitting(true);
-        setDoc(doc(firestore, 'settings', 'about'), values, { merge: true })
-            .then(() => { 
-                toast({ title: 'Ayarlar Kaydedildi' }); 
-                setIsSubmitting(false); 
-            })
-            .catch(() => setIsSubmitting(false));
-    };
-
-    const handleSeedDatabase = async () => {
-        setIsSeeding(true);
-        try {
-            await seedDatabase(firestore, 'UPDATE');
-            toast({ title: 'Başarılı', description: 'Veriler koddan başarıyla güncellendi.' });
+            
+            if (pathPrefix === 'audio') placeForm.setValue('audioUrlTr', url);
+            if (pathPrefix === 'kml') routeForm.setValue('kmlUrl', url);
+            
+            toast({ title: 'Yüklendi', description: 'Değişikliği kaydetmeyi unutmayın.' });
         } catch (error) {
-            toast({ variant: 'destructive', title: 'Hata', description: 'Güncelleme sırasında bir sorun oluştu.' });
-        } finally {
-            setIsSeeding(false);
-        }
+            toast({ variant: 'destructive', title: 'Hata', description: 'Yükleme başarısız.' });
+        } finally { setIsUploading(false); }
     };
 
-    const handleDownloadCSV = () => {
-        if (!filteredFeedbacks.length) return;
-        const total = filteredFeedbacks.length;
-        const avg = (key: string) => (filteredFeedbacks.reduce((acc: number, f: any) => acc + (f[key] || 0), 0) / total).toFixed(2);
-        const ratio = (key: string) => `%${((filteredFeedbacks.filter((f: any) => f[key] === 'yes').length / total) * 100).toFixed(1)}`;
-        const d = ';';
-        const rows = [
-            [`sep=${d}`],
-            ['SALIHLI ROTA ANALIZ RAPORU'],
-            ['Tarih', format(new Date(), 'dd.MM.yyyy HH:mm')],
-            ['Toplam Katilimci', total.toString()],
-            [''],
-            ['ISTATISTIKSEL OZET'],
-            ['Temizlik Ortalaması', avg('cleanliness')],
-            ['Erişilebilirlik Ortalaması', avg('accessibility')],
-            ['Memnuniyet Ortalaması', avg('satisfaction')],
-            ['Turla Gelen Oranı', ratio('withTour')],
-            ['Rehber Alan Oranı', ratio('guided')],
-            ['Bilgi Panosu Yeterliliği', ratio('infoBoards')],
-            [''],
-            ['DETAYLI ANKET LISTESI'],
-            ['Mekan;Tarih;Temizlik;Erisim;Memnuniyet;Tur;Rehber;Pano']
-        ];
-        filteredFeedbacks.forEach(f => {
-            const dateStr = f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yyyy') : '';
-            rows.push([`${f.placeName}${d}${dateStr}${d}${f.cleanliness}${d}${f.accessibility}${d}${f.satisfaction}${d}${f.withTour}${d}${f.guided}${d}${f.infoBoards}`]);
-        });
-        const blob = new Blob(['\ufeff' + rows.map(r => r.join('')).join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Salihli_Rapor_${format(new Date(), 'yyyy-MM-dd')}.csv`;
-        link.click();
+    const onPlaceSubmit = (values: any) => {
+        setIsSubmitting(true);
+        const data = { ...values, coordinates: { lat: values.lat, lng: values.lng } };
+        const callback = { 
+            onSuccess: () => { toast({ title: 'Başarılı' }); setEditingPlaceId(null); setIsSubmitting(false); },
+            onError: () => setIsSubmitting(false)
+        };
+        editingPlaceId ? updatePlace(firestore, editingPlaceId, data, callback) : addPlace(firestore, data, callback);
+    };
+
+    const onStorySubmit = (values: any) => {
+        setIsSubmitting(true);
+        const callback = {
+            onSuccess: () => { toast({ title: 'Başarılı' }); setEditingStoryId(null); setIsSubmitting(false); },
+            onError: () => setIsSubmitting(false)
+        };
+        editingStoryId ? updateStory(firestore, editingStoryId, values, callback) : addStory(firestore, values, callback);
+    };
+
+    const onRouteSubmit = (values: any) => {
+        setIsSubmitting(true);
+        const callback = {
+            onSuccess: () => { toast({ title: 'Başarılı' }); setEditingRouteId(null); setIsSubmitting(false); },
+            onError: () => setIsSubmitting(false)
+        };
+        editingRouteId ? updateRoute(firestore, editingRouteId, values, callback) : addRoute(firestore, values, callback);
+    };
+
+    const handleDelete = async () => {
+        if (!deletingId || !deletingType) return;
+        setIsSubmitting(true);
+        const callback = { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingId(null); setIsSubmitting(false); } };
+        if (deletingType === 'place') deletePlace(firestore, deletingId, callback);
+        if (deletingType === 'story') deleteStory(firestore, deletingId, callback);
+        if (deletingType === 'route') deleteRoute(firestore, deletingId, callback);
     };
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-20">
-            <Tabs defaultValue="places" className="w-full">
-                <TabsList className="flex justify-center sticky top-0 z-40 glass py-4 border-b overflow-x-auto">
-                    <TabsTrigger value="places">Yerler</TabsTrigger>
-                    <TabsTrigger value="experience">Salihli'de Bir Gün</TabsTrigger>
-                    <TabsTrigger value="general">Genel Bilgiler</TabsTrigger>
-                    <TabsTrigger value="feedbacks">Anketler</TabsTrigger>
-                    <TabsTrigger value="guestbook">Ziyaretçi Defteri</TabsTrigger>
-                    <TabsTrigger value="database">Veritabanı</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="flex justify-center sticky top-0 z-40 glass py-4 border-b overflow-x-auto gap-2">
+                    <TabsTrigger value="places" className="rounded-xl px-6">Yerler & Mekanlar</TabsTrigger>
+                    <TabsTrigger value="stories" className="rounded-xl px-6">Hikayeler</TabsTrigger>
+                    <TabsTrigger value="routes" className="rounded-xl px-6">Rotalar & KML</TabsTrigger>
+                    <TabsTrigger value="database" className="rounded-xl px-6">Veritabanı</TabsTrigger>
                 </TabsList>
-                
-                <TabsContent value="places" className="p-4 space-y-8">
+
+                {/* --- YERLER & MEKANLAR --- */}
+                <TabsContent value="places" className="p-4 space-y-8 animate-in fade-in duration-500">
+                    <div className="flex flex-wrap gap-4 mb-6">
+                        <Button variant="outline" className="rounded-2xl h-12 gap-2 border-primary/20 hover:bg-primary/5" onClick={() => { setEditingPlaceId(null); placeForm.setValue('category', 'food'); }}>
+                            <Utensils className="h-4 w-4 text-orange-600" /> Yeni Lezzet Durağı
+                        </Button>
+                        <Button variant="outline" className="rounded-2xl h-12 gap-2 border-primary/20 hover:bg-primary/5" onClick={() => { setEditingPlaceId(null); placeForm.setValue('category', 'accommodation'); }}>
+                            <Bed className="h-4 w-4 text-blue-600" /> Yeni Konaklama İşletmesi
+                        </Button>
+                    </div>
+
                     <Card className="rounded-[2rem] shadow-xl border-none">
-                        <CardHeader><CardTitle>Yeni Yer Ekle</CardTitle></CardHeader>
+                        <CardHeader>
+                            <CardTitle className="text-2xl font-black font-headline text-primary">
+                                {editingPlaceId ? 'Mekanı Düzenle' : 'Yeni Yer/Mekan Ekle'}
+                            </CardTitle>
+                            <CardDescription>Sardes, Kurşunlu, restoranlar veya oteller gibi tüm noktaları buradan yönetin.</CardDescription>
+                        </CardHeader>
                         <CardContent>
-                            <Form {...addPlaceForm}>
-                                <form onSubmit={addPlaceForm.handleSubmit(handleAddPlaceSubmit)} className="space-y-6">
-                                    <LocalizedFields form={addPlaceForm} fieldNames={['name', 'slug', 'description']} />
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <FormField control={addPlaceForm.control} name="category" render={({ field }) => (
+                            <Form {...placeForm}>
+                                <form onSubmit={placeForm.handleSubmit(onPlaceSubmit)} className="space-y-8">
+                                    <div className="bg-primary/5 p-6 rounded-[2rem] border-2 border-primary/10 space-y-4">
+                                        <h4 className="font-bold flex items-center gap-2 text-primary"><Headphones className="h-5 w-5" /> Türkçe Seslendirme (MP3)</h4>
+                                        <div className="flex items-center gap-4">
+                                            <input type="file" accept="audio/mpeg" onChange={e => handleFileUpload(e, 'audio')} className="hidden" id="audio-upload" />
+                                            <Button type="button" variant="outline" className="rounded-xl font-bold" onClick={() => document.getElementById('audio-upload')?.click()} disabled={isUploading}>
+                                                {isUploading ? <Loader2 className="animate-spin mr-2" /> : <Upload className="mr-2" />} MP3 Yükle
+                                            </Button>
+                                            {placeForm.watch('audioUrlTr') && <Badge className="bg-green-600">MP3 Yüklü</Badge>}
+                                        </div>
+                                    </div>
+                                    
+                                    <LocalizedFields form={placeForm} fieldNames={['name', 'slug', 'description']} />
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <FormField control={placeForm.control} name="category" render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Kategori</FormLabel>
-                                                <select {...field} className="w-full h-10 rounded-xl border border-input px-3 text-sm focus:ring-2 focus:ring-primary">
-                                                    <option value="poi">Önemli Nokta</option>
-                                                    <option value="history">Tarih</option>
-                                                    <option value="nature">Doğa</option>
-                                                    <option value="food">Lezzet</option>
-                                                    <option value="accommodation">Konaklama</option>
+                                                <FormLabel>Kategori (Nerede Listelenecek?)</FormLabel>
+                                                <select {...field} className="w-full h-12 rounded-xl border border-input px-4 focus:ring-2 focus:ring-primary font-bold">
+                                                    <option value="poi">Önemli Nokta (Yerler Sayfası)</option>
+                                                    <option value="history">Tarih (Yerler Sayfası)</option>
+                                                    <option value="nature">Doğa (Yerler Sayfası)</option>
+                                                    <option value="food">Lezzet Durağı (Lezzetler Sayfası)</option>
+                                                    <option value="accommodation">Konaklama İşletmesi (Konaklama Sayfası)</option>
                                                 </select>
                                             </FormItem>
                                         )}/>
-                                        <FormField control={addPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl" /></FormItem>)}/>
-                                        <FormField control={addPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl" /></FormItem>)}/>
-                                        <FormField control={addPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama</FormLabel><Input type="number" {...field} className="rounded-xl" /></FormItem>)}/>
+                                        <FormField control={placeForm.control} name="imageUrl" render={({ field }) => (
+                                            <FormItem><FormLabel>Görsel URL (Direct Link)</FormLabel><FormControl><Input placeholder="https://i.imgur.com/..." {...field} className="rounded-xl h-12" /></FormControl></FormItem>
+                                        )}/>
                                     </div>
-                                    <Button type="submit" disabled={isSubmitting} className="rounded-xl px-12 h-12 font-bold shadow-lg">
-                                        {isSubmitting && <Loader2 className="animate-spin mr-2" />} Ekle
-                                    </Button>
+
+                                    <div className="grid grid-cols-3 gap-6">
+                                        <FormField control={placeForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Enlem (Lat)</FormLabel><Input type="number" step="any" {...field} className="rounded-xl" /></FormItem>)}/>
+                                        <FormField control={placeForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Boylam (Lng)</FormLabel><Input type="number" step="any" {...field} className="rounded-xl" /></FormItem>)}/>
+                                        <FormField control={placeForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıralama No</FormLabel><Input type="number" {...field} className="rounded-xl" /></FormItem>)}/>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <Button type="submit" disabled={isSubmitting} className="rounded-2xl px-12 h-14 font-black shadow-lg">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} {editingPlaceId ? 'Güncelle' : 'Kaydet'}
+                                        </Button>
+                                        {editingPlaceId && <Button variant="ghost" onClick={() => setEditingPlaceId(null)} className="h-14 rounded-2xl">İptal</Button>}
+                                    </div>
                                 </form>
                             </Form>
                         </CardContent>
@@ -472,38 +369,17 @@ export default function AdminPage() {
                         <CardHeader><CardTitle>Mevcut Yerler</CardTitle></CardHeader>
                         <CardContent className="p-0">
                             <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                        <TableHead className="w-20 pl-6">Sıra</TableHead>
-                                        <TableHead>İsim</TableHead>
-                                        <TableHead>Kategori</TableHead>
-                                        <TableHead className="text-right pr-6">Eylemler</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="w-20 pl-6">Sıra</TableHead><TableHead>İsim</TableHead><TableHead>Kategori</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
                                 <TableBody>
-                                    {placesLoading ? (
-                                        <TableRow><TableCell colSpan={4} className="p-6"><Skeleton className="h-20 w-full rounded-2xl" /></TableCell></TableRow>
-                                    ) : sortedPlaces.map(p => (
-                                        <TableRow key={p.id} className="hover:bg-muted/30 transition-colors">
-                                            <TableCell className="pl-6"><Badge variant="secondary" className="rounded-lg">{p.order || '-'}</Badge></TableCell>
-                                            <TableCell className="font-bold text-slate-700">{p.name.tr}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="capitalize">
-                                                    {p.category === 'accommodation' ? 'Konaklama' : p.category === 'food' ? 'Lezzet' : p.category}
-                                                </Badge>
-                                            </TableCell>
+                                    {placesLoading ? <TableRow><TableCell colSpan={4}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
+                                    sortedPlaces.map(p => (
+                                        <TableRow key={p.id} className="hover:bg-muted/30">
+                                            <TableCell className="pl-6"><Badge variant="secondary">{p.order || '-'}</Badge></TableCell>
+                                            <TableCell className="font-bold">{p.name.tr}</TableCell>
+                                            <TableCell><Badge variant="outline">{p.category}</Badge></TableCell>
                                             <TableCell className="text-right pr-6">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="rounded-xl"><MoreHorizontal /></Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[180px]">
-                                                        <DropdownMenuItem onClick={() => setEditingPlaceId(p.id)} className="rounded-xl p-3"><FilePenLine className="mr-2 h-4 w-4" /> Düzenle</DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => setManagingSubPointsPlaceId(p.id)} className="rounded-xl p-3"><Layers className="mr-2 h-4 w-4" /> Alt Başlıklar</DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem onClick={() => setDeletingPlaceId(p.id)} className="text-destructive rounded-xl p-3"><Trash2 className="mr-2 h-4 w-4" /> Sil</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                <Button variant="ghost" size="icon" onClick={() => setEditingPlaceId(p.id)}><FilePenLine className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(p.id); setDeletingType('place'); }}><Trash2 className="h-4 w-4" /></Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -513,46 +389,30 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="experience" className="p-4 space-y-8">
+                {/* --- HİKAYELER --- */}
+                <TabsContent value="stories" className="p-4 space-y-8 animate-in fade-in duration-500">
                     <Card className="rounded-[2rem] shadow-xl border-none">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <LayoutGrid className="h-5 w-5 text-primary" />
-                                {editingExpItem ? 'Menü Öğesini Düzenle' : 'Yeni Menü Öğesi Ekle'}
-                            </CardTitle>
-                            <CardDescription>Ana sayfadaki "Salihli'de Bir Gün" bölümünü yönetin.</CardDescription>
+                            <CardTitle className="flex items-center gap-2 font-black text-primary"><BookOpen /> {editingStoryId ? 'Hikayeyi Düzenle' : 'Yeni Hikaye Ekle'}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <Form {...expItemForm}>
-                                <form onSubmit={expItemForm.handleSubmit(handleExpItemSubmit)} className="space-y-6">
-                                    <LocalizedFields form={expItemForm} fieldNames={['name']} />
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <FormField control={expItemForm.control} name="icon" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>İkon (Lucide Adı)</FormLabel>
-                                                <FormControl><Input placeholder="Mountain, Utensils..." {...field} className="rounded-xl" /></FormControl>
-                                            </FormItem>
-                                        )} />
-                                        <FormField control={expItemForm.control} name="link" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Link (Sayfa Yolu)</FormLabel>
-                                                <FormControl><Input placeholder="/yerler, /lezzetler..." {...field} className="rounded-xl" /></FormControl>
-                                            </FormItem>
-                                        )} />
-                                        <FormField control={expItemForm.control} name="order" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Sıralama</FormLabel>
-                                                <FormControl><Input type="number" {...field} className="rounded-xl" /></FormControl>
-                                            </FormItem>
-                                        )} />
-                                    </div>
+                            <Form {...storyForm}>
+                                <form onSubmit={storyForm.handleSubmit(onStorySubmit)} className="space-y-6">
+                                    <LocalizedFields form={storyForm} fieldNames={['title', 'slug', 'author', 'content']} />
+                                    <FormField control={storyForm.control} name="placeId" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>İlgili Mekan (Mekana Git butonu için)</FormLabel>
+                                            <select {...field} className="w-full h-12 rounded-xl border px-4 font-bold">
+                                                <option value="">Bağlantılı Mekan Yok</option>
+                                                {places?.map(p => <option key={p.id} value={p.id}>{p.name.tr}</option>)}
+                                            </select>
+                                        </FormItem>
+                                    )}/>
                                     <div className="flex gap-4">
-                                        <Button type="submit" disabled={isSubmitting} className="rounded-xl px-12 h-12 font-bold shadow-lg">
-                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} {editingExpItem ? 'Güncelle' : 'Ekle'}
+                                        <Button type="submit" disabled={isSubmitting} className="rounded-2xl px-12 h-14 font-black">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Kaydet
                                         </Button>
-                                        {editingExpItem && (
-                                            <Button variant="ghost" onClick={() => setEditingExpItemId(null)} className="h-12 rounded-xl">İptal</Button>
-                                        )}
+                                        {editingStoryId && <Button variant="ghost" onClick={() => setEditingStoryId(null)} className="h-14 rounded-2xl">İptal</Button>}
                                     </div>
                                 </form>
                             </Form>
@@ -560,30 +420,18 @@ export default function AdminPage() {
                     </Card>
 
                     <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
-                        <CardHeader><CardTitle>Mevcut Menü Öğeleri</CardTitle></CardHeader>
                         <CardContent className="p-0">
                             <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-muted/50">
-                                        <TableHead className="w-20 pl-6">Sıra</TableHead>
-                                        <TableHead>İsim (TR)</TableHead>
-                                        <TableHead>Link</TableHead>
-                                        <TableHead className="text-right pr-6">Eylemler</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="pl-6">Başlık</TableHead><TableHead>Yazar</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
                                 <TableBody>
-                                    {expLoading ? (
-                                        <TableRow><TableCell colSpan={4} className="p-6"><Skeleton className="h-12 w-full rounded-xl" /></TableCell></TableRow>
-                                    ) : expItems?.map(item => (
-                                        <TableRow key={item.id} className="hover:bg-muted/30">
-                                            <TableCell className="pl-6"><Badge variant="outline">{item.order}</Badge></TableCell>
-                                            <TableCell className="font-bold">{item.name.tr}</TableCell>
-                                            <TableCell className="text-muted-foreground text-sm">{item.link}</TableCell>
+                                    {storiesLoading ? <TableRow><TableCell colSpan={3}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
+                                    stories?.map(s => (
+                                        <TableRow key={s.id} className="hover:bg-muted/30">
+                                            <TableCell className="pl-6 font-bold">{s.title.tr}</TableCell>
+                                            <TableCell className="text-muted-foreground">{s.author.tr}</TableCell>
                                             <TableCell className="text-right pr-6">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" onClick={() => setEditingExpItemId(item.id)} className="rounded-xl"><FilePenLine className="h-4 w-4" /></Button>
-                                                    <Button variant="ghost" size="icon" onClick={() => setDeletingExpItemId(item.id)} className="text-destructive rounded-xl"><Trash2 className="h-4 w-4" /></Button>
-                                                </div>
+                                                <Button variant="ghost" size="icon" onClick={() => setEditingStoryId(s.id)}><FilePenLine className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(s.id); setDeletingType('story'); }}><Trash2 className="h-4 w-4" /></Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -593,61 +441,74 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="general" className="p-4 space-y-6">
+                {/* --- ROTALAR & KML --- */}
+                <TabsContent value="routes" className="p-4 space-y-8 animate-in fade-in duration-500">
                     <Card className="rounded-[2rem] shadow-xl border-none">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Settings className="h-5 w-5 text-primary" /> Hakkımızda / Tanıtım Metni</CardTitle>
-                            <CardDescription>Ana sayfadaki 'Salihli Hakkında' butonuna basıldığında açılan pencere içeriği.</CardDescription>
+                            <CardTitle className="flex items-center gap-2 font-black text-primary"><RouteIcon /> {editingRouteId ? 'Rotayı Düzenle' : 'Yeni Rota Oluştur'}</CardTitle>
+                            <CardDescription>Tematik rotalar (durak seçimiyle) veya bisiklet/yürüyüş yolları (KML yükleyerek) oluşturun.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Form {...siteSettingsForm}>
-                                <form onSubmit={siteSettingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-6">
-                                    <LocalizedFields form={siteSettingsForm} fieldNames={['title', 'content']} />
-                                    <Button type="submit" disabled={isSubmitting} className="rounded-xl px-12 h-12 font-bold shadow-lg">
-                                        {isSubmitting && <Loader2 className="animate-spin mr-2" />} Değişiklikleri Kaydet
-                                    </Button>
+                            <Form {...routeForm}>
+                                <form onSubmit={routeForm.handleSubmit(onRouteSubmit)} className="space-y-6">
+                                    <LocalizedFields form={routeForm} fieldNames={['name', 'slug', 'description']} />
+                                    
+                                    <div className="bg-primary/5 p-6 rounded-[2rem] border-2 border-primary/10 space-y-4">
+                                        <h4 className="font-bold flex items-center gap-2 text-primary"><MapPin className="h-5 w-5" /> Rota Çizimi (KML Dosyası)</h4>
+                                        <FormDescription>Bisiklet veya yürüyüş rotası için Google Earth/Maps'ten aldığınız .kml dosyasını buraya yükleyin.</FormDescription>
+                                        <div className="flex items-center gap-4">
+                                            <input type="file" accept=".kml" onChange={e => handleFileUpload(e, 'kml')} className="hidden" id="kml-upload" />
+                                            <Button type="button" variant="outline" className="rounded-xl font-bold" onClick={() => document.getElementById('kml-upload')?.click()} disabled={isUploading}>
+                                                {isUploading ? <Loader2 className="animate-spin mr-2" /> : <Upload className="mr-2" />} KML Yükle
+                                            </Button>
+                                            {routeForm.watch('kmlUrl') && <Badge className="bg-blue-600">KML Aktif</Badge>}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <h4 className="font-bold text-primary">Rota Duraklarını Seçin (Tematik Rotalar İçin)</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-60 overflow-y-auto p-4 bg-muted/20 rounded-2xl border">
+                                            {places?.map(p => (
+                                                <div key={p.id} className="flex items-center space-x-2 bg-background p-2 rounded-lg shadow-sm">
+                                                    <Checkbox 
+                                                        id={`stop-${p.id}`} 
+                                                        checked={routeForm.watch('stops')?.includes(p.id)}
+                                                        onCheckedChange={(checked) => {
+                                                            const current = routeForm.getValues('stops') || [];
+                                                            routeForm.setValue('stops', checked ? [...current, p.id] : current.filter(id => id !== p.id));
+                                                        }}
+                                                    />
+                                                    <label htmlFor={`stop-${p.id}`} className="text-xs font-medium cursor-pointer truncate">{p.name.tr}</label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <Button type="submit" disabled={isSubmitting} className="rounded-2xl px-12 h-14 font-black">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Rota Kaydet
+                                        </Button>
+                                        {editingRouteId && <Button variant="ghost" onClick={() => setEditingRouteId(null)} className="h-14 rounded-2xl">İptal</Button>}
+                                    </div>
                                 </form>
                             </Form>
                         </CardContent>
                     </Card>
-                </TabsContent>
 
-                <TabsContent value="feedbacks" className="p-4 space-y-6">
-                    <div className="grid md:grid-cols-4 gap-6">
-                        <Card className="p-6 rounded-[2rem] bg-primary shadow-xl border-none text-white flex flex-col gap-4">
-                            <h3 className="font-bold flex items-center gap-2"><PieChart className="h-5 w-5" /> Filtrele</h3>
-                            <Select value={feedbackPlaceFilter} onValueChange={setFeedbackPlaceFilter}>
-                                <SelectTrigger className="bg-white/10 border-white/20 text-white rounded-xl"><SelectValue placeholder="Tüm Yerler" /></SelectTrigger>
-                                <SelectContent className="rounded-2xl">
-                                    <SelectItem value="all">Tüm Yerler</SelectItem>
-                                    {sortedPlaces.map(p => <SelectItem key={p.id} value={p.id}>{p.name.tr}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <Button onClick={handleDownloadCSV} variant="secondary" className="w-full rounded-xl h-12 font-bold"><Download className="mr-2 h-4 w-4" /> Rapor İndir</Button>
-                        </Card>
-                        <Card className="p-6 rounded-[2rem] shadow-xl border-none flex flex-col items-center justify-center text-center"><span className="text-xs text-muted-foreground font-black uppercase tracking-widest">Toplam Anket</span><span className="text-4xl font-black text-primary mt-2">{filteredFeedbacks.length}</span></Card>
-                        <Card className="p-6 rounded-[2rem] shadow-xl border-none flex flex-col items-center justify-center text-center"><span className="text-xs text-muted-foreground font-black uppercase tracking-widest">Ort. Memnuniyet</span><span className="text-4xl font-black text-accent mt-2">{filteredFeedbacks.length ? (filteredFeedbacks.reduce((a,f) => a+f.satisfaction,0)/filteredFeedbacks.length).toFixed(1) : 0}/5</span></Card>
-                        <Card className="p-6 rounded-[2rem] shadow-xl border-none flex flex-col items-center justify-center text-center"><span className="text-xs text-muted-foreground font-black uppercase tracking-widest">Turla Gelen</span><span className="text-4xl font-black text-blue-500 mt-2">%{filteredFeedbacks.length ? ((filteredFeedbacks.filter(f=>f.withTour==='yes').length/filteredFeedbacks.length)*100).toFixed(0) : 0}</span></Card>
-                    </div>
                     <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
                         <CardContent className="p-0">
                             <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                        <TableHead className="pl-6">Mekan</TableHead>
-                                        <TableHead>Tarih</TableHead>
-                                        <TableHead>Puan</TableHead>
-                                        <TableHead className="text-right pr-6">Eylem</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="pl-6">Rota İsmi</TableHead><TableHead>Durak Sayısı</TableHead><TableHead>KML Durumu</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
                                 <TableBody>
-                                    {filteredFeedbacks.map(f => (
-                                        <TableRow key={f.id} className="hover:bg-muted/30 transition-colors">
-                                            <TableCell className="pl-6 font-bold">{f.placeName}</TableCell>
-                                            <TableCell className="text-xs text-muted-foreground">{f.createdAt?.toDate ? format(f.createdAt.toDate(), 'dd.MM.yy HH:mm') : '-'}</TableCell>
-                                            <TableCell><Badge variant="outline" className="bg-accent/10 border-accent/20 text-accent font-bold px-3 py-1">{f.satisfaction}/5 Yıldız</Badge></TableCell>
+                                    {routesLoading ? <TableRow><TableCell colSpan={4}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
+                                    routes?.map(r => (
+                                        <TableRow key={r.id} className="hover:bg-muted/30">
+                                            <TableCell className="pl-6 font-bold">{r.name.tr}</TableCell>
+                                            <TableCell><Badge variant="secondary">{r.stops?.length || 0} Durak</Badge></TableCell>
+                                            <TableCell>{r.kmlUrl ? <Badge className="bg-blue-100 text-blue-800">Çizim Var</Badge> : <span className="text-xs text-muted-foreground">Yok</span>}</TableCell>
                                             <TableCell className="text-right pr-6">
-                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl" onClick={() => setDeletingFeedback(f)}><Trash2 className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" onClick={() => setEditingRouteId(r.id)}><FilePenLine className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(r.id); setDeletingType('route'); }}><Trash2 className="h-4 w-4" /></Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -657,60 +518,19 @@ export default function AdminPage() {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="guestbook" className="p-4 space-y-6">
-                    <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <MessageSquare className="h-5 w-5 text-primary" />
-                                Ziyaretçi Defteri Yorumları
-                            </CardTitle>
-                            <CardDescription>Ziyaretçiler tarafından paylaşılan tüm mesajları yönetin.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                        <TableHead className="pl-6">İsim</TableHead>
-                                        <TableHead>Mesaj</TableHead>
-                                        <TableHead>Tarih</TableHead>
-                                        <TableHead className="text-right pr-6">Eylemler</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {guestbookLoading ? (
-                                        <TableRow><TableCell colSpan={4} className="p-6"><Skeleton className="h-12 w-full rounded-xl" /></TableCell></TableRow>
-                                    ) : guestbookComments?.map(comment => (
-                                        <TableRow key={comment.id} className="hover:bg-muted/30 transition-colors">
-                                            <TableCell className="pl-6 font-bold">{comment.name || 'Ziyaretçi'}</TableCell>
-                                            <TableCell className="max-w-md truncate">{comment.message}</TableCell>
-                                            <TableCell className="text-xs text-muted-foreground">
-                                                {comment.createdAt?.toDate ? format(comment.createdAt.toDate(), 'dd.MM.yy HH:mm') : '-'}
-                                            </TableCell>
-                                            <TableCell className="text-right pr-6">
-                                                <Button variant="ghost" size="icon" className="text-destructive rounded-xl" onClick={() => setDeletingGuestbookComment(comment)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="database" className="p-4">
+                {/* --- VERİTABANI & AYARLAR --- */}
+                <TabsContent value="database" className="p-4 space-y-8 animate-in fade-in duration-500">
                     <div className="grid md:grid-cols-2 gap-8">
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
-                            <CardHeader><CardTitle>Kod Güncelleme</CardTitle><CardDescription>Statik verilerdeki (kod içindeki) güncellemeleri veritabanına yansıtır.</CardDescription></CardHeader>
+                            <CardHeader><CardTitle>Statik Verileri Yükle</CardTitle><CardDescription>Kod içindeki varsayılan verileri veritabanına aktarır.</CardDescription></CardHeader>
                             <CardContent>
-                                <Button onClick={handleSeedDatabase} disabled={isSeeding} className="w-full h-14 rounded-2xl font-bold" variant="secondary">
+                                <Button onClick={async () => { setIsSeeding(true); await seedDatabase(firestore, 'UPDATE'); setIsSeeding(false); toast({ title: 'Güncellendi' }); }} disabled={isSeeding} className="w-full h-14 rounded-2xl font-bold" variant="secondary">
                                     {isSeeding ? <Loader2 className="animate-spin mr-2" /> : null} Verileri Koddan Güncelle
                                 </Button>
                             </CardContent>
                         </Card>
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
-                            <CardHeader><CardTitle>Geri Yükle</CardTitle><CardDescription>Hatalı bir işlem sonrası veritabanını son yedek haline döndürür.</CardDescription></CardHeader>
+                            <CardHeader><CardTitle>Yedekten Geri Yükle</CardTitle><CardDescription>En son yapılan işlemleri geri alır.</CardDescription></CardHeader>
                             <CardContent>
                                 <Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button>
                             </CardContent>
@@ -719,233 +539,21 @@ export default function AdminPage() {
                 </TabsContent>
             </Tabs>
 
-            {/* MODALS */}
-            <Dialog open={!!editingPlace} onOpenChange={o => !o && setEditingPlaceId(null)}>
-                <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
-                    <DialogHeader className="p-8 border-b shrink-0 bg-primary/5">
-                        <DialogTitle className="text-2xl font-black font-headline text-primary">Yeri Düzenle: {editingPlace?.name.tr}</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex-1 min-h-0">
-                        <ScrollArea className="h-full">
-                            <div className="p-8 space-y-8 pb-20">
-                                <Form {...editPlaceForm}>
-                                    <form onSubmit={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} className="space-y-8">
-                                        <div className="bg-primary/5 p-6 rounded-[2rem] border-2 border-primary/10 space-y-4">
-                                            <h4 className="font-bold flex items-center gap-2 text-primary"><Headphones className="h-5 w-5" /> Türkçe Seslendirme (MP3)</h4>
-                                            <p className="text-sm text-muted-foreground font-medium">Kendi seslendirmenizi yükleyerek yapay zeka sesini devre dışı bırakabilirsiniz.</p>
-                                            <div className="flex items-center gap-4">
-                                                <input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'place')} className="hidden" id="audio-place" />
-                                                <Button type="button" variant="outline" className="rounded-xl px-6 font-bold" onClick={() => document.getElementById('audio-place')?.click()} disabled={isUploadingAudio}>
-                                                    {isUploadingAudio ? <Loader2 className="animate-spin mr-2" /> : <Upload className="mr-2" />} {editPlaceForm.getValues('audioUrlTr') ? 'Dosyayı Değiştir' : 'Özel MP3 Yükle'}
-                                                </Button>
-                                                {editPlaceForm.getValues('audioUrlTr') && <Badge className="bg-green-600 text-white border-none rounded-lg font-bold px-4 py-1.5">MP3 Yüklü</Badge>}
-                                            </div>
-                                        </div>
-                                        <LocalizedFields form={editPlaceForm} fieldNames={['name', 'slug', 'description']} />
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <FormField control={editPlaceForm.control} name="imageUrl" render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Görsel URL</FormLabel>
-                                                    <FormControl><Input placeholder="https://..." {...field} className="rounded-xl" /></FormControl>
-                                                </FormItem>
-                                            )} />
-                                            <FormField control={editPlaceForm.control} name="imageHint" render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Görsel İpucu (Hint)</FormLabel>
-                                                    <FormControl><Input placeholder="antik kent, manzara..." {...field} className="rounded-xl" /></FormControl>
-                                                </FormItem>
-                                            )} />
-                                        </div>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                            <FormField control={editPlaceForm.control} name="category" render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Kategori</FormLabel>
-                                                    <select {...field} className="w-full h-11 border rounded-xl px-4 focus:ring-2 focus:ring-primary">
-                                                        <option value="poi">Önemli Nokta</option>
-                                                        <option value="history">Tarih</option>
-                                                        <option value="nature">Doğa</option>
-                                                        <option value="food">Lezzet</option>
-                                                        <option value="accommodation">Konaklama</option>
-                                                    </select>
-                                                </FormItem>
-                                            )}/>
-                                            <FormField control={editPlaceForm.control} name="order" render={({ field }) => (<FormItem><FormLabel>Sıra</FormLabel><Input type="number" {...field} className="rounded-xl h-11" /></FormItem>)}/>
-                                            <FormField control={editPlaceForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
-                                            <FormField control={editPlaceForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
-                                        </div>
-                                    </form>
-                                </Form>
-                            </div>
-                        </ScrollArea>
-                    </div>
-                    <DialogFooter className="p-8 border-t bg-muted/20 shrink-0">
-                        <Button variant="ghost" onClick={() => setEditingPlaceId(null)} className="rounded-xl px-8 h-12">İptal</Button>
-                        <Button onClick={editPlaceForm.handleSubmit(handleEditPlaceSubmit)} disabled={isSubmitting} className="rounded-xl px-12 h-12 font-black shadow-lg">
-                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Güncelle
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            <Dialog open={!!managingSubPointsPlaceId} onOpenChange={o => !o && setManagingSubPointsPlaceId(null)}>
-                <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
-                    <DialogHeader className="p-8 border-b shrink-0 bg-primary/5">
-                        <DialogTitle className="text-2xl font-black font-headline text-primary">Alt Başlık Yönetimi: {managingSubPointsPlace?.name.tr}</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex-1 min-h-0">
-                        <ScrollArea className="h-full">
-                            <div className="p-8 space-y-12 pb-20">
-                                <Form {...subPointForm}>
-                                    <form onSubmit={subPointForm.handleSubmit(handleSubPointSubmit)} className="space-y-6 border-2 border-primary/10 p-8 rounded-[2rem] bg-muted/5 shadow-sm">
-                                        <h4 className="font-black text-lg flex items-center gap-2 text-primary uppercase tracking-tight">
-                                            {editingSubPoint ? <FilePenLine className="h-5 w-5" /> : <Plus className="h-5 w-5" />} 
-                                            {editingSubPoint ? 'Alt Başlığı Düzenle' : 'Yeni Alt Başlık Ekle'}
-                                        </h4>
-                                        <div className="bg-primary/5 p-5 rounded-2xl border-2 border-primary/10 mb-4 flex flex-wrap items-center gap-4">
-                                            <div className="flex items-center gap-2">
-                                                <input type="file" accept="audio/mpeg" onChange={e => handleAudioUpload(e, 'subpoint')} className="hidden" id="audio-sub" />
-                                                <Button type="button" size="sm" variant="outline" className="rounded-xl px-4 font-bold" onClick={() => document.getElementById('audio-sub')?.click()} disabled={isUploadingAudio}>
-                                                    {isUploadingAudio ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : <Upload className="h-4 w-4 mr-2" />} MP3 Yükle
-                                                </Button>
-                                                {subPointForm.getValues('audioUrlTr') && <Badge className="bg-green-600 text-white px-3 py-1 rounded-lg">MP3 Yüklü</Badge>}
-                                            </div>
-                                            
-                                            <div className="flex-1 min-w-[200px]">
-                                                <FormField control={subPointForm.control} name="imageUrl" render={({ field }) => (
-                                                    <FormItem className="space-y-0">
-                                                        <FormControl>
-                                                            <div className="relative">
-                                                                <ImageIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                                                <Input placeholder="Görsel Linki (https://...)" {...field} className="rounded-xl pl-9 h-9 text-xs" />
-                                                            </div>
-                                                        </FormControl>
-                                                        <FormMessage className="text-[10px]" />
-                                                    </FormItem>
-                                                )} />
-                                            </div>
-                                        </div>
-                                        <LocalizedFields form={subPointForm} fieldNames={['name', 'description']} />
-                                        <div className="grid grid-cols-2 gap-6">
-                                            <FormField control={subPointForm.control} name="lat" render={({ field }) => (<FormItem><FormLabel>Lat</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
-                                            <FormField control={subPointForm.control} name="lng" render={({ field }) => (<FormItem><FormLabel>Lng</FormLabel><Input type="number" step="any" {...field} className="rounded-xl h-11" /></FormItem>)}/>
-                                        </div>
-                                        <div className="flex gap-4 pt-4">
-                                            <Button type="submit" disabled={isSubmitting} className="flex-1 h-12 rounded-xl font-bold shadow-md">
-                                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                                {editingSubPoint ? 'Güncelle' : 'Ekle'}
-                                            </Button>
-                                            {editingSubPoint && <Button type="button" variant="ghost" onClick={() => { setEditingSubPoint(null); subPointForm.reset(); }} className="h-12 rounded-xl">Vazgeç</Button>}
-                                        </div>
-                                    </form>
-                                </Form>
-                                <div className="space-y-4">
-                                    <h4 className="font-black text-sm text-muted-foreground uppercase tracking-widest border-b-2 border-primary/10 pb-4">Ekli Alt Başlıklar</h4>
-                                    {(managingSubPointsPlace?.subPoints?.length ?? 0) > 0 ? (
-                                        managingSubPointsPlace?.subPoints?.map((s, index) => (
-                                            <div key={`${s.id}-${index}`} className="flex justify-between items-center p-6 border-none rounded-[1.5rem] bg-white shadow-md hover:shadow-xl transition-all group">
-                                                <div className="flex items-center gap-4">
-                                                    {s.imageUrl && (
-                                                        <div className="relative h-12 w-20 rounded-lg overflow-hidden shrink-0 border border-muted">
-                                                            <Image src={sanitizeImageUrl(s.imageUrl)} alt={s.name.tr} fill className="object-cover" />
-                                                        </div>
-                                                    )}
-                                                    <div className="flex flex-col">
-                                                        <span className="font-bold text-lg text-slate-800">{s.name.tr}</span>
-                                                        <span className="text-xs text-muted-foreground font-mono mt-1 opacity-70 group-hover:opacity-100">{s.coordinates.lat.toFixed(4)}, {s.coordinates.lng.toFixed(4)}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/5 hover:text-primary" onClick={() => { setEditingSubPoint(s); subPointForm.reset({ ...s, lat: s.coordinates.lat, lng: s.coordinates.lng }); }}>
-                                                        <FilePenLine className="h-5 w-5" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="text-destructive rounded-xl hover:bg-destructive/5" onClick={() => setSubPointIndexToDelete(index)} disabled={isSubmitting}>
-                                                        {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-center py-20 text-muted-foreground italic bg-muted/20 rounded-[2rem]">Henüz alt başlık eklenmemiş.</p>
-                                    )}
-                                </div>
-                            </div>
-                        </ScrollArea>
-                    </div>
-                </DialogContent>
-            </Dialog>
-
-            <AlertDialog open={subPointIndexToDelete !== null} onOpenChange={o => !o && setSubPointIndexToDelete(null)}>
+            {/* DELETE DIALOG */}
+            <AlertDialog open={!!deletingId} onOpenChange={o => !o && setDeletingId(null)}>
                 <AlertDialogContent className="rounded-[2.5rem] border-none shadow-2xl p-10 max-w-md">
                     <AlertDialogHeader className="flex flex-col items-center text-center">
                         <div className="h-20 w-20 bg-destructive/10 rounded-full flex items-center justify-center mb-6">
                             <AlertCircle className="h-10 w-10 text-destructive" />
                         </div>
-                        <AlertDialogTitle className="text-2xl font-black font-headline">Alt Başlığı Sil</AlertDialogTitle>
-                        <AlertDialogDescription className="text-lg font-medium text-slate-600 mt-2">
-                            Bu alt başlık kalıcı olarak silinecektir. Bu işlem geri alınamaz.
-                        </AlertDialogDescription>
+                        <AlertDialogTitle className="text-2xl font-black font-headline">Silmek istediğinize emin misiniz?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg font-medium text-slate-600 mt-2">Bu işlem geri alınamaz ve veri kalıcı olarak silinecektir.</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex flex-col sm:flex-row gap-3 mt-10">
-                        <AlertDialogCancel className="rounded-xl h-12 px-8 flex-1 border-slate-200">Vazgeç</AlertDialogCancel>
-                        <AlertDialogAction 
-                            onClick={handleConfirmDeleteSubPoint} 
-                            disabled={isSubmitting}
-                            className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-black flex-1 shadow-lg shadow-destructive/20"
-                        >
-                            {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Evet, Kalıcı Olarak Sil'}
+                        <AlertDialogCancel className="rounded-xl h-12 flex-1 border-slate-200">Vazgeç</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} disabled={isSubmitting} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 font-black flex-1">
+                            {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Evet, Sil'}
                         </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
-            <AlertDialog open={!!deletingFeedback} onOpenChange={o => !o && setDeletingFeedback(null)}>
-                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-2xl font-black">Anket Kaydını Sil</AlertDialogTitle>
-                        <AlertDialogDescription className="text-lg">Bu anket kaydı kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6">
-                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
-                        <AlertDialogAction onClick={async () => { if(deletingFeedback) { await deleteDoc(doc(firestore, 'feedbacks', deletingFeedback.id)); toast({ title: 'Silindi' }); setDeletingFeedback(null); } }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Kalıcı Olarak Sil</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
-            <AlertDialog open={!!deletingGuestbookComment} onOpenChange={o => !o && setDeletingGuestbookComment(null)}>
-                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-2xl font-black">Yorumu Sil</AlertDialogTitle>
-                        <AlertDialogDescription className="text-lg">Bu ziyaretçi yorumu kalıcı olarak silinecektir. Bu işlem geri alınamaz.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6">
-                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => { if(deletingGuestbookComment) deleteFeedbackComment(firestore, deletingGuestbookComment.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingGuestbookComment(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Yorumu Sil</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
-            <AlertDialog open={!!deletingPlaceId} onOpenChange={o => !o && setDeletingPlaceId(null)}>
-                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-2xl font-black">Mekanı Sil</AlertDialogTitle>
-                        <AlertDialogDescription className="text-lg">'{deletingPlace?.name.tr}' mekanı ve tüm alt başlıkları kalıcı olarak silinecektir.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6">
-                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
-                        <AlertDialogAction onClick={async () => { if(deletingPlace) deletePlace(firestore, deletingPlace.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingPlaceId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
-            <AlertDialog open={!!deletingExpItemId} onOpenChange={o => !o && setDeletingExpItemId(null)}>
-                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-2xl font-black">Menü Öğesini Sil</AlertDialogTitle>
-                        <AlertDialogDescription className="text-lg">'{deletingExpItem?.name.tr}' menü öğesi kalıcı olarak silinecektir.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="pt-6">
-                        <AlertDialogCancel className="rounded-xl h-12 px-8">İptal</AlertDialogCancel>
-                        <AlertDialogAction onClick={async () => { if(deletingExpItem) deleteExperienceItem(firestore, deletingExpItem.id, { onSuccess: () => { toast({ title: 'Silindi' }); setDeletingExpItemId(null); } }); }} className="bg-destructive hover:bg-destructive/90 rounded-xl h-12 px-10 font-bold">Sil</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
