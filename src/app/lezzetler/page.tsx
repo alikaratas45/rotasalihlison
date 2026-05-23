@@ -30,14 +30,16 @@ export default function LezzetlerPage() {
       .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [allPlaces]);
 
-  // Odun Köfte usually has ID '3' in seed data
+  // Dynamic Featured Logic: Pick Odun Köfte if exists, otherwise pick the first available food place
   const featuredPlace = useMemo(() => {
-    if (!allPlaces) return null;
-    return allPlaces.find(p => p.id === '3' || p.name.tr.includes('Odun Köfte')) || null;
-  }, [allPlaces]);
+    if (!foodPlaces || foodPlaces.length === 0) return null;
+    const specific = foodPlaces.find(p => p.id === '3' || p.name.tr.includes('Odun Köfte'));
+    return specific || foodPlaces[0];
+  }, [foodPlaces]);
 
   const otherFoodPlaces = useMemo(() => {
-    return foodPlaces.filter(p => p.id !== featuredPlace?.id);
+    if (!featuredPlace) return foodPlaces;
+    return foodPlaces.filter(p => p.id !== featuredPlace.id);
   }, [foodPlaces, featuredPlace]);
 
   const handleOpenRestaurants = () => {
@@ -57,29 +59,29 @@ export default function LezzetlerPage() {
         </div>
 
         <div className="max-w-5xl mx-auto space-y-20">
-            {/* ÖNE ÇIKAN: SALİHLİ ODUN KÖFTE */}
+            {/* ÖNE ÇIKAN MEKAN (DİNAMİK) */}
             {loading ? (
                 <Skeleton className="h-[450px] w-full rounded-[2.5rem]" />
             ) : featuredPlace ? (
                 <div className="space-y-6">
                     <div className="flex items-center gap-3 border-b pb-4">
                         <Utensils className="text-orange-600 h-6 w-6" />
-                        <h2 className="text-2xl font-black font-headline">Coğrafi İşaretli Lezzet</h2>
+                        <h2 className="text-2xl font-black font-headline">Öne Çıkan Lezzet Durağı</h2>
                     </div>
                     <Card className="overflow-hidden border-none shadow-2xl rounded-[2.5rem] bg-white ring-1 ring-black/5">
                         <div className="flex flex-col md:flex-row">
                             <div className="relative h-64 md:h-auto md:w-1/2 shrink-0 overflow-hidden">
                                 <Image 
-                                src={featuredPlace.imageUrl || "https://i.imgur.com/IT6VuDV.jpeg"} 
+                                src={featuredPlace.imageUrl || "https://picsum.photos/seed/cuisine-featured/800/600"} 
                                 alt={featuredPlace.name[typedLanguage]} 
                                 fill 
                                 className="object-cover transition-transform duration-700 hover:scale-105"
-                                data-ai-hint="delicious grilled meatballs"
+                                data-ai-hint="delicious local food"
                                 sizes="600px"
                                 />
                                 <div className="absolute top-6 left-6">
                                     <Badge className="bg-orange-600 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border-none shadow-lg">
-                                        Meşhur Lezzet
+                                        Mutlaka Deneyin
                                     </Badge>
                                 </div>
                             </div>
