@@ -9,7 +9,7 @@ export const places: Place[] = [
         description: { 
             tr: `Salihli’nin tarihini başlatan Antik Sardes (SART) kenti, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ’ın batısındaki tepelerin kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda Lidya Devleti'nin görkemli başkenti olan Sardes, tarihte paranın ilk basıldığı yer olarak bilinir. 
 
-Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde भी önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
+Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde bhi önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
             en: `Sardis, the magnificent capital of the Lydian Kingdom in the 7th and 6th centuries BC, is known as the place where money was first minted in history. Located in the Gediz basin, on the slopes of Mount Tmolus (Bozdağ), it was a center of industrial inventions, lyric poetry, and sculpture. 
 
 It maintained its importance throughout the Persian, Roman, and Byzantine periods as a major administrative and cultural hub. The vast spread of tumuli and ruins proves that the ancient city was a broad civilization basin reaching the south of modern-day Salihli.`,
@@ -37,7 +37,7 @@ Nowadays, it offers visitors a peaceful retreat with its modern spa facilities, 
             de: `Die Thermalquellen von Kurşunlu am Fuße des Bozdağ-Gebirges sind ein bedeutendes Wellnesszentrum, das für sein heilendes Wasser und seine üppige Natur bekannt ist. Die Legende besagt, dass Prinzessin Kursun ihre legendäre Schönheit wiedererlangte, nachdem sie hier badete.`,
             ja: `ボズダ山脈の麓に位置するクルシュンル温泉は、癒しの水 ve 豊かな自然で有名な主要なウェルネスセンターです。伝説によると、クルスン王女は皮膚病を治すためにこの温泉に浸かった後、伝説的な美しさを取り戻したと言われています。`
         },
-        category: 'nature',
+        category: 'accommodation',
         coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 },
         imageUrl: 'https://i.imgur.com/n7fioom.jpeg',
         imageHint: 'hot springs'
