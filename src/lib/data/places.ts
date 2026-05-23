@@ -7,12 +7,8 @@ export const places: Place[] = [
         slug: { tr: 'sardes-antik-kenti', en: 'sardes-ancient-city', fr: 'cite-antique-de-sardes', de: 'antike-stadt-sardes', ja: 'sardes-ancient-city-ja' },
         name: { tr: 'Sardes Antik Kenti', en: 'Sardis Ancient City', fr: 'Cité Antique de Sardes', de: 'Antike Stadt Sardes', ja: 'サルディス古代都市' },
         description: { 
-            tr: `Salihli’nin tarihini başlatan Antik Sardes (SART) kenti, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ’ın batısındaki tepelerin kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda Lidya Devleti'nin görkemli başkenti olan Sardes, tarihte paranın ilk basıldığı yer olarak bilinir. 
-
-Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde de önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
-            en: `Sardis, the magnificent capital of the Lydian Kingdom in the 7th and 6th centuries BC, is known as the place where money was first minted in history. Located in the Gediz basin, on the slopes of Mount Tmolus (Bozdağ), it was a center of industrial inventions, lyric poetry, and sculpture. 
-
-It maintained its importance throughout the Persian, Roman, and Byzantine periods as a major administrative and cultural hub. The vast spread of tumuli and ruins proves that the ancient city was a broad civilization basin reaching the south of modern-day Salihli.`,
+            tr: `Salihli’nin tarihini başlatan Antik Sardes (SART) kenti, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ’ın batısındaki tepelerin kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda Lidya Devleti'nin görkemli başkenti olan Sardes, tarihte paranın ilk basıldığı yer olarak bilinir. \n\nEndüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde de önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
+            en: `Sardis, the magnificent capital of the Lydian Kingdom in the 7th and 6th centuries BC, is known as the place where money was first minted in history. Located in the Gediz basin, on the slopes of Mount Tmolus (Bozdağ), it was a center of industrial inventions, lyric poetry, and sculpture. \n\nIt maintained its importance throughout the Persian, Roman, and Byzantine periods as a major administrative and cultural hub. The vast spread of tumuli and ruins proves that the ancient city was a broad civilization basin reaching the south of modern-day Salihli.`,
             fr: `Sardes, la magnifique capitale du royaume lydien aux VIIe et VIe siècles avant J.-C., est connue comme le lieu où la monnaie a été frappée pour la première fois dans l'histoire. Située dans le bassin du Gediz, sur les pentes du mont Tmolos, elle fut un centre d'inventions industrielles, de poésie lyrique et de sculpture.`,
             de: `Sardes, die prachtvolle Hauptstadt des lydischen Königreichs im 7. und 6. Jahrhundert v. Chr., ist als der Ort bekannt, an dem zum ersten Mal in der Geschichte Geld geprägt wurde. In der Nähe des heutigen Salihli gelegen, war es ein Zentrum für industrielle Erfindungen, Lyrik und Bildhauerei.`,
             ja: `紀元前7世紀から6世紀にかけてのリディア王国の壮大な首都サルディスは、歴史上初めて硬貨が鋳造された場所として知られています。ゲディズ盆地に位置し、工業的発明、叙情詩、彫刻の中心地でした。`
@@ -27,12 +23,8 @@ It maintained its importance throughout the Persian, Roman, and Byzantine period
         slug: { tr: 'kursunlu-kaplicalari', en: 'kursunlu-thermal-springs', fr: 'sources-thermales-de-kursunlu', de: 'thermalquellen-von-kursunlu', ja: 'kursunlu-thermal-springs-ja' },
         name: { tr: 'Kurşunlu Kaplıcaları', en: 'Kurşunlu Thermal Springs', fr: 'Sources Thermales de Kurşunlu', de: 'Thermalquellen von Kurşunlu', ja: 'クルシュンル温泉' },
         description: { 
-            tr: `Salihli’nin güneyinde, Bozdağlar’ın eteklerinde yer alan Kurşunlu Kaplıcaları, hem şifalı suları hem de muazzam doğal güzelliği ile bölgenin en önemli turizm merkezidir. Efsaneye göre, deri hastalığına yakalanan Prenses Kursun, bu vadi içindeki sıcak sularda yıkanarak eski güzelliğine kavuşmuştur. 
-
-Bugün modern tesisleri, yeşilin her tonunu barındıran piknik alanları ve huzur veren şelaleleriyle ziyaretçilerine hem sağlık hem de doğa ile iç içe bir tatil imkanı sunmaktadır. Suları özellikle romatizmal hastalıklar ve cilt sorunları için şifa kaynağı olarak kabul edilir.`, 
-            en: `Located at the foothills of the Bozdağ Mountains, Kurşunlu Thermal Springs is a major wellness center famous for its healing waters and lush nature. Legend has it that Princess Kursun regained her legendary beauty after bathing in these thermal springs to cure a skin disease. 
-
-Nowadays, it offers visitors a peaceful retreat with its modern spa facilities, scenic picnic areas, and soothing waterfalls. The waters are widely recognized for their therapeutic benefits, particularly for skin conditions and rheumatic disorders.`,
+            tr: `Salihli’nin güneyinde, Bozdağlar’’ın eteklerinde yer alan Kurşunlu Kaplıcaları, hem şifalı suları hem de muazzam doğal güzelliği ile bölgenin en önemli turizm merkezidir. Efsaneye göre, deri hastalığına yakalanan Prenses Kursun, bu vadi içindeki sıcak sularda yıkanarak eski güzelliğine kavuşmuştur. \n\nBugün modern tesisleri, yeşilin her tonunu barındıran piknik alanları ve huzur veren şelaleleriyle ziyaretçilerine hem sağlık hem de doğa ile iç içe bir tatil imkanı sunmaktadır. Suları özellikle romatizmal hastalıklar ve cilt sorunları için şifa kaynağı olarak kabul edilir.`, 
+            en: `Located at the foothills of the Bozdağ Mountains, Kurşunlu Thermal Springs is a major wellness center famous for its healing waters and lush nature. Legend has it that Princess Kursun regained her legendary beauty after bathing in these thermal springs to cure a skin disease. \n\nNowadays, it offers visitors a peaceful retreat with its modern spa facilities, scenic picnic areas, and soothing waterfalls. The waters are widely recognized for their therapeutic benefits, particularly for skin conditions and rheumatic disorders.`,
             fr: `Situées au pied des montagnes Bozdağ, les sources thermales de Kurşunlu sont un centre de bien-être majeur, célèbre pour ses eaux curatives et sa nature luxuriante. La légende raconte que la princesse Kursun a retrouvé sa beauté légendaire après s'être baignée dans ces sources.`,
             de: `Die Thermalquellen von Kurşunlu am Fuße des Bozdağ-Gebirges sind ein bedeutendes Wellnesszentrum, das für sein heilendes Wasser und seine üppige Natur bekannt ist. Die Legende besagt, dass Prinzessin Kursun ihre legendäre Schönheit wiedererlangte, nachdem sie hier badete.`,
             ja: `ボズダ山脈の麓に位置するクルシュンル温泉は、癒しの水 ve 豊かな自然で有名な主要なウェルネスセンターです。伝説によると、クルスン王女は皮膚病を治すためにこの温泉に浸かった後、伝説的な美しさを取り戻したと言われています。`
@@ -43,36 +35,12 @@ Nowadays, it offers visitors a peaceful retreat with its modern spa facilities, 
         imageHint: 'hot springs'
     },
     {
-        id: '3',
-        slug: { tr: 'salihli-odun-kofte', en: 'salihli-wood-meatballs', fr: 'boulettes-de-viande-au-feu-de-bois-de-salihli', de: 'salihli-holzfleischballchen', ja: 'salihli-wood-meatballs-ja' },
-        name: { tr: 'Salihli Odun Köftesi', en: 'Salihli Wood Meatballs', fr: 'Boulettes de Viande au Feu de Bois de Salihli', de: 'Salihli Holz-Meatballs', ja: 'サリフリ・ウッドミートボール' },
-        description: { 
-            tr: `Salihli denince akla gelen ilk lezzet olan Odun Köftesi, sadece meşe odunu ateşinde ve özel bir teknikle pişirilir. %100 dana etinden hazırlanan bu eşsiz lezzet, Salihli’nin tescilli bir gastronomi markasıdır. 
-
-Yanında servis edilen közlenmiş biber, taze sumaklı soğan ve bölgenin meşhur Sultaniye üzüm şırası ile servis edilen bu köfte, yolculukların en keyifli durak noktalarından biridir. Sadece lezzetiyle değil, hazırlanışındaki ustalıkla da yüzyıllık bir geleneği yaşatmaktadır.`, 
-            en: `The signature dish of Salihli, Wood Meatballs (Odun Köfte), is exclusively cooked over an oak wood fire using a centuries-old technique. Prepared with 100% beef, this unique flavor is a registered gastronomic trademark of the region. 
-
-Served traditionally with roasted peppers, fresh onions with sumac, and the local Sultaniye grape juice, it is a must-try for any food lover passing through the region. It represents a living culinary heritage passed down through generations.`,
-            fr: `Plat emblématique de Salihli, les boulettes de viande au feu de bois (Odun Köfte) sont exclusivement cuites sur un feu de bois de chêne selon une technique séculaire. C'est une marque gastronomique déposée de la région.`,
-            de: `Das Markenzeichen von Salihli, die Holz-Fleischbällchen (Odun Köfte), werden ausschließlich über einem Eichenholzfeuer nach einer jahrhundertealten Technik zubereitet. Sie sind ein eingetragenes gastronomisches Warenzeichen.`,
-            ja: `サリフリの代表的な料理であるウッドミートボール（オドゥン・キョフテ）は、何世紀も前の技法を用いてオークの薪だけで調理されます。100%牛肉で調理されるこのユニークな味は、この地域の登録された美食商標です。`
-        },
-        category: 'food',
-        coordinates: { lat: 38.4833, lng: 28.1333 },
-        imageUrl: 'https://i.imgur.com/IT6VuDV.jpeg',
-        imageHint: 'grilled meatballs'
-    },
-    {
         id: 'bizim-ev-sosyal-tesis',
         slug: { tr: 'bizim-ev-sosyal-tesisleri', en: 'bizim-ev-social-facilities', fr: 'installations-sociales-bizim-ev', de: 'bizim-ev-soziale-einrichtungen', ja: 'bizim-ev-social-facilities-ja' },
         name: { tr: 'Bizim Ev Sosyal Tesisleri', en: 'Bizim Ev Social Facilities', fr: 'Installations Sociales Bizim Ev', de: 'Bizim Ev Soziale Einrichtungen', ja: 'ビジム・エヴ・ソーシャル・ファシリティーズ' },
         description: { 
-            tr: `Salihli Belediyesi tarafından işletilen Bizim Ev Sosyal Tesisleri, Gediz Nehri'nin kıyısında, doğa ile iç içe huzurlu bir atmosfer sunmaktadır. Yerel lezzetlerin, özellikle de Salihli Odun Köftesi'nin en iyi örneklerinin sunulduğu tesis, hem aileler hem de gezginler için ideal bir dinlenme noktasıdır.
-
-Geniş bahçesi, çocuk oyun alanları ve nehir manzarası eşliğinde sunulan kaliteli hizmetiyle Salihli'nin misafirperverliğini en iyi yansıtan mekanlardan biridir.`, 
-            en: `Operated by Salihli Municipality, Bizim Ev Social Facilities offers a peaceful atmosphere intertwined with nature on the banks of the Gediz River. Serving the best examples of local flavors, especially Salihli Wood Meatballs, the facility is an ideal resting point for both families and travelers.
-
-With its large garden, children's playgrounds, and river views, it is one of the places that best reflects Salihli's hospitality through its high-quality service.`,
+            tr: `Salihli Belediyesi tarafından işletilen Bizim Ev Sosyal Tesisleri, Gediz Nehri'nin kıyısında, doğa ile iç içe huzurlu bir atmosfer sunmaktadır. Yerel lezzetlerin, özellikle de Salihli Odun Köftesi'nin en iyi örneklerinin sunulduğu tesis, hem aileler hem de gezginler için ideal bir dinlenme noktasıdır.\n\nGeniş bahçesi, çocuk oyun alanları ve nehir manzarası eşliğinde sunulan kaliteli hizmetiyle Salihli'nin misafirperverliğini en iyi yansıtan mekanlardan biridir.`, 
+            en: `Operated by Salihli Municipality, Bizim Ev Social Facilities offers a peaceful atmosphere intertwined with nature on the banks of the Gediz River. Serving the best examples of local flavors, especially Salihli Wood Meatballs, the facility is an ideal resting point for both families and travelers.\n\nWith its large garden, children's playgrounds, and river views, it is one of the places that best reflects Salihli's hospitality through its high-quality service.`,
             fr: `Géré par la municipalité de Salihli, Bizim Ev Social Facilities offre une atmosphère paisible au bord du fleuve Gediz. C'est un point de repos idéal proposant les meilleures saveurs locales.`,
             de: `Die von der Stadtverwaltung Salihli betriebenen Bizim Ev Social Facilities bieten eine friedliche Atmosphäre am Ufer des Flusses Gediz. Ein idealer Ort zum Ausruhen mit lokalen Spezialitäten.`,
             ja: `サリフリ市が運営するビジム・エヴ・ソーシャル・ファシリティーズは、ゲディズ川のほとりにあり、自然と調和した穏やかな雰囲気を提供しています。地元の味、特にサリフリ・ウッドミートボールを楽しめる、家族や旅行者にとって理想的な休憩所です。`
@@ -84,15 +52,11 @@ With its large garden, children's playgrounds, and river views, it is one of the
     },
     {
         id: '6',
-        slug: { tr: 'tabak-deresi-dev-kazanlari', en: 'tabak-creek-giant-cauldrons', fr: 'chaudrons-geants-du-ruisseau-tabak', de: 'tabak-bach-riesenkessel', ja: 'tabak-creek-giant-cauldrons-ja' },
+        slug: { tr: 'tabak-deresi-dev-kazanlari', en: 'tabak-creek-giant-cauldrons', fr: 'cite-tabak-ruisseau-chaudrons', de: 'tabak-bach-riesenkessel', ja: 'tabak-creek-giant-cauldrons-ja' },
         name: { tr: 'Tabak Deresi Dev Kazanları', en: 'Tabak Creek Giant Cauldrons', fr: 'Chaudrons Géants du Ruisseau Tabak', de: 'Tabak-Bach Riesenkessel', ja: 'タバッククリークの巨大な大釜' },
         description: { 
-            tr: `Salihli’nin doğal gizemlerinden biri olan Tabak Deresi Dev Kazanları, suyun binlerce yıl boyunca kayaları aşındırmasıyla oluşmuş muazzam doğal havuzlardır. Kral Midas efsanesine ev sahipliği yapan bu bölge, altın dokunuş lanetinden kurtulmak için Midas’ın yıkandığı yer olarak bilinir. 
-
-Doğa yürüyüşü ve fotoğraf meraklıları için saklı bir cennet niteliğindedir. Kayaların içindeki bu dairesel oyuklar, doğanın gücünü ve estetiğini en çıplak haliyle sergiler.`, 
-            en: `Tabak Creek Giant Cauldrons are magnificent natural pools formed by water eroding rocks over thousands of years. This region is home to the legend of King Midas, known as the place where he bathed to be freed from the golden touch curse. 
-
-It is a hidden paradise for hiking and photography enthusiasts. These circular hollows within the rocks display the power and aesthetics of nature in its purest form.`,
+            tr: `Salihli’nin doğal gizemlerinden biri olan Tabak Deresi Dev Kazanları, suyun binlerce yıl boyunca kayaları aşındırmasıyla oluşmuş muazzam doğal havuzlardır. Kral Midas efsanesine ev sahipliği yapan bu bölge, altın dokunuş lanetinden kurtulmak için Midas’ın yıkandığı yer olarak bilinir. \n\nDoğa yürüyüşü ve fotoğraf meraklıları için saklı bir cennet niteliğindedir. Kayaların içindeki bu dairesel oyuklar, doğanın gücünü ve estetiğini en çıplak haliyle sergiler.`, 
+            en: `Tabak Creek Giant Cauldrons are magnificent natural pools formed by water eroding rocks over thousands of years. This region is home to the legend of King Midas, known as the place where he bathed to be freed from the golden touch curse. \n\nIt is a hidden paradise for hiking and photography enthusiasts. These circular hollows within the rocks display the power and aesthetics of nature in its purest form.`,
             fr: `Les chaudrons géants du ruisseau Tabak sont de magnifiques bassins naturels formés par l'érosion des roches par l'eau. Berceau de la légende du roi Midas.`,
             de: `Die Riesenkessel des Tabak-Bachs sind prächtige natürliche Becken, die durch die jahrtausendelange Erosion von Felsen durch Wasser entstanden sind. Heimat der Legende von König Midas.`,
             ja: `タバッククリークの巨大な大釜は、数千年にわたって水が岩を侵食して形成された壮大な自然のプールです。ミダス王の伝説の地。`
@@ -107,12 +71,8 @@ It is a hidden paradise for hiking and photography enthusiasts. These circular h
         slug: { tr: 'gymnasium', en: 'gymnasium', fr: 'gymnase', de: 'gymnasium', ja: 'gymnasium-ja' },
         name: { tr: 'Gymnasium', en: 'Gymnasium', fr: 'Gymnase', de: 'Gymnasium', ja: 'ギムナジウム' },
         description: { 
-            tr: `Sardes Antik Kenti'nin en görkemli yapılarından biri olan Roma Hamam-Gymnasium Kompleksi, antik çağın eğitim, spor ve sosyal yaşam merkezidir. MS 2. yüzyılda inşa edilen bu devasa yapı, mermer işçiliği ve abidevi sütunlarıyla Roma mimarisinin en güzel örneklerinden birini sunmaktadır. 
-
-Kompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorlara adanmış olup eşsiz bir restorasyon çalışmasıyla ayağa kaldırılmıştır. Burası sadece spor yapılan bir alan değil, aynı zamanda felsefe ve sanatın tartışıldığı kültürel bir odak noktasıydı.`, 
-            en: `The Roman Bath-Gymnasium Complex, one of the most magnificent structures in Sardis, was the center of education, sports, and social life in antiquity. Built in the 2nd century AD, this massive structure showcases some of the finest examples of Roman architecture with its intricate marble work and monumental columns. 
-
-The "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been restored to its former glory. It was not just a place for physical exercise, but also a cultural hub where philosophy and art were discussed.`,
+            tr: `Sardes Antik Kenti'nin en görkemli yapılarından biri olan Roma Hamam-Gymnasium Kompleksi, antik çağın eğitim, spor ve sosyal yaşam merkezidir. MS 2. yüzyılda inşa edilen bu devasa yapı, mermer işçiliği ve abidevi sütunlarıyla Roma mimarisinin en güzel örneklerinden birini sunmaktadır. \n\nKompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorlara adanmış olup eşsiz bir restorasyon çalışmasıyla ayağa kaldırılmıştır. Burası sadece spor yapılan bir alan değil, aynı zamanda felsefe ve sanatın tartışıldığı kültürel bir odak noktasıydı.`, 
+            en: `The Roman Bath-Gymnasium Complex, one of the most magnificent structures in Sardis, was the center of education, sports, and social life in antiquity. Built in the 2nd century AD, this massive structure showcases some of the finest examples of Roman architecture with its intricate marble work and monumental columns. \n\nThe "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been restored to its former glory. It was not just a place for physical exercise, but also a cultural hub where philosophy and art were discussed.`,
             fr: `Le complexe romain Thermes-Gymnase, l'une des structures les plus grandioses de Sardes, était le centre de l'éducation, du sport et de la vie sociale dans l'Antiquité. Construit au IIe siècle de notre ère, ce bâtiment massif présente des exemples exceptionnels d'architecture romaine.`,
             de: `Der römische Bad-Gymnasium-Komplex, eines der prächtigsten Bauwerke in Sardes, war in der Antike das Zentrum für Bildung, Sport und soziales Leben. Er wurde im 2. Jahrhundert n. Chr. erbaut und zeigt feinste römische Architektur.`,
             ja: `サルディスで最も壮大な建造物の一つであるローマ浴場・ギムナジウム・コンプレックスは、古代の教育、スポーツ、社会生活の中心地でした。西暦2世紀に建てられたこの巨大な建造物は、ローマ建築の優れた例を示しています。`
@@ -133,12 +93,8 @@ The "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been resto
                 },
                 coordinates: { lat: 38.488307, lng: 28.040346 },
                 description: {
-                    tr: `Abidevi havra, Geç Roma döneminde, Musevi toplumunun dini merkezi olarak kullanılmaktaydı. 1962 yılında ortaya çıkarılan bina ve süslemeler kısmen restore edilmiştir. Bin kişiyle barındırabilecek büyüklükte ve uzunluğu 50 metreyi aşkın ana toplantı salonu yer almaktadır. 
-
-Yerden 14 metre yükseklikteki çatı masif taş payelerle desteklenmiştir. Bina, birkaç kere yenilenmiştir. Önceleri, Roma Hamam-Gymnasium Kompleksinin bir parçası iken, daha sonraları, Musevi toplumunun ibadethanesi haline dönüşmüştür. Mozaik yer döşemeleri, mefruşatı ve mermer duvar bezemeleri, MS 4. ve 5. yüzyıldan kalan nadide eserlerdir.`,
-                    en: `The monumental synagogue was used as the religious center of the Jewish community in the Late Roman period. Excavated in 1962, it features a main assembly hall large enough to accommodate a thousand people, exceeding 50 meters in length. 
-
-The roof, 14 meters above the ground, was supported by massive stone pillars. Initially part of the Roman Bath-Gymnasium Complex, it later became a dedicated place of worship. The mosaic floors and marble wall decorations are precious remains from the 4th and 5th centuries AD.`,
+                    tr: `Abidevi havra, Geç Roma döneminde, Musevi toplumunun dini merkezi olarak kullanılmaktaydı. 1962 yılında ortaya çıkarılan bina ve süslemeler kısmen restore edilmiştir. Bin kişiyle barındırabilecek büyüklükte ve uzunluğu 50 metreyi aşkın ana toplantı salonu yer almaktadır. \n\nYerden 14 metre yükseklikteki çatı masif taş payelerle desteklenmiştir. Bina, birkaç kere yenilenmiştir. Önceleri, Roma Hamam-Gymnasium Kompleksinin bir parçası iken, daha sonraları, Musevi toplumunun ibadethanesi haline dönüşmüştür. Mozaik yer döşemeleri, mefruşatı ve mermer duvar bezemeleri, MS 4. ve 5. yüzyıldan kalan nadide eserlerdir.`,
+                    en: `The monumental synagogue was used as the religious center of the Jewish community in the Late Roman period. Excavated in 1962, it features a main assembly hall large enough to accommodate a thousand people, exceeding 50 meters in length. \n\nThe roof, 14 meters above the ground, was supported by massive stone pillars. Initially part of the Roman Bath-Gymnasium Complex, it later became a dedicated place of worship. The mosaic floors and marble wall decorations are precious remains from the 4th and 5th centuries AD.`,
                     fr: `Cette synagogue monumentale servait de centre religieux à la communauté juive à la fin de l'époque romaine. Découvert en 1962, le bâtiment comprend une salle de réunion principale pouvant accueillir mille personnes.`,
                     de: `Die monumentale Synagoge diente in der spätrömischen Zeit als religiöses Zentrum der jüdischen Gemeinde. Das 1962 freigelegte Gebäude verfügt über eine Versammlungshalle für tausend Personen.`,
                     ja: `この記念碑的なシナゴーグは、後期ローマ時代にユダヤ人コミュニティの宗教的中心地として使用されていました。1000人を収容できる大きさのメインホールがあります。`
@@ -151,12 +107,8 @@ The roof, 14 meters above the ground, was supported by massive stone pillars. In
         slug: { tr: 'adala-volkanik-kanyonu', en: 'adala-volcanic-canyon', fr: 'canyon-volcanique-adala', de: 'vulkanischer-canyon-adala', ja: 'adala-volcanic-canyon-ja' },
         name: { tr: 'Adala Volkanik Kanyonu', en: 'Adala Volcanic Canyon', fr: 'Canyon Volcanique d\'Adala', de: 'Vulkanischer Canyon von Adala', ja: 'アダラ火山渓谷' },
         description: { 
-            tr: `Kula-Salihli UNESCO Küresel Jeoparkı’nın bir parçası olan Adala Volkanik Kanyonu, Gediz Nehri’nin binlerce yıl önce akan lavları aşındırmasıyla oluşmuştur. Jeolojik açıdan "Siyah Lavlar" arasında akan nehrin oluşturduğu manzara, doğa severler için büyüleyicidir. 
-
-Kanyon, doğa yürüyüşü, fotoğrafçılık ve huzur arayanlar için eşsiz bir rotadır. Volkanik kaya oluşumlarının nehirle buluştuğu bu alan, bölgenin volkanik geçmişine dair en canlı kanıtları barındırmaktadır.`, 
-            en: `Part of the Kula-Salihli UNESCO Global Geopark, the Adala Volcanic Canyon was formed by the Gediz River eroding ancient lava flows over thousands of years. The sight of the river flowing through "Black Lavas" is mesmerizing for nature enthusiasts. 
-
-The canyon offers unique routes for hiking, photography, and those seeking tranquility. These volcanic rock formations provide vivid evidence of the region's intense volcanic history.`,
+            tr: `Kula-Salihli UNESCO Küresel Jeoparkı’nın bir parçası olan Adala Volkanik Kanyonu, Gediz Nehri’nin binlerce yıl önce akan lavları aşındırmasıyla oluşmuştur. Jeolojik açıdan "Siyah Lavlar" arasında akan nehrin oluşturduğu manzara, doğa severler için büyüleyicidir. \n\nKanyon, doğa yürüyüşü, fotoğrafçılık ve huzur arayanlar için eşsiz bir rotadır. Volkanik kaya oluşumlarının nehirle buluştuğu bu alan, bölgenin volkanik geçmişine dair en canlı kanıtları barındırmaktadır.`, 
+            en: `Part of the Kula-Salihli UNESCO Global Geopark, the Adala Volcanic Canyon was formed by the Gediz River eroding ancient lava flows over thousands of years. The sight of the river flowing through "Black Lavas" is mesmerizing for nature enthusiasts. \n\nThe canyon offers unique routes for hiking, photography, and those seeking tranquility. These volcanic rock formations provide vivid evidence of the region's intense volcanic history.`,
             fr: `Faisant partie du géoparc mondial UNESCO de Kula-Salihli, le canyon volcanique d'Adala a été formé par le fleuve Gediz érodant d'anciennes coulées de lave. C'est un site fascinant pour les amoureux de la nature.`,
             de: `Der Adala-Vulkancanyon, Teil des UNESCO-Global-Geoparks Kula-Salihli, entstand durch die Erosion alter Lavaströme durch den Fluss Gediz. Ein faszinierender Ort für Naturfreunde.`,
             ja: `ユネスコ世界ジオパークであるクラーサリフリの一部であるアダラ火山渓谷は、ゲディズ川が数千年にわたって古代の溶岩流を侵食して形成されました。`
@@ -171,12 +123,8 @@ The canyon offers unique routes for hiking, photography, and those seeking tranq
         slug: { tr: 'bintepeler-lidya-tumulusleri', en: 'bintepeler-lydian-tumuli', fr: 'tumulus-lydiens-de-bintepeler', de: 'lydische-tumuli-von-bintepeler', ja: 'bintepeler-lydian-tumuli-ja' },
         name: { tr: 'Bintepeler Lidya Tümülüsleri', en: 'Bintepeler Lydian Tumuli', fr: 'Tumulus Lydiens de Bintepeler', de: 'Lydische Tumuli von Bintepeler', ja: 'ビンテペレル・リディアの墳丘墓' },
         description: { 
-            tr: `Dünyanın en büyük tümülüs alanlarından biri olan Bintepeler, antik Lidya krallarına ve soylularına ait yaklaşık 100 civarında yapay tepeden (tümülüs) oluşur. "Anadolu’nun Piramitleri" olarak da adlandırılan bu alan, antik dünyanın ölü gömme geleneklerini en görkemli haliyle yansıtır. 
-
-Marmara Gölü’nün güneyinde yer alan bu devasa mezar anıtları, Lidya’nın zenginliğini ve gücünü simgeler. En büyüğü Lidya Kralı Alyattes’e ait olan tümülüs, Heredot tarafından dünyanın en büyük yapılarından biri olarak tanımlanmıştır.`, 
-            en: `Bintepeler is one of the world's largest tumulus areas, consisting of nearly 100 artificial hills (tumuli) belonging to Lydian kings and nobles. Often called the "Pyramids of Anatolia," this site showcases ancient burial traditions at their grandest scale. 
-
-Located south of Lake Marmara, these massive funerary monuments symbolize the wealth and power of Lydia. The largest one, belonging to King Alyattes, was described by Herodotus as one of the greatest structures in the world.`,
+            tr: `Dünyanın en büyük tümülüs alanlarından biri olan Bintepeler, antik Lidya krallarına ve soylularına ait yaklaşık 100 civarında yapay tepeden (tümülüs) oluşur. "Anadolu’nun Piramitleri" olarak da adlandırılan bu alan, antik dünyanın ölü gömme geleneklerini en görkemli haliyle yansıtır. \n\nMarmara Gölü’nün güneyinde yer alan bu devasa mezar anıtları, Lidya’nın zenginliğini ve gücünü simgeler. En büyüğü Lidya Kralı Alyattes’e ait olan tümülüs, Heredot tarafından dünyanın en büyük yapılarından biri olarak tanımlanmıştır.`, 
+            en: `Bintepeler is one of the world's largest tumulus areas, consisting of nearly 100 artificial hills (tumuli) belonging to Lydian kings and nobles. Often called the "Pyramids of Anatolia," this site showcases ancient burial traditions at their grandest scale. \n\nLocated south of Lake Marmara, these massive funerary monuments symbolize the wealth and power of Lydia. The largest one, belonging to King Alyattes, was described by Herodotus as one of the greatest structures in the world.`,
             fr: `Bintepeler est l'une des plus grandes zones de tumulus au monde, comprenant près de 100 collines artificielles appartenant aux rois et nobles lydiens. Surnommées les "Pyramides d'Anatolie".`,
             de: `Bintepeler ist eines der weltweit größten Gebiete mit Tumuli und besteht aus fast 100 künstlichen Hügeln, die lydischen Königen und Adligen gehörten. Oft als die "Pyramiden von Anatolien" bezeichnet.`,
             ja: `ビンテペレルは世界最大の墳丘墓地帯の一つで、リディアの王や貴族に属する約100の人工的な丘（墳丘墓）で構成されています。「アナトリアのピラミッド」とも呼ばれます。`
@@ -191,12 +139,8 @@ Located south of Lake Marmara, these massive funerary monuments symbolize the we
         slug: { tr: 'salihli-kent-muzesi', en: 'salihli-city-museum', fr: 'musee-de-la-ville-de-salihli', de: 'stadtmuseum-salihli', ja: 'salihli-city-museum-ja' },
         name: { tr: 'Salihli Kent Müzesi', en: 'Salihli City Museum', fr: 'Musée de la Ville de Salihli', de: 'Stadtmuseum Salihli', ja: 'サリフリ市立博物館' },
         description: { 
-            tr: `Salihli’nin Cumhuriyet dönemine tanıklık eden Müstantik (Sorgu Hakimi) Ahmet Efendi Konağı, günümüzde kentin sosyal, kültürel ve ekonomik tarihini sergileyen bir müze olarak hizmet vermektedir. 
-
-Müze içerisinde tarım aletlerinden geleneksel kıyafetlere, eski zanaat dallarından Kurtuluş Savaşı hatıralarına kadar Salihli’nin kimliğini oluşturan pek çok eser sergilenmektedir. Konağın mimari yapısı da dönemin estetik anlayışını yansıtan önemli bir kültürel mirastır.`, 
-            en: `The Ahmet Efendi Mansion, which witnessed Salihli's Republican era, now serves as a city museum showcasing the social, cultural, and economic history of the district. 
-
-The museum exhibits various artifacts forming Salihli's identity, ranging from agricultural tools and traditional costumes to old crafts and memories of the War of Independence. The mansion's architecture is also a significant heritage reflecting the era's aesthetics.`,
+            tr: `Salihli’nin Cumhuriyet dönemine tanıklık eden Müstantik (Sorgu Hakimi) Ahmet Efendi Konağı, günümüzde kentin sosyal, kültürel ve ekonomik tarihini sergileyen bir müze olarak hizmet vermektedir. \n\nMüze içerisinde tarım aletlerinden geleneksel kıyafetlere, eski zanaat dallarından Kurtuluş Savaşı hatıralarına kadar Salihli’nin kimliğini oluşturan pek çok eser sergilenmektedir. Konağın mimari yapısı da dönemin estetik anlayışını yansıtan önemli bir kültürel mirastır.`, 
+            en: `The Ahmet Efendi Mansion, which witnessed Salihli's Republican era, now serves as a city museum showcasing the social, cultural, and economic history of the district. \n\nThe museum exhibits various artifacts forming Salihli's identity, ranging from agricultural tools and traditional costumes to old crafts and memories of the War of Independence. The mansion's architecture is also a significant heritage reflecting the era's aesthetics.`,
             fr: `Le manoir Ahmet Efendi, témoin de l'ère républicaine de Salihli, sert aujourd'hui de musée municipal retraçant l'histoire sociale, culturelle et économique du district.`,
             de: `Das Ahmet-Efendi-Herrenhaus, ein Zeuge der republikanischen Ära Salihlis, dient heute als Stadtmuseum, das die soziale, kulturelle und wirtschaftliche Geschichte des Bezirks zeigt.`,
             ja: `サリフリの共和国時代を見守ってきたアフメット・エフェンディ邸は、現在は地区の社会的、文化的、経済的歴史を紹介する市立博物館として機能しています。`
@@ -211,12 +155,8 @@ The museum exhibits various artifacts forming Salihli's identity, ranging from a
         slug: { tr: 'artemis-tapinagi', en: 'temple-of-artemis', fr: 'temple-artemis', de: 'artemis-tempel', ja: 'temple-of-artemis-ja' },
         name: { tr: 'Artemis Tapınağı', en: 'Temple of Artemis', fr: 'Temple d\'Artémis', de: 'Artemis-Tempel', ja: 'アルテミス神殿' },
         description: { 
-            tr: `Antik dünyanın en büyük İyon düzenindeki tapınaklarından biri olan Artemis Tapınağı, Lidya Krallığı'nın dini kalbidir. MS 17 yılındaki büyük depremden sonra İmparator Tiberius döneminde yeniden inşa edilen tapınak, devasa sütunları ve büyüleyici atmosferiyle ziyaretçilerini selamlar. 
-
-Tapınağın hemen yanında yer alan erken dönem Hristiyan kilisesi, inançlar arasındaki geçişi simgeleyen önemli bir detaydır. Tapınak, hem mimari ihtişamı hem de binlerce yıllık dini geçmişiyle Sardes’in en mistik noktalarından biridir.`, 
-            en: `One of the largest Ionic temples in the ancient world, the Temple of Artemis was the religious heart of the Lydian Kingdom. Rebuilt during Emperor Tiberius's reign after the great earthquake of 17 AD, it welcomes visitors with its massive columns and enchanting atmosphere. 
-
-The early Christian church located right next to the temple is a significant detail symbolizing the transition between faiths. The temple remains one of the most mystical spots in Sardis, with its architectural grandeur and religious history.`,
+            tr: `Antik dünyanın en büyük İyon düzenindeki tapınaklarından biri olan Artemis Tapınağı, Lidya Krallığı'nın dini kalbidir. MS 17 yılındaki büyük depremden sonra İmparator Tiberius döneminde yeniden inşa edilen tapınak, devasa sütunları ve büyüleyici atmosferiyle ziyaretçilerini selamlar. \n\nTapınağın hemen yanında yer alan erken dönem Hristiyan kilisesi, inançlar arasındaki geçişi simgeleyen önemli bir detaydır. Tapınak, hem mimari ihtişamı hem de binlerce yıllık dini geçmişiyle Sardes’in en mistik noktalarından biridir.`, 
+            en: `One of the largest Ionic temples in the ancient world, the Temple of Artemis was the religious heart of the Lydian Kingdom. Rebuilt during Emperor Tiberius's reign after the great earthquake of 17 AD, it welcomes visitors with its massive columns and enchanting atmosphere. \n\nThe early Christian church located right next to the temple is a significant detail symbolizing the transition between faiths. The temple remains one of the most mystical spots in Sardis, with its architectural grandeur and religious history.`,
             fr: `L'un des plus grands temples ioniques du monde antique, le temple d'Artémis était le cœur religieux du royaume lydien. Reconstruit sous le règne de l'empereur Tibère.`,
             de: `Der Artemis-Tempel, einer der größten ionischen Tempel der antiken Welt, war das religiöse Herz des lydischen Königreichs. Er wurde unter Kaiser Tiberius wiederaufgebaut.`,
             ja: `古代世界で最大のイオニア式神殿の一つであるアルテミス神殿は、リディア王国の宗教的中心地でした。西暦17年の大地震の後、ティベリウス皇帝の治世中に再建されました。`
