@@ -28,7 +28,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, FilePenLine, Trash2, Plus, Upload, Headphones, Download, Settings, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin, AlertCircle, Save } from 'lucide-react';
+import { Loader2, FilePenLine, Trash2, Plus, Upload, Headphones, Download, Settings, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin, AlertCircle, Save, LayoutGrid, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -79,6 +79,13 @@ const routeFormSchema = z.object({
     description: localizedStringSchema,
     stops: z.array(z.string()).default([]),
     kmlUrl: z.string().optional(),
+});
+
+const experienceItemFormSchema = z.object({
+  name: localizedStringSchema,
+  icon: z.string().min(1, 'İkon ismi gereklidir.'),
+  link: z.string().min(1, 'Bağlantı gereklidir.'),
+  order: z.coerce.number().min(0),
 });
 
 // Helper Component for Localized Fields
@@ -143,18 +150,21 @@ export default function AdminPage() {
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
     const storiesQuery = useMemo(() => query(collection(firestore, 'stories')), [firestore]);
     const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
+    const experienceItemsQuery = useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]);
 
     const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
     const { data: stories, loading: storiesLoading } = useCollection<Story>(storiesQuery);
     const { data: routes, loading: routesLoading } = useCollection<Route>(routesQuery);
+    const { data: experienceItems, loading: experienceLoading } = useCollection<ExperienceItem>(experienceItemsQuery);
 
     // ID tracking states
     const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
     const [editingStoryId, setEditingStoryId] = useState<string | null>(null);
     const [editingRouteId, setEditingRouteId] = useState<string | null>(null);
+    const [editingExperienceItemId, setEditingExperienceItemId] = useState<string | null>(null);
     
     const [deletingId, setDeletingId] = useState<string | null>(null);
-    const [deletingType, setDeletingType] = useState<'place' | 'story' | 'route' | null>(null);
+    const [deletingType, setDeletingType] = useState<'place' | 'story' | 'route' | 'experience' | null>(null);
 
     const sortedPlaces = useMemo(() => {
         if (!places) return [];
@@ -175,6 +185,11 @@ export default function AdminPage() {
     const routeForm = useForm({
         resolver: zodResolver(routeFormSchema),
         defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, stops: [], kmlUrl: '' } as any
+    });
+
+    const experienceItemForm = useForm({
+      resolver: zodResolver(experienceItemFormSchema),
+      defaultValues: { name: { tr: '', en: '' }, icon: 'Star', link: '/', order: 0 } as any
     });
 
     // Reset forms when editing
@@ -204,6 +219,15 @@ export default function AdminPage() {
             routeForm.reset({ name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, stops: [], kmlUrl: '' });
         }
     }, [editingRouteId, routes, routeForm]);
+
+    useEffect(() => {
+      if (editingExperienceItemId && experienceItems) {
+        const item = experienceItems.find(x => x.id === editingExperienceItemId);
+        if (item) experienceItemForm.reset(item);
+      } else if (!editingExperienceItemId) {
+        experienceItemForm.reset({ name: { tr: '', en: '' }, icon: 'Star', link: '/', order: (experienceItems?.length || 0) + 1 });
+      }
+    }, [editingExperienceItemId, experienceItems, experienceItemForm]);
 
     // Action Handlers
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, pathPrefix: string) => {
@@ -254,6 +278,15 @@ export default function AdminPage() {
         editingRouteId ? updateRoute(firestore, editingRouteId, values, callback) : addRoute(firestore, values, callback);
     };
 
+    const onExperienceItemSubmit = (values: any) => {
+      setIsSubmitting(true);
+      const callback = {
+        onSuccess: () => { toast({ title: 'Başarılı' }); setEditingExperienceItemId(null); setIsSubmitting(false); },
+        onError: () => setIsSubmitting(false)
+      };
+      editingExperienceItemId ? updateExperienceItem(firestore, editingExperienceItemId, values, callback) : addExperienceItem(firestore, values, callback);
+    };
+
     const handleDelete = async () => {
         if (!deletingId || !deletingType) return;
         setIsSubmitting(true);
@@ -261,6 +294,7 @@ export default function AdminPage() {
         if (deletingType === 'place') deletePlace(firestore, deletingId, callback);
         if (deletingType === 'story') deleteStory(firestore, deletingId, callback);
         if (deletingType === 'route') deleteRoute(firestore, deletingId, callback);
+        if (deletingType === 'experience') deleteExperienceItem(firestore, deletingId, callback);
     };
 
     const handleManualBackup = async () => {
@@ -282,6 +316,7 @@ export default function AdminPage() {
                     <TabsTrigger value="places" className="rounded-xl px-6">Yerler & Mekanlar</TabsTrigger>
                     <TabsTrigger value="stories" className="rounded-xl px-6">Hikayeler</TabsTrigger>
                     <TabsTrigger value="routes" className="rounded-xl px-6">Rotalar & KML</TabsTrigger>
+                    <TabsTrigger value="experience" className="rounded-xl px-6">Deneyim Menüsü</TabsTrigger>
                     <TabsTrigger value="database" className="rounded-xl px-6">Veritabanı</TabsTrigger>
                 </TabsList>
 
@@ -498,6 +533,75 @@ export default function AdminPage() {
                                             <TableCell className="text-right pr-6">
                                                 <Button variant="ghost" size="icon" onClick={() => setEditingRouteId(r.id)}><FilePenLine className="h-4 w-4" /></Button>
                                                 <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(r.id); setDeletingType('route'); }}><Trash2 className="h-4 w-4" /></Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* --- DENEYİM MENÜSÜ --- */}
+                <TabsContent value="experience" className="p-4 space-y-8 animate-in fade-in duration-500">
+                    <Card className="rounded-[2rem] shadow-xl border-none">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 font-black text-primary"><LayoutGrid /> {editingExperienceItemId ? 'Öğeyi Düzenle' : 'Yeni Deneyim Menüsü Öğesi Ekle'}</CardTitle>
+                            <CardDescription>Ana sayfadaki 'Salihli'de 1 Gün' menü ikonlarını yönetin.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Form {...experienceItemForm}>
+                                <form onSubmit={experienceItemForm.handleSubmit(onExperienceItemSubmit)} className="space-y-6">
+                                    <LocalizedFields form={experienceItemForm} fieldNames={['name']} />
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <FormField control={experienceItemForm.control} name="icon" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>İkon (Lucide İsim)</FormLabel>
+                                                <FormControl><Input placeholder="Mountain, Landmark, Utensils..." {...field} className="rounded-xl" /></FormControl>
+                                                <FormDescription>Örn: Map, Camera, Coffee</FormDescription>
+                                            </FormItem>
+                                        )}/>
+                                        <FormField control={experienceItemForm.control} name="link" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Bağlantı (URL)</FormLabel>
+                                                <FormControl><Input placeholder="/yerler?category=nature" {...field} className="rounded-xl" /></FormControl>
+                                            </FormItem>
+                                        )}/>
+                                        <FormField control={experienceItemForm.control} name="order" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Sıralama No</FormLabel>
+                                                <FormControl><Input type="number" {...field} className="rounded-xl" /></FormControl>
+                                            </FormItem>
+                                        )}/>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <Button type="submit" disabled={isSubmitting} className="rounded-2xl px-12 h-14 font-black">
+                                            {isSubmitting && <Loader2 className="animate-spin mr-2" />} Öğeyi Kaydet
+                                        </Button>
+                                        {editingExperienceItemId && <Button variant="ghost" onClick={() => setEditingExperienceItemId(null)} className="h-14 rounded-2xl">İptal</Button>}
+                                    </div>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="pl-6 w-20">Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead>Link</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
+                                <TableBody>
+                                    {experienceLoading ? <TableRow><TableCell colSpan={5}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
+                                    experienceItems?.map(item => (
+                                        <TableRow key={item.id} className="hover:bg-muted/30">
+                                            <TableCell className="pl-6"><Badge variant="secondary">{item.order}</Badge></TableCell>
+                                            <TableCell className="font-bold">{item.name.tr}</TableCell>
+                                            <TableCell><Badge variant="outline">{item.icon}</Badge></TableCell>
+                                            <TableCell className="text-xs text-muted-foreground">{item.link}</TableCell>
+                                            <TableCell className="text-right pr-6">
+                                                <Button variant="ghost" size="icon" onClick={() => setEditingExperienceItemId(item.id)}><FilePenLine className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(item.id); setDeletingType('experience'); }}><Trash2 className="h-4 w-4" /></Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
