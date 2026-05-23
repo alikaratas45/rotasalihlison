@@ -47,7 +47,6 @@ export default function StoryDetailPage() {
   }
 
   const title = story.title[typedLanguage];
-  const author = story.author[typedLanguage];
   const content = story.content[typedLanguage];
 
   return (
@@ -61,8 +60,7 @@ export default function StoryDetailPage() {
             </Button>
         </div>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 text-center">{title}</h1>
-        <p className="text-center text-muted-foreground mb-8">{t('stories.by')} {author}</p>
+        <h1 className="text-4xl md:text-5xl font-bold font-headline mb-8 text-center">{title}</h1>
         
         {placesLoading && story?.placeId && (
             <Card className="mb-8 overflow-hidden shadow-lg">

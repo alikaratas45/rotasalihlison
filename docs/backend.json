@@ -128,11 +128,10 @@
         "id": { "type": "string" },
         "slug": { "$ref": "#/backend/entities/LocalizedString" },
         "title": { "$ref": "#/backend/entities/LocalizedString" },
-        "author": { "$ref": "#/backend/entities/LocalizedString" },
         "content": { "$ref": "#/backend/entities/LocalizedString" },
         "placeId": { "type": "string" }
-            },
-      "required": ["id", "slug", "title", "author", "content"]
+      },
+      "required": ["id", "slug", "title", "content"]
     },
     "MenuItem": {
       "title": "Menu Item",

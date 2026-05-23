@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -89,7 +90,6 @@ function HikayelerContent() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                      <div className="absolute bottom-0 p-6 text-white">
                         <h3 className="text-2xl font-bold font-headline mb-2">{story.title[typedLanguage] || story.title.tr}</h3>
-                        <p className="text-sm opacity-90">{t('stories.by')} {story.author[typedLanguage] || story.author.tr}</p>
                       </div>
                   </div>
                   <div className="p-6 flex flex-col flex-grow">

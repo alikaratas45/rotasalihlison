@@ -1,3 +1,4 @@
+
 import type { Story } from '@/lib/definitions';
 
 export const stories: Story[] = [
@@ -16,13 +17,6 @@ export const stories: Story[] = [
             fr: 'Le Roi Midas et la Touche d\'Or',
             de: 'König Midas und die goldene Berührung',
             ja: 'ミダス王と黄金のタッチ'
-        },
-        author: {
-            tr: 'Ovidius',
-            en: 'Ovid',
-            fr: 'Ovide',
-            de: 'Ovid',
-            ja: 'オウィディウス'
         },
         content: {
             tr: `Efsaneye göre, Frigya Kralı Midas, tanrı Dionysos'un yoldaşı bir satiri konuk eder ve onu ağırlar. Bu iyiliğinden etkilenen Dionysos, krala bir dilek hakkı sunar. Gözü zenginlikte olan Midas, dokunduğu her şeyin altına dönüşmesini diler.
@@ -73,13 +67,6 @@ Die "Riesenkessel" im Tabak-Bach, die als einer der Orte gelten, an denen Midas 
             de: 'Die Geschichte von Artemis und Orion',
             ja: 'アルテミスとオリオンの物語'
         },
-        author: {
-            tr: 'Mitoloji',
-            en: 'Mythology',
-            fr: 'Mythologie',
-            de: 'Mythologie',
-            ja: '神話'
-        },
         content: {
             tr: `Artemis dev bir avcı olan Poseidon’un oğlu olan Orion’a aşık olur. Fakat bu aşk Artemis'in ikiz kardeşi olan Apollon’un hoşuna gitmez. 
 
@@ -125,13 +112,6 @@ Sie legt ihn in ihren aus Silber gefertigten Mondwagen und trägt ihn mit eigene
             de: 'Die Heilung der Prinzessin Kursun',
             ja: 'クルスン王女の癒し'
         },
-        author: {
-            tr: 'Halk Efsanesi',
-            en: 'Folk Legend',
-            fr: 'Légende Populaire',
-            de: 'Volkssage',
-            ja: '民話'
-        },
         content: {
             tr: `Bir zamanlar güzelliği ile dillere destan olan kralın kızı Kursun önemli bir deri hastalığı geçirir. Bu deri hastalığı sebebi ile vücudunda yaralar çıkar ve çirkinleşir. 
 
@@ -148,7 +128,7 @@ Over time, seeing the wounds on her body heal, Kursun regained her old beauty co
 Kursun, défigurée et fatiguée d'être moquée et ostracisée, s'éloigna de la ville. Elle commença à vivre autour de la vallée de Kurşunlu. Comme cela la gardait au chaud le soir, elle dormait dans le ruisseau de Kurşunlu, qui était une source thermale naturelle.
 
 Au fil du temps, voyant les plaies sur son corps guérir, Kursun retrouva complètement sa beauté d'autrefois après environ 15 jours et retourna en ville. En apprenant la source de sa guérison, les gens commencèrent à venir à cette source thermale à intervalles réguliers et profitèrent de cette eau pendant des périodes de 10 à 15 jours.`,
-            de: `Es war einmal eine Königstochter namens Kursun, deren Schönheit legendär war. Doch sie erkrankte an einer schweren Hautkrankheit. Infolge dieser Krankheit bildeten sich Wunden an ihrem ganzen Körper, und sie verlor ihre einstige Schönheit.
+            de: `Es war einmal eine Königstochter namens Kursun, deren Schönheit legendär war. Doch sie erkrankte an einer schweren Hautkrankheit. Infolge dieser Krankheit bildeten sich Wunden an her ganzen Körper, und sie verlor ihre einstige Schönheit.
 
 Erschöpft von den Spötteleien und der Ausgrenzung durch ihre Mitmenschen, verließ Kursun die Stadt. Sie begann, im Kurşunlu-Tal zu leben. Da es sie abends warm hielt, schlief sie im Wasser des Kurşunlu-Bachs, der aus einer natürlichen Thermalquelle gespeist wurde.
 

@@ -68,7 +68,6 @@ const placeFormSchema = z.object({
 const storyFormSchema = z.object({
     title: localizedStringSchema,
     slug: localizedStringSchema,
-    author: localizedStringSchema,
     content: localizedStringSchema,
     placeId: z.string().optional(),
 });
@@ -106,11 +105,6 @@ const LocalizedFields = ({ form, fieldNames, prefix = "" }: { form: any, fieldNa
                         {fieldNames.includes('title') && (
                             <FormField control={form.control} name={`${prefix}title.${lang}`} render={({ field }) => (
                                 <FormItem><FormLabel>Başlık</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
-                            )} />
-                        )}
-                        {fieldNames.includes('author') && (
-                            <FormField control={form.control} name={`${prefix}author.${lang}`} render={({ field }) => (
-                                <FormItem><FormLabel>Yazar / Kaynak</FormLabel><FormControl><Input {...field} value={field.value || ''} /></FormControl></FormItem>
                             )} />
                         )}
                         {fieldNames.includes('description') && (
@@ -179,7 +173,7 @@ export default function AdminPage() {
 
     const storyForm = useForm({
         resolver: zodResolver(storyFormSchema),
-        defaultValues: { title: { tr: '', en: '' }, slug: { tr: '', en: '' }, author: { tr: '', en: '' }, content: { tr: '', en: '' }, placeId: '' } as any
+        defaultValues: { title: { tr: '', en: '' }, slug: { tr: '', en: '' }, content: { tr: '', en: '' }, placeId: '' } as any
     });
 
     const routeForm = useForm({
@@ -207,7 +201,7 @@ export default function AdminPage() {
             const s = stories.find(x => x.id === editingStoryId);
             if (s) storyForm.reset(s);
         } else if (!editingStoryId) {
-            storyForm.reset({ title: { tr: '', en: '' }, slug: { tr: '', en: '' }, author: { tr: '', en: '' }, content: { tr: '', en: '' }, placeId: '' });
+            storyForm.reset({ title: { tr: '', en: '' }, slug: { tr: '', en: '' }, content: { tr: '', en: '' }, placeId: '' });
         }
     }, [editingStoryId, stories, storyForm]);
 
@@ -422,7 +416,7 @@ export default function AdminPage() {
                         <CardContent>
                             <Form {...storyForm}>
                                 <form onSubmit={storyForm.handleSubmit(onStorySubmit)} className="space-y-6">
-                                    <LocalizedFields form={storyForm} fieldNames={['title', 'slug', 'author', 'content']} />
+                                    <LocalizedFields form={storyForm} fieldNames={['title', 'slug', 'content']} />
                                     <FormField control={storyForm.control} name="placeId" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>İlgili Mekan (Mekana Git butonu için)</FormLabel>
@@ -446,13 +440,12 @@ export default function AdminPage() {
                     <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
                         <CardContent className="p-0">
                             <Table>
-                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="pl-6">Başlık</TableHead><TableHead>Yazar</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="pl-6">Başlık</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
                                 <TableBody>
-                                    {storiesLoading ? <TableRow><TableCell colSpan={3}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
+                                    {storiesLoading ? <TableRow><TableCell colSpan={2}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
                                     stories?.map(s => (
                                         <TableRow key={s.id} className="hover:bg-muted/30">
                                             <TableCell className="pl-6 font-bold">{s.title.tr}</TableCell>
-                                            <TableCell className="text-muted-foreground">{s.author.tr}</TableCell>
                                             <TableCell className="text-right pr-6">
                                                 <Button variant="ghost" size="icon" onClick={() => setEditingStoryId(s.id)}><FilePenLine className="h-4 w-4" /></Button>
                                                 <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(s.id); setDeletingType('story'); }}><Trash2 className="h-4 w-4" /></Button>

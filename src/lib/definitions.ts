@@ -55,7 +55,6 @@ export type Story = {
     id: string;
     slug: LocalizedString;
     title: LocalizedString;
-    author: LocalizedString;
     content: LocalizedString;
     placeId?: string; // Optional place ID
 };
