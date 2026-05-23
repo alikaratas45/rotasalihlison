@@ -9,7 +9,7 @@ export const places: Place[] = [
         description: { 
             tr: `Salihli’nin tarihini başlatan Antik Sardes (SART) kenti, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ’ın batısındaki tepelerin kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda Lidya Devleti'nin görkemli başkenti olan Sardes, tarihte paranın ilk basıldığı yer olarak bilinir. 
 
-Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde bhi önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
+Endüstriyel buluşların, lirik şiirin ve heykelciliğin merkezi olan kent, Pers, Roma ve Bizans dönemlerinde de önemini korumuştur. Mezarların yerleşim merkezleri çevresinde bulunması, antik kentin bugünkü Salihli’nin güneyine kadar uzanan geniş bir medeniyet havzası olduğunu kanıtlamaktadır.`, 
             en: `Sardis, the magnificent capital of the Lydian Kingdom in the 7th and 6th centuries BC, is known as the place where money was first minted in history. Located in the Gediz basin, on the slopes of Mount Tmolus (Bozdağ), it was a center of industrial inventions, lyric poetry, and sculpture. 
 
 It maintained its importance throughout the Persian, Roman, and Byzantine periods as a major administrative and cultural hub. The vast spread of tumuli and ruins proves that the ancient city was a broad civilization basin reaching the south of modern-day Salihli.`,
@@ -38,7 +38,7 @@ Nowadays, it offers visitors a peaceful retreat with its modern spa facilities, 
             ja: `ボズダ山脈の麓に位置するクルシュンル温泉は、癒しの水 ve 豊かな自然で有名な主要なウェルネスセンターです。伝説によると、クルスン王女は皮膚病を治すためにこの温泉に浸かった後、伝説的な美しさを取り戻したと言われています。`
         },
         category: 'accommodation',
-        coordinates: { lat: 38.448729326237775, lng: 28.11443981723854 },
+        coordinates: { lat: 38.448729, lng: 28.114439 },
         imageUrl: 'https://i.imgur.com/n7fioom.jpeg',
         imageHint: 'hot springs'
     },
@@ -109,16 +109,16 @@ It is a hidden paradise for hiking and photography enthusiasts. These circular h
         description: { 
             tr: `Sardes Antik Kenti'nin en görkemli yapılarından biri olan Roma Hamam-Gymnasium Kompleksi, antik çağın eğitim, spor ve sosyal yaşam merkezidir. MS 2. yüzyılda inşa edilen bu devasa yapı, mermer işçiliği ve abidevi sütunlarıyla Roma mimarisinin en güzel örneklerinden birini sunmaktadır. 
 
-Kompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorlara adanmış olup eşsiz bir restorasyon çalışmasıyla ayağa kaldırılmıştır. Burası sadece spor yapılan bir alan değil, Trials zamanda felsefe ve sanatın tartışıldığı kültürel bir odak noktasıydı.`, 
+Kompleksin en dikkat çekici kısmı olan "Mermer Avlu" (Kaisersaal), imparatorlara adanmış olup eşsiz bir restorasyon çalışmasıyla ayağa kaldırılmıştır. Burası sadece spor yapılan bir alan değil, aynı zamanda felsefe ve sanatın tartışıldığı kültürel bir odak noktasıydı.`, 
             en: `The Roman Bath-Gymnasium Complex, one of the most magnificent structures in Sardis, was the center of education, sports, and social life in antiquity. Built in the 2nd century AD, this massive structure showcases some of the finest examples of Roman architecture with its intricate marble work and monumental columns. 
 
 The "Marble Court" (Kaisersaal), dedicated to the Roman emperors, has been restored to its former glory. It was not just a place for physical exercise, but also a cultural hub where philosophy and art were discussed.`,
             fr: `Le complexe romain Thermes-Gymnase, l'une des structures les plus grandioses de Sardes, était le centre de l'éducation, du sport et de la vie sociale dans l'Antiquité. Construit au IIe siècle de notre ère, ce bâtiment massif présente des exemples exceptionnels d'architecture romaine.`,
             de: `Der römische Bad-Gymnasium-Komplex, eines der prächtigsten Bauwerke in Sardes, war in der Antike das Zentrum für Bildung, Sport und soziales Leben. Er wurde im 2. Jahrhundert n. Chr. erbaut und zeigt feinste römische Architektur.`,
-            ja: `サルディスで最も壮大な建造物の一つであるローマ浴場・ギムナジウム・コンプレックスは、古代の教育、スポーツ、社会生活の中心地でした。西暦2世紀に建てられたこの巨大な建造物は、ローマ建築ের優れた例を示しています。`
+            ja: `サルディスで最も壮大な建造物の一つであるローマ浴場・ギムナジウム・コンプレックスは、古代の教育、スポーツ、社会生活の中心地でした。西暦2世紀に建てられたこの巨大な建造物は、ローマ建築の優れた例を示しています。`
         },
         category: 'history',
-        coordinates: { lat: 38.48848035921838, lng: 28.040289089766958 },
+        coordinates: { lat: 38.488480, lng: 28.040289 },
         imageUrl: 'https://i.imgur.com/l2YJCmK.jpeg',
         imageHint: 'ancient gymnasium',
         subPoints: [
@@ -141,7 +141,7 @@ Yerden 14 metre yükseklikteki çatı masif taş payelerle desteklenmiştir. Bin
 The roof, 14 meters above the ground, was supported by massive stone pillars. Initially part of the Roman Bath-Gymnasium Complex, it later became a dedicated place of worship. The mosaic floors and marble wall decorations are precious remains from the 4th and 5th centuries AD.`,
                     fr: `Cette synagogue monumentale servait de centre religieux à la communauté juive à la fin de l'époque romaine. Découvert en 1962, le bâtiment comprend une salle de réunion principale pouvant accueillir mille personnes.`,
                     de: `Die monumentale Synagoge diente in der spätrömischen Zeit als religiöses Zentrum der jüdischen Gemeinde. Das 1962 freigelegte Gebäude verfügt über eine Versammlungshalle für tausend Personen.`,
-                    ja: `この記念碑的なシナゴーグは、後期ローマ時代にユダヤ人コミュニティの宗教的中心地として使用されていました。1000人を収容できる大きさ의メインホールがあります。`
+                    ja: `この記念碑的なシナゴーグは、後期ローマ時代にユダヤ人コミュニティの宗教的中心地として使用されていました。1000人を収容できる大きさのメインホールがあります。`
                 }
             }
         ]
@@ -162,7 +162,7 @@ The canyon offers unique routes for hiking, photography, and those seeking tranq
             ja: `ユネスコ世界ジオパークであるクラーサリフリの一部であるアダラ火山渓谷は、ゲディズ川が数千年にわたって古代の溶岩流を侵食して形成されました。`
         },
         category: 'nature',
-        coordinates: { lat: 38.581712325205984, lng: 28.271791613037774 },
+        coordinates: { lat: 38.581712, lng: 28.271791 },
         imageUrl: 'https://i.imgur.com/I6L6rHm.jpeg',
         imageHint: 'volcanic canyon'
     },
@@ -182,7 +182,7 @@ Located south of Lake Marmara, these massive funerary monuments symbolize the we
             ja: `ビンテペレルは世界最大の墳丘墓地帯の一つで、リディアの王や貴族に属する約100の人工的な丘（墳丘墓）で構成されています。「アナトリアのピラミッド」とも呼ばれます。`
         },
         category: 'history',
-        coordinates: { lat: 38.579235811237744, lng: 28.007434965748573 },
+        coordinates: { lat: 38.579235, lng: 28.007434 },
         imageUrl: 'https://i.imgur.com/2zhSlFd.jpeg',
         imageHint: 'ancient hills'
     },
@@ -202,7 +202,7 @@ The museum exhibits various artifacts forming Salihli's identity, ranging from a
             ja: `サリフリの共和国時代を見守ってきたアフメット・エフェンディ邸は、現在は地区の社会的、文化的、経済的歴史を紹介する市立博物館として機能しています。`
         },
         category: 'history',
-        coordinates: { lat: 38.48235578263535, lng: 28.1309880487272 },
+        coordinates: { lat: 38.482355, lng: 28.130988 },
         imageUrl: 'https://i.imgur.com/IauiziR.jpeg',
         imageHint: 'city museum'
     },
@@ -222,7 +222,7 @@ The early Christian church located right next to the temple is a significant det
             ja: `古代世界で最大のイオニア式神殿の一つであるアルテミス神殿は、リディア王国の宗教的中心地でした。西暦17年の大地震の後、ティベリウス皇帝の治世中に再建されました。`
         },
         category: 'history',
-        coordinates: { lat: 38.479498365864494, lng: 28.03118038595177 },
+        coordinates: { lat: 38.479498, lng: 28.031180 },
         imageUrl: 'https://i.imgur.com/d2RoArI.jpeg',
         imageHint: 'ancient temple'
     }
