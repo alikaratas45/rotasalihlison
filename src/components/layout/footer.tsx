@@ -56,11 +56,16 @@ export function Footer() {
              </ul>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {year} Salihli Belediyesi. {t('footer.copyright')}</p>
-          <Link href="/admin/login" className="text-xs text-muted-foreground/50 hover:text-muted-foreground">
-              Admin Girişi
-          </Link>
+        <div className="mt-8 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+          <div className="text-center md:text-left">
+            <p>&copy; {year} Salihli Belediyesi. {t('footer.copyright')}</p>
+            <Link href="/admin/login" className="text-xs text-muted-foreground/50 hover:text-muted-foreground">
+                Admin Girişi
+            </Link>
+          </div>
+          <div className="text-[10px] opacity-40 hover:opacity-100 transition-opacity text-right">
+             Bu web sitesi Ali Karataş tarafından yapılmıştır.
+          </div>
         </div>
       </div>
     </footer>
