@@ -7,16 +7,31 @@ import { experienceItems as staticExperienceItems } from '@/lib/data/experience-
 
 import type { Place, Route, ExperienceItem } from '@/lib/definitions';
 
+// Yedeklenecek tüm koleksiyonların listesi
+const BACKUP_COLLECTIONS = [
+  'places', 
+  'routes', 
+  'experience-items', 
+  'stories', 
+  'menu-items', 
+  'settings', 
+  'feedback', 
+  'feedbacks'
+];
+
 /**
  * Mevcut veritabanı durumunu 'backups' koleksiyonuna yedekler.
  */
 export async function createBackup(firestore: Firestore) {
-  const collections = ['places', 'routes', 'experience-items'];
   const backupData: any = { timestamp: serverTimestamp() };
 
-  for (const collName of collections) {
-    const snap = await getDocs(collection(firestore, collName));
-    backupData[collName] = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+  for (const collName of BACKUP_COLLECTIONS) {
+    try {
+      const snap = await getDocs(collection(firestore, collName));
+      backupData[collName] = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+    } catch (e) {
+      console.warn(`Koleksiyon yedeklenemedi: ${collName}`, e);
+    }
   }
 
   const backupRef = doc(collection(firestore, 'backups'));
@@ -34,19 +49,27 @@ export async function undoLastOperation(firestore: Firestore) {
   if (snap.empty) throw new Error("Geri yüklenecek yedek bulunamadı.");
 
   const lastBackup = snap.docs[0].data();
-  const collections = ['places', 'routes', 'experience-items'];
 
-  for (const collName of collections) {
-    const currentSnap = await getDocs(collection(firestore, collName));
-    for (const d of currentSnap.docs) {
-      await deleteDoc(doc(firestore, collName, d.id));
-    }
-    const items = lastBackup[collName] || [];
-    for (const item of items) {
-      const { id, ...data } = item;
-      await setDoc(doc(firestore, collName, id), data);
+  for (const collName of BACKUP_COLLECTIONS) {
+    try {
+      // Mevcut verileri sil
+      const currentSnap = await getDocs(collection(firestore, collName));
+      for (const d of currentSnap.docs) {
+        await deleteDoc(doc(firestore, collName, d.id));
+      }
+      
+      // Yedekten geri yükle
+      const items = lastBackup[collName] || [];
+      for (const item of items) {
+        const { id, ...data } = item;
+        await setDoc(doc(firestore, collName, id), data);
+      }
+    } catch (e) {
+      console.error(`${collName} geri yüklenirken hata oluştu:`, e);
     }
   }
+  
+  // Kullanılan yedek belgesini sil
   await deleteDoc(snap.docs[0].ref);
 }
 
@@ -60,14 +83,12 @@ async function seedCollection<T extends { id?: string }>(
   const collectionRef = collection(firestore, collectionName);
 
   for (const item of staticData) {
-    // If no ID provided, try to find by link (for exp items) or generate one
     let targetId = (item as any).id;
     let docRef: any = targetId ? doc(collectionRef, targetId) : null;
     
     try {
       let docSnap = docRef ? await getDoc(docRef) : null;
 
-      // Handle experience-items specially to avoid duplicates based on link
       if ((!docSnap || !docSnap.exists()) && collectionName === 'experience-items') {
           const q = query(collectionRef, where('link', '==', (item as any).link));
           const existing = await getDocs(q);
@@ -86,13 +107,9 @@ async function seedCollection<T extends { id?: string }>(
         
         let mergedData;
         if (collectionName === 'experience-items') {
-            // Update order and names from code, but keep user changes if necessary
-            // Here we prioritize code values for order to fix menu layout
             mergedData = { ...currentData, ...staticPayload, order: staticPayload.order };
         } else {
-            // Standard merge
             mergedData = { ...staticPayload, ...currentData };
-            // Ensure subPoints from code are added if Firestore version is empty
             if (staticPayload.subPoints && (!currentData.subPoints || currentData.subPoints.length === 0)) {
                 mergedData.subPoints = staticPayload.subPoints;
             }
@@ -123,6 +140,7 @@ export async function seedDatabase(firestore: Firestore, mode: 'SAFE' | 'UPDATE'
   routes: { added: number, updated: number },
   experienceItems: { added: number, updated: number }
 }> {
+  // Güncelleme öncesi otomatik yedek al
   await createBackup(firestore);
 
   const placesResult = await seedCollection<Place>(firestore, 'places', staticPlaces, mode);

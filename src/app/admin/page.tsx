@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 
 // Services
 import { addPlace, updatePlace, deletePlace, updateSubPoints } from '@/firebase/firestore/places-service';
-import { seedDatabase, undoLastOperation } from '@/firebase/firestore/seed-service';
+import { seedDatabase, undoLastOperation, createBackup } from '@/firebase/firestore/seed-service';
 import { addExperienceItem, updateExperienceItem, deleteExperienceItem } from '@/firebase/firestore/experience-menu-service';
 import { deleteFeedbackComment } from '@/firebase/firestore/feedback-service';
 import { addStory, updateStory, deleteStory } from '@/firebase/firestore/stories-service';
@@ -28,13 +28,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, MoreHorizontal, FilePenLine, Trash2, Layers, Plus, Upload, Headphones, PieChart, Download, Settings, LayoutGrid, MessageSquare, ImageIcon, AlertCircle, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin } from 'lucide-react';
+import { Loader2, FilePenLine, Trash2, Plus, Upload, Headphones, Download, Settings, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin, AlertCircle, Save } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 
@@ -44,17 +42,6 @@ import type { Place, Feedback, SubPoint, ExperienceItem, CommentFeedback, Story,
 // Constants
 const languageNames: Record<string, string> = { tr: 'Türkçe', en: 'English', fr: 'Français', de: 'Deutsch', ja: '日本語' };
 const languages = ['tr', 'en', 'fr', 'de', 'ja'] as const;
-
-// Helper to fix common URL mistakes
-const sanitizeImageUrl = (url: string | undefined) => {
-  if (!url) return '';
-  if (url.includes('imgur.com/') && !url.includes('i.imgur.com')) {
-    const parts = url.split('/');
-    const id = parts[parts.length - 1];
-    return `https://i.imgur.com/${id}.png`;
-  }
-  return url;
-};
 
 // --- ZOD Schemas ---
 const localizedStringSchema = z.object({
@@ -92,13 +79,6 @@ const routeFormSchema = z.object({
     description: localizedStringSchema,
     stops: z.array(z.string()).default([]),
     kmlUrl: z.string().optional(),
-});
-
-const experienceItemSchema = z.object({
-    name: localizedStringSchema,
-    icon: z.string().min(1, 'İkon adı gereklidir.'),
-    link: z.string().min(1, 'Link gereklidir.'),
-    order: z.coerce.number().min(0),
 });
 
 // Helper Component for Localized Fields
@@ -155,6 +135,7 @@ export default function AdminPage() {
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSeeding, setIsSeeding] = useState(false);
+    const [isBackingUp, setIsBackingUp] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [activeTab, setActiveTab] = useState('places');
 
@@ -162,14 +143,10 @@ export default function AdminPage() {
     const placesQuery = useMemo(() => query(collection(firestore, 'places')), [firestore]);
     const storiesQuery = useMemo(() => query(collection(firestore, 'stories')), [firestore]);
     const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
-    const feedbacksQuery = useMemo(() => query(collection(firestore, 'feedbacks'), orderBy('createdAt', 'desc')), [firestore]);
-    const experienceQuery = useMemo(() => query(collection(firestore, 'experience-items'), orderBy('order')), [firestore]);
 
     const { data: places, loading: placesLoading } = useCollection<Place>(placesQuery);
     const { data: stories, loading: storiesLoading } = useCollection<Story>(storiesQuery);
     const { data: routes, loading: routesLoading } = useCollection<Route>(routesQuery);
-    const { data: feedbacks } = useCollection<Feedback>(feedbacksQuery);
-    const { data: expItems } = useCollection<ExperienceItem>(experienceQuery);
 
     // ID tracking states
     const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
@@ -286,6 +263,18 @@ export default function AdminPage() {
         if (deletingType === 'route') deleteRoute(firestore, deletingId, callback);
     };
 
+    const handleManualBackup = async () => {
+        setIsBackingUp(true);
+        try {
+            await createBackup(firestore);
+            toast({ title: 'Yedekleme Başarılı', description: 'Şu anki site durumu başarıyla kaydedildi.' });
+        } catch (error) {
+            toast({ variant: 'destructive', title: 'Hata', description: 'Yedekleme sırasında bir sorun oluştu.' });
+        } finally {
+            setIsBackingUp(false);
+        }
+    };
+
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-20">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -299,10 +288,10 @@ export default function AdminPage() {
                 {/* --- YERLER & MEKANLAR --- */}
                 <TabsContent value="places" className="p-4 space-y-8 animate-in fade-in duration-500">
                     <div className="flex flex-wrap gap-4 mb-6">
-                        <Button variant="outline" className="rounded-2xl h-12 gap-2 border-primary/20 hover:bg-primary/5" onClick={() => { setEditingPlaceId(null); placeForm.setValue('category', 'food'); }}>
+                        <Button variant="outline" className="rounded-2xl h-12 gap-2 border-primary/20 hover:bg-primary/5" onClick={() => { setEditingPlaceId(null); placeForm.reset(); placeForm.setValue('category', 'food'); }}>
                             <Utensils className="h-4 w-4 text-orange-600" /> Yeni Lezzet Durağı
                         </Button>
-                        <Button variant="outline" className="rounded-2xl h-12 gap-2 border-primary/20 hover:bg-primary/5" onClick={() => { setEditingPlaceId(null); placeForm.setValue('category', 'accommodation'); }}>
+                        <Button variant="outline" className="rounded-2xl h-12 gap-2 border-primary/20 hover:bg-primary/5" onClick={() => { setEditingPlaceId(null); placeForm.reset(); placeForm.setValue('category', 'accommodation'); }}>
                             <Bed className="h-4 w-4 text-blue-600" /> Yeni Konaklama İşletmesi
                         </Button>
                     </div>
@@ -522,6 +511,15 @@ export default function AdminPage() {
                 <TabsContent value="database" className="p-4 space-y-8 animate-in fade-in duration-500">
                     <div className="grid md:grid-cols-2 gap-8">
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
+                            <CardHeader><CardTitle>Sitenin Şu Anki Halini Yedekle</CardTitle><CardDescription>Tüm yerleri, rotaları ve hikayeleri güvenli bir şekilde yedekler.</CardDescription></CardHeader>
+                            <CardContent>
+                                <Button onClick={handleManualBackup} disabled={isBackingUp} className="w-full h-14 rounded-2xl font-bold" variant="default">
+                                    {isBackingUp ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2" />} Şu Anki Durumu Yedekle
+                                </Button>
+                            </CardContent>
+                        </Card>
+                        
+                        <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
                             <CardHeader><CardTitle>Statik Verileri Yükle</CardTitle><CardDescription>Kod içindeki varsayılan verileri veritabanına aktarır.</CardDescription></CardHeader>
                             <CardContent>
                                 <Button onClick={async () => { setIsSeeding(true); await seedDatabase(firestore, 'UPDATE'); setIsSeeding(false); toast({ title: 'Güncellendi' }); }} disabled={isSeeding} className="w-full h-14 rounded-2xl font-bold" variant="secondary">
@@ -529,10 +527,11 @@ export default function AdminPage() {
                                 </Button>
                             </CardContent>
                         </Card>
+
                         <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
-                            <CardHeader><CardTitle>Yedekten Geri Yükle</CardTitle><CardDescription>En son yapılan işlemleri geri alır.</CardDescription></CardHeader>
+                            <CardHeader><CardTitle>Yedekten Geri Yükle</CardTitle><CardDescription>En son yapılan işlemleri veya son manuel yedeği geri yükler.</CardDescription></CardHeader>
                             <CardContent>
-                                <Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi Geri Al</Button>
+                                <Button onClick={() => undoLastOperation(firestore)} className="w-full h-14 rounded-2xl font-bold" variant="outline">Son İşlemi/Yedeği Geri Al</Button>
                             </CardContent>
                         </Card>
                     </div>
