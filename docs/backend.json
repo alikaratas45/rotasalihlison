@@ -103,9 +103,14 @@
         "slug": { "$ref": "#/backend/entities/LocalizedString" },
         "name": { "$ref": "#/backend/entities/LocalizedString" },
         "description": { "$ref": "#/backend/entities/LocalizedString" },
-        "stops": { "type": "array", "items": { "type": "string" } }
+        "stops": { "type": "array", "items": { "type": "string" } },
+        "category": { "type": "string", "enum": ["thematic", "bicycle", "walking"] },
+        "distance": { "type": "string" },
+        "wikilocId": { "type": "string" },
+        "wikilocEmbedHtml": { "type": "string", "description": "Full HTML embed code from Wikiloc." },
+        "kmlUrl": { "type": "string", "format": "uri" }
       },
-      "required": ["id", "slug", "name", "description", "stops"]
+      "required": ["id", "slug", "name", "description", "stops", "category"]
     },
     "ExperienceItem": {
       "title": "Experience Item",

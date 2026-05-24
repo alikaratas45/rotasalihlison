@@ -44,6 +44,7 @@ export type Route = {
     category: 'thematic' | 'bicycle' | 'walking';
     distance?: string;
     wikilocId?: string;
+    wikilocEmbedHtml?: string; // Full HTML embed code from Wikiloc
     kmlUrl?: string;
 };
 

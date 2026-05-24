@@ -26,7 +26,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Loader2, FilePenLine, Trash2, Plus, Upload, Headphones, Settings, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin, AlertCircle, Save, LayoutGrid, Bike, Footprints } from 'lucide-react';
+import { Loader2, FilePenLine, Trash2, Plus, Upload, Headphones, Settings, BookOpen, Route as RouteIcon, Utensils, Bed, MapPin, AlertCircle, Save, LayoutGrid, Bike, Footprints, Code } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -77,6 +77,7 @@ const routeFormSchema = z.object({
     category: z.enum(['thematic', 'bicycle', 'walking']).default('thematic'),
     distance: z.string().optional(),
     wikilocId: z.string().optional(),
+    wikilocEmbedHtml: z.string().optional(),
     stops: z.array(z.string()).default([]),
     kmlUrl: z.string().optional(),
 });
@@ -179,7 +180,7 @@ export default function AdminPage() {
 
     const routeForm = useForm({
         resolver: zodResolver(routeFormSchema),
-        defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'thematic', distance: '', wikilocId: '', stops: [], kmlUrl: '' } as any
+        defaultValues: { name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'thematic', distance: '', wikilocId: '', wikilocEmbedHtml: '', stops: [], kmlUrl: '' } as any
     });
 
     const experienceItemForm = useForm({
@@ -211,7 +212,7 @@ export default function AdminPage() {
             const r = routes.find(x => x.id === editingRouteId);
             if (r) routeForm.reset(r);
         } else if (!editingRouteId) {
-            routeForm.reset({ name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'thematic', distance: '', wikilocId: '', stops: [], kmlUrl: '' });
+            routeForm.reset({ name: { tr: '', en: '' }, slug: { tr: '', en: '' }, description: { tr: '', en: '' }, category: 'thematic', distance: '', wikilocId: '', wikilocEmbedHtml: '', stops: [], kmlUrl: '' });
         }
     }, [editingRouteId, routes, routeForm]);
 
@@ -469,7 +470,7 @@ export default function AdminPage() {
                         <CardContent>
                             <Form {...routeForm}>
                                 <form onSubmit={routeForm.handleSubmit(onRouteSubmit)} className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <FormField control={routeForm.control} name="category" render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Rota Tipi</FormLabel>
@@ -486,10 +487,22 @@ export default function AdminPage() {
                                                 <FormControl><Input {...field} className="rounded-xl h-12" /></FormControl>
                                             </FormItem>
                                         )}/>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <FormField control={routeForm.control} name="wikilocId" render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Wikiloc Embed ID (Sayısal)</FormLabel>
+                                                <FormLabel>Wikiloc ID (Eski Sistem)</FormLabel>
                                                 <FormControl><Input {...field} placeholder="Örn: 40219098" className="rounded-xl h-12" /></FormControl>
+                                            </FormItem>
+                                        )}/>
+                                        <FormField control={routeForm.control} name="wikilocEmbedHtml" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="flex items-center gap-2">
+                                                    <Code className="h-4 w-4" /> Wikiloc Embed Kodu (HTML)
+                                                </FormLabel>
+                                                <FormControl><Textarea {...field} placeholder='<iframe ...></iframe>' className="rounded-xl h-24 font-mono text-xs" /></FormControl>
+                                                <FormDescription>Wikiloc'tan kopyaladığınız tüm iframe kodunu buraya yapıştırın.</FormDescription>
                                             </FormItem>
                                         )}/>
                                     </div>
@@ -556,7 +569,7 @@ export default function AdminPage() {
                                             <TableCell>
                                                 <div className="flex gap-1">
                                                     {r.kmlUrl && <Badge className="bg-blue-100 text-blue-800 text-[10px]">KML</Badge>}
-                                                    {r.wikilocId && <Badge className="bg-green-100 text-green-800 text-[10px]">Wiki</Badge>}
+                                                    {(r.wikilocId || r.wikilocEmbedHtml) && <Badge className="bg-green-100 text-green-800 text-[10px]">Wiki</Badge>}
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right pr-6">
@@ -594,7 +607,29 @@ export default function AdminPage() {
                             </Form>
                         </CardContent>
                     </Card>
-                    {/* ... (Experience list table - keeping consistent with previous edits) ... */}
+                    
+                    <Card className="rounded-[2rem] shadow-xl border-none overflow-hidden">
+                        <CardHeader><CardTitle>Deneyim Menüsü Öğeleri</CardTitle></CardHeader>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader><TableRow className="bg-muted/50"><TableHead className="w-20 pl-6">Sıra</TableHead><TableHead>İsim</TableHead><TableHead>İkon</TableHead><TableHead className="text-right pr-6">İşlemler</TableHead></TableRow></TableHeader>
+                                <TableBody>
+                                    {experienceLoading ? <TableRow><TableCell colSpan={4}><Skeleton className="h-12 w-full" /></TableCell></TableRow> : 
+                                    experienceItems?.map(item => (
+                                        <TableRow key={item.id} className="hover:bg-muted/30">
+                                            <TableCell className="pl-6"><Badge variant="secondary">{item.order}</Badge></TableCell>
+                                            <TableCell className="font-bold">{item.name.tr}</TableCell>
+                                            <TableCell>{item.icon}</TableCell>
+                                            <TableCell className="text-right pr-6">
+                                                <Button variant="ghost" size="icon" onClick={() => setEditingExperienceItemId(item.id)}><FilePenLine className="h-4 w-4" /></Button>
+                                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { setDeletingId(item.id); setDeletingType('experience'); }}><Trash2 className="h-4 w-4" /></Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
                 </TabsContent>
 
                 {/* --- VERİTABANI & AYARLAR --- */}

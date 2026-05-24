@@ -4,7 +4,7 @@
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useRef, useMemo, useEffect } from 'react';
 import { PlacesMap } from '@/components/places-map';
-import { Bike, Navigation, ChevronRight, MapPinned, Info } from 'lucide-react';
+import { Bike, Navigation, ChevronRight, MapPinned, Info, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -253,7 +253,7 @@ export default function BisikletRotalariPage() {
             </div>
         )}
 
-        {activeRoute?.wikilocId && (
+        {activeRoute && (activeRoute.wikilocEmbedHtml || activeRoute.wikilocId) && (
             <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">
                 <h2 className="text-3xl font-bold font-headline text-slate-900">
@@ -263,15 +263,22 @@ export default function BisikletRotalariPage() {
 
                 <Card className="overflow-hidden border-none shadow-2xl rounded-2xl bg-white border border-slate-100">
                     <div className="w-full min-h-[500px]">
-                        <iframe 
-                            src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
-                            width="100%" 
-                            height="500" 
-                            frameBorder="0" 
-                            scrolling="no"
-                            title={`${activeRoute.name.tr} Wikiloc Detayı`}
-                            className="w-full"
-                        ></iframe>
+                        {activeRoute.wikilocEmbedHtml ? (
+                            <div 
+                                className="w-full [&>iframe]:w-full [&>iframe]:min-h-[500px] [&>iframe]:border-none" 
+                                dangerouslySetInnerHTML={{ __html: activeRoute.wikilocEmbedHtml }} 
+                            />
+                        ) : (
+                            <iframe 
+                                src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
+                                width="100%" 
+                                height="500" 
+                                frameBorder="0" 
+                                scrolling="no"
+                                title={`${activeRoute.name.tr} Wikiloc Detayı`}
+                                className="w-full"
+                            ></iframe>
+                        )}
                     </div>
                     <div className="px-6 py-4 bg-slate-50/50 border-t flex justify-between items-center">
                         <div className="text-slate-400 text-[11px] leading-relaxed">
