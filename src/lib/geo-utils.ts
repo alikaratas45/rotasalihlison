@@ -1,3 +1,4 @@
+
 /**
  * Geo Utilities for Rota Salihli
  * Handles distance calculations and KML coordinate extraction.
@@ -43,17 +44,20 @@ export async function getKmlPoints(url: string): Promise<{ lat: number; lng: num
     const kmlText = await response.text();
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
+    
+    // Support both standard 'coordinates' and potential variations
     const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
     const points: { lat: number; lng: number }[] = [];
 
     Array.from(coordinatesElements).forEach((element) => {
       const coordString = element.textContent?.trim();
       if (coordString) {
-        // Robust coordinate splitting: handles spaces, newlines, and tabs
+        // Robust coordinate splitting: handles spaces, newlines, tabs and various delimiters
         const rawPoints = coordString.split(/[\s\n\r]+/).filter((p) => p.trim());
         rawPoints.forEach((p) => {
           const parts = p.split(',');
           if (parts.length >= 2) {
+            // KML format is typically Lng, Lat, Alt
             const lng = parseFloat(parts[0]);
             const lat = parseFloat(parts[1]);
             if (!isNaN(lat) && !isNaN(lng)) {
@@ -76,7 +80,7 @@ export async function getKmlPoints(url: string): Promise<{ lat: number; lng: num
 export function isPointNearRoute(
   point: { lat: number; lng: number },
   routePoints: { lat: number; lng: number }[],
-  thresholdMeters: number
+  thresholdMeters: number = 300
 ): boolean {
   if (routePoints.length === 0) return false;
   

@@ -9,7 +9,6 @@ import { Loader2, Navigation } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { googleMapsApiKey } from '@/lib/config';
 
 interface PlacesMapProps {
   places: Place[];
@@ -41,6 +40,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
   const polylinesRef = useRef<google.maps.Polyline[]>([]);
+  const fallbackPolylineRef = useRef<google.maps.Polyline | null>(null);
 
   useEffect(() => {
     const handleAuthError = () => setAuthFailed(true);
@@ -68,7 +68,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         zoom: 12,
         disableDefaultUI: true,
         zoomControl: true,
-        gestureHandling: 'greedy', // Better for mobile maps
+        gestureHandling: 'greedy',
         mapTypeControl: false,
       });
       setMap(newMap);
@@ -79,62 +79,24 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         suppressMarkers: true,
         preserveViewport: false,
         polylineOptions: {
-          strokeColor: '#2563EB', // Vibrant Blue
-          strokeWeight: 8,       // Thicker for better visibility
-          strokeOpacity: 0.9,     
+          strokeColor: '#0047FF', // Ultra Belirgin Mavi
+          strokeWeight: 10,       // Kalın çizgi
+          strokeOpacity: 1.0,     
           zIndex: 50
         }
       });
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // User Location Tracking
-  useEffect(() => {
-    if (!map || !isApiLoaded) return;
-
-    const updateUserMarker = (pos: { lat: number, lng: number }) => {
-      if (userMarkerRef.current) {
-        userMarkerRef.current.setPosition(pos);
-      } else {
-        userMarkerRef.current = new window.google.maps.Marker({
-          position: pos,
-          map: map,
-          title: "Konumunuz",
-          icon: {
-            path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: '#4285F4',
-            fillOpacity: 1,
-            strokeColor: 'white',
-            strokeWeight: 3,
-            scale: 9,
-          },
-          zIndex: 1000
-        });
-      }
-    };
-
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => updateUserMarker({ lat: position.coords.latitude, lng: position.coords.longitude }),
-        null,
-        { enableHighAccuracy: true }
-      );
-
-      watchIdRef.current = navigator.geolocation.watchPosition(
-        (position) => updateUserMarker({ lat: position.coords.latitude, lng: position.coords.longitude }),
-        null,
-        { enableHighAccuracy: true }
-      );
-    }
-
-    return () => {
-      if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
-    };
-  }, [map, isApiLoaded]);
-
-  // Directions Logic
+  // Directions & Fallback Routing
   useEffect(() => {
     if (!map || !places || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) return;
+
+    // Clear previous fallback
+    if (fallbackPolylineRef.current) {
+        fallbackPolylineRef.current.setMap(null);
+        fallbackPolylineRef.current = null;
+    }
 
     if (!isRoute || kmlUrl) {
       directionsRendererRef.current.setDirections({ routes: [] });
@@ -142,12 +104,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     }
 
     const validPlaces = places.filter(p => p.coordinates?.lat && p.coordinates?.lng);
-    const origin = startLocation || (validPlaces.length >= 2 ? validPlaces[0].coordinates : null);
+    const origin = startLocation || (validPlaces.length >= 1 ? validPlaces[0].coordinates : null);
     
-    if (!origin || validPlaces.length < 1) {
-      directionsRendererRef.current.setDirections({ routes: [] });
-      return;
-    }
+    if (!origin || validPlaces.length < 1) return;
 
     let destination;
     let waypoints: google.maps.DirectionsWaypoint[] = [];
@@ -156,7 +115,14 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         destination = validPlaces[validPlaces.length - 1].coordinates;
         waypoints = validPlaces.slice(0, -1).map(p => ({ location: p.coordinates, stopover: true }));
     } else {
-        if (validPlaces.length < 2) return;
+        if (validPlaces.length < 2) {
+            // Sadece tek bir nokta varsa odaklan ve çık
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(validPlaces[0].coordinates);
+            map.fitBounds(bounds);
+            map.setZoom(15);
+            return;
+        }
         destination = validPlaces[validPlaces.length - 1].coordinates;
         waypoints = validPlaces.slice(1, -1).map(p => ({ location: p.coordinates, stopover: true }));
     }
@@ -170,17 +136,30 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
       } else {
-        console.warn("Directions request failed:", status);
-        // Fallback: Fit to markers if route fails
+        console.warn("Directions failed, falling back to simple Polyline:", status);
+        
+        // FALLBACK: Draw simple polyline between all points
+        const path = [origin, ...validPlaces.map(p => p.coordinates)];
+        const fallback = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#0047FF',
+            strokeOpacity: 1.0,
+            strokeWeight: 10,
+            map: map,
+            zIndex: 50
+        });
+        fallbackPolylineRef.current = fallback;
+
+        // Auto-center fallback
         const bounds = new google.maps.LatLngBounds();
-        validPlaces.forEach(p => bounds.extend(p.coordinates));
-        if (startLocation) bounds.extend(startLocation);
+        path.forEach(p => bounds.extend(p));
         map.fitBounds(bounds);
       }
     });
   }, [map, places, isRoute, authFailed, startLocation, kmlUrl, travelMode]);
 
-  // KML Logic
+  // KML Logic with Robust Parsing
   useEffect(() => {
     if (!map || authFailed) return;
     
@@ -206,6 +185,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
           const coordString = element.textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
+            // Handle various coord formats (comma, space, newline separated)
             const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
             
             rawPoints.forEach(p => {
@@ -225,9 +205,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
               const polyline = new google.maps.Polyline({
                 path: path,
                 geodesic: true,
-                strokeColor: '#2563EB', // Vibrant Blue
-                strokeOpacity: 0.9,
-                strokeWeight: 8,       // Thick line for visibility
+                strokeColor: '#0047FF', // Ultra Belirgin Mavi
+                strokeOpacity: 1.0,
+                strokeWeight: 10,       
                 map: map,
                 zIndex: 40
               });
@@ -237,16 +217,23 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
           }
         });
 
-        if (hasPath && !bounds.isEmpty()) {
+        // Also add places to bounds
+        if (places && places.length > 0) {
+            places.forEach(p => {
+                if(p.coordinates?.lat) bounds.extend(p.coordinates);
+            });
+        }
+
+        if (!bounds.isEmpty()) {
           map.fitBounds(bounds);
         }
       } catch (error) {
-        console.error("KML Processing error:", error);
+        console.error("KML Error:", error);
       }
     };
 
     processKml();
-  }, [map, kmlUrl, authFailed]);
+  }, [map, kmlUrl, authFailed, places]);
 
   // Markers Logic
   useEffect(() => {
@@ -270,11 +257,11 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         title: place.name[typedLanguage] || place.name.tr,
         icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: '#166534', // Deep Heritage Green
+            fillColor: '#166534',
             fillOpacity: 1,
             strokeColor: 'white',
-            strokeWeight: 3,
-            scale: 8,
+            strokeWeight: 4,
+            scale: 9,
         },
         zIndex: 100
       });
@@ -302,22 +289,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       map.fitBounds(bounds);
       if (validMarkerCount === 1) map.setZoom(15);
     }
-
-    return () => {
-        markersRef.current.forEach(m => m.setMap(null));
-        markersRef.current = [];
-    };
   }, [map, places, typedLanguage, authFailed, isRoute, kmlUrl]);
-
-  const handleCenterOnUser = () => {
-    navigator.geolocation.getCurrentPosition((pos) => {
-        const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        map?.panTo(coords);
-        map?.setZoom(15);
-    });
-  };
-
-  if (authFailed) return <div className={className}><Alert variant="destructive"><AlertTitle>Harita Hatası</AlertTitle><AlertDescription>Google Haritalar API yüklenemedi.</AlertDescription></Alert></div>;
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-slate-50", className)}>
@@ -327,11 +299,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
          </div>
       )}
       <div ref={mapRef} className="w-full h-full" />
-      {isApiLoaded && (
-          <Button variant="secondary" size="icon" className="absolute bottom-6 right-6 z-20 shadow-xl h-12 w-12 rounded-full bg-white border-2 border-primary/10 hover:bg-slate-50" onClick={handleCenterOnUser}>
-            <Navigation className="h-6 w-6 text-primary fill-primary/10" />
-          </Button>
-      )}
     </div>
   );
 };
