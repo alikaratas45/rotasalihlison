@@ -9,8 +9,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
-import type { Place } from '@/lib/definitions';
+import { collection, query, where } from 'firebase/firestore';
+import type { Place, Route } from '@/lib/definitions';
 import type { Language } from '@/context/language-context';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,14 +19,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getKmlPoints, isPointNearRoute } from '@/lib/geo-utils';
 
-interface BicycleRoute {
-  id: string;
-  key: string; 
-  distance: string;
-  kmlUrl: string;
-  wikilocId?: string;
-}
-
 export default function BisikletRotalariPage() {
   const { t, language } = useLanguage();
   const typedLanguage = language as Language;
@@ -34,64 +26,42 @@ export default function BisikletRotalariPage() {
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const firestore = useFirestore();
 
-  // Fetch all places from Firestore
+  // Fetch all places
   const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
   
-  const routes: BicycleRoute[] = useMemo(() => [
-    {
-      id: 'lidya-yolu-1',
-      key: 'lidya_yolu',
-      distance: '28,50 km',
-      kmlUrl: '/lidyayolu.kml',
-      wikilocId: '40219098'
-    },
-    {
-      id: 'salihli-alasehir-1',
-      key: 'salihli_alasehir',
-      distance: '35,20 km',
-      kmlUrl: '/salihli-alasehir.kml',
-      wikilocId: '167004910'
-    },
-    {
-      id: 'kursunlu-marmara-1',
-      key: 'kursunlu_marmara',
-      distance: '45,80 km',
-      kmlUrl: '/kursunlu-golmarmara-kemerdamlari.kml',
-      wikilocId: '35690357'
-    },
-    {
-      id: 'kula-salihli-geopark-1',
-      key: 'kula_salihli_geopark',
-      distance: '52,40 km',
-      kmlUrl: '/kula-salihli-geopark.kml',
-      wikilocId: '75216382'
-    }
-  ], []);
+  // Fetch bicycle routes from Firestore
+  const { data: dbRoutes, loading: routesLoading } = useCollection<Route>(
+    useMemo(() => query(collection(firestore, 'routes'), where('category', '==', 'bicycle')), [firestore])
+  );
 
-  const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [routePois, setRoutePois] = useState<Place[]>([]);
   const [isProcessingPois, setIsProcessingPois] = useState(false);
   
-  const activeRoute = useMemo(() => 
-    routes.find(r => r.id === selectedRouteId) || routes[0]
-  , [selectedRouteId, routes]);
+  const activeRoute = useMemo(() => {
+    if (!dbRoutes || dbRoutes.length === 0) return null;
+    return dbRoutes.find(r => r.id === selectedRouteId) || dbRoutes[0];
+  }, [selectedRouteId, dbRoutes]);
 
-  // 200 METER PROXIMITY RULE: Dynamic filtering based on KML path
+  useEffect(() => {
+    if (dbRoutes && dbRoutes.length > 0 && !selectedRouteId) {
+        setSelectedRouteId(dbRoutes[0].id);
+    }
+  }, [dbRoutes, selectedRouteId]);
+
   useEffect(() => {
     let isMounted = true;
-
     async function updatePois() {
-      if (!allPlaces) return;
+      if (!allPlaces || !activeRoute) return;
       setIsProcessingPois(true);
       
       try {
-        const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
+        const kmlPoints = activeRoute.kmlUrl ? await getKmlPoints(activeRoute.kmlUrl) : [];
         if (!isMounted) return;
 
         const filtered = allPlaces.filter(place => {
-          // 200 meters proximity threshold (updated from 2000m)
           return isPointNearRoute(place.coordinates, kmlPoints, 200);
         });
         setRoutePois(filtered);
@@ -104,7 +74,7 @@ export default function BisikletRotalariPage() {
     
     updatePois();
     return () => { isMounted = false; };
-  }, [activeRoute.id, allPlaces]);
+  }, [activeRoute, allPlaces]);
 
   const handleRouteClick = (id: string) => {
     setSelectedRouteId(id);
@@ -121,6 +91,13 @@ export default function BisikletRotalariPage() {
     poi: 'POI' 
   };
 
+  if (routesLoading) return (
+    <div className="container mx-auto px-4 py-20 text-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
+        <p className="font-bold text-muted-foreground">Rotalar Yükleniyor...</p>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <div className="container mx-auto px-4 py-8 md:py-12">
@@ -133,146 +110,154 @@ export default function BisikletRotalariPage() {
           </h1>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 mb-12">
-          <div className="space-y-8">
-            <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2">
-              {t('bicycleRoutes.availableRoutes')}
-            </h2>
-            
-            <div className="grid gap-4">
-              {routes.map((route) => (
-                <button 
-                  key={route.id} 
-                  onClick={() => handleRouteClick(route.id)}
-                  className="text-left w-full transition-transform active:scale-95"
-                >
-                  <Card className={cn(
-                    "overflow-hidden border-2 transition-all duration-300 bg-white",
-                    selectedRouteId === route.id 
-                      ? "border-primary shadow-lg ring-1 ring-primary/20 bg-primary/5" 
-                      : "border-transparent shadow-sm hover:border-slate-200"
-                  )}>
-                    <CardContent className="p-5">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className={cn(
-                            "text-xl font-bold font-headline",
-                            selectedRouteId === route.id ? "text-primary" : "text-slate-900"
+        {dbRoutes && dbRoutes.length > 0 ? (
+            <div className="grid lg:grid-cols-2 gap-10 mb-12">
+            <div className="space-y-8">
+                <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2">
+                {t('bicycleRoutes.availableRoutes')}
+                </h2>
+                
+                <div className="grid gap-4">
+                {dbRoutes.map((route) => (
+                    <button 
+                    key={route.id} 
+                    onClick={() => handleRouteClick(route.id)}
+                    className="text-left w-full transition-transform active:scale-95"
+                    >
+                    <Card className={cn(
+                        "overflow-hidden border-2 transition-all duration-300 bg-white",
+                        selectedRouteId === route.id 
+                        ? "border-primary shadow-lg ring-1 ring-primary/20 bg-primary/5" 
+                        : "border-transparent shadow-sm hover:border-slate-200"
+                    )}>
+                        <CardContent className="p-5">
+                        <div className="flex justify-between items-start mb-2">
+                            <h3 className={cn(
+                                "text-xl font-bold font-headline",
+                                selectedRouteId === route.id ? "text-primary" : "text-slate-900"
+                            )}>
+                                {route.name[typedLanguage] || route.name.tr}
+                            </h3>
+                            {selectedRouteId === route.id && (
+                                <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded uppercase tracking-wider">
+                                    {t('bicycleRoutes.selectedLabel')}
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-slate-400 text-xs mb-3 font-medium">
+                            {t('bicycleRoutes.distanceLabel')} {route.distance}
+                        </p>
+                        <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">
+                            {route.description[typedLanguage] || route.description.tr}
+                        </p>
+                        <div className={cn(
+                            "mt-3 flex items-center text-xs font-bold uppercase tracking-widest transition-colors",
+                            selectedRouteId === route.id ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
                         )}>
-                            {t(`bicycleRoutes.routes.${route.key}.name`)}
-                        </h3>
-                        {selectedRouteId === route.id && (
-                             <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded uppercase tracking-wider">
-                                {t('bicycleRoutes.selectedLabel')}
-                            </span>
-                        )}
-                      </div>
-                      <p className="text-slate-400 text-xs mb-3 font-medium">
-                        {t('bicycleRoutes.distanceLabel')} {route.distance}
-                      </p>
-                      <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">
-                        {t(`bicycleRoutes.routes.${route.key}.description`)}
-                      </p>
-                      <div className={cn(
-                          "mt-3 flex items-center text-xs font-bold uppercase tracking-widest transition-colors",
-                          selectedRouteId === route.id ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
-                      )}>
-                          {t('bicycleRoutes.viewOnMapLabel')} <ChevronRight className="h-3 w-3 ml-1" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-6" ref={mapSectionRef}>
-            <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
-              <Navigation className="h-5 w-5 text-primary" />
-              {t('bicycleRoutes.routeMap')}
-            </h2>
-            <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
-                <PlacesMap 
-                    places={routePois} 
-                    className="w-full h-full" 
-                    kmlUrl={activeRoute.kmlUrl}
-                    key={activeRoute.id} 
-                />
-            </div>
-            <p className="text-xs text-muted-foreground italic text-center">
-              {t('bicycleRoutes.legendText', t(`bicycleRoutes.routes.${activeRoute.key}.name`))}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-20">
-            <div className="flex items-center gap-3 mb-8 border-b pb-4">
-                <MapPinned className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl font-bold font-headline text-slate-900">{t('bicycleRoutes.poisTitle')}</h2>
-            </div>
-
-            {placesLoading || isProcessingPois ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[1, 2, 3].map((i) => (
-                        <Card key={i} className="overflow-hidden border-none shadow-md">
-                            <Skeleton className="h-48 w-full" />
-                            <CardContent className="p-6 space-y-4">
-                                <Skeleton className="h-4 w-24" />
-                                <Skeleton className="h-6 w-3/4" />
-                                <Skeleton className="h-4 w-full" />
-                                <Skeleton className="h-10 w-full rounded-md" />
-                            </CardContent>
-                        </Card>
-                    ))}
+                            {t('bicycleRoutes.viewOnMapLabel')} <ChevronRight className="h-3 w-3 ml-1" />
+                        </div>
+                        </CardContent>
+                    </Card>
+                    </button>
+                ))}
                 </div>
-            ) : routePois.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {routePois.map((place) => (
-                        <Card key={place.id} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
-                            <div className="relative h-48 w-full overflow-hidden">
-                                <Image
-                                    src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                                    alt={place.name[typedLanguage]}
-                                    data-ai-hint={place.imageHint || 'landmark'}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                    sizes="400px"
-                                />
-                                <div className="absolute top-4 left-4">
-                                    <Badge className="bg-white/90 text-primary hover:bg-white font-bold backdrop-blur-sm border-none shadow-sm">
-                                        {categoryLabels[place.category]}
-                                    </Badge>
+            </div>
+
+            <div className="space-y-6" ref={mapSectionRef}>
+                <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
+                <Navigation className="h-5 w-5 text-primary" />
+                {t('bicycleRoutes.routeMap')}
+                </h2>
+                <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
+                    <PlacesMap 
+                        places={routePois} 
+                        className="w-full h-full" 
+                        kmlUrl={activeRoute?.kmlUrl}
+                        key={activeRoute?.id} 
+                    />
+                </div>
+                <p className="text-xs text-muted-foreground italic text-center">
+                {t('bicycleRoutes.legendText', activeRoute?.name[typedLanguage] || activeRoute?.name.tr || '')}
+                </p>
+            </div>
+            </div>
+        ) : (
+            <div className="text-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
+                <Bike className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground font-bold">Henüz bisiklet rotası eklenmemiş.</p>
+            </div>
+        )}
+
+        {activeRoute && (
+            <div className="mt-20">
+                <div className="flex items-center gap-3 mb-8 border-b pb-4">
+                    <MapPinned className="h-8 w-8 text-primary" />
+                    <h2 className="text-3xl font-bold font-headline text-slate-900">{t('bicycleRoutes.poisTitle')}</h2>
+                </div>
+
+                {isProcessingPois ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3].map((i) => (
+                            <Card key={i} className="overflow-hidden border-none shadow-md">
+                                <Skeleton className="h-48 w-full" />
+                                <CardContent className="p-6 space-y-4">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-full" />
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                ) : routePois.length > 0 ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {routePois.map((place) => (
+                            <Card key={place.id} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
+                                <div className="relative h-48 w-full overflow-hidden">
+                                    <Image
+                                        src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
+                                        alt={place.name[typedLanguage]}
+                                        data-ai-hint={place.imageHint || 'landmark'}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                        sizes="400px"
+                                    />
+                                    <div className="absolute top-4 left-4">
+                                        <Badge className="bg-white/90 text-primary hover:bg-white font-bold backdrop-blur-sm border-none shadow-sm">
+                                            {categoryLabels[place.category]}
+                                        </Badge>
+                                    </div>
                                 </div>
-                            </div>
-                            <CardContent className="p-6">
-                                <h3 className="text-xl font-bold font-headline mb-3 text-slate-900 group-hover:text-primary transition-colors">
-                                    {place.name[typedLanguage]}
-                                </h3>
-                                <p className="text-slate-500 text-sm line-clamp-2 mb-6 leading-relaxed">
-                                    {place.description[typedLanguage]}
-                                </p>
-                                <Button asChild className="w-full font-bold h-11" variant="outline">
-                                    <Link href={`/yerler/${place.slug[typedLanguage]}`}>
-                                        <Info className="mr-2 h-4 w-4" />
-                                        {t('actions.seeDetails')}
-                                    </Link>
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            ) : (
-                <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                    <Info className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-500 font-medium">{t('bicycleRoutes.noPoisFound')}</p>
-                </div>
-            )}
-        </div>
+                                <CardContent className="p-6">
+                                    <h3 className="text-xl font-bold font-headline mb-3 text-slate-900 group-hover:text-primary transition-colors">
+                                        {place.name[typedLanguage]}
+                                    </h3>
+                                    <p className="text-slate-500 text-sm line-clamp-2 mb-6 leading-relaxed">
+                                        {place.description[typedLanguage]}
+                                    </p>
+                                    <Button asChild className="w-full font-bold h-11" variant="outline">
+                                        <Link href={`/yerler/${place.slug[typedLanguage]}`}>
+                                            <Info className="mr-2 h-4 w-4" />
+                                            {t('actions.seeDetails')}
+                                        </Link>
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                        <Info className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                        <p className="text-slate-500 font-medium">{t('bicycleRoutes.noPoisFound')}</p>
+                    </div>
+                )}
+            </div>
+        )}
 
-        {activeRoute.wikilocId && (
+        {activeRoute?.wikilocId && (
             <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="flex items-center gap-3 border-b pb-4">
                 <h2 className="text-3xl font-bold font-headline text-slate-900">
-                    {t('hikingRoutes.wikilocDetailTitle', t(`bicycleRoutes.routes.${activeRoute.key}.name`))}
+                    {t('hikingRoutes.wikilocDetailTitle', activeRoute.name[typedLanguage] || activeRoute.name.tr)}
                 </h2>
                 </div>
 
@@ -284,7 +269,7 @@ export default function BisikletRotalariPage() {
                             height="500" 
                             frameBorder="0" 
                             scrolling="no"
-                            title={`${t(`bicycleRoutes.routes.${activeRoute.key}.name`)} Wikiloc Detayı`}
+                            title={`${activeRoute.name.tr} Wikiloc Detayı`}
                             className="w-full"
                         ></iframe>
                     </div>

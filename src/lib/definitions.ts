@@ -41,6 +41,10 @@ export type Route = {
     name: LocalizedString;
     description: LocalizedString;
     stops: string[]; // Array of place IDs
+    category: 'thematic' | 'bicycle' | 'walking';
+    distance?: string;
+    wikilocId?: string;
+    kmlUrl?: string;
 };
 
 export type ExperienceItem = {
