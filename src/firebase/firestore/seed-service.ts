@@ -1,3 +1,4 @@
+
 'use client';
 import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, type Firestore, serverTimestamp, query, orderBy, limit, where } from 'firebase/firestore';
 
@@ -89,6 +90,7 @@ async function seedCollection<T extends { id?: string }>(
     try {
       let docSnap = docRef ? await getDoc(docRef) : null;
 
+      // Experience items için link bazlı eşleştirme yap (çünkü ID statik olmayabilir)
       if ((!docSnap || !docSnap.exists()) && collectionName === 'experience-items') {
           const q = query(collectionRef, where('link', '==', (item as any).link));
           const existing = await getDocs(q);
@@ -102,18 +104,13 @@ async function seedCollection<T extends { id?: string }>(
       if (docSnap && docSnap.exists()) {
         if (mode === 'SAFE') continue;
 
+        // GÜVENLİ GÜNCELLEME: Mevcut veriyi koru, sadece yeni alanları veya değişen statik alanları ekle
         const currentData = docSnap.data();
         const { id, ...staticPayload } = item as any;
         
-        let mergedData;
-        if (collectionName === 'experience-items') {
-            mergedData = { ...currentData, ...staticPayload, order: staticPayload.order };
-        } else {
-            mergedData = { ...staticPayload, ...currentData };
-            if (staticPayload.subPoints && (!currentData.subPoints || currentData.subPoints.length === 0)) {
-                mergedData.subPoints = staticPayload.subPoints;
-            }
-        }
+        // Statik veri (koddaki) veritabanındaki verinin üzerine yazılır (UPDATE modu için)
+        // Ancak admin panelinden girilmiş olabilecek 'subPoints' gibi kompleks yapıları korumaya çalışırız
+        let mergedData = { ...currentData, ...staticPayload };
         
         await setDoc(docRef, mergedData, { merge: true });
         updated++;

@@ -2,7 +2,7 @@
 import type { Route } from '@/lib/definitions';
 
 export const routes: Route[] = [
-    // --- TEMATİK ROTALAR (ŞEHİR İÇİ / KÜLTÜR) ---
+    // --- TEMATİK ROTALAR ---
     {
         id: 'r1',
         slug: { 
@@ -183,7 +183,7 @@ export const routes: Route[] = [
             en: 'A medium-difficulty nature walk trail starting from Kurşunlu Thermal Springs to Allahdiyen village, accompanied by pine trees and the sound of the stream.',
             fr: 'Un sentier de randonnée en pleine nature de difficulté moyenne partant des sources thermales de Kurşunlu jusqu\'au village d\'Allahdiyen.',
             de: 'Ein mittelschwerer Naturwanderweg, der von den Kurşunlu Thermalquellen zum Dorf Allahdiyen führt.',
-            ja: 'クルシュンル温泉からアッラーディイェン村まで続く、松の木と小川のせせらぎに包まれた自然散策コースです。'
+            ja: 'クルシュンル温泉からアッラーディイェン村まで続く、松の木と小川'
         },
         stops: ['2']
     }
