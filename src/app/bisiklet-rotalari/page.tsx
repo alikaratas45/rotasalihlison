@@ -26,12 +26,10 @@ export default function BisikletRotalariPage() {
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const firestore = useFirestore();
 
-  // Fetch all places
   const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
   
-  // Fetch bicycle routes
   const { data: dbRoutes, loading: routesLoading } = useCollection<Route>(
     useMemo(() => query(collection(firestore, 'routes'), where('category', '==', 'bicycle')), [firestore])
   );
@@ -58,7 +56,6 @@ export default function BisikletRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        // Find explicit stops from ID list
         const explicitStops = (activeRoute.stops || [])
           .map(id => allPlaces.find(p => String(p.id) === String(id)))
           .filter(Boolean) as Place[];
@@ -67,7 +64,6 @@ export default function BisikletRotalariPage() {
           const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
           if (!isMounted) return;
 
-          // Find nearby POIs to the track that aren't already stops
           const nearby = allPlaces.filter(place => {
             if (activeRoute.stops?.includes(place.id)) return false;
             return isPointNearRoute(place.coordinates, kmlPoints, 500);
@@ -186,7 +182,7 @@ export default function BisikletRotalariPage() {
                         places={routePois} 
                         className="w-full h-full" 
                         kmlUrl={activeRoute?.kmlUrl}
-                        isRoute={!activeRoute?.kmlUrl}
+                        isRoute={true}
                         travelMode="BICYCLING"
                         key={activeRoute?.id} 
                     />

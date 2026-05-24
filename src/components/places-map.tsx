@@ -5,9 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { Place } from '@/lib/definitions';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
-import { Loader2, Navigation } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PlacesMapProps {
@@ -29,19 +27,17 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { language } = useLanguage();
-  const typedLanguage = language as Language;
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [authFailed, setAuthFailed] = useState(false);
   
-  const userMarkerRef = useRef<google.maps.Marker | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
-  const watchIdRef = useRef<number | null>(null);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
   const polylinesRef = useRef<google.maps.Polyline[]>([]);
   const fallbackPolylineRef = useRef<google.maps.Polyline | null>(null);
 
+  // 1. Google Maps Script Ready Check
   useEffect(() => {
     const handleAuthError = () => setAuthFailed(true);
     window.addEventListener('gm-auth-failure', handleAuthError);
@@ -51,7 +47,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         setIsApiLoaded(true);
         clearInterval(checkGoogleMaps);
       }
-    }, 200);
+    }, 500);
 
     return () => {
       window.removeEventListener('gm-auth-failure', handleAuthError);
@@ -59,7 +55,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     };
   }, []);
 
-  // Initialize Map
+  // 2. Map Initialization
   useEffect(() => {
     if (isApiLoaded && mapRef.current && !map && !authFailed) {
       const salihliCenter = { lat: 38.48, lng: 28.14 };
@@ -70,6 +66,13 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         zoomControl: true,
         gestureHandling: 'greedy',
         mapTypeControl: false,
+        styles: [
+            {
+                "featureType": "poi",
+                "elementType": "labels",
+                "stylers": [{ "visibility": "off" }]
+            }
+        ]
       });
       setMap(newMap);
 
@@ -79,33 +82,40 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         suppressMarkers: true,
         preserveViewport: false,
         polylineOptions: {
-          strokeColor: '#0047FF', // Ultra Belirgin Mavi
-          strokeWeight: 10,       // Kalın çizgi
-          strokeOpacity: 1.0,     
+          strokeColor: '#0047FF',
+          strokeWeight: 10,
+          strokeOpacity: 0.9,
           zIndex: 50
         }
       });
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // Directions & Fallback Routing
+  // 3. Directions & Path Logic
   useEffect(() => {
     if (!map || !places || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) return;
 
-    // Clear previous fallback
+    // Clear previous polylines
     if (fallbackPolylineRef.current) {
         fallbackPolylineRef.current.setMap(null);
         fallbackPolylineRef.current = null;
     }
 
-    if (!isRoute || kmlUrl) {
-      directionsRendererRef.current.setDirections({ routes: [] });
-      return;
+    const validPlaces = places.filter(p => p.coordinates?.lat && p.coordinates?.lng);
+    
+    // Auto-fit to markers if no route logic is needed
+    if (!isRoute) {
+        const bounds = new google.maps.LatLngBounds();
+        validPlaces.forEach(p => bounds.extend(p.coordinates));
+        if (!bounds.isEmpty()) {
+            map.fitBounds(bounds);
+            if (validPlaces.length === 1) map.setZoom(15);
+        }
+        return;
     }
 
-    const validPlaces = places.filter(p => p.coordinates?.lat && p.coordinates?.lng);
+    // ROUTE LOGIC
     const origin = startLocation || (validPlaces.length >= 1 ? validPlaces[0].coordinates : null);
-    
     if (!origin || validPlaces.length < 1) return;
 
     let destination;
@@ -116,7 +126,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         waypoints = validPlaces.slice(0, -1).map(p => ({ location: p.coordinates, stopover: true }));
     } else {
         if (validPlaces.length < 2) {
-            // Sadece tek bir nokta varsa odaklan ve çık
             const bounds = new google.maps.LatLngBounds();
             bounds.extend(validPlaces[0].coordinates);
             map.fitBounds(bounds);
@@ -136,38 +145,34 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
       } else {
-        console.warn("Directions failed, falling back to simple Polyline:", status);
-        
-        // FALLBACK: Draw simple polyline between all points
+        console.warn("Directions API failed, using Polyline fallback:", status);
         const path = [origin, ...validPlaces.map(p => p.coordinates)];
         const fallback = new google.maps.Polyline({
             path: path,
             geodesic: true,
             strokeColor: '#0047FF',
-            strokeOpacity: 1.0,
+            strokeOpacity: 0.9,
             strokeWeight: 10,
             map: map,
             zIndex: 50
         });
         fallbackPolylineRef.current = fallback;
-
-        // Auto-center fallback
+        
         const bounds = new google.maps.LatLngBounds();
         path.forEach(p => bounds.extend(p));
         map.fitBounds(bounds);
       }
     });
-  }, [map, places, isRoute, authFailed, startLocation, kmlUrl, travelMode]);
+  }, [map, places, isRoute, authFailed, startLocation, travelMode]);
 
-  // KML Logic with Robust Parsing
+  // 4. KML Path Logic
   useEffect(() => {
-    if (!map || authFailed) return;
+    if (!map || authFailed || !kmlUrl) {
+        polylinesRef.current.forEach(p => p.setMap(null));
+        polylinesRef.current = [];
+        return;
+    }
     
-    polylinesRef.current.forEach(p => p.setMap(null));
-    polylinesRef.current = [];
-
-    if (!kmlUrl) return;
-
     const processKml = async () => {
       try {
         const response = await fetch(kmlUrl).catch(() => null);
@@ -179,13 +184,14 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         
         const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
         const bounds = new google.maps.LatLngBounds();
-        let hasPath = false;
+
+        polylinesRef.current.forEach(p => p.setMap(null));
+        polylinesRef.current = [];
 
         Array.from(coordinatesElements).forEach((element) => {
           const coordString = element.textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
-            // Handle various coord formats (comma, space, newline separated)
             const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
             
             rawPoints.forEach(p => {
@@ -205,24 +211,21 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
               const polyline = new google.maps.Polyline({
                 path: path,
                 geodesic: true,
-                strokeColor: '#0047FF', // Ultra Belirgin Mavi
-                strokeOpacity: 1.0,
+                strokeColor: '#0047FF',
+                strokeOpacity: 0.8,
                 strokeWeight: 10,       
                 map: map,
                 zIndex: 40
               });
               polylinesRef.current.push(polyline);
-              hasPath = true;
             }
           }
         });
 
-        // Also add places to bounds
-        if (places && places.length > 0) {
-            places.forEach(p => {
-                if(p.coordinates?.lat) bounds.extend(p.coordinates);
-            });
-        }
+        // Extend bounds with markers
+        places.forEach(p => {
+            if(p.coordinates?.lat) bounds.extend(p.coordinates);
+        });
 
         if (!bounds.isEmpty()) {
           map.fitBounds(bounds);
@@ -235,7 +238,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     processKml();
   }, [map, kmlUrl, authFailed, places]);
 
-  // Markers Logic
+  // 5. Markers Logic
   useEffect(() => {
     if (!map || authFailed) return;
 
@@ -245,23 +248,28 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     if (!places || places.length === 0) return;
 
     const infoWindow = new window.google.maps.InfoWindow();
-    const bounds = new window.google.maps.LatLngBounds();
-    let validMarkerCount = 0;
+    const typedLanguage = language as Language;
 
-    places.forEach((place) => {
+    places.forEach((place, index) => {
       if (!place.coordinates || isNaN(place.coordinates.lat)) return;
       
       const marker = new window.google.maps.Marker({
         position: place.coordinates,
         map: map,
         title: place.name[typedLanguage] || place.name.tr,
+        label: isRoute ? {
+            text: (index + 1).toString(),
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '12px'
+        } : undefined,
         icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
             fillColor: '#166534',
             fillOpacity: 1,
             strokeColor: 'white',
             strokeWeight: 4,
-            scale: 9,
+            scale: isRoute ? 12 : 10,
         },
         zIndex: 100
       });
@@ -269,7 +277,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       const contentString = `
         <div style="color: black; max-width: 200px; font-family: sans-serif; padding: 4px;">
           <h3 style="font-weight: bold; margin-bottom: 4px;">${place.name[typedLanguage] || place.name.tr}</h3>
-          <p style="font-size: 12px; margin-bottom: 8px;">${(place.description[typedLanguage] || place.description.tr).substring(0, 60)}...</p>
           <a href="/yerler/${place.slug[typedLanguage] || place.slug.tr}" style="color: #166534; font-weight: bold; font-size: 12px; text-decoration: none;">Detayları Gör →</a>
         </div>
       `;
@@ -281,15 +288,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       });
       
       markersRef.current.push(marker);
-      bounds.extend(place.coordinates);
-      validMarkerCount++;
     });
-
-    if (validMarkerCount > 0 && !kmlUrl && !isRoute) {
-      map.fitBounds(bounds);
-      if (validMarkerCount === 1) map.setZoom(15);
-    }
-  }, [map, places, typedLanguage, authFailed, isRoute, kmlUrl]);
+  }, [map, places, language, authFailed, isRoute]);
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-slate-50", className)}>

@@ -26,12 +26,10 @@ export default function YuruyusRotalariPage() {
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const firestore = useFirestore();
 
-  // Fetch all places
   const { data: allPlaces, loading: placesLoading } = useCollection<Place>(
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
   
-  // Fetch walking routes
   const { data: dbRoutes, loading: routesLoading } = useCollection<Route>(
     useMemo(() => query(collection(firestore, 'routes'), where('category', '==', 'walking')), [firestore])
   );
@@ -58,7 +56,6 @@ export default function YuruyusRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        // Find explicit stops from ID list
         const explicitStops = (activeRoute.stops || [])
           .map(id => allPlaces.find(p => String(p.id) === String(id)))
           .filter(Boolean) as Place[];
@@ -67,7 +64,6 @@ export default function YuruyusRotalariPage() {
           const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
           if (!isMounted) return;
 
-          // Find nearby POIs to the track that aren't already stops
           const nearby = allPlaces.filter(place => {
             if (activeRoute.stops?.includes(place.id)) return false;
             return isPointNearRoute(place.coordinates, kmlPoints, 500);
@@ -188,7 +184,7 @@ export default function YuruyusRotalariPage() {
                             places={routePois} 
                             className="w-full h-full" 
                             kmlUrl={activeRoute?.kmlUrl}
-                            isRoute={!activeRoute?.kmlUrl}
+                            isRoute={true}
                             travelMode="WALKING"
                             key={activeRoute?.id} 
                         />
