@@ -58,18 +58,19 @@ export default function YuruyusRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        // Start with explicitly defined stops
-        const explicitStops = activeRoute.stops?.map(id => allPlaces.find(p => p.id === id)).filter(Boolean) as Place[] || [];
+        // Find explicit stops from ID list
+        const explicitStops = (activeRoute.stops || [])
+          .map(id => allPlaces.find(p => String(p.id) === String(id)))
+          .filter(Boolean) as Place[];
         
         if (activeRoute.kmlUrl) {
           const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
           if (!isMounted) return;
 
-          // Find nearby POIs to the track
+          // Find nearby POIs to the track that aren't already stops
           const nearby = allPlaces.filter(place => {
-            // Already added as explicit stop? Skip
             if (activeRoute.stops?.includes(place.id)) return false;
-            return isPointNearRoute(place.coordinates, kmlPoints, 300);
+            return isPointNearRoute(place.coordinates, kmlPoints, 500);
           });
           
           setRoutePois([...explicitStops, ...nearby]);
@@ -247,13 +248,13 @@ export default function YuruyusRotalariPage() {
                                 </div>
                                 <CardContent className="p-6">
                                     <h3 className="text-xl font-bold font-headline mb-3 text-slate-900 group-hover:text-primary transition-colors">
-                                        {place.name[typedLanguage] || place.name.tr}
+                                        {place.name[typedLanguage]}
                                     </h3>
                                     <p className="text-slate-500 text-sm line-clamp-2 mb-6 leading-relaxed">
-                                        {place.description[typedLanguage] || place.description.tr}
+                                        {place.description[typedLanguage]}
                                     </p>
                                     <Button asChild className="w-full font-bold h-11" variant="outline">
-                                        <Link href={`/yerler/${place.slug[typedLanguage] || place.slug.tr}`}>
+                                        <Link href={`/yerler/${place.slug[typedLanguage]}`}>
                                             <Info className="mr-2 h-4 w-4" />
                                             {t('actions.seeDetails')}
                                         </Link>

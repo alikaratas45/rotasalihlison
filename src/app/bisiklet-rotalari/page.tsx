@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -57,17 +58,19 @@ export default function BisikletRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        // Start with explicitly defined stops
-        const explicitStops = activeRoute.stops?.map(id => allPlaces.find(p => p.id === id)).filter(Boolean) as Place[] || [];
+        // Find explicit stops from ID list
+        const explicitStops = (activeRoute.stops || [])
+          .map(id => allPlaces.find(p => String(p.id) === String(id)))
+          .filter(Boolean) as Place[];
         
         if (activeRoute.kmlUrl) {
           const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
           if (!isMounted) return;
 
-          // Find nearby POIs to the track
+          // Find nearby POIs to the track that aren't already stops
           const nearby = allPlaces.filter(place => {
             if (activeRoute.stops?.includes(place.id)) return false;
-            return isPointNearRoute(place.coordinates, kmlPoints, 300);
+            return isPointNearRoute(place.coordinates, kmlPoints, 500);
           });
           
           setRoutePois([...explicitStops, ...nearby]);
@@ -227,7 +230,7 @@ export default function BisikletRotalariPage() {
                                 <div className="relative h-48 w-full overflow-hidden">
                                     <Image
                                         src={place.imageUrl || `https://picsum.photos/seed/${place.id}/600/400`}
-                                        alt={place.name[typedLanguage]}
+                                        alt={place.name[typedLanguage] || place.name.tr}
                                         data-ai-hint={place.imageHint || 'landmark'}
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
