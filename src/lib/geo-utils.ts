@@ -28,12 +28,18 @@ export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2
  * Fetches and extracts all coordinates from a KML file.
  */
 export async function getKmlPoints(url: string): Promise<{ lat: number; lng: number }[]> {
+  if (!url || !url.startsWith('http')) {
+    return [];
+  }
+
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      console.warn(`KML file not found at ${url}`);
+    const response = await fetch(url).catch(() => null);
+    
+    if (!response || !response.ok) {
+      console.warn(`KML file could not be fetched from ${url}`);
       return [];
     }
+    
     const kmlText = await response.text();
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(kmlText, 'text/xml');

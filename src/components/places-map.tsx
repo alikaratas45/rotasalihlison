@@ -187,8 +187,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       polylinesRef.current = [];
 
       try {
-        const response = await fetch(kmlUrl);
-        if (!response.ok) return;
+        const response = await fetch(kmlUrl).catch(() => null);
+        if (!response || !response.ok) return;
+        
         const kmlText = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
