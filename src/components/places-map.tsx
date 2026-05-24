@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -36,6 +37,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
   const [authFailed, setAuthFailed] = useState(false);
   
   const userMarkerRef = useRef<google.maps.Marker | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
   const watchIdRef = useRef<number | null>(null);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
@@ -67,6 +69,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     };
   }, []);
 
+  // Initialize Map
   useEffect(() => {
     if (isApiLoaded && mapRef.current && !map && !authFailed) {
       const salihliCenter = { lat: 38.48, lng: 28.14 };
@@ -83,6 +86,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       directionsRendererRef.current = new google.maps.DirectionsRenderer({
         map: newMap,
         suppressMarkers: true,
+        preserveViewport: false, // Allow directions to auto-center
         polylineOptions: {
           strokeColor: '#1A237E', 
           strokeWeight: 6,       
@@ -92,6 +96,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     }
   }, [isApiLoaded, map, authFailed]);
 
+  // User Location Tracking
   useEffect(() => {
     if (!map || !isApiLoaded) return;
 
@@ -141,26 +146,33 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     };
   }, [map, isApiLoaded]);
 
+  // Directions Logic
   useEffect(() => {
-    if (!map || !places || !isRoute || authFailed || !directionsServiceRef.current || !directionsRendererRef.current || kmlUrl) {
-      directionsRendererRef.current?.setDirections({ routes: [] });
+    if (!map || !places || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) return;
+
+    if (!isRoute || kmlUrl) {
+      directionsRendererRef.current.setDirections({ routes: [] });
       return;
     }
 
-    const origin = startLocation || (places.length >= 2 ? places[0].coordinates : null);
-    if (!origin) return;
+    const validPlaces = places.filter(p => p.coordinates?.lat && p.coordinates?.lng);
+    const origin = startLocation || (validPlaces.length >= 2 ? validPlaces[0].coordinates : null);
+    
+    if (!origin || validPlaces.length < 1) {
+      directionsRendererRef.current.setDirections({ routes: [] });
+      return;
+    }
 
     let destination;
     let waypoints: google.maps.DirectionsWaypoint[] = [];
 
     if (startLocation) {
-        if (places.length === 0) return;
-        destination = places[places.length - 1].coordinates;
-        waypoints = places.slice(0, -1).map(p => ({ location: p.coordinates, stopover: true }));
+        destination = validPlaces[validPlaces.length - 1].coordinates;
+        waypoints = validPlaces.slice(0, -1).map(p => ({ location: p.coordinates, stopover: true }));
     } else {
-        if (places.length < 2) return;
-        destination = places[places.length - 1].coordinates;
-        waypoints = places.slice(1, -1).map(p => ({ location: p.coordinates, stopover: true }));
+        if (validPlaces.length < 2) return;
+        destination = validPlaces[validPlaces.length - 1].coordinates;
+        waypoints = validPlaces.slice(1, -1).map(p => ({ location: p.coordinates, stopover: true }));
     }
 
     directionsServiceRef.current.route({
@@ -171,21 +183,22 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     }, (result, status) => {
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
+      } else {
+        console.warn("Directions request failed:", status);
       }
     });
   }, [map, places, isRoute, authFailed, startLocation, kmlUrl, travelMode]);
 
+  // KML Logic
   useEffect(() => {
-    if (!map || !kmlUrl || authFailed) {
-        polylinesRef.current.forEach(p => p.setMap(null));
-        polylinesRef.current = [];
-        return;
-    }
+    if (!map || authFailed) return;
+    
+    polylinesRef.current.forEach(p => p.setMap(null));
+    polylinesRef.current = [];
+
+    if (!kmlUrl) return;
 
     const processKml = async () => {
-      polylinesRef.current.forEach(p => p.setMap(null));
-      polylinesRef.current = [];
-
       try {
         const response = await fetch(kmlUrl).catch(() => null);
         if (!response || !response.ok) return;
@@ -202,6 +215,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
           const coordString = element.textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
+            // Handle different coordinate split styles
             const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
             
             rawPoints.forEach(p => {
@@ -243,18 +257,27 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     processKml();
   }, [map, kmlUrl, authFailed]);
 
+  // Markers Logic
   useEffect(() => {
-    if (!map || !places || authFailed) return;
+    if (!map || authFailed) return;
 
-    const markers: google.maps.Marker[] = [];
+    // Clear old markers
+    markersRef.current.forEach(m => m.setMap(null));
+    markersRef.current = [];
+
+    if (!places || places.length === 0) return;
+
     const infoWindow = new window.google.maps.InfoWindow();
+    const bounds = new window.google.maps.LatLngBounds();
+    let validMarkerCount = 0;
 
     places.forEach((place) => {
-      if (!place.coordinates) return;
+      if (!place.coordinates || isNaN(place.coordinates.lat)) return;
+      
       const marker = new window.google.maps.Marker({
         position: place.coordinates,
         map: map,
-        title: place.name[typedLanguage],
+        title: place.name[typedLanguage] || place.name.tr,
         icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
             fillColor: 'hsl(142, 35%, 25%)',
@@ -267,9 +290,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
 
       const contentString = `
         <div style="color: black; max-width: 200px; font-family: sans-serif; padding: 4px;">
-          <h3 style="font-weight: bold; margin-bottom: 4px;">${place.name[typedLanguage]}</h3>
-          <p style="font-size: 12px; margin-bottom: 8px;">${place.description[typedLanguage].substring(0, 60)}...</p>
-          <a href="/yerler/${place.slug[typedLanguage]}" style="color: #2D5A27; font-weight: bold; font-size: 12px; text-decoration: none;">Detayları Gör →</a>
+          <h3 style="font-weight: bold; margin-bottom: 4px;">${place.name[typedLanguage] || place.name.tr}</h3>
+          <p style="font-size: 12px; margin-bottom: 8px;">${(place.description[typedLanguage] || place.description.tr).substring(0, 60)}...</p>
+          <a href="/yerler/${place.slug[typedLanguage] || place.slug.tr}" style="color: #2D5A27; font-weight: bold; font-size: 12px; text-decoration: none;">Detayları Gör →</a>
         </div>
       `;
 
@@ -278,18 +301,27 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         infoWindow.setContent(contentString);
         infoWindow.open(map, marker);
       });
-      markers.push(marker);
+      
+      markersRef.current.push(marker);
+      bounds.extend(place.coordinates);
+      validMarkerCount++;
     });
 
-    if (places.length > 0 && !isRoute && !kmlUrl) {
-      const bounds = new window.google.maps.LatLngBounds();
-      places.forEach(place => bounds.extend(place.coordinates));
+    // Fit bounds if not a directions/kml route (those have their own centering)
+    // Or if directions/kml are still loading/failed
+    if (validMarkerCount > 0 && !kmlUrl && !isRoute) {
       map.fitBounds(bounds);
-      if (places.length === 1) map.setZoom(14);
+      if (validMarkerCount === 1) map.setZoom(14);
+    } else if (validMarkerCount > 0 && isRoute) {
+        // Initial fit for route markers before directions arrive
+        map.fitBounds(bounds);
     }
 
-    return () => markers.forEach(m => m.setMap(null));
-  }, [map, places, typedLanguage, t, authFailed, isRoute, kmlUrl]);
+    return () => {
+        markersRef.current.forEach(m => m.setMap(null));
+        markersRef.current = [];
+    };
+  }, [map, places, typedLanguage, authFailed, isRoute, kmlUrl]);
 
   const handleCenterOnUser = () => {
     navigator.geolocation.getCurrentPosition((pos) => {
