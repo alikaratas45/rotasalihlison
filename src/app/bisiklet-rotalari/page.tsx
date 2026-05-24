@@ -3,8 +3,7 @@
 
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useRef, useMemo, useEffect } from 'react';
-import { PlacesMap } from '@/components/places-map';
-import { Bike, Navigation, ChevronRight, MapPinned, Info, Loader2 } from 'lucide-react';
+import { Bike, ChevronRight, MapPinned, Info, Loader2, Map as MapIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -174,22 +173,42 @@ export default function BisikletRotalariPage() {
 
             <div className="space-y-6" ref={mapSectionRef}>
                 <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
-                <Navigation className="h-5 w-5 text-primary" />
-                {t('bicycleRoutes.routeMap')}
+                    <MapIcon className="h-5 w-5 text-primary" />
+                    {t('bicycleRoutes.routeMap')}
                 </h2>
-                <div className="w-full h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-white">
-                    <PlacesMap 
-                        places={routePois} 
-                        className="w-full h-full" 
-                        kmlUrl={activeRoute?.kmlUrl}
-                        isRoute={true}
-                        travelMode="BICYCLING"
-                        key={activeRoute?.id} 
-                    />
-                </div>
-                <p className="text-xs text-muted-foreground italic text-center">
-                {t('bicycleRoutes.legendText', activeRoute?.name[typedLanguage] || activeRoute?.name.tr || '')}
-                </p>
+                
+                <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
+                    <div className="w-full h-full relative">
+                        {activeRoute && (activeRoute.wikilocEmbedHtml || activeRoute.wikilocId) ? (
+                            activeRoute.wikilocEmbedHtml ? (
+                                <div 
+                                    className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-none" 
+                                    dangerouslySetInnerHTML={{ __html: activeRoute.wikilocEmbedHtml }} 
+                                />
+                            ) : (
+                                <iframe 
+                                    src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
+                                    width="100%" 
+                                    height="100%" 
+                                    frameBorder="0" 
+                                    scrolling="no"
+                                    title={`${activeRoute.name.tr} Wikiloc Detayı`}
+                                    className="w-full h-full"
+                                ></iframe>
+                            )
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400 p-10 text-center">
+                                <MapPinned className="h-12 w-12 mb-4 opacity-20" />
+                                <p className="font-bold">Bu rota için Wikiloc haritası henüz eklenmemiş.</p>
+                            </div>
+                        )}
+                    </div>
+                </Card>
+                {activeRoute?.wikilocId && (
+                    <p className="text-[10px] text-slate-400 italic text-center">
+                        Powered by <a href="https://tr.wikiloc.com" target="_blank" rel="noopener noreferrer" className="text-[#4C8C2B] font-bold hover:underline">Wikiloc</a>
+                    </p>
+                )}
             </div>
             </div>
         ) : (
@@ -261,42 +280,6 @@ export default function BisikletRotalariPage() {
                         <p className="text-slate-500 font-medium">{t('bicycleRoutes.noPoisFound')}</p>
                     </div>
                 )}
-            </div>
-        )}
-
-        {activeRoute && (activeRoute.wikilocEmbedHtml || activeRoute.wikilocId) && (
-            <div className="mt-24 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <div className="flex items-center gap-3 border-b pb-4">
-                <h2 className="text-3xl font-bold font-headline text-slate-900">
-                    {t('hikingRoutes.wikilocDetailTitle', activeRoute.name[typedLanguage] || activeRoute.name.tr)}
-                </h2>
-                </div>
-
-                <Card className="overflow-hidden border-none shadow-2xl rounded-2xl bg-white border border-slate-100">
-                    <div className="w-full min-h-[500px]">
-                        {activeRoute.wikilocEmbedHtml ? (
-                            <div 
-                                className="w-full [&>iframe]:w-full [&>iframe]:min-h-[500px] [&>iframe]:border-none" 
-                                dangerouslySetInnerHTML={{ __html: activeRoute.wikilocEmbedHtml }} 
-                            />
-                        ) : (
-                            <iframe 
-                                src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
-                                width="100%" 
-                                height="500" 
-                                frameBorder="0" 
-                                scrolling="no"
-                                title={`${activeRoute.name.tr} Wikiloc Detayı`}
-                                className="w-full"
-                            ></iframe>
-                        )}
-                    </div>
-                    <div className="px-6 py-4 bg-slate-50/50 border-t flex justify-between items-center">
-                        <div className="text-slate-400 text-[11px] leading-relaxed">
-                            Powered by <a href="https://tr.wikiloc.com" target="_blank" rel="noopener noreferrer" className="text-[#4C8C2B] font-bold hover:underline">Wikiloc</a>
-                        </div>
-                    </div>
-                </Card>
             </div>
         )}
       </div>
