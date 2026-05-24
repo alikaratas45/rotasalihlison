@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -31,7 +30,7 @@ export default function BisikletRotalariPage() {
     useMemo(() => query(collection(firestore, 'places')), [firestore])
   );
   
-  // Fetch bicycle routes from Firestore
+  // Fetch bicycle routes
   const { data: dbRoutes, loading: routesLoading } = useCollection<Route>(
     useMemo(() => query(collection(firestore, 'routes'), where('category', '==', 'bicycle')), [firestore])
   );
@@ -58,13 +57,23 @@ export default function BisikletRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        const kmlPoints = activeRoute.kmlUrl ? await getKmlPoints(activeRoute.kmlUrl) : [];
-        if (!isMounted) return;
+        // Start with explicitly defined stops
+        const explicitStops = activeRoute.stops?.map(id => allPlaces.find(p => p.id === id)).filter(Boolean) as Place[] || [];
+        
+        if (activeRoute.kmlUrl) {
+          const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
+          if (!isMounted) return;
 
-        const filtered = allPlaces.filter(place => {
-          return isPointNearRoute(place.coordinates, kmlPoints, 200);
-        });
-        setRoutePois(filtered);
+          // Find nearby POIs to the track
+          const nearby = allPlaces.filter(place => {
+            if (activeRoute.stops?.includes(place.id)) return false;
+            return isPointNearRoute(place.coordinates, kmlPoints, 300);
+          });
+          
+          setRoutePois([...explicitStops, ...nearby]);
+        } else {
+          setRoutePois(explicitStops);
+        }
       } catch (err) {
         console.error("Proximity filtering error:", err);
       } finally {
@@ -88,7 +97,8 @@ export default function BisikletRotalariPage() {
     nature: t('nature.title'), 
     food: t('header.cuisine'), 
     shopping: t('shopping.title'), 
-    poi: 'POI' 
+    poi: 'POI',
+    accommodation: t('accommodation.title')
   };
 
   if (routesLoading) return (
@@ -145,7 +155,7 @@ export default function BisikletRotalariPage() {
                             )}
                         </div>
                         <p className="text-slate-400 text-xs mb-3 font-medium">
-                            {t('bicycleRoutes.distanceLabel')} {route.distance}
+                            {t('bicycleRoutes.distanceLabel')} {route.distance || 'Bilinmiyor'}
                         </p>
                         <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">
                             {route.description[typedLanguage] || route.description.tr}
@@ -173,6 +183,8 @@ export default function BisikletRotalariPage() {
                         places={routePois} 
                         className="w-full h-full" 
                         kmlUrl={activeRoute?.kmlUrl}
+                        isRoute={!activeRoute?.kmlUrl}
+                        travelMode="BICYCLING"
                         key={activeRoute?.id} 
                     />
                 </div>

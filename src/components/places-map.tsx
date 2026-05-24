@@ -16,9 +16,17 @@ interface PlacesMapProps {
   isRoute?: boolean;
   startLocation?: { lat: number; lng: number };
   kmlUrl?: string;
+  travelMode?: 'DRIVING' | 'WALKING' | 'BICYCLING';
 }
 
-export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute = false, startLocation, kmlUrl }) => {
+export const PlacesMap: React.FC<PlacesMapProps> = ({ 
+  places, 
+  className, 
+  isRoute = false, 
+  startLocation, 
+  kmlUrl,
+  travelMode = 'DRIVING'
+}) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { language, t } = useLanguage();
   const typedLanguage = language as Language;
@@ -59,7 +67,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     };
   }, []);
 
-  // Initialize Map
   useEffect(() => {
     if (isApiLoaded && mapRef.current && !map && !authFailed) {
       const salihliCenter = { lat: 38.48, lng: 28.14 };
@@ -78,14 +85,13 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         suppressMarkers: true,
         polylineOptions: {
           strokeColor: '#1A237E', 
-          strokeWeight: 8,       
-          strokeOpacity: 0.9,     
+          strokeWeight: 6,       
+          strokeOpacity: 0.8,     
         }
       });
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // Track User Location and Show Marker
   useEffect(() => {
     if (!map || !isApiLoaded) return;
 
@@ -103,7 +109,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
             fillOpacity: 1,
             strokeColor: 'white',
             strokeWeight: 2,
-            scale: 10,
+            scale: 8,
           },
           zIndex: 1000
         });
@@ -132,14 +138,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
 
     return () => {
       if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
-      if (userMarkerRef.current) {
-        userMarkerRef.current.setMap(null);
-        userMarkerRef.current = null;
-      }
     };
   }, [map, isApiLoaded]);
 
-  // Directions logic for routes (standard routing)
   useEffect(() => {
     if (!map || !places || !isRoute || authFailed || !directionsServiceRef.current || !directionsRendererRef.current || kmlUrl) {
       directionsRendererRef.current?.setDirections({ routes: [] });
@@ -166,15 +167,14 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
       origin,
       destination,
       waypoints,
-      travelMode: google.maps.TravelMode.DRIVING,
+      travelMode: google.maps.TravelMode[travelMode || 'DRIVING'],
     }, (result, status) => {
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
       }
     });
-  }, [map, places, isRoute, authFailed, startLocation, kmlUrl]);
+  }, [map, places, isRoute, authFailed, startLocation, kmlUrl, travelMode]);
 
-  // Professional KML Processing: Manual fetch and draw
   useEffect(() => {
     if (!map || !kmlUrl || authFailed) {
         polylinesRef.current.forEach(p => p.setMap(null));
@@ -183,21 +183,16 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     }
 
     const processKml = async () => {
-      // Clear previous polylines
       polylinesRef.current.forEach(p => p.setMap(null));
       polylinesRef.current = [];
 
       try {
         const response = await fetch(kmlUrl);
-        if (!response.ok) {
-          console.warn(`KML file not found at ${kmlUrl}`);
-          return;
-        }
+        if (!response.ok) return;
         const kmlText = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
         
-        // Use getElementsByTagName to be agnostic about XML namespaces
         const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
         const bounds = new google.maps.LatLngBounds();
         let hasPath = false;
@@ -206,7 +201,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
           const coordString = element.textContent?.trim();
           if (coordString) {
             const path: google.maps.LatLngLiteral[] = [];
-            // Robust coordinate splitting: handles spaces, newlines, and tabs
             const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
             
             rawPoints.forEach(p => {
@@ -226,9 +220,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
               const polyline = new google.maps.Polyline({
                 path: path,
                 geodesic: true,
-                strokeColor: '#1A237E', // Dark Blue
-                strokeOpacity: 0.9,
-                strokeWeight: 6,
+                strokeColor: '#1A237E',
+                strokeOpacity: 0.8,
+                strokeWeight: 5,
                 map: map,
               });
               polylinesRef.current.push(polyline);
@@ -246,21 +240,15 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     };
 
     processKml();
-
-    return () => {
-      polylinesRef.current.forEach(p => p.setMap(null));
-      polylinesRef.current = [];
-    };
   }, [map, kmlUrl, authFailed]);
 
-  // Place Markers
   useEffect(() => {
     if (!map || !places || authFailed) return;
 
     const markers: google.maps.Marker[] = [];
     const infoWindow = new window.google.maps.InfoWindow();
 
-    places.forEach((place, idx) => {
+    places.forEach((place) => {
       if (!place.coordinates) return;
       const marker = new window.google.maps.Marker({
         position: place.coordinates,
@@ -268,19 +256,19 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
         title: place.name[typedLanguage],
         icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: 'hsl(140, 56%, 36%)',
-            fillOpacity: 0.9,
+            fillColor: 'hsl(142, 35%, 25%)',
+            fillOpacity: 1,
             strokeColor: 'white',
             strokeWeight: 2,
-            scale: 10,
+            scale: 8,
         }
       });
 
       const contentString = `
-        <div style="color: black; max-width: 250px; font-family: 'PT Sans', sans-serif; padding: 4px;">
-          <h3 style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;">${place.name[typedLanguage]}</h3>
-          <p style="font-size: 0.85rem; margin: 0 0 8px 0; line-height: 1.4;">${place.description[typedLanguage].substring(0, 80)}...</p>
-          <a href="/yerler/${place.slug[typedLanguage]}" style="color: hsl(140, 56%, 36%); text-decoration: none; font-weight: bold; font-size: 0.85rem;">${t('actions.seeDetails')}</a>
+        <div style="color: black; max-width: 200px; font-family: sans-serif; padding: 4px;">
+          <h3 style="font-weight: bold; margin-bottom: 4px;">${place.name[typedLanguage]}</h3>
+          <p style="font-size: 12px; margin-bottom: 8px;">${place.description[typedLanguage].substring(0, 60)}...</p>
+          <a href="/yerler/${place.slug[typedLanguage]}" style="color: #2D5A27; font-weight: bold; font-size: 12px; text-decoration: none;">Detayları Gör →</a>
         </div>
       `;
 
@@ -294,17 +282,13 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
 
     if (places.length > 0 && !isRoute && !kmlUrl) {
       const bounds = new window.google.maps.LatLngBounds();
-      places.forEach(place => { if (place.coordinates) bounds.extend(place.coordinates); });
-      if (userMarkerRef.current?.getPosition()) {
-          bounds.extend(userMarkerRef.current.getPosition()!);
-      }
-      if (startLocation) bounds.extend(startLocation);
+      places.forEach(place => bounds.extend(place.coordinates));
       map.fitBounds(bounds);
-      if (places.length === 1 && !startLocation) map.setZoom(14);
+      if (places.length === 1) map.setZoom(14);
     }
 
     return () => markers.forEach(m => m.setMap(null));
-  }, [map, places, typedLanguage, t, authFailed, isRoute, startLocation, kmlUrl]);
+  }, [map, places, typedLanguage, t, authFailed, isRoute, kmlUrl]);
 
   const handleCenterOnUser = () => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -314,19 +298,19 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({ places, className, isRoute
     });
   };
 
-  if (authFailed) return <div className={className}><Alert variant="destructive"><AlertTitle>Harita Hatası</AlertTitle><AlertDescription>Google Maps yüklenemedi.</AlertDescription></Alert></div>;
+  if (authFailed) return <div className={className}><Alert variant="destructive"><AlertTitle>Harita Hatası</AlertTitle><AlertDescription>Google Haritalar API yüklenemedi.</AlertDescription></Alert></div>;
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative overflow-hidden rounded-xl", className)}>
       {!isApiLoaded && (
-         <div className="w-full h-full flex items-center justify-center bg-muted absolute inset-0 z-10">
-            <Loader2 className="h-8 w-8 animate-spin" /><p className="ml-4 text-muted-foreground">Harita yükleniyor...</p>
+         <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
          </div>
       )}
-      <div ref={mapRef} className={cn("w-full h-full rounded-lg overflow-hidden", { 'invisible': !isApiLoaded })} />
+      <div ref={mapRef} className="w-full h-full" />
       {isApiLoaded && (
-          <Button variant="secondary" size="icon" className="absolute bottom-6 right-4 z-20 shadow-lg bg-background/90 h-12 w-12 rounded-full border-2 border-primary/20" onClick={handleCenterOnUser}>
-            <Navigation className="h-6 w-6 text-primary fill-primary/20" />
+          <Button variant="secondary" size="icon" className="absolute bottom-4 right-4 z-20 shadow-md h-10 w-10 rounded-full" onClick={handleCenterOnUser}>
+            <Navigation className="h-5 w-5 text-primary fill-primary/20" />
           </Button>
       )}
     </div>
