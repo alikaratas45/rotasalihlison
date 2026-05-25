@@ -106,7 +106,8 @@ function PlaceDetailContent() {
           const lng = position.coords.longitude;
           
           const distToMain = calculateDistance(lat, lng, place.coordinates.lat, place.coordinates.lng);
-          setIsNearPlace(distToMain <= 50);
+          // 200 metre tolerans (Geniş alanlar ve GPS sapması için artırıldı)
+          setIsNearPlace(distToMain <= 200);
 
           if (place.subPoints && place.subPoints.length > 0) {
               let nearestSub: SubPoint | null = null;
@@ -126,8 +127,10 @@ function PlaceDetailContent() {
               setActiveSubPoint(null);
           }
         },
-        null,
-        { enableHighAccuracy: true }
+        (error) => {
+          console.warn("Konum takibi sırasında hata oluştu:", error.message);
+        },
+        { enableHighAccuracy: true, maximumAge: 1000 }
       );
       return () => navigator.geolocation.clearWatch(watchId);
     }
