@@ -106,8 +106,8 @@ function PlaceDetailContent() {
           const lng = position.coords.longitude;
           
           const distToMain = calculateDistance(lat, lng, place.coordinates.lat, place.coordinates.lng);
-          // 200 metre tolerans (Geniş alanlar ve GPS sapması için artırıldı)
-          setIsNearPlace(distToMain <= 200);
+          // 50 metre tolerans (Kullanıcı isteği üzerine 50m olarak güncellendi)
+          setIsNearPlace(distToMain <= 50);
 
           if (place.subPoints && place.subPoints.length > 0) {
               let nearestSub: SubPoint | null = null;
