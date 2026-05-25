@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/use-language';
 import { useCollection, useFirestore } from '@/firebase';
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Volume2 } from 'lucide-react';
+import type { Language } from '@/lib/language-config';
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371000; // Metre cinsinden
@@ -37,6 +38,36 @@ export function AudioProximityAlert() {
 
   const [activeAlertPlace, setActiveAlertPlace] = useState<Place | null>(null);
   const [notifiedPlaceIds, setNotifiedPlaceIds] = useState<Set<string>>(new Set());
+  const spokenRef = useRef<string | null>(null);
+
+  // Mekana yaklaşıldığında sesli uyarı ver
+  useEffect(() => {
+    if (activeAlertPlace && isAudioGuideEnabled && typeof window !== 'undefined' && window.speechSynthesis) {
+        const placeName = activeAlertPlace.name[language as keyof typeof activeAlertPlace.name] || activeAlertPlace.name.tr;
+        const alertText = t('proximity.alert', placeName);
+        
+        // Eğer bu mekan için zaten seslendirme yapılmadıysa seslendir
+        if (spokenRef.current !== activeAlertPlace.id) {
+            window.speechSynthesis.cancel(); // Mevcut sesleri durdur
+            
+            const utterance = new SpeechSynthesisUtterance(alertText);
+            const langMap: Record<string, string> = {
+                tr: 'tr-TR',
+                en: 'en-US',
+                fr: 'fr-FR',
+                de: 'de-DE',
+                ja: 'ja-JP'
+            };
+            utterance.lang = langMap[language] || 'tr-TR';
+            utterance.rate = 0.9;
+            
+            window.speechSynthesis.speak(utterance);
+            spokenRef.current = activeAlertPlace.id;
+        }
+    } else if (!activeAlertPlace) {
+        spokenRef.current = null;
+    }
+  }, [activeAlertPlace, language, isAudioGuideEnabled, t]);
 
   useEffect(() => {
     // Sesli rehber kapalıysa veya yerler yüklenmediyse takip yapma
@@ -62,11 +93,14 @@ export function AudioProximityAlert() {
           if (!place.coordinates) continue;
           const dist = calculateDistance(latitude, longitude, place.coordinates.lat, place.coordinates.lng);
           
-          if (dist <= 20 && !notifiedPlaceIds.has(place.id)) {
+          // 25 metre içine girince tetikle
+          if (dist <= 25 && !notifiedPlaceIds.has(place.id)) {
             setActiveAlertPlace(place);
             setNotifiedPlaceIds(prev => new Set(prev).add(place.id));
             break; 
-          } else if (dist > 100 && notifiedPlaceIds.has(place.id)) {
+          } 
+          // 100 metreden uzaklaşınca tekrar bildirim alabilir hale getir
+          else if (dist > 100 && notifiedPlaceIds.has(place.id)) {
             setNotifiedPlaceIds(prev => {
               const next = new Set(prev);
               next.delete(place.id);
@@ -76,7 +110,6 @@ export function AudioProximityAlert() {
         }
       },
       (error) => {
-        // Hataları sessizce logla, kullanıcıya uyarı verme (özellikle yetki hataları için)
         console.log("Konum servisi bilgisi:", error.message);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -89,9 +122,7 @@ export function AudioProximityAlert() {
     if (!activeAlertPlace) return;
 
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-        const primingUtterance = new SpeechSynthesisUtterance('');
-        primingUtterance.volume = 0;
-        window.speechSynthesis.speak(primingUtterance);
+        window.speechSynthesis.cancel();
     }
 
     const typedLanguage = language as keyof typeof activeAlertPlace.slug;
@@ -102,6 +133,9 @@ export function AudioProximityAlert() {
   };
 
   const handleClose = () => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
     setActiveAlertPlace(null);
   };
 
@@ -109,24 +143,30 @@ export function AudioProximityAlert() {
 
   return (
     <Dialog open={!!activeAlertPlace} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-primary">
-            <Volume2 className="h-6 w-6" />
-            {t('header.audioGuide')}
-          </DialogTitle>
-          <DialogDescription className="text-lg py-4 leading-relaxed font-medium text-foreground">
+      <DialogContent className="sm:max-w-md border-none shadow-2xl rounded-[2rem] overflow-hidden p-0">
+        <div className="bg-primary/5 p-8 pb-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 mx-auto text-primary animate-pulse">
+                <Volume2 className="h-8 w-8" />
+            </div>
+            <DialogHeader>
+                <DialogTitle className="text-2xl font-black font-headline text-primary text-center">
+                    {t('header.audioGuide')}
+                </DialogTitle>
+            </DialogHeader>
+        </div>
+        <div className="p-8 pt-4 space-y-6">
+          <DialogDescription className="text-lg leading-relaxed font-bold text-slate-700 text-center">
             {t('proximity.alert', activeAlertPlace.name[language as keyof typeof activeAlertPlace.name] || activeAlertPlace.name.tr)}
           </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="flex flex-col sm:flex-row gap-3">
-          <Button variant="outline" onClick={handleClose} className="flex-1">
-            {t('proximity.no')}
-          </Button>
-          <Button onClick={handleConfirm} className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
-            {t('proximity.yes')}
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="flex flex-col sm:flex-row gap-3">
+            <Button variant="outline" onClick={handleClose} className="h-12 rounded-xl flex-1 font-bold">
+              {t('proximity.no')}
+            </Button>
+            <Button onClick={handleConfirm} className="h-12 rounded-xl flex-1 bg-primary text-white hover:bg-primary/90 font-black shadow-lg shadow-primary/20">
+              {t('proximity.yes')}
+            </Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
