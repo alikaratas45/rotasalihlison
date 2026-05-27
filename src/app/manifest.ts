@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Rota Salihli',
-    short_name: 'RotaSalihli',
+    short_name: 'Rota Salihli',
     description: "Sardes'in mirası, paranın merkezi Salihli'yi keşfedin.",
     start_url: '/',
     display: 'standalone',
@@ -12,15 +12,15 @@ export default function manifest(): MetadataRoute.Manifest {
     icons: [
       {
         src: '/logos.png',
-        sizes: '192x192',
+        sizes: 'any',
         type: 'image/png',
-        purpose: 'maskable'
+        purpose: 'any',
       },
       {
         src: '/logos.png',
-        sizes: '512x512',
+        sizes: '192x192',
         type: 'image/png',
-        purpose: 'any'
+        purpose: 'maskable',
       }
     ],
   };
