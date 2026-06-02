@@ -124,16 +124,11 @@ const KmlAndDirectionsLayer = ({
 }) => {
   const map = useMap();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
-  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
 
   const cleanup = useCallback(() => {
     if (polylineRef.current) {
       polylineRef.current.setMap(null);
       polylineRef.current = null;
-    }
-    if (directionsRendererRef.current) {
-      directionsRendererRef.current.setMap(null);
-      directionsRendererRef.current = null;
     }
   }, []);
 
@@ -149,7 +144,6 @@ const KmlAndDirectionsLayer = ({
       const processKml = async () => {
         setIsLoading(true);
         try {
-          // CORS uyarısı: Dış kaynaklı Firebase URL'leri fetch edilebilir olmalıdır.
           const response = await fetch(kmlUrl).catch(() => null);
           if (!response || !response.ok) throw new Error("KML yüklenemedi");
 
@@ -191,7 +185,9 @@ const KmlAndDirectionsLayer = ({
           }
         } catch (err) {
           console.warn("KML Parser Hatası, Standart Rota Motoruna Geçiliyor:", err);
-          drawDirections(map, validPlaces, travelMode, bounds);
+          if (isRoute && validPlaces.length >= 2) {
+            drawDirections(map, validPlaces, travelMode, bounds);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -224,6 +220,9 @@ const drawDirections = (
   mode: string, 
   bounds: google.maps.LatLngBounds
 ) => {
+  // Guard clause: Yeterli durak yoksa işlem yapma
+  if (!places || places.length < 2) return;
+
   const directionsService = new google.maps.DirectionsService();
   const renderer = new google.maps.DirectionsRenderer({
     map,
