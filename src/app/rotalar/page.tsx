@@ -23,10 +23,15 @@ function RotalarContent() {
   const routesQuery = useMemo(() => query(collection(firestore, 'routes')), [firestore]);
   const { data: dbRoutes, loading } = useCollection<Route>(routesQuery);
 
-  const displayRoutes = useMemo(() => {
-    const all = (dbRoutes && dbRoutes.length > 0) ? dbRoutes : staticRoutes;
-    // Sadece tematik rotaları filtrele
-    return all.filter(r => r.category === 'thematic');
+  const thematicRoutes = useMemo(() => {
+    // Hem veritabanındaki hem de kod içindeki tematik rotaları birleştir
+    const allRoutes = [...(dbRoutes || []), ...staticRoutes];
+    
+    // Tekilleştir (ID'ye göre) ve sadece 'thematic' olanları al
+    const uniqueThematic = Array.from(new Map(allRoutes.map(item => [item.id, item])).values())
+      .filter(r => r.category === 'thematic');
+      
+    return uniqueThematic;
   }, [dbRoutes]);
 
   if (loading) {
@@ -126,8 +131,8 @@ function RotalarContent() {
           </Card>
         </Link>
 
-        {/* MEVCUT TEMATİK ROTALAR */}
-        {displayRoutes.map(route => {
+        {/* TEMATİK ROTALAR LİSTESİ */}
+        {thematicRoutes.map(route => {
             let imageId = '';
             const enSlug = route.slug.en || '';
             if (enSlug.includes('lydian')) imageId = 'gymnasium';
