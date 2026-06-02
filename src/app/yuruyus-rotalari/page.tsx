@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -17,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getKmlPoints, isPointNearRoute } from '@/lib/geo-utils';
+import { PlacesMap } from '@/components/places-map';
 
 export default function YuruyusRotalariPage() {
   const { t, language } = useLanguage();
@@ -181,7 +181,14 @@ export default function YuruyusRotalariPage() {
                     
                     <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
                         <div className="w-full h-full relative">
-                            {activeRoute && (activeRoute.wikilocEmbedHtml || activeRoute.wikilocId) ? (
+                            {activeRoute?.kmlUrl ? (
+                              <PlacesMap 
+                                places={routePois} 
+                                kmlUrl={activeRoute.kmlUrl} 
+                                isRoute={true} 
+                                className="w-full h-full"
+                              />
+                            ) : activeRoute && (activeRoute.wikilocEmbedHtml || activeRoute.wikilocId) ? (
                                 activeRoute.wikilocEmbedHtml ? (
                                     <div 
                                         className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-none" 
@@ -201,12 +208,12 @@ export default function YuruyusRotalariPage() {
                             ) : (
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400 p-10 text-center">
                                     <MapPinned className="h-12 w-12 mb-4 opacity-20" />
-                                    <p className="font-bold">Bu rota için Wikiloc haritası henüz eklenmemiş.</p>
+                                    <p className="font-bold">Bu rota için henüz harita eklenmemiş.</p>
                                 </div>
                             )}
                         </div>
                     </Card>
-                    {activeRoute?.wikilocId && (
+                    {activeRoute?.wikilocId && !activeRoute.kmlUrl && (
                         <p className="text-[10px] text-slate-400 italic text-center">
                             Powered by <a href="https://tr.wikiloc.com" target="_blank" rel="noopener noreferrer" className="text-[#4C8C2B] font-bold hover:underline">Wikiloc</a>
                         </p>

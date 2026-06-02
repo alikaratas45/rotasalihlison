@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -30,6 +29,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [authFailed, setAuthFailed] = useState(false);
+  const [isKmlLoading, setIsKmlLoading] = useState(false);
   
   const markersRef = useRef<google.maps.Marker[]>([]);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
@@ -83,27 +83,24 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         preserveViewport: false,
         polylineOptions: {
           strokeColor: '#0047FF',
-          strokeWeight: 10,
-          strokeOpacity: 0.9,
+          strokeWeight: 8,
+          strokeOpacity: 0.8,
           zIndex: 50
         }
       });
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // 3. Directions & Path Logic
+  // 3. Directions & Path Logic (Used when NO KML is provided)
   useEffect(() => {
-    if (!map || !places || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) return;
-
-    // Clear previous polylines
-    if (fallbackPolylineRef.current) {
-        fallbackPolylineRef.current.setMap(null);
-        fallbackPolylineRef.current = null;
+    if (!map || !places || authFailed || !directionsServiceRef.current || !directionsRendererRef.current || kmlUrl) {
+      if (directionsRendererRef.current) directionsRendererRef.current.setDirections({ routes: [] } as any);
+      if (fallbackPolylineRef.current) fallbackPolylineRef.current.setMap(null);
+      return;
     }
 
     const validPlaces = places.filter(p => p.coordinates?.lat && p.coordinates?.lng);
     
-    // Auto-fit to markers if no route logic is needed
     if (!isRoute) {
         const bounds = new google.maps.LatLngBounds();
         validPlaces.forEach(p => bounds.extend(p.coordinates));
@@ -114,7 +111,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         return;
     }
 
-    // ROUTE LOGIC
     const origin = startLocation || (validPlaces.length >= 1 ? validPlaces[0].coordinates : null);
     if (!origin || validPlaces.length < 1) return;
 
@@ -145,25 +141,23 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
       } else {
-        console.warn("Directions API failed, using Polyline fallback:", status);
         const path = [origin, ...validPlaces.map(p => p.coordinates)];
         const fallback = new google.maps.Polyline({
             path: path,
             geodesic: true,
             strokeColor: '#0047FF',
-            strokeOpacity: 0.9,
-            strokeWeight: 10,
+            strokeOpacity: 0.8,
+            strokeWeight: 8,
             map: map,
             zIndex: 50
         });
         fallbackPolylineRef.current = fallback;
-        
         const bounds = new google.maps.LatLngBounds();
         path.forEach(p => bounds.extend(p));
         map.fitBounds(bounds);
       }
     });
-  }, [map, places, isRoute, authFailed, startLocation, travelMode]);
+  }, [map, places, isRoute, authFailed, startLocation, travelMode, kmlUrl]);
 
   // 4. KML Path Logic
   useEffect(() => {
@@ -174,9 +168,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     }
     
     const processKml = async () => {
+      setIsKmlLoading(true);
       try {
         const response = await fetch(kmlUrl).catch(() => null);
-        if (!response || !response.ok) return;
+        if (!response || !response.ok) throw new Error("KML load failed");
         
         const kmlText = await response.text();
         const parser = new DOMParser();
@@ -212,8 +207,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                 path: path,
                 geodesic: true,
                 strokeColor: '#0047FF',
-                strokeOpacity: 0.8,
-                strokeWeight: 10,       
+                strokeOpacity: 0.9,
+                strokeWeight: 8,       
                 map: map,
                 zIndex: 40
               });
@@ -222,7 +217,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
           }
         });
 
-        // Extend bounds with markers
         places.forEach(p => {
             if(p.coordinates?.lat) bounds.extend(p.coordinates);
         });
@@ -232,6 +226,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         }
       } catch (error) {
         console.error("KML Error:", error);
+      } finally {
+        setIsKmlLoading(false);
       }
     };
 
@@ -268,7 +264,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
             fillColor: '#166534',
             fillOpacity: 1,
             strokeColor: 'white',
-            strokeWeight: 4,
+            strokeWeight: 2,
             scale: isRoute ? 12 : 10,
         },
         zIndex: 100
@@ -293,7 +289,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-slate-50", className)}>
-      {!isApiLoaded && (
+      {(!isApiLoaded || isKmlLoading) && (
          <div className="absolute inset-0 flex items-center justify-center bg-muted/30 z-10">
             <Loader2 className="h-10 w-10 animate-spin text-primary" />
          </div>
