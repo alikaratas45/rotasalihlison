@@ -3,8 +3,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Map, useMap, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
 import type { Place } from '@/lib/definitions';
-import { useLanguage } from '@/hooks/use-language';
-import type { Language } from '@/context/language-context';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -123,12 +121,15 @@ const KmlAndDirectionsLayer = ({
   setIsLoading: (val: boolean) => void;
 }) => {
   const map = useMap();
-  const polylineRef = useRef<google.maps.Polyline | null>(null);
+  const polylinesRef = useRef<google.maps.Polyline[]>([]);
+  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
 
   const cleanup = useCallback(() => {
-    if (polylineRef.current) {
-      polylineRef.current.setMap(null);
-      polylineRef.current = null;
+    polylinesRef.current.forEach(p => p.setMap(null));
+    polylinesRef.current = [];
+    if (directionsRendererRef.current) {
+      directionsRendererRef.current.setMap(null);
+      directionsRendererRef.current = null;
     }
   }, []);
 
@@ -152,12 +153,15 @@ const KmlAndDirectionsLayer = ({
           const xml = parser.parseFromString(text, 'text/xml');
           const coordsElems = xml.getElementsByTagName('coordinates');
           
-          const path: google.maps.LatLngLiteral[] = [];
-          
+          let hasFoundAnyLine = false;
+
           Array.from(coordsElems).forEach(elem => {
             const raw = elem.textContent?.trim() || "";
-            const points = raw.split(/[\s\n\r]+/).filter(p => p.trim());
-            points.forEach(p => {
+            // KML format: "lng,lat,alt lng,lat,alt ..."
+            const pointsStr = raw.split(/\s+/).filter(p => p.trim());
+            const path: google.maps.LatLngLiteral[] = [];
+            
+            pointsStr.forEach(p => {
               const parts = p.split(',');
               if (parts.length >= 2) {
                 const lng = parseFloat(parts[0]);
@@ -169,24 +173,31 @@ const KmlAndDirectionsLayer = ({
                 }
               }
             });
+
+            if (path.length > 1) {
+              const polyline = new google.maps.Polyline({
+                path,
+                strokeColor: '#0047FF',
+                strokeWeight: 6,
+                strokeOpacity: 0.9,
+                map
+              });
+              polylinesRef.current.push(polyline);
+              hasFoundAnyLine = true;
+            }
           });
 
-          if (path.length > 0) {
-            polylineRef.current = new google.maps.Polyline({
-              path,
-              strokeColor: '#0000FF',
-              strokeWeight: 6,
-              strokeOpacity: 0.8,
-              map
-            });
-            map.fitBounds(bounds);
+          if (hasFoundAnyLine) {
+            map.fitBounds(bounds, 50); // 50px padding
           } else {
-            throw new Error("KML koordinat içermiyor");
+             // KML'de çizgi yoksa duraklara odaklan
+             validPlaces.forEach(p => bounds.extend(p.coordinates));
+             if (!bounds.isEmpty()) map.fitBounds(bounds);
           }
         } catch (err) {
-          console.warn("KML Parser Hatası, Standart Rota Motoruna Geçiliyor:", err);
+          console.warn("KML Hatası, Yol Tarifine Geçiliyor:", err);
           if (isRoute && validPlaces.length >= 2) {
-            drawDirections(map, validPlaces, travelMode, bounds);
+            drawDirections(map, validPlaces, travelMode, bounds, directionsRendererRef);
           }
         } finally {
           setIsLoading(false);
@@ -196,7 +207,7 @@ const KmlAndDirectionsLayer = ({
     } 
     // --- 2. SEÇENEK: GOOGLE DIRECTIONS API ---
     else if (isRoute && validPlaces.length >= 2) {
-      drawDirections(map, validPlaces, travelMode, bounds);
+      drawDirections(map, validPlaces, travelMode, bounds, directionsRendererRef);
     } 
     // --- 3. SEÇENEK: SADECE MARKER ODAKLAMA ---
     else if (validPlaces.length > 0) {
@@ -218,9 +229,9 @@ const drawDirections = (
   map: google.maps.Map, 
   places: Place[], 
   mode: string, 
-  bounds: google.maps.LatLngBounds
+  bounds: google.maps.LatLngBounds,
+  rendererRef: React.MutableRefObject<google.maps.DirectionsRenderer | null>
 ) => {
-  // Guard clause: Yeterli durak yoksa işlem yapma
   if (!places || places.length < 2) return;
 
   const directionsService = new google.maps.DirectionsService();
@@ -228,11 +239,12 @@ const drawDirections = (
     map,
     suppressMarkers: true,
     polylineOptions: {
-      strokeColor: '#0055FF',
+      strokeColor: '#0047FF',
       strokeWeight: 6,
       strokeOpacity: 0.8
     }
   });
+  rendererRef.current = renderer;
 
   const waypoints = places.slice(1, -1).map(p => ({
     location: p.coordinates,
@@ -255,9 +267,9 @@ const drawDirections = (
     } else {
       // Fallback: Düz çizgi
       const path = places.map(p => p.coordinates);
-      new google.maps.Polyline({
+      const polyline = new google.maps.Polyline({
         path,
-        strokeColor: '#0055FF',
+        strokeColor: '#0047FF',
         strokeOpacity: 0.6,
         strokeWeight: 4,
         map
