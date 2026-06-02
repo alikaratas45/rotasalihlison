@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useRef, useMemo, useEffect } from 'react';
-import { Footprints, ChevronRight, MapPinned, Info, Loader2, Map as MapIcon, Layers } from 'lucide-react';
+import { Footprints, ChevronRight, MapPinned, Info, Loader2, Map as MapIcon, Layers, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,8 +16,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getKmlPoints, isPointNearRoute } from '@/lib/geo-utils';
-import { PlacesMap } from '@/components/places-map';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function YuruyusRotalariPage() {
   const { t, language } = useLanguage();
@@ -38,16 +36,6 @@ export default function YuruyusRotalariPage() {
   const [routeStops, setRouteStops] = useState<Place[]>([]);
   const [nearbyPois, setNearbyPois] = useState<Place[]>([]);
   const [isProcessingPois, setIsProcessingPois] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | undefined>(undefined);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && "geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-            (err) => console.warn("Location error", err)
-        );
-    }
-  }, []);
 
   const activeRoute = useMemo(() => {
     if (!dbRoutes || dbRoutes.length === 0) return null;
@@ -183,54 +171,31 @@ export default function YuruyusRotalariPage() {
                 <div className="space-y-6" ref={mapSectionRef}>
                     <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
                         <MapIcon className="h-5 w-5 text-primary" />
-                        Rota Haritası ve Detaylar
+                        Rota Detayları (Wikiloc)
                     </h2>
                     
-                    <Tabs defaultValue="interactive" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2 rounded-xl mb-4">
-                            <TabsTrigger value="interactive" className="rounded-lg gap-2">
-                                <MapIcon className="h-4 w-4" /> İnteraktif Harita
-                            </TabsTrigger>
-                            <TabsTrigger value="wikiloc" className="rounded-lg gap-2" disabled={!activeRoute?.wikilocEmbedHtml}>
-                                <Layers className="h-4 w-4" /> Wikiloc Detayı
-                            </TabsTrigger>
-                        </TabsList>
-                        
-                        <TabsContent value="interactive">
-                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white h-[500px] lg:h-[600px] border border-slate-100">
-                                <div className="w-full h-full relative">
-                                    {activeRoute && (
-                                        <PlacesMap 
-                                            key={`map-${activeRoute.id}`}
-                                            places={routeStops} 
-                                            extraMarkers={nearbyPois}
-                                            kmlUrl={activeRoute.kmlUrl} 
-                                            isRoute={true} 
-                                            className="w-full h-full"
-                                            travelMode="WALKING"
-                                            startLocation={userLocation}
-                                        />
-                                    )}
-                                </div>
-                            </Card>
-                        </TabsContent>
-                        
-                        <TabsContent value="wikiloc">
-                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white h-[500px] lg:h-[600px] border border-slate-100">
-                                {activeRoute?.wikilocEmbedHtml ? (
-                                    <div className="w-full h-full" dangerouslySetInnerHTML={{ 
-                                        __html: activeRoute.wikilocEmbedHtml
-                                            .replace(/width="\d+"/, 'width="100%"')
-                                            .replace(/height="\d+"/, 'height="100%"') 
-                                    }} />
-                                ) : (
-                                    <div className="flex items-center justify-center h-full bg-slate-50 text-slate-400 font-bold">
-                                        Wikiloc verisi bulunamadı.
-                                    </div>
+                    <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white h-[500px] lg:h-[600px] border border-slate-100">
+                        {activeRoute?.wikilocEmbedHtml ? (
+                            <div className="w-full h-full" dangerouslySetInnerHTML={{ 
+                                __html: activeRoute.wikilocEmbedHtml
+                                    .replace(/width="\d+"/, 'width="100%"')
+                                    .replace(/height="\d+"/, 'height="100%"') 
+                            }} />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full bg-slate-50 text-slate-400 p-8 text-center">
+                                <Layers className="h-12 w-12 mb-4 opacity-20" />
+                                <p className="font-bold">Bu rota için Wikiloc verisi henüz eklenmemiş.</p>
+                                {activeRoute?.wikilocId && (
+                                    <Button asChild variant="outline" className="mt-4">
+                                        <a href={`https://www.wikiloc.com/wikiloc/view.do?id=${activeRoute.wikilocId}`} target="_blank">
+                                            <ExternalLink className="mr-2 h-4 w-4" />
+                                            Wikiloc'ta Görüntüle
+                                        </a>
+                                    </Button>
                                 )}
-                            </Card>
-                        </TabsContent>
-                    </Tabs>
+                            </div>
+                        )}
+                    </Card>
                 </div>
             </div>
         ) : (
