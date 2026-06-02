@@ -66,7 +66,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         disableDefaultUI: false,
         zoomControl: true,
         streetViewControl: false,
-        mapTypeControl: false,
+        mapTypeControl: true,
         gestureHandling: 'greedy',
         styles: [{ "featureType": "poi", "elementType": "labels", "stylers": [{ "visibility": "off" }] }]
       });
@@ -120,7 +120,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         bounds.extend(startLocation);
     }
 
-    // Durak İşaretçileri
+    // Durak İşaretçileri (Markers Her Zaman Çizilir)
     const infoWindow = new window.google.maps.InfoWindow();
     const typedLanguage = language as Language;
 
@@ -167,65 +167,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         markersRef.current.push(marker);
     });
 
-    // --- ROTA ÇİZİMİ ---
-    
-    // YOL TARİFİ FONKSİYONU (Smart Fallback)
-    const drawDirections = async (pts: Place[], mode: string, bnds: google.maps.LatLngBounds, currentMap: google.maps.Map) => {
-        const directionsService = new google.maps.DirectionsService();
-        
-        const tryRoute = (targetMode: google.maps.TravelMode): Promise<google.maps.DirectionsResult> => {
-            return new Promise((resolve, reject) => {
-                const waypoints = pts.slice(1, -1).map(p => ({
-                    location: p.coordinates,
-                    stopover: true
-                }));
+    // --- ROTA ÇİZİM MANTIĞI ---
 
-                directionsService.route({
-                    origin: pts[0].coordinates,
-                    destination: pts[pts.length - 1].coordinates,
-                    waypoints: waypoints,
-                    travelMode: targetMode,
-                    optimizeWaypoints: false
-                }, (result, status) => {
-                    if (status === 'OK' && result) resolve(result);
-                    else reject(status);
-                });
-            });
-        };
-
-        try {
-            // Önce istenen modu dene (WALKING/BICYCLING)
-            const gMode = mode === 'BICYCLING' ? google.maps.TravelMode.BICYCLING : 
-                          mode === 'WALKING' ? google.maps.TravelMode.WALKING : 
-                          google.maps.TravelMode.DRIVING;
-            
-            const result = await tryRoute(gMode).catch(async () => {
-                // Başarısız olursa (yol verisi yoksa) DRIVING dene
-                if (gMode !== google.maps.TravelMode.DRIVING) {
-                    return await tryRoute(google.maps.TravelMode.DRIVING);
-                }
-                throw new Error("No route found");
-            });
-
-            if (directionsRendererRef.current && result) {
-                directionsRendererRef.current.setDirections(result);
-            }
-        } catch (err) {
-            // Tamamen başarısızsa düz çizgilerle bağla
-            const path = pts.map(p => p.coordinates);
-            const polyline = new google.maps.Polyline({
-                path: path,
-                strokeColor: '#0055FF',
-                strokeOpacity: 0.8,
-                strokeWeight: 6,
-                map: currentMap,
-                zIndex: 50
-            });
-            polylinesRef.current.push(polyline);
-            if (!bnds.isEmpty()) currentMap.fitBounds(bnds);
-        }
-    };
-
+    // KML VARSA SADECE KML'Yİ ÇİZ
     if (kmlUrl) {
         const processKml = async () => {
             setIsKmlLoading(true);
@@ -242,6 +186,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                     const coordString = element.textContent?.trim();
                     if (coordString) {
                         const path: google.maps.LatLngLiteral[] = [];
+                        // KML formatındaki farklı ayrıştırıcıları temizle
                         const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
                         rawPoints.forEach(p => {
                             const parts = p.split(',');
@@ -271,22 +216,54 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                     }
                 });
 
-                if (kmlHasData && !bounds.isEmpty()) {
+                if (kmlHasData) {
                     map.fitBounds(bounds);
-                } else if (isRoute && validPlaces.length > 1) {
-                    drawDirections(validPlaces, travelMode, bounds, map);
                 }
             } catch (error) {
-                if (isRoute && validPlaces.length > 1) {
-                    drawDirections(validPlaces, travelMode, bounds, map);
-                }
+                console.error("KML Error:", error);
             } finally {
                 setIsKmlLoading(false);
             }
         };
         processKml();
-    } else if (isRoute && validPlaces.length > 1) {
-        drawDirections(validPlaces, travelMode, bounds, map);
+    } 
+    // KML YOKSA VE ROTA MODUNDAYSA DIRECTIONS API KULLAN
+    else if (isRoute && validPlaces.length > 1) {
+        const directionsService = new google.maps.DirectionsService();
+        
+        const mode = travelMode === 'BICYCLING' ? google.maps.TravelMode.BICYCLING : 
+                     travelMode === 'WALKING' ? google.maps.TravelMode.WALKING : 
+                     google.maps.TravelMode.DRIVING;
+
+        const waypoints = validPlaces.slice(1, -1).map(p => ({
+            location: p.coordinates,
+            stopover: true
+        }));
+
+        directionsService.route({
+            origin: validPlaces[0].coordinates,
+            destination: validPlaces[validPlaces.length - 1].coordinates,
+            waypoints: waypoints,
+            travelMode: mode,
+            optimizeWaypoints: false
+        }, (result, status) => {
+            if (status === 'OK' && result && directionsRendererRef.current) {
+                directionsRendererRef.current.setDirections(result);
+            } else {
+                // Fallback: Düz çizgiyle bağla
+                const path = validPlaces.map(p => p.coordinates);
+                const polyline = new google.maps.Polyline({
+                    path: path,
+                    strokeColor: '#0055FF',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 6,
+                    map: map,
+                    zIndex: 50
+                });
+                polylinesRef.current.push(polyline);
+                map.fitBounds(bounds);
+            }
+        });
     } else if (validPlaces.length > 0) {
         if (!bounds.isEmpty()) {
             map.fitBounds(bounds);
