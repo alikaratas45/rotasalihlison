@@ -34,6 +34,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
   const markersRef = useRef<google.maps.Marker[]>([]);
   const polylinesRef = useRef<google.maps.Polyline[]>([]);
   const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+  const userMarkerRef = useRef<google.maps.Marker | null>(null);
 
   // 1. Google Maps API Kontrolü
   useEffect(() => {
@@ -60,10 +61,11 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       const newMap = new window.google.maps.Map(mapRef.current, {
         center: salihliCenter,
         zoom: 12,
-        disableDefaultUI: true,
+        disableDefaultUI: false,
         zoomControl: true,
-        gestureHandling: 'greedy',
+        streetViewControl: false,
         mapTypeControl: false,
+        gestureHandling: 'greedy',
         styles: [{ "featureType": "poi", "elementType": "labels", "stylers": [{ "visibility": "off" }] }]
       });
       setMap(newMap);
@@ -73,15 +75,15 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         suppressMarkers: true,
         polylineOptions: {
           strokeColor: '#0055FF',
-          strokeWeight: 10,
-          strokeOpacity: 0.9,
+          strokeWeight: 8,
+          strokeOpacity: 0.8,
           zIndex: 60
         }
       });
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // 3. Rota Çizimi ve İşaretçiler
+  // 3. Verileri İşleme (Markers, KML, Directions)
   useEffect(() => {
     if (!map || authFailed) return;
 
@@ -90,12 +92,32 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     markersRef.current = [];
     polylinesRef.current.forEach(p => p.setMap(null));
     polylinesRef.current = [];
+    if (userMarkerRef.current) userMarkerRef.current.setMap(null);
     if (directionsRendererRef.current) directionsRendererRef.current.setDirections({ routes: [] } as any);
 
     const validPlaces = (places || []).filter(p => p.coordinates?.lat && !isNaN(p.coordinates.lat));
     const bounds = new google.maps.LatLngBounds();
 
-    // İşaretçileri Ekle
+    // Kullanıcı Konumu (Mavi Nokta)
+    if (startLocation) {
+        userMarkerRef.current = new google.maps.Marker({
+            position: startLocation,
+            map: map,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: '#4285F4',
+                fillOpacity: 1,
+                strokeColor: 'white',
+                strokeWeight: 2,
+                scale: 8
+            },
+            title: 'Konumunuz',
+            zIndex: 200
+        });
+        bounds.extend(startLocation);
+    }
+
+    // Durak İşaretçileri
     const infoWindow = new window.google.maps.InfoWindow();
     const typedLanguage = language as Language;
 
@@ -124,8 +146,9 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       bounds.extend(place.coordinates);
     });
 
-    // Rota Çizimi (KML Varsa)
+    // ROTA ÇİZİMİ MANTIĞI
     if (kmlUrl) {
+        // MOD 1: KML Dosyası Varsa (Statik Çizim)
         const processKml = async () => {
             setIsKmlLoading(true);
             try {
@@ -140,7 +163,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                     const coordString = element.textContent?.trim();
                     if (coordString) {
                         const path: google.maps.LatLngLiteral[] = [];
-                        // KML formatı genelde: lng,lat,alt (boşluk veya yeni satırla ayrılmış)
                         const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
                         rawPoints.forEach(p => {
                             const parts = p.split(',');
@@ -160,7 +182,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                                 path: path,
                                 strokeColor: '#0055FF',
                                 strokeOpacity: 0.85,
-                                strokeWeight: 12,
+                                strokeWeight: 10,
                                 map: map,
                                 zIndex: 50
                             });
@@ -169,10 +191,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                     }
                 });
 
-                if (!bounds.isEmpty()) {
-                    map.fitBounds(bounds);
-                    if (validPlaces.length === 1) map.setZoom(15);
-                }
+                if (!bounds.isEmpty()) map.fitBounds(bounds);
             } catch (error) {
                 console.warn("KML Error:", error);
             } finally {
@@ -181,26 +200,49 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         };
         processKml();
     } else if (isRoute && validPlaces.length > 1) {
-        // KML yoksa ama duraklar varsa, durakları birbirine bağlayan kalın bir çizgi çiz (Directions yerine daha garanti)
-        const path = validPlaces.map(p => p.coordinates);
-        const polyline = new google.maps.Polyline({
-            path: path,
-            strokeColor: '#0055FF',
-            strokeOpacity: 0.8,
-            strokeWeight: 10,
-            map: map,
-            zIndex: 50
+        // MOD 2: Rota Oluşturma Veya Dinamik Rota (Directions API - Gerçek Yol Takibi)
+        const directionsService = new google.maps.DirectionsService();
+        
+        const waypoints = validPlaces.slice(1, -1).map(p => ({
+            location: p.coordinates,
+            stopover: true
+        }));
+
+        directionsService.route({
+            origin: validPlaces[0].coordinates,
+            destination: validPlaces[validPlaces.length - 1].coordinates,
+            waypoints: waypoints,
+            travelMode: travelMode === 'BICYCLING' ? google.maps.TravelMode.BICYCLING : 
+                        travelMode === 'WALKING' ? google.maps.TravelMode.WALKING : 
+                        google.maps.TravelMode.DRIVING,
+            optimizeWaypoints: true
+        }, (result, status) => {
+            if (status === 'OK' && directionsRendererRef.current && result) {
+                directionsRendererRef.current.setDirections(result);
+            } else {
+                // Yol tarifi başarısız olursa (örneğin yol olmayan yerler), düz çizgilerle bağla
+                const path = validPlaces.map(p => p.coordinates);
+                const polyline = new google.maps.Polyline({
+                    path: path,
+                    strokeColor: '#0055FF',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 8,
+                    map: map,
+                    zIndex: 50
+                });
+                polylinesRef.current.push(polyline);
+                if (!bounds.isEmpty()) map.fitBounds(bounds);
+            }
         });
-        polylinesRef.current.push(polyline);
-        if (!bounds.isEmpty()) map.fitBounds(bounds);
     } else if (validPlaces.length > 0) {
+        // MOD 3: Sadece Noktaları Göster
         if (!bounds.isEmpty()) {
             map.fitBounds(bounds);
             if (validPlaces.length === 1) map.setZoom(15);
         }
     }
 
-  }, [map, places, kmlUrl, isRoute, authFailed, language]);
+  }, [map, places, kmlUrl, isRoute, authFailed, language, startLocation, travelMode]);
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-slate-100", className)}>

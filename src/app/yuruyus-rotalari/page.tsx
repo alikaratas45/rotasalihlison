@@ -2,7 +2,7 @@
 
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useRef, useMemo, useEffect } from 'react';
-import { Footprints, ChevronRight, MapPinned, Info, Loader2, Map as MapIcon } from 'lucide-react';
+import { Footprints, ChevronRight, MapPinned, Info, Loader2, Map as MapIcon, Layers } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getKmlPoints, isPointNearRoute } from '@/lib/geo-utils';
 import { PlacesMap } from '@/components/places-map';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function YuruyusRotalariPage() {
   const { t, language } = useLanguage();
@@ -36,6 +37,17 @@ export default function YuruyusRotalariPage() {
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [routePois, setRoutePois] = useState<Place[]>([]);
   const [isProcessingPois, setIsProcessingPois] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | undefined>(undefined);
+
+  // Konum Takibi
+  useEffect(() => {
+    if (typeof window !== 'undefined' && "geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            (err) => console.warn("Location error", err)
+        );
+    }
+  }, []);
 
   const activeRoute = useMemo(() => {
     if (!dbRoutes || dbRoutes.length === 0) return null;
@@ -99,9 +111,7 @@ export default function YuruyusRotalariPage() {
     accommodation: t('accommodation.title')
   };
 
-  const isLoading = routesLoading || (placesLoading && !allPlaces);
-
-  if (isLoading) return (
+  if (routesLoading) return (
     <div className="container mx-auto px-4 py-20 text-center">
         <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
         <p className="font-bold text-muted-foreground">Rotalar Yükleniyor...</p>
@@ -160,12 +170,6 @@ export default function YuruyusRotalariPage() {
                             <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">
                                 {route.description[typedLanguage] || route.description.tr}
                             </p>
-                            <div className={cn(
-                                "mt-3 flex items-center text-xs font-bold uppercase tracking-widest transition-colors",
-                                selectedRouteId === route.id ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
-                            )}>
-                                {t('hikingRoutes.viewOnMapLabel')} <ChevronRight className="h-3 w-3 ml-1" />
-                            </div>
                             </CardContent>
                         </Card>
                         </button>
@@ -176,34 +180,53 @@ export default function YuruyusRotalariPage() {
                 <div className="space-y-6" ref={mapSectionRef}>
                     <h2 className="text-2xl font-bold font-headline text-slate-800 border-b pb-2 flex items-center gap-2">
                         <MapIcon className="h-5 w-5 text-primary" />
-                        {t('hikingRoutes.routeMap')}
+                        Rota Haritası ve Detaylar
                     </h2>
                     
-                    <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
-                        <div className="w-full h-full relative">
-                            {activeRoute && (
-                              activeRoute.kmlUrl ? (
-                                <PlacesMap 
-                                    key={`map-${activeRoute.id}`}
-                                    places={routePois} 
-                                    kmlUrl={activeRoute.kmlUrl} 
-                                    isRoute={true} 
-                                    className="w-full h-full"
-                                />
-                              ) : activeRoute.wikilocEmbedHtml ? (
-                                <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: activeRoute.wikilocEmbedHtml.replace('width="500"', 'width="100%"').replace('height="400"', 'height="100%"') }} />
-                              ) : (
-                                <div className="w-full h-full flex flex-col items-center justify-center p-10 text-center bg-slate-50">
-                                    <MapPinned className="h-12 w-12 text-slate-300 mb-4" />
-                                    <p className="text-slate-500 font-bold">Harita verisi (KML veya Wikiloc) bulunamadı.</p>
-                                    <Button className="mt-4" onClick={() => window.open(`https://www.wikiloc.com/wikiloc/find.do?q=${activeRoute.name.tr}`, '_blank')}>
-                                        Wikiloc'ta Ara
-                                    </Button>
+                    <Tabs defaultValue="interactive" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 rounded-xl mb-4">
+                            <TabsTrigger value="interactive" className="rounded-lg gap-2">
+                                <MapIcon className="h-4 w-4" /> İnteraktif Harita
+                            </TabsTrigger>
+                            <TabsTrigger value="wikiloc" className="rounded-lg gap-2" disabled={!activeRoute?.wikilocEmbedHtml}>
+                                <Layers className="h-4 w-4" /> Wikiloc Detayı
+                            </TabsTrigger>
+                        </TabsList>
+                        
+                        <TabsContent value="interactive">
+                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
+                                <div className="w-full h-full relative">
+                                    {activeRoute && (
+                                        <PlacesMap 
+                                            key={`map-${activeRoute.id}`}
+                                            places={routePois} 
+                                            kmlUrl={activeRoute.kmlUrl} 
+                                            isRoute={true} 
+                                            className="w-full h-full"
+                                            travelMode="WALKING"
+                                            startLocation={userLocation}
+                                        />
+                                    )}
                                 </div>
-                              )
-                            )}
-                        </div>
-                    </Card>
+                            </Card>
+                        </TabsContent>
+                        
+                        <TabsContent value="wikiloc">
+                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
+                                {activeRoute?.wikilocEmbedHtml ? (
+                                    <div className="w-full h-full" dangerouslySetInnerHTML={{ 
+                                        __html: activeRoute.wikilocEmbedHtml
+                                            .replace(/width="\d+"/, 'width="100%"')
+                                            .replace(/height="\d+"/, 'height="100%"') 
+                                    }} />
+                                ) : (
+                                    <div className="flex items-center justify-center h-full bg-slate-50 text-slate-400 font-bold">
+                                        Wikiloc verisi bulunamadı.
+                                    </div>
+                                )}
+                            </Card>
+                        </TabsContent>
+                    </Tabs>
                 </div>
             </div>
         ) : (
