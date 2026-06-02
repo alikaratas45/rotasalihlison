@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -120,7 +121,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         bounds.extend(startLocation);
     }
 
-    // Durak İşaretçileri (Markers Her Zaman Çizilir)
+    // Durak İşaretçileri
     const infoWindow = new window.google.maps.InfoWindow();
     const typedLanguage = language as Language;
 
@@ -169,68 +170,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
 
     // --- ROTA ÇİZİM MANTIĞI ---
 
-    // KML VARSA SADECE KML'Yİ ÇİZ
-    if (kmlUrl) {
-        const processKml = async () => {
-            setIsKmlLoading(true);
-            try {
-                const response = await fetch(kmlUrl).catch(() => null);
-                if (!response || !response.ok) throw new Error("Fetch failed");
-                const kmlText = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
-                const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
-
-                let kmlHasData = false;
-                Array.from(coordinatesElements).forEach((element) => {
-                    const coordString = element.textContent?.trim();
-                    if (coordString) {
-                        const path: google.maps.LatLngLiteral[] = [];
-                        // KML formatındaki farklı ayrıştırıcıları temizle
-                        const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
-                        rawPoints.forEach(p => {
-                            const parts = p.split(',');
-                            if (parts.length >= 2) {
-                                const lng = parseFloat(parts[0]);
-                                const lat = parseFloat(parts[1]);
-                                if (!isNaN(lat) && !isNaN(lng)) {
-                                    const coord = { lat, lng };
-                                    path.push(coord);
-                                    bounds.extend(coord);
-                                    kmlHasData = true;
-                                }
-                            }
-                        });
-
-                        if (path.length > 0) {
-                            const polyline = new google.maps.Polyline({
-                                path: path,
-                                strokeColor: '#0055FF',
-                                strokeOpacity: 0.9,
-                                strokeWeight: 10,
-                                map: map,
-                                zIndex: 50
-                            });
-                            polylinesRef.current.push(polyline);
-                        }
-                    }
-                });
-
-                if (kmlHasData) {
-                    map.fitBounds(bounds);
-                }
-            } catch (error) {
-                console.error("KML Error:", error);
-            } finally {
-                setIsKmlLoading(false);
-            }
-        };
-        processKml();
-    } 
-    // KML YOKSA VE ROTA MODUNDAYSA DIRECTIONS API KULLAN
-    else if (isRoute && validPlaces.length > 1) {
-        const directionsService = new google.maps.DirectionsService();
+    const runDirections = () => {
+        if (!isRoute || validPlaces.length < 2) return;
         
+        const directionsService = new google.maps.DirectionsService();
         const mode = travelMode === 'BICYCLING' ? google.maps.TravelMode.BICYCLING : 
                      travelMode === 'WALKING' ? google.maps.TravelMode.WALKING : 
                      google.maps.TravelMode.DRIVING;
@@ -264,6 +207,79 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                 map.fitBounds(bounds);
             }
         });
+    };
+
+    // KML VARSA KML'Yİ ÇİZMEYE ÇALIŞ
+    if (kmlUrl) {
+        const processKml = async () => {
+            setIsKmlLoading(true);
+            try {
+                const response = await fetch(kmlUrl).catch(() => null);
+                
+                // Hata Durumu: KML indirilemediyse veya CORS reddettiyse
+                if (!response || !response.ok) {
+                    console.warn("KML dosyası yüklenemedi (Ağ hatası veya CORS), otomatik rota motoruna geçiliyor.");
+                    runDirections();
+                    return;
+                }
+
+                const kmlText = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
+                const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
+
+                let kmlHasData = false;
+                Array.from(coordinatesElements).forEach((element) => {
+                    const coordString = element.textContent?.trim();
+                    if (coordString) {
+                        const path: google.maps.LatLngLiteral[] = [];
+                        const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
+                        rawPoints.forEach(p => {
+                            const parts = p.split(',');
+                            if (parts.length >= 2) {
+                                const lng = parseFloat(parts[0]);
+                                const lat = parseFloat(parts[1]);
+                                if (!isNaN(lat) && !isNaN(lng)) {
+                                    const coord = { lat, lng };
+                                    path.push(coord);
+                                    bounds.extend(coord);
+                                    kmlHasData = true;
+                                }
+                            }
+                        });
+
+                        if (path.length > 0) {
+                            const polyline = new google.maps.Polyline({
+                                path: path,
+                                strokeColor: '#0055FF',
+                                strokeOpacity: 0.9,
+                                strokeWeight: 10,
+                                map: map,
+                                zIndex: 50
+                            });
+                            polylinesRef.current.push(polyline);
+                        }
+                    }
+                });
+
+                if (kmlHasData) {
+                    map.fitBounds(bounds);
+                } else {
+                    // KML içinde koordinat yoksa geri dön
+                    runDirections();
+                }
+            } catch (error) {
+                console.warn("KML ayrıştırma hatası, otomatik rota motoruna geçiliyor:", error);
+                runDirections();
+            } finally {
+                setIsKmlLoading(false);
+            }
+        };
+        processKml();
+    } 
+    // KML YOKSA DİREKT OTOMATİK ROTA
+    else if (isRoute && validPlaces.length > 1) {
+        runDirections();
     } else if (validPlaces.length > 0) {
         if (!bounds.isEmpty()) {
             map.fitBounds(bounds);
