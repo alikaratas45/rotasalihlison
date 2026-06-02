@@ -4,7 +4,8 @@ import { ThemeProvider } from '@/providers/theme-provider';
 import AppWrapper from '@/components/layout/app-wrapper';
 import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { GoogleMapsProvider } from '@/components/google-maps-provider';
+import { APIProvider } from '@vis.gl/react-google-maps';
+import { googleMapsApiKey } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: 'Rota Salihli',
@@ -34,10 +35,11 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider>
             <FirebaseClientProvider>
-              <GoogleMapsProvider />
-              <AppWrapper>
-                {children}
-              </AppWrapper>
+              <APIProvider apiKey={googleMapsApiKey}>
+                <AppWrapper>
+                  {children}
+                </AppWrapper>
+              </APIProvider>
             </FirebaseClientProvider>
           </LanguageProvider>
         </ThemeProvider>

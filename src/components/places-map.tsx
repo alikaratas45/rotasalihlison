@@ -1,7 +1,7 @@
-
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { Map, useMap, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
 import type { Place } from '@/lib/definitions';
 import { useLanguage } from '@/hooks/use-language';
 import type { Language } from '@/context/language-context';
@@ -27,281 +27,244 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
   travelMode = 'DRIVING',
   extraMarkers = []
 }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const { language } = useLanguage();
-  const [isApiLoaded, setIsApiLoaded] = useState(false);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [authFailed, setAuthFailed] = useState(false);
-  const [isKmlLoading, setIsKmlLoading] = useState(false);
-  
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const polylinesRef = useRef<google.maps.Polyline[]>([]);
-  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
-  const userMarkerRef = useRef<google.maps.Marker | null>(null);
-
-  // 1. Google Maps API Kontrolü
-  useEffect(() => {
-    const handleAuthError = () => setAuthFailed(true);
-    window.addEventListener('gm-auth-failure', handleAuthError);
-
-    const checkGoogleMaps = setInterval(() => {
-      if (typeof window !== 'undefined' && window.google && window.google.maps && window.google.maps.Map) {
-        setIsApiLoaded(true);
-        clearInterval(checkGoogleMaps);
-      }
-    }, 500);
-
-    return () => {
-      window.removeEventListener('gm-auth-failure', handleAuthError);
-      clearInterval(checkGoogleMaps);
-    };
-  }, []);
-
-  // 2. Harita Başlatma
-  useEffect(() => {
-    if (isApiLoaded && mapRef.current && !map && !authFailed) {
-      const salihliCenter = { lat: 38.48, lng: 28.14 };
-      const newMap = new window.google.maps.Map(mapRef.current, {
-        center: salihliCenter,
-        zoom: 12,
-        disableDefaultUI: false,
-        zoomControl: true,
-        streetViewControl: false,
-        mapTypeControl: true,
-        gestureHandling: 'greedy',
-        styles: [{ "featureType": "poi", "elementType": "labels", "stylers": [{ "visibility": "off" }] }]
-      });
-      setMap(newMap);
-      
-      directionsRendererRef.current = new google.maps.DirectionsRenderer({
-        map: newMap,
-        suppressMarkers: true,
-        polylineOptions: {
-          strokeColor: '#0055FF',
-          strokeWeight: 8,
-          strokeOpacity: 0.9,
-          zIndex: 60
-        }
-      });
-    }
-  }, [isApiLoaded, map, authFailed]);
-
-  // 3. Verileri İşleme (Markers, KML, Directions)
-  useEffect(() => {
-    if (!map || authFailed) return;
-
-    // Temizlik
-    markersRef.current.forEach(m => m.setMap(null));
-    markersRef.current = [];
-    polylinesRef.current.forEach(p => p.setMap(null));
-    polylinesRef.current = [];
-    if (userMarkerRef.current) userMarkerRef.current.setMap(null);
-    if (directionsRendererRef.current) directionsRendererRef.current.setDirections({ routes: [] } as any);
-
-    const validPlaces = (places || []).filter(p => p.coordinates?.lat && !isNaN(p.coordinates.lat));
-    const validExtra = (extraMarkers || []).filter(p => p.coordinates?.lat && !isNaN(p.coordinates.lat));
-    const bounds = new google.maps.LatLngBounds();
-
-    // Kullanıcı Konumu (Mavi Nokta)
-    if (startLocation) {
-        userMarkerRef.current = new google.maps.Marker({
-            position: startLocation,
-            map: map,
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: '#4285F4',
-                fillOpacity: 1,
-                strokeColor: 'white',
-                strokeWeight: 2,
-                scale: 8
-            },
-            title: 'Konumunuz',
-            zIndex: 200
-        });
-        bounds.extend(startLocation);
-    }
-
-    // Durak İşaretçileri
-    const infoWindow = new window.google.maps.InfoWindow();
-    const typedLanguage = language as Language;
-
-    validPlaces.forEach((place, index) => {
-      const marker = new window.google.maps.Marker({
-        position: place.coordinates,
-        map: map,
-        title: place.name[typedLanguage] || place.name.tr,
-        label: isRoute ? { text: (index + 1).toString(), color: 'white', fontWeight: 'bold' } : undefined,
-        icon: {
-            path: window.google.maps.SymbolPath.CIRCLE,
-            fillColor: '#166534',
-            fillOpacity: 1,
-            strokeColor: 'white',
-            strokeWeight: 2,
-            scale: isRoute ? 12 : 10,
-        },
-        zIndex: 100
-      });
-
-      marker.addListener('click', () => {
-        infoWindow.setContent(`<div style="color:black;padding:5px;"><b>${place.name[typedLanguage] || place.name.tr}</b><br/><a href="/yerler/${place.slug[typedLanguage] || place.slug.tr}" style="color:#166534;font-size:12px;text-decoration:none;">Detaylar →</a></div>`);
-        infoWindow.open(map, marker);
-      });
-      markersRef.current.push(marker);
-      bounds.extend(place.coordinates);
-    });
-
-    validExtra.forEach((place) => {
-        const marker = new window.google.maps.Marker({
-          position: place.coordinates,
-          map: map,
-          title: place.name[typedLanguage] || place.name.tr,
-          icon: {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              fillColor: '#6B7280',
-              fillOpacity: 0.8,
-              strokeColor: 'white',
-              strokeWeight: 1,
-              scale: 8,
-          },
-          zIndex: 90
-        });
-        markersRef.current.push(marker);
-    });
-
-    // --- ROTA ÇİZİM MANTIĞI ---
-
-    const runDirections = () => {
-        if (!isRoute || validPlaces.length < 2) return;
-        
-        const directionsService = new google.maps.DirectionsService();
-        const mode = travelMode === 'BICYCLING' ? google.maps.TravelMode.BICYCLING : 
-                     travelMode === 'WALKING' ? google.maps.TravelMode.WALKING : 
-                     google.maps.TravelMode.DRIVING;
-
-        const waypoints = validPlaces.slice(1, -1).map(p => ({
-            location: p.coordinates,
-            stopover: true
-        }));
-
-        directionsService.route({
-            origin: validPlaces[0].coordinates,
-            destination: validPlaces[validPlaces.length - 1].coordinates,
-            waypoints: waypoints,
-            travelMode: mode,
-            optimizeWaypoints: false
-        }, (result, status) => {
-            if (status === 'OK' && result && directionsRendererRef.current) {
-                directionsRendererRef.current.setDirections(result);
-            } else {
-                // Fallback: Düz çizgiyle bağla
-                const path = validPlaces.map(p => p.coordinates);
-                const polyline = new google.maps.Polyline({
-                    path: path,
-                    strokeColor: '#0055FF',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 6,
-                    map: map,
-                    zIndex: 50
-                });
-                polylinesRef.current.push(polyline);
-                map.fitBounds(bounds);
-            }
-        });
-    };
-
-    // KML VARSA KML'Yİ ÇİZMEYE ÇALIŞ
-    if (kmlUrl) {
-        const processKml = async () => {
-            setIsKmlLoading(true);
-            try {
-                const response = await fetch(kmlUrl).catch(() => null);
-                
-                // Hata Durumu: KML indirilemediyse veya CORS reddettiyse
-                if (!response || !response.ok) {
-                    console.warn("KML dosyası yüklenemedi (Ağ hatası veya CORS), otomatik rota motoruna geçiliyor.");
-                    runDirections();
-                    return;
-                }
-
-                const kmlText = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
-                const coordinatesElements = xmlDoc.getElementsByTagName('coordinates');
-
-                let kmlHasData = false;
-                Array.from(coordinatesElements).forEach((element) => {
-                    const coordString = element.textContent?.trim();
-                    if (coordString) {
-                        const path: google.maps.LatLngLiteral[] = [];
-                        const rawPoints = coordString.split(/[\s\n\r]+/).filter(p => p.trim());
-                        rawPoints.forEach(p => {
-                            const parts = p.split(',');
-                            if (parts.length >= 2) {
-                                const lng = parseFloat(parts[0]);
-                                const lat = parseFloat(parts[1]);
-                                if (!isNaN(lat) && !isNaN(lng)) {
-                                    const coord = { lat, lng };
-                                    path.push(coord);
-                                    bounds.extend(coord);
-                                    kmlHasData = true;
-                                }
-                            }
-                        });
-
-                        if (path.length > 0) {
-                            const polyline = new google.maps.Polyline({
-                                path: path,
-                                strokeColor: '#0055FF',
-                                strokeOpacity: 0.9,
-                                strokeWeight: 10,
-                                map: map,
-                                zIndex: 50
-                            });
-                            polylinesRef.current.push(polyline);
-                        }
-                    }
-                });
-
-                if (kmlHasData) {
-                    map.fitBounds(bounds);
-                } else {
-                    // KML içinde koordinat yoksa geri dön
-                    runDirections();
-                }
-            } catch (error) {
-                console.warn("KML ayrıştırma hatası, otomatik rota motoruna geçiliyor:", error);
-                runDirections();
-            } finally {
-                setIsKmlLoading(false);
-            }
-        };
-        processKml();
-    } 
-    // KML YOKSA DİREKT OTOMATİK ROTA
-    else if (isRoute && validPlaces.length > 1) {
-        runDirections();
-    } else if (validPlaces.length > 0) {
-        if (!bounds.isEmpty()) {
-            map.fitBounds(bounds);
-            if (validPlaces.length === 1) map.setZoom(15);
-        }
-    }
-
-  }, [map, places, extraMarkers, kmlUrl, isRoute, authFailed, language, startLocation, travelMode]);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <div className={cn("relative overflow-hidden rounded-xl bg-slate-100", className)}>
-      {(!isApiLoaded || isKmlLoading) && (
-         <div className="absolute inset-0 flex items-center justify-center bg-muted/30 z-10">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-         </div>
-      )}
-      <div ref={mapRef} className="w-full h-full" />
-      {authFailed && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-200 text-slate-500 p-4 text-center text-sm font-bold">
-              Harita yüklenemedi. Lütfen API anahtarını kontrol edin.
-          </div>
+    <div className={cn("relative overflow-hidden rounded-xl bg-slate-100 h-full w-full", className)}>
+      <Map
+        mapId="ROTA_SALIHLI_MAP_ID"
+        defaultCenter={{ lat: 38.48, lng: 28.14 }}
+        defaultZoom={12}
+        gestureHandling={'greedy'}
+        disableDefaultUI={false}
+      >
+        <KmlAndDirectionsLayer 
+          places={places} 
+          isRoute={isRoute} 
+          kmlUrl={kmlUrl} 
+          travelMode={travelMode}
+          setIsLoading={setIsLoading}
+        />
+
+        {/* User Location Marker */}
+        {startLocation && (
+          <AdvancedMarker position={startLocation} title="Konumunuz">
+            <Pin background={'#4285F4'} glyphColor={'#FFFFFF'} borderColor={'#FFFFFF'} scale={0.8} />
+          </AdvancedMarker>
+        )}
+
+        {/* Place Markers */}
+        {places.map((place, index) => (
+          <AdvancedMarker
+            key={place.id}
+            position={place.coordinates}
+            onClick={() => setSelectedPlace(place)}
+          >
+            <Pin 
+              background={'#166534'} 
+              glyphColor={'#FFFFFF'} 
+              borderColor={'#FFFFFF'} 
+              glyph={isRoute ? (index + 1).toString() : undefined}
+              scale={isRoute ? 1.2 : 1.0}
+            />
+          </AdvancedMarker>
+        ))}
+
+        {/* Extra Markers */}
+        {extraMarkers.map((place) => (
+          <AdvancedMarker
+            key={place.id}
+            position={place.coordinates}
+            onClick={() => setSelectedPlace(place)}
+          >
+            <Pin background={'#6B7280'} glyphColor={'#FFFFFF'} borderColor={'#FFFFFF'} scale={0.8} />
+          </AdvancedMarker>
+        ))}
+
+        {selectedPlace && (
+          <InfoWindow
+            position={selectedPlace.coordinates}
+            onCloseClick={() => setSelectedPlace(null)}
+          >
+            <div className="p-2 text-slate-900">
+              <h3 className="font-bold text-sm">{selectedPlace.name.tr}</h3>
+              <a href={`/yerler/${selectedPlace.slug.tr}`} className="text-xs text-primary hover:underline mt-1 block">
+                Detayları Gör →
+              </a>
+            </div>
+          </InfoWindow>
+        )}
+      </Map>
+
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/20 z-50">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        </div>
       )}
     </div>
   );
+};
+
+/**
+ * KML ve Yol Tarifi Katmanını Yöneten Alt Bileşen
+ */
+const KmlAndDirectionsLayer = ({ 
+  places, 
+  isRoute, 
+  kmlUrl, 
+  travelMode,
+  setIsLoading 
+}: { 
+  places: Place[]; 
+  isRoute: boolean; 
+  kmlUrl?: string; 
+  travelMode: string;
+  setIsLoading: (val: boolean) => void;
+}) => {
+  const map = useMap();
+  const polylineRef = useRef<google.maps.Polyline | null>(null);
+  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+
+  const cleanup = useCallback(() => {
+    if (polylineRef.current) {
+      polylineRef.current.setMap(null);
+      polylineRef.current = null;
+    }
+    if (directionsRendererRef.current) {
+      directionsRendererRef.current.setMap(null);
+      directionsRendererRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!map) return;
+    cleanup();
+
+    const bounds = new google.maps.LatLngBounds();
+    const validPlaces = places.filter(p => p.coordinates?.lat && !isNaN(p.coordinates.lat));
+
+    // --- 1. ÖNCELİK: KML DOSYASI ---
+    if (kmlUrl) {
+      const processKml = async () => {
+        setIsLoading(true);
+        try {
+          // CORS uyarısı: Dış kaynaklı Firebase URL'leri fetch edilebilir olmalıdır.
+          const response = await fetch(kmlUrl).catch(() => null);
+          if (!response || !response.ok) throw new Error("KML yüklenemedi");
+
+          const text = await response.text();
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(text, 'text/xml');
+          const coordsElems = xml.getElementsByTagName('coordinates');
+          
+          const path: google.maps.LatLngLiteral[] = [];
+          
+          Array.from(coordsElems).forEach(elem => {
+            const raw = elem.textContent?.trim() || "";
+            const points = raw.split(/[\s\n\r]+/).filter(p => p.trim());
+            points.forEach(p => {
+              const parts = p.split(',');
+              if (parts.length >= 2) {
+                const lng = parseFloat(parts[0]);
+                const lat = parseFloat(parts[1]);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                  const pt = { lat, lng };
+                  path.push(pt);
+                  bounds.extend(pt);
+                }
+              }
+            });
+          });
+
+          if (path.length > 0) {
+            polylineRef.current = new google.maps.Polyline({
+              path,
+              strokeColor: '#0000FF',
+              strokeWeight: 6,
+              strokeOpacity: 0.8,
+              map
+            });
+            map.fitBounds(bounds);
+          } else {
+            throw new Error("KML koordinat içermiyor");
+          }
+        } catch (err) {
+          console.warn("KML Parser Hatası, Standart Rota Motoruna Geçiliyor:", err);
+          drawDirections(map, validPlaces, travelMode, bounds);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      processKml();
+    } 
+    // --- 2. SEÇENEK: GOOGLE DIRECTIONS API ---
+    else if (isRoute && validPlaces.length >= 2) {
+      drawDirections(map, validPlaces, travelMode, bounds);
+    } 
+    // --- 3. SEÇENEK: SADECE MARKER ODAKLAMA ---
+    else if (validPlaces.length > 0) {
+      validPlaces.forEach(p => bounds.extend(p.coordinates));
+      map.fitBounds(bounds);
+      if (validPlaces.length === 1) map.setZoom(15);
+    }
+
+    return cleanup;
+  }, [map, kmlUrl, places, isRoute, travelMode, cleanup, setIsLoading]);
+
+  return null;
+};
+
+/**
+ * Standart Google Yol Tarifi Çizme Fonksiyonu
+ */
+const drawDirections = (
+  map: google.maps.Map, 
+  places: Place[], 
+  mode: string, 
+  bounds: google.maps.LatLngBounds
+) => {
+  const directionsService = new google.maps.DirectionsService();
+  const renderer = new google.maps.DirectionsRenderer({
+    map,
+    suppressMarkers: true,
+    polylineOptions: {
+      strokeColor: '#0055FF',
+      strokeWeight: 6,
+      strokeOpacity: 0.8
+    }
+  });
+
+  const waypoints = places.slice(1, -1).map(p => ({
+    location: p.coordinates,
+    stopover: true
+  }));
+
+  const targetMode = mode === 'BICYCLING' ? google.maps.TravelMode.BICYCLING :
+                    mode === 'WALKING' ? google.maps.TravelMode.WALKING :
+                    google.maps.TravelMode.DRIVING;
+
+  directionsService.route({
+    origin: places[0].coordinates,
+    destination: places[places.length - 1].coordinates,
+    waypoints: waypoints,
+    travelMode: targetMode,
+    optimizeWaypoints: false
+  }, (result, status) => {
+    if (status === 'OK' && result) {
+      renderer.setDirections(result);
+    } else {
+      // Fallback: Düz çizgi
+      const path = places.map(p => p.coordinates);
+      new google.maps.Polyline({
+        path,
+        strokeColor: '#0055FF',
+        strokeOpacity: 0.6,
+        strokeWeight: 4,
+        map
+      });
+      places.forEach(p => bounds.extend(p.coordinates));
+      map.fitBounds(bounds);
+    }
+  });
 };
