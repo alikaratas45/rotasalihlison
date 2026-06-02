@@ -37,7 +37,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
   const polylinesRef = useRef<google.maps.Polyline[]>([]);
   const fallbackPolylineRef = useRef<google.maps.Polyline | null>(null);
 
-  // 1. Google Maps Script Ready Check
   useEffect(() => {
     const handleAuthError = () => setAuthFailed(true);
     window.addEventListener('gm-auth-failure', handleAuthError);
@@ -55,7 +54,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     };
   }, []);
 
-  // 2. Map Initialization
   useEffect(() => {
     if (isApiLoaded && mapRef.current && !map && !authFailed) {
       const salihliCenter = { lat: 38.48, lng: 28.14 };
@@ -83,23 +81,24 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
         preserveViewport: false,
         polylineOptions: {
           strokeColor: '#0047FF',
-          strokeWeight: 8,
-          strokeOpacity: 0.8,
-          zIndex: 50
+          strokeWeight: 10,
+          strokeOpacity: 0.9,
+          zIndex: 60
         }
       });
     }
   }, [isApiLoaded, map, authFailed]);
 
-  // 3. Directions & Path Logic (Used when NO KML is provided)
   useEffect(() => {
-    if (!map || !places || authFailed || !directionsServiceRef.current || !directionsRendererRef.current || kmlUrl) {
-      if (directionsRendererRef.current) directionsRendererRef.current.setDirections({ routes: [] } as any);
+    if (!map || authFailed || !directionsServiceRef.current || !directionsRendererRef.current) return;
+
+    if (kmlUrl) {
+      directionsRendererRef.current.setDirections({ routes: [] } as any);
       if (fallbackPolylineRef.current) fallbackPolylineRef.current.setMap(null);
       return;
     }
 
-    const validPlaces = places.filter(p => p.coordinates?.lat && p.coordinates?.lng);
+    const validPlaces = (places || []).filter(p => p.coordinates?.lat && p.coordinates?.lng);
     
     if (!isRoute) {
         const bounds = new google.maps.LatLngBounds();
@@ -141,15 +140,16 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       if (status === google.maps.DirectionsStatus.OK && result) {
         directionsRendererRef.current?.setDirections(result);
       } else {
+        if (fallbackPolylineRef.current) fallbackPolylineRef.current.setMap(null);
         const path = [origin, ...validPlaces.map(p => p.coordinates)];
         const fallback = new google.maps.Polyline({
             path: path,
             geodesic: true,
             strokeColor: '#0047FF',
-            strokeOpacity: 0.8,
-            strokeWeight: 8,
+            strokeOpacity: 0.9,
+            strokeWeight: 10,
             map: map,
-            zIndex: 50
+            zIndex: 60
         });
         fallbackPolylineRef.current = fallback;
         const bounds = new google.maps.LatLngBounds();
@@ -159,7 +159,6 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     });
   }, [map, places, isRoute, authFailed, startLocation, travelMode, kmlUrl]);
 
-  // 4. KML Path Logic
   useEffect(() => {
     if (!map || authFailed || !kmlUrl) {
         polylinesRef.current.forEach(p => p.setMap(null));
@@ -172,7 +171,8 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       try {
         const response = await fetch(kmlUrl).catch(() => null);
         if (!response || !response.ok) {
-            console.warn("KML load failed for URL:", kmlUrl);
+            console.warn("KML yüklenemedi:", kmlUrl);
+            setIsKmlLoading(false);
             return;
         }
         
@@ -211,24 +211,26 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
                 geodesic: true,
                 strokeColor: '#0047FF',
                 strokeOpacity: 0.9,
-                strokeWeight: 8,       
+                strokeWeight: 10,       
                 map: map,
-                zIndex: 40
+                zIndex: 60
               });
               polylinesRef.current.push(polyline);
             }
           }
         });
 
-        places.forEach(p => {
-            if(p.coordinates?.lat) bounds.extend(p.coordinates);
-        });
+        if (places && places.length > 0) {
+          places.forEach(p => {
+              if(p.coordinates?.lat && !isNaN(p.coordinates.lat)) bounds.extend(p.coordinates);
+          });
+        }
 
         if (!bounds.isEmpty()) {
           map.fitBounds(bounds);
         }
       } catch (error) {
-        console.error("KML Processing Error:", error);
+        console.error("KML İşleme Hatası:", error);
       } finally {
         setIsKmlLoading(false);
       }
@@ -237,21 +239,19 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
     processKml();
   }, [map, kmlUrl, authFailed, places]);
 
-  // 5. Markers Logic
   useEffect(() => {
     if (!map || authFailed) return;
 
     markersRef.current.forEach(m => m.setMap(null));
     markersRef.current = [];
 
-    if (!places || places.length === 0) return;
+    const validPlaces = (places || []).filter(p => p.coordinates?.lat && !isNaN(p.coordinates.lat));
+    if (validPlaces.length === 0) return;
 
     const infoWindow = new window.google.maps.InfoWindow();
     const typedLanguage = language as Language;
 
-    places.forEach((place, index) => {
-      if (!place.coordinates || isNaN(place.coordinates.lat)) return;
-      
+    validPlaces.forEach((place, index) => {
       const marker = new window.google.maps.Marker({
         position: place.coordinates,
         map: map,

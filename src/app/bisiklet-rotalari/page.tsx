@@ -73,7 +73,7 @@ export default function BisikletRotalariPage() {
           setRoutePois(explicitStops);
         }
       } catch (err) {
-        console.error("Proximity filtering error:", err);
+        console.error("Mesafe filtreleme hatası:", err);
       } finally {
         if (isMounted) setIsProcessingPois(false);
       }
@@ -179,43 +179,17 @@ export default function BisikletRotalariPage() {
                 
                 <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
                     <div className="w-full h-full relative">
-                        {activeRoute?.kmlUrl ? (
+                        {activeRoute && (
                           <PlacesMap 
+                            key={activeRoute.id}
                             places={routePois} 
                             kmlUrl={activeRoute.kmlUrl} 
                             isRoute={true} 
                             className="w-full h-full"
                           />
-                        ) : activeRoute && (activeRoute.wikilocEmbedHtml || activeRoute.wikilocId) ? (
-                            activeRoute.wikilocEmbedHtml ? (
-                                <div 
-                                    className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-none" 
-                                    dangerouslySetInnerHTML={{ __html: activeRoute.wikilocEmbedHtml }} 
-                                />
-                            ) : (
-                                <iframe 
-                                    src={`https://tr.wikiloc.com/wikiloc/embedv2.do?id=${activeRoute.wikilocId}&elevation=on&images=on&maptype=H`} 
-                                    width="100%" 
-                                    height="100%" 
-                                    frameBorder="0" 
-                                    scrolling="no"
-                                    title={`${activeRoute.name.tr} Wikiloc Detayı`}
-                                    className="w-full h-full"
-                                ></iframe>
-                            )
-                        ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400 p-10 text-center">
-                                <MapPinned className="h-12 w-12 mb-4 opacity-20" />
-                                <p className="font-bold">Bu rota için henüz harita eklenmemiş.</p>
-                            </div>
                         )}
                     </div>
                 </Card>
-                {activeRoute?.wikilocId && !activeRoute.kmlUrl && (
-                    <p className="text-[10px] text-slate-400 italic text-center">
-                        Powered by <a href="https://tr.wikiloc.com" target="_blank" rel="noopener noreferrer" className="text-[#4C8C2B] font-bold hover:underline">Wikiloc</a>
-                    </p>
-                )}
             </div>
             </div>
         ) : (
