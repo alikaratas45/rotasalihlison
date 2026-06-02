@@ -40,7 +40,6 @@ export default function YuruyusRotalariPage() {
   const [isProcessingPois, setIsProcessingPois] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | undefined>(undefined);
 
-  // Konum Takibi
   useEffect(() => {
     if (typeof window !== 'undefined' && "geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -198,7 +197,7 @@ export default function YuruyusRotalariPage() {
                         </TabsList>
                         
                         <TabsContent value="interactive">
-                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
+                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white h-[500px] lg:h-[600px] border border-slate-100">
                                 <div className="w-full h-full relative">
                                     {activeRoute && (
                                         <PlacesMap 
@@ -217,7 +216,7 @@ export default function YuruyusRotalariPage() {
                         </TabsContent>
                         
                         <TabsContent value="wikiloc">
-                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
+                            <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white h-[500px] lg:h-[600px] border border-slate-100">
                                 {activeRoute?.wikilocEmbedHtml ? (
                                     <div className="w-full h-full" dangerouslySetInnerHTML={{ 
                                         __html: activeRoute.wikilocEmbedHtml
