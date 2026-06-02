@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -6,9 +5,10 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { AudioProximityAlert } from '@/components/audio-proximity-alert';
-import { cn } from '@/lib/utils';
 import { useFirestore } from '@/firebase';
 import { incrementVisitorCount } from '@/firebase/firestore/stats-service';
+import { APIProvider } from '@vis.gl/react-google-maps';
+import { googleMapsApiKey } from '@/lib/config';
 
 export default function AppWrapper({
   children,
@@ -52,19 +52,21 @@ export default function AppWrapper({
   }, []);
 
   return (
-    <div 
-      onClick={handleInteraction} 
-      onTouchStart={handleInteraction}
-      className="min-h-screen flex flex-col"
-    >
-      {mounted && <AudioProximityAlert />}
-      
-      <div className="flex flex-col flex-1">
-          <Header />
-          <main className="flex-grow">{children}</main>
-          <Footer />
+    <APIProvider apiKey={googleMapsApiKey}>
+      <div 
+        onClick={handleInteraction} 
+        onTouchStart={handleInteraction}
+        className="min-h-screen flex flex-col"
+      >
+        {mounted && <AudioProximityAlert />}
+        
+        <div className="flex flex-col flex-1">
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+        </div>
+        <Toaster />
       </div>
-      <Toaster />
-    </div>
+    </APIProvider>
   );
 }
