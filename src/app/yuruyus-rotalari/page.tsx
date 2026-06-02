@@ -35,7 +35,8 @@ export default function YuruyusRotalariPage() {
   );
 
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
-  const [routePois, setRoutePois] = useState<Place[]>([]);
+  const [routeStops, setRouteStops] = useState<Place[]>([]);
+  const [nearbyPois, setNearbyPois] = useState<Place[]>([]);
   const [isProcessingPois, setIsProcessingPois] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | undefined>(undefined);
 
@@ -67,10 +68,12 @@ export default function YuruyusRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        const explicitStops = (activeRoute.stops || [])
+        const stops = (activeRoute.stops || [])
           .map(id => allPlaces.find(p => String(p.id) === String(id)))
           .filter(Boolean) as Place[];
         
+        setRouteStops(stops);
+
         if (activeRoute.kmlUrl) {
           const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
           if (!isMounted) return;
@@ -79,10 +82,9 @@ export default function YuruyusRotalariPage() {
             if (activeRoute.stops?.includes(place.id)) return false;
             return isPointNearRoute(place.coordinates, kmlPoints, 500);
           });
-          
-          setRoutePois([...explicitStops, ...nearby]);
+          setNearbyPois(nearby);
         } else {
-          setRoutePois(explicitStops);
+          setNearbyPois([]);
         }
       } catch (err) {
         console.error("POI filtering error:", err);
@@ -110,6 +112,8 @@ export default function YuruyusRotalariPage() {
     poi: 'POI',
     accommodation: t('accommodation.title')
   };
+
+  const allRouteMarkers = useMemo(() => [...routeStops, ...nearbyPois], [routeStops, nearbyPois]);
 
   if (routesLoading) return (
     <div className="container mx-auto px-4 py-20 text-center">
@@ -199,7 +203,8 @@ export default function YuruyusRotalariPage() {
                                     {activeRoute && (
                                         <PlacesMap 
                                             key={`map-${activeRoute.id}`}
-                                            places={routePois} 
+                                            places={routeStops} 
+                                            extraMarkers={nearbyPois}
                                             kmlUrl={activeRoute.kmlUrl} 
                                             isRoute={true} 
                                             className="w-full h-full"
@@ -240,7 +245,7 @@ export default function YuruyusRotalariPage() {
             <div className="mt-20">
                 <div className="flex items-center gap-3 mb-8 border-b pb-4">
                     <MapPinned className="h-8 w-8 text-primary" />
-                    <h2 className="text-3xl font-bold font-headline text-slate-900">{t('bicycleRoutes.poisTitle')}</h2>
+                    <h2 className="text-3xl font-bold font-headline text-slate-900">{t('hikingRoutes.availableRoutes')}</h2>
                 </div>
 
                 {isProcessingPois ? (
@@ -256,9 +261,9 @@ export default function YuruyusRotalariPage() {
                             </Card>
                         ))}
                     </div>
-                ) : routePois.length > 0 ? (
+                ) : allRouteMarkers.length > 0 ? (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {routePois.map((place) => (
+                        {allRouteMarkers.map((place) => (
                             <Card key={place.id} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
                                 <div className="relative h-48 w-full overflow-hidden">
                                     <Image
@@ -277,13 +282,13 @@ export default function YuruyusRotalariPage() {
                                 </div>
                                 <CardContent className="p-6">
                                     <h3 className="text-xl font-bold font-headline mb-3 text-slate-900 group-hover:text-primary transition-colors">
-                                        {place.name[typedLanguage]}
+                                        {place.name[typedLanguage] || place.name.tr}
                                     </h3>
                                     <p className="text-slate-500 text-sm line-clamp-2 mb-6 leading-relaxed">
-                                        {place.description[typedLanguage]}
+                                        {place.description[typedLanguage] || place.description.tr}
                                     </p>
                                     <Button asChild className="w-full font-bold h-11" variant="outline">
-                                        <Link href={`/yerler/${place.slug[typedLanguage]}`}>
+                                        <Link href={`/yerler/${place.slug[typedLanguage] || place.slug.tr}`}>
                                             <Info className="mr-2 h-4 w-4" />
                                             {t('actions.seeDetails')}
                                         </Link>
@@ -295,7 +300,7 @@ export default function YuruyusRotalariPage() {
                 ) : (
                     <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                         <Info className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                        <p className="text-slate-500 font-medium">{t('bicycleRoutes.noPoisFound')}</p>
+                        <p className="text-slate-500 font-medium">{t('hikingRoutes.noPoisFound') || 'Bu rota için POI bulunamadı.'}</p>
                     </div>
                 )}
             </div>

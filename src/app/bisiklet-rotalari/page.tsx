@@ -35,7 +35,8 @@ export default function BisikletRotalariPage() {
   );
 
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
-  const [routePois, setRoutePois] = useState<Place[]>([]);
+  const [routeStops, setRouteStops] = useState<Place[]>([]);
+  const [nearbyPois, setNearbyPois] = useState<Place[]>([]);
   const [isProcessingPois, setIsProcessingPois] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | undefined>(undefined);
   
@@ -67,10 +68,12 @@ export default function BisikletRotalariPage() {
       setIsProcessingPois(true);
       
       try {
-        const explicitStops = (activeRoute.stops || [])
+        const stops = (activeRoute.stops || [])
           .map(id => allPlaces.find(p => String(p.id) === String(id)))
           .filter(Boolean) as Place[];
         
+        setRouteStops(stops);
+
         if (activeRoute.kmlUrl) {
           const kmlPoints = await getKmlPoints(activeRoute.kmlUrl);
           if (!isMounted) return;
@@ -79,10 +82,9 @@ export default function BisikletRotalariPage() {
             if (activeRoute.stops?.includes(place.id)) return false;
             return isPointNearRoute(place.coordinates, kmlPoints, 500);
           });
-          
-          setRoutePois([...explicitStops, ...nearby]);
+          setNearbyPois(nearby);
         } else {
-          setRoutePois(explicitStops);
+          setNearbyPois([]);
         }
       } catch (err) {
         console.error("POI filtering error:", err);
@@ -110,6 +112,8 @@ export default function BisikletRotalariPage() {
     poi: 'POI',
     accommodation: t('accommodation.title')
   };
+
+  const allRouteMarkers = useMemo(() => [...routeStops, ...nearbyPois], [routeStops, nearbyPois]);
 
   if (routesLoading) return (
     <div className="container mx-auto px-4 py-20 text-center">
@@ -199,7 +203,8 @@ export default function BisikletRotalariPage() {
                                     {activeRoute && (
                                         <PlacesMap 
                                             key={`map-${activeRoute.id}`}
-                                            places={routePois} 
+                                            places={routeStops} 
+                                            extraMarkers={nearbyPois}
                                             kmlUrl={activeRoute.kmlUrl} 
                                             isRoute={true} 
                                             className="w-full h-full"
@@ -256,9 +261,9 @@ export default function BisikletRotalariPage() {
                             </Card>
                         ))}
                     </div>
-                ) : routePois.length > 0 ? (
+                ) : allRouteMarkers.length > 0 ? (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {routePois.map((place) => (
+                        {allRouteMarkers.map((place) => (
                             <Card key={place.id} className="group overflow-hidden transition-all duration-300 hover:shadow-2xl border-none bg-white">
                                 <div className="relative h-48 w-full overflow-hidden">
                                     <Image
@@ -277,13 +282,13 @@ export default function BisikletRotalariPage() {
                                 </div>
                                 <CardContent className="p-6">
                                     <h3 className="text-xl font-bold font-headline mb-3 text-slate-900 group-hover:text-primary transition-colors">
-                                        {place.name[typedLanguage]}
+                                        {place.name[typedLanguage] || place.name.tr}
                                     </h3>
                                     <p className="text-slate-500 text-sm line-clamp-2 mb-6 leading-relaxed">
-                                        {place.description[typedLanguage]}
+                                        {place.description[typedLanguage] || place.description.tr}
                                     </p>
                                     <Button asChild className="w-full font-bold h-11" variant="outline">
-                                        <Link href={`/yerler/${place.slug[typedLanguage]}`}>
+                                        <Link href={`/yerler/${place.slug[typedLanguage] || place.slug.tr}`}>
                                             <Info className="mr-2 h-4 w-4" />
                                             {t('actions.seeDetails')}
                                         </Link>
