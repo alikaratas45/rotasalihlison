@@ -73,7 +73,7 @@ export default function YuruyusRotalariPage() {
           setRoutePois(explicitStops);
         }
       } catch (err) {
-        console.error("Mesafe filtreleme hatası:", err);
+        console.error("POI filtering error:", err);
       } finally {
         if (isMounted) setIsProcessingPois(false);
       }
@@ -182,13 +182,25 @@ export default function YuruyusRotalariPage() {
                     <Card className="overflow-hidden border-none shadow-xl rounded-2xl bg-white border border-slate-100 h-[500px] lg:h-[600px]">
                         <div className="w-full h-full relative">
                             {activeRoute && (
-                              <PlacesMap 
-                                key={activeRoute.id}
-                                places={routePois} 
-                                kmlUrl={activeRoute.kmlUrl} 
-                                isRoute={true} 
-                                className="w-full h-full"
-                              />
+                              activeRoute.kmlUrl ? (
+                                <PlacesMap 
+                                    key={`map-${activeRoute.id}`}
+                                    places={routePois} 
+                                    kmlUrl={activeRoute.kmlUrl} 
+                                    isRoute={true} 
+                                    className="w-full h-full"
+                                />
+                              ) : activeRoute.wikilocEmbedHtml ? (
+                                <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: activeRoute.wikilocEmbedHtml.replace('width="500"', 'width="100%"').replace('height="400"', 'height="100%"') }} />
+                              ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center p-10 text-center bg-slate-50">
+                                    <MapPinned className="h-12 w-12 text-slate-300 mb-4" />
+                                    <p className="text-slate-500 font-bold">Harita verisi (KML veya Wikiloc) bulunamadı.</p>
+                                    <Button className="mt-4" onClick={() => window.open(`https://www.wikiloc.com/wikiloc/find.do?q=${activeRoute.name.tr}`, '_blank')}>
+                                        Wikiloc'ta Ara
+                                    </Button>
+                                </div>
+                              )
                             )}
                         </div>
                     </Card>
