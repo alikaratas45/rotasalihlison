@@ -50,7 +50,7 @@ export const routes: Route[] = [
             en: 'Embark on a journey through the fertile lands of the Gediz River. This route will take you on a peaceful journey from the healing waters of Kurşunlu to volcanic canyons and the fascinating giant cauldrons of Tabak Creek.',
             fr: 'Embarquez pour un voyage à travers les terres fertiles de la rivière Gediz. Cet itinéraire vous emmènera dans un voyage paisible des eaux curatives de Kurşunlu aux canyons volcaniques et aux fascinants chaudrons géants du ruisseau Tabak.',
             de: 'Begeben Sie sich auf eine Reise durch die fruchtbaren Länder des Gediz-Flusses. Diese Route führt Sie auf eine friedliche Reise von den heilenden Wassern von Kurşunlu zu vulkanischen Schluchten und den faszinierenden Riesenkesseln des Tabak-Bachs.',
-            ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から火山の峡谷やタバック・クリークの魅力的な巨大な大釜へと続く平和な旅にあなたを連れています。'
+            ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から火山の峡谷やタバック・クリーク의魅力的な巨大な大釜へと続く平和な旅にあなたを連れています。'
         },
         category: 'thematic',
         stops: ['2', '6', '7']
@@ -174,16 +174,17 @@ export const routes: Route[] = [
     {
         id: 'h-4',
         category: 'walking',
-        distance: '6,5 km',
+        distance: '7,2 km',
         wikilocId: '40219600',
-        slug: { tr: 'kursunlu-allahdiyen-yuruyus-rotasi', en: 'kursunlu-allahdiyen-hike', fr: 'sentier-kursunlu-allahdiyen', de: 'kursunlu-allahdiyen-weg', ja: 'kursunlu-allahdiyen-ja' },
-        name: { tr: 'Kurşunlu-Allahdiyen Yürüyüş Rotası', en: 'Kurşunlu-Allahdiyen Walking Route', fr: 'Itinéraire Kurşunlu-Allahdiyen', de: 'Kurşunlu-Allahdiyen Wanderweg', ja: 'クルシュンル・アッラーディイェン' },
+        kmlUrl: '/allahdiyen.kml',
+        slug: { tr: 'allahdiyen-komurcutepesi-yuruyus-rotasi', en: 'allahdiyen-komurcutepesi-hike', fr: 'sentier-allahdiyen-komurcutepesi', de: 'allahdiyen-komurcutepesi-weg', ja: 'allahdiyen-komurcutepesi-ja' },
+        name: { tr: 'Allahdiyen - Kömürcütepesi Yürüyüş Rotası', en: 'Allahdiyen - Kömürcütepesi Hiking Route', fr: 'Itinéraire Allahdiyen - Kömürcütepesi', de: 'Allahdiyen - Kömürcütepesi Wanderweg', ja: 'アッラーディイェン - キョミュルジュテペシ' },
         description: { 
-            tr: 'Kurşunlu Kaplıcaları\'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru.',
-            en: 'A medium-difficulty nature walk trail starting from Kurşunlu Thermal Springs to Allahdiyen village, accompanied by pine trees and the sound of the stream.',
-            fr: 'Un sentier de randonnée en pleine nature de difficulté moyenne partant des sources thermales de Kurşunlu jusqu\'au village d\'Allahdiyen.',
-            de: 'Ein mittelschwerer Naturwanderweg, der von den Kurşunlu Thermalquellen zum Dorf Allahdiyen führt.',
-            ja: 'クルシュンル温泉からアッラーディイェン村まで続く、松の木と小川'
+            tr: 'Allahdiyen köyünden başlayıp Kömürcütepesi mevkiine kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde muazzam bir doğa yürüyüşü parkuru.',
+            en: 'A magnificent nature walk trail starting from Allahdiyen village and extending to Kömürcütepesi, accompanied by pine trees and the sound of the stream.',
+            fr: 'Un sentier de randonnée en pleine nature partant du village d\'Allahdiyen jusqu\'à Kömürcütepesi.',
+            de: 'Ein herrlicher Naturwanderweg, der vom Dorf Allahdiyen zum Kömürcütepesi führt.',
+            ja: 'アッラーディイェン村からキョミュルジュテペシまで続く、松の木と小川のせせらぎに包まれた素晴らしい自然散策コースです。'
         },
         stops: ['2']
     }
