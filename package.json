@@ -6,7 +6,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "dev": "next dev --turbopack -p 9002",
+    "dev": "next dev -p 9002 --hostname 0.0.0.0",
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
@@ -42,12 +42,12 @@
     "embla-carousel-react": "^8.6.0",
     "firebase": "^10.12.2",
     "lucide-react": "^0.475.0",
-    "next": "15.3.8",
+    "next": "15.1.7",
     "next-themes": "^0.3.0",
     "patch-package": "^8.0.0",
-    "react": "^18.3.1",
+    "react": "^19.0.0",
     "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.0.0",
     "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.52.0",
     "recharts": "^2.15.1",
@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
