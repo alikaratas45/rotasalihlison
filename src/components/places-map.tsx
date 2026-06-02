@@ -171,7 +171,10 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
       setIsKmlLoading(true);
       try {
         const response = await fetch(kmlUrl).catch(() => null);
-        if (!response || !response.ok) throw new Error("KML load failed");
+        if (!response || !response.ok) {
+            console.warn("KML load failed for URL:", kmlUrl);
+            return;
+        }
         
         const kmlText = await response.text();
         const parser = new DOMParser();
@@ -225,7 +228,7 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
           map.fitBounds(bounds);
         }
       } catch (error) {
-        console.error("KML Error:", error);
+        console.error("KML Processing Error:", error);
       } finally {
         setIsKmlLoading(false);
       }
