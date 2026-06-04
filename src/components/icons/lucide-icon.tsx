@@ -17,10 +17,16 @@ import {
   Compass,
   Info,
   Bike,
+  Hotel,
+  ForkKnife,
+  Trees,
+  History,
+  ShoppingBag,
   type LucideProps
 } from 'lucide-react';
 
 const iconMap: Record<string, React.FC<LucideProps>> = {
+  // Standart İkonlar
   Landmark,
   Mountain,
   Utensils,
@@ -35,8 +41,25 @@ const iconMap: Record<string, React.FC<LucideProps>> = {
   Info,
   Footprints,
   Bike,
-  Climbing: Footprints, // Alias for backward compatibility
-  HelpCircle
+  Hotel,
+  ForkKnife,
+  Trees,
+  History,
+  ShoppingBag,
+  
+  // Akıllı Takma Adlar (Kategori isimleri veya varyasyonlar için)
+  Food: Utensils,
+  Cuisine: ForkKnife,
+  Accommodation: Bed,
+  Stay: Hotel,
+  Nature: Mountain,
+  Parks: Trees,
+  Historical: Landmark,
+  Chronology: History,
+  Shopping: ShoppingBag,
+  Climbing: Footprints,
+  Bicycle: Bike,
+  Help: HelpCircle
 };
 
 type LucideIconProps = {
@@ -46,8 +69,13 @@ type LucideIconProps = {
 };
 
 export const LucideIcon = ({ name, ...props }: LucideIconProps) => {
-  // Veritabanından veya statik veriden gelen ikon isminin ilk harfini büyütüp map'te arıyoruz
-  const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
-  const Icon = iconMap[capitalizedName] || iconMap[name] || HelpCircle;
+  if (!name) return <HelpCircle {...props} />;
+
+  // Veritabanından gelen ismi normalize et (İlk harf büyük, diğerleri küçük)
+  const normalizedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  
+  // Önce tam eşleşme, sonra normalize edilmiş eşleşme, en son fallback
+  const Icon = iconMap[name] || iconMap[normalizedName] || HelpCircle;
+  
   return <Icon {...props} />;
 };
