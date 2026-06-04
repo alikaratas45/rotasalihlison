@@ -16,6 +16,7 @@ import {
   Star,
   Compass,
   Info,
+  Bike,
   type LucideProps
 } from 'lucide-react';
 
@@ -33,6 +34,7 @@ const iconMap: Record<string, React.FC<LucideProps>> = {
   Compass,
   Info,
   Footprints,
+  Bike,
   Climbing: Footprints, // Alias for backward compatibility
   HelpCircle
 };
@@ -44,6 +46,8 @@ type LucideIconProps = {
 };
 
 export const LucideIcon = ({ name, ...props }: LucideIconProps) => {
-  const Icon = iconMap[name] || HelpCircle;
+  // Veritabanından veya statik veriden gelen ikon isminin ilk harfini büyütüp map'te arıyoruz
+  const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+  const Icon = iconMap[capitalizedName] || iconMap[name] || HelpCircle;
   return <Icon {...props} />;
 };

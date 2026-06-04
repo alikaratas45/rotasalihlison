@@ -88,26 +88,26 @@ export const experienceItems: Omit<ExperienceItem, 'id'>[] = [
   },
   {
     name: {
-      tr: 'Dijital Yayınlar',
-      en: 'Digital Publications',
-      fr: 'Publications Numériques',
-      de: 'Digitale Publikationen',
-      ja: '電子出版物'
+      tr: 'Yürüyüş Rotaları',
+      en: 'Hiking Routes',
+      fr: 'Sentiers de Randonnée',
+      de: 'Wanderwege',
+      ja: 'ハイキングルート'
     },
-    icon: 'Library',
-    link: '/dijital-yayinlar',
+    icon: 'Footprints',
+    link: '/yuruyus-rotalari',
     order: 8
   },
   {
     name: {
-      tr: 'Rotalar',
-      en: 'Tracks',
-      fr: 'Sentiers',
-      de: 'Pfade',
-      ja: 'トレイル'
+      tr: 'Bisiklet Rotaları',
+      en: 'Bicycle Routes',
+      fr: 'Pistes Cyclables',
+      de: 'Fahrradrouten',
+      ja: '自転車ルート'
     },
-    icon: 'Footprints',
-    link: '/yuruyus-rotalari',
+    icon: 'Bike',
+    link: '/bisiklet-rotalari',
     order: 9
   },
   {
