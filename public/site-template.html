@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rota Salihli - Tasarım Şablonu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: PT Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'PT Sans', sans-serif; background-color: #FDFCE6; }
+        .font-headline { font-weight: 900; }
+        .text-shadow-strong { text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+    </style>
+    <script>
+        // Tailwind Konfigürasyonu
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2D5A27', // Koyu Miras Yeşili
+                        accent: '#D4AF37',  // Lidya Altını
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="sticky top-0 z-50 w-full h-20 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="container mx-auto px-6 h-full flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary p-2 rounded-xl text-white">
+                    <i data-lucide="map" class="w-8 h-8"></i>
+                </div>
+                <span class="text-2xl font-black text-primary uppercase tracking-tighter">Rota Salihli</span>
+            </div>
+            <div class="hidden md:flex items-center gap-6 text-sm font-bold text-gray-600">
+                <a href="#" class="hover:text-primary transition-colors">YERLER</a>
+                <a href="#" class="hover:text-primary transition-colors">ROTALAR</a>
+                <a href="#" class="hover:text-primary transition-colors">HİKAYELER</a>
+                <a href="#" class="hover:text-primary transition-colors">LEZZETLER</a>
+                <button class="bg-accent text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-md">SESLİ REHBER</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative h-[70vh] flex items-center justify-center overflow-hidden">
+        <img src="https://i.imgur.com/2deYxHC.png" class="absolute inset-0 w-full h-full object-cover scale-105" alt="Sardes">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent"></div>
+        <div class="relative text-center text-white px-6">
+            <span class="inline-block bg-accent px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase mb-4 shadow-xl">Sardes'in Mirası</span>
+            <h1 class="text-5xl md:text-8xl font-black text-shadow-strong leading-none mb-6">SALİHLİ'Yİ KEŞFET</h1>
+            <p class="text-xl md:text-2xl italic font-medium max-w-2xl mx-auto opacity-90">"Paranın icat edildiği kadim toprakları bizimle keşfedin."</p>
+            <div class="mt-10 flex flex-wrap justify-center gap-4">
+                <button class="bg-primary px-10 py-4 rounded-2xl font-black text-lg shadow-2xl hover:scale-105 transition-all">HEMEN BAŞLA</button>
+                <button class="bg-black/40 backdrop-blur-md border border-white/30 px-10 py-4 rounded-2xl font-black text-lg shadow-2xl">BİLGİ AL</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE MENU -->
+    <section class="relative z-20 -mt-16">
+        <div class="container mx-auto px-6">
+            <div class="bg-white rounded-[3rem] shadow-2xl p-10">
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-black text-primary mb-2">Salihli'de Bir Gün</h2>
+                    <div class="w-20 h-1 bg-accent mx-auto rounded-full"></div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                    <!-- Bir Öğe Örneği -->
+                    <div class="group cursor-pointer flex flex-col items-center p-6 bg-gray-50 rounded-[2rem] hover:bg-primary transition-all duration-500 hover:-translate-y-2">
+                        <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white group-hover:text-primary transition-all">
+                            <i data-lucide="landmark" class="w-8 h-8 text-primary"></i>
+                        </div>
+                        <span class="font-black text-xs uppercase tracking-tighter text-center group-hover:text-white">Tarihe Yolculuk</span>
+                    </div>
+                    <!-- Diğer Öğeler (Simüle Edildi) -->
+                    <div class="group flex flex-col items-center p-6 bg-gray-50 rounded-[2rem] hover:bg-primary transition-all duration-500"><div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white"><i data-lucide="mountain" class="w-8 h-8 text-primary"></i></div><span class="font-black text-xs uppercase tracking-tighter group-hover:text-white">Doğa & Huzur</span></div>
+                    <div class="group flex flex-col items-center p-6 bg-gray-50 rounded-[2rem] hover:bg-primary transition-all duration-500"><div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white"><i data-lucide="utensils" class="w-8 h-8 text-primary"></i></div><span class="font-black text-xs uppercase tracking-tighter group-hover:text-white">Lezzetler</span></div>
+                    <div class="group flex flex-col items-center p-6 bg-gray-50 rounded-[2rem] hover:bg-primary transition-all duration-500"><div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white"><i data-lucide="map" class="w-8 h-8 text-primary"></i></div><span class="font-black text-xs uppercase tracking-tighter group-hover:text-white">Rotalar</span></div>
+                    <div class="group flex flex-col items-center p-6 bg-gray-50 rounded-[2rem] hover:bg-primary transition-all duration-500"><div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white"><i data-lucide="bike" class="w-8 h-8 text-primary"></i></div><span class="font-black text-xs uppercase tracking-tighter group-hover:text-white">Bisiklet Yolu</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT SECTION (PLACES) -->
+    <section class="py-20 container mx-auto px-6">
+        <h2 class="text-4xl font-black text-gray-800 mb-10 border-l-8 border-primary pl-6 uppercase tracking-tight">Öne Çıkan Yerler</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Place Card -->
+            <div class="group bg-white rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500">
+                <div class="relative h-64">
+                    <img src="https://i.imgur.com/l2YJCmK.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Gymnasium">
+                    <div class="absolute top-6 left-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-[10px] font-black uppercase text-primary">ANTİK KENT</div>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-black text-gray-800 mb-3 group-hover:text-primary transition-colors">Sart Gymnasium</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-3">Antik çağın en görkemli hamam ve eğitim kompleksi. Roma mimarisinin en eşsiz örneklerinden birini keşfedin.</p>
+                    <a href="#" class="inline-flex items-center text-primary font-black text-xs uppercase tracking-widest group-hover:gap-2 transition-all">İNCELE <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+                </div>
+            </div>
+            <!-- Diğer Kartlar Buraya Gelecek -->
+        </div>
+    </section>
+
+    <!-- GUESTBOOK (ZİYARETÇİ DEFTERİ) -->
+    <section class="py-20 bg-primary/5">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <div class="text-center mb-12">
+                <div class="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mx-auto mb-4 text-primary">
+                    <i data-lucide="message-square" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-4xl font-black text-gray-800 uppercase tracking-tight">Ziyaretçi Defteri</h2>
+            </div>
+            
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-primary/5 mb-10">
+                <input type="text" placeholder="İsminiz" class="w-full p-4 rounded-xl border border-gray-100 bg-gray-50 mb-4 focus:ring-2 focus:ring-primary outline-none">
+                <textarea placeholder="Mesajınız..." rows="4" class="w-full p-4 rounded-xl border border-gray-100 bg-gray-50 mb-6 focus:ring-2 focus:ring-primary outline-none"></textarea>
+                <button class="w-full bg-primary text-white py-4 rounded-xl font-black text-lg shadow-lg shadow-primary/20">MESAJI GÖNDER</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADMIN PANEL DRAFT (MODAL GİBİ SİMÜLE EDİLDİ) -->
+    <div class="container mx-auto px-6 py-20 border-t-4 border-dashed border-gray-200 mt-20">
+        <h2 class="text-3xl font-black text-red-600 mb-6 uppercase">Yönetim Paneli Şablonu</h2>
+        <div class="bg-gray-800 text-white rounded-[2rem] p-10 overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="border-b border-gray-700">
+                    <tr>
+                        <th class="py-4 px-4 font-bold text-gray-400">YER ADI</th>
+                        <th class="py-4 px-4 font-bold text-gray-400">KATEGORİ</th>
+                        <th class="py-4 px-4 font-bold text-gray-400 text-right">İŞLEMLER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-gray-700/50">
+                        <td class="py-4 px-4 font-bold">Sardes Antik Kenti</td>
+                        <td class="py-4 px-4"><span class="bg-gray-700 px-3 py-1 rounded text-xs">history</span></td>
+                        <td class="py-4 px-4 text-right">
+                            <button class="text-blue-400 mr-4 font-bold">Düzenle</button>
+                            <button class="text-red-400 font-bold">Sil</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary text-white py-20">
+        <div class="container mx-auto px-6 grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="map" class="w-10 h-10 text-accent"></i>
+                    <span class="text-3xl font-black uppercase tracking-tighter">Rota Salihli</span>
+                </div>
+                <p class="text-white/60 text-sm leading-relaxed">Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış dijital rehber.</p>
+            </div>
+            <div>
+                <h4 class="font-black text-xl mb-6 uppercase text-accent">Bağlantılar</h4>
+                <ul class="space-y-3 opacity-80 font-bold">
+                    <li><a href="#" class="hover:text-accent">Ana Sayfa</a></li>
+                    <li><a href="#" class="hover:text-accent">Yerler</a></li>
+                    <li><a href="#" class="hover:text-accent">Rotalar</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-black text-xl mb-6 uppercase text-accent">İletişim</h4>
+                <p class="opacity-80 text-sm font-bold">Salihli Belediyesi<br>Mithatpaşa, 25. Sk., 45300 Salihli/Manisa<br>Tel: 0236 714 10 65</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // İkonları Başlat
+        lucide.createIcons();
+    </script>
+</body>
+</html>
