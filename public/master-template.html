@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rota Salihli - Master Template</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"PT Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1a3a14', // Deep Heritage Green
+                        accent: '#c59d3f',  // Lydian Gold
+                        background: '#fdfce6' // Off-white cream
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #fdfce6; color: #1a3a14; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+    </style>
+</head>
+<body class="font-sans">
+
+    <!-- NAVIGATION -->
+    <nav class="sticky top-0 z-50 glass border-b border-black/5 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
+            <div class="bg-white p-2 rounded-xl shadow-sm border border-primary/10">
+                <img src="https://rotasalihli.com/logos.png" class="h-8 w-8" alt="Logo">
+            </div>
+            <span class="font-bold text-xl tracking-tight">Rota Salihli</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6 font-bold text-sm uppercase tracking-tighter">
+            <a href="#" onclick="showPage('places')" class="hover:text-accent">Yerler</a>
+            <a href="#" onclick="showPage('routes')" class="hover:text-accent">Rotalar</a>
+            <a href="#" onclick="showPage('stories')" class="hover:text-accent">Hikayeler</a>
+            <a href="#" onclick="showPage('admin')" class="bg-primary text-white px-4 py-2 rounded-xl">Yönetim</a>
+        </div>
+    </nav>
+
+    <!-- PAGE: HOME -->
+    <section id="home" class="page-section active">
+        <!-- HERO -->
+        <div class="relative h-[70vh] flex items-center justify-center text-center overflow-hidden">
+            <img src="https://i.imgur.com/2deYxHC.png" class="absolute inset-0 w-full h-full object-cover" alt="Hero">
+            <div class="absolute inset-0 bg-black/50"></div>
+            <div class="relative z-10 p-6 text-white">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4">Salihli'yi Keşfet</h1>
+                <p class="text-xl opacity-90 max-w-2xl mx-auto italic">"Sardes'in mirası, paranın merkezi olan kadim toprakları bizimle keşfedin."</p>
+                <button onclick="showPage('places')" class="mt-8 bg-accent text-white px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all">Hemen Başla</button>
+            </div>
+        </div>
+
+        <!-- EXPERIENCE MENU -->
+        <div class="container mx-auto px-6 -mt-12 relative z-20">
+            <div class="bg-white rounded-[2.5rem] shadow-2xl p-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div onclick="showPage('places')" class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
+                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="landmark"></i></div>
+                    <span class="font-bold text-xs uppercase">Tarih</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
+                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="mountain"></i></div>
+                    <span class="font-bold text-xs uppercase">Doğa</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
+                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="utensils"></i></div>
+                    <span class="font-bold text-xs uppercase">Lezzet</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
+                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="map"></i></div>
+                    <span class="font-bold text-xs uppercase">Rotalar</span>
+                </div>
+                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
+                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="message-square"></i></div>
+                    <span class="font-bold text-xs uppercase">Defter</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: PLACES -->
+    <section id="places" class="page-section container mx-auto px-6 py-20">
+        <h2 class="text-4xl font-bold text-center mb-12">Gezilecek Yerler</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- PLACE CARD EXAMPLE -->
+            <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg group hover:shadow-2xl transition-all">
+                <div class="relative h-64">
+                    <img src="https://i.imgur.com/l2YJCmK.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" alt="Sardes">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <h3 class="absolute bottom-6 left-6 text-white text-2xl font-bold">Sardes Antik Kenti</h3>
+                </div>
+                <div class="p-8">
+                    <p class="text-slate-500 text-sm mb-6 line-clamp-3">Lidya Krallığı'nın görkemli başkenti. Paranın ilk basıldığı yer olarak bilinir.</p>
+                    <button class="text-primary font-bold flex items-center gap-2">Detayları Gör <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: ADMIN PANEL -->
+    <section id="admin" class="page-section container mx-auto px-6 py-20">
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h2 class="text-3xl font-bold">Yönetim Paneli</h2>
+                <p class="text-slate-500">Site içeriğini buradan düzenleyebilirsiniz.</p>
+            </div>
+            <button class="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2">
+                <i data-lucide="plus"></i> Yeni Ekle
+            </button>
+        </div>
+
+        <!-- STATS -->
+        <div class="grid md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
+                <span class="text-slate-400 text-xs font-bold uppercase">Toplam Yer</span>
+                <p class="text-3xl font-bold">24</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
+                <span class="text-slate-400 text-xs font-bold uppercase">Ziyaretçi</span>
+                <p class="text-3xl font-bold">1,240</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
+                <span class="text-slate-400 text-xs font-bold uppercase">Yorumlar</span>
+                <p class="text-3xl font-bold">85</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
+                <span class="text-slate-400 text-xs font-bold uppercase">Rotalar</span>
+                <p class="text-3xl font-bold">12</p>
+            </div>
+        </div>
+
+        <!-- CONTENT TABLE -->
+        <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b">
+                    <tr>
+                        <th class="p-6 font-bold text-sm">Başlık</th>
+                        <th class="p-6 font-bold text-sm">Kategori</th>
+                        <th class="p-6 font-bold text-sm">Durum</th>
+                        <th class="p-6 font-bold text-sm text-right">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b hover:bg-slate-50 transition-all">
+                        <td class="p-6 font-bold">Sardes Antik Kenti</td>
+                        <td class="p-6"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Tarih</span></td>
+                        <td class="p-6 text-green-600 font-bold">Aktif</td>
+                        <td class="p-6 text-right">
+                            <button class="p-2 hover:bg-primary/10 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button class="p-2 hover:bg-red-100 text-red-600 rounded-lg ml-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary text-white py-20 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <img src="https://rotasalihli.com/logos.png" class="h-12 w-12 mx-auto mb-6 brightness-0 invert" alt="Logo">
+            <p class="max-w-md mx-auto opacity-70 mb-8 text-sm leading-relaxed">Rota Salihli, Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.</p>
+            <div class="flex justify-center gap-8 font-bold text-xs uppercase tracking-widest opacity-50">
+                <a href="#">Instagram</a>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+            </div>
+            <div class="mt-12 pt-8 border-t border-white/10 text-[10px] opacity-30">
+                © 2025 Salihli Belediyesi. Tüm hakları saklıdır.
+            </div>
+        </div>
+    </footer>
+
+    <!-- CORE LOGIC (Simulation) -->
+    <script>
+        // İkonları başlat
+        lucide.createIcons();
+
+        // Sayfa Değiştirme Fonksiyonu
+        function showPage(pageId) {
+            // Tüm bölümleri gizle
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // İlgili bölümü göster
+            document.getElementById(pageId).classList.add('active');
+            // Sayfa başına kaydır
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
