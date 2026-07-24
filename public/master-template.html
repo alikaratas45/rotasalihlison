@@ -3,202 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota Salihli - Master Template</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Rota Salihli - Tek Dosya Şablonu</title>
+    <!-- Modern Stil ve İkon Kütüphaneleri (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"PT Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#1a3a14', // Deep Heritage Green
-                        accent: '#c59d3f',  // Lydian Gold
-                        background: '#fdfce6' // Off-white cream
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #fdfce6; color: #1a3a14; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .page-section { display: none; }
-        .page-section.active { display: block; }
+        :root { --primary: #1a3c1a; --accent: #d4af37; }
+        body { font-family: 'PT Sans', sans-serif; background-color: #fdfce6; color: #1a1a1a; scroll-behavior: smooth; }
+        .page { display: none; min-height: 80vh; }
+        .page.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .bg-heritage { background-color: var(--primary); }
+        .text-heritage { color: var(--primary); }
+        .bg-gold { background-color: var(--accent); }
     </style>
 </head>
-<body class="font-sans">
-
-    <!-- NAVIGATION -->
-    <nav class="sticky top-0 z-50 glass border-b border-black/5 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
-            <div class="bg-white p-2 rounded-xl shadow-sm border border-primary/10">
-                <img src="https://rotasalihli.com/logos.png" class="h-8 w-8" alt="Logo">
+<body>
+    <!-- NAVİGASYON -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b">
+        <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="#" onclick="showPage('home')" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-heritage rounded-xl flex items-center justify-center text-white"><i data-lucide="map"></i></div>
+                <span class="font-bold text-xl uppercase tracking-tighter">Rota Salihli</span>
+            </a>
+            <div class="hidden md:flex gap-6 text-xs font-bold uppercase tracking-widest">
+                <a href="#" onclick="showPage('home')" class="hover:text-heritage">Ana Sayfa</a>
+                <a href="#" onclick="showPage('places')" class="hover:text-heritage">Yerler</a>
+                <a href="#" onclick="showPage('stories')" class="hover:text-heritage">Hikayeler</a>
+                <a href="#" onclick="showPage('guestbook')" class="hover:text-heritage">Ziyaretçi Defteri</a>
+                <a href="#" onclick="showPage('admin')" class="bg-heritage text-white px-4 py-1 rounded-full">Admin</a>
             </div>
-            <span class="font-bold text-xl tracking-tight">Rota Salihli</span>
-        </div>
-        <div class="hidden md:flex items-center gap-6 font-bold text-sm uppercase tracking-tighter">
-            <a href="#" onclick="showPage('places')" class="hover:text-accent">Yerler</a>
-            <a href="#" onclick="showPage('routes')" class="hover:text-accent">Rotalar</a>
-            <a href="#" onclick="showPage('stories')" class="hover:text-accent">Hikayeler</a>
-            <a href="#" onclick="showPage('admin')" class="bg-primary text-white px-4 py-2 rounded-xl">Yönetim</a>
+            <button class="md:hidden" onclick="toggleMenu()"><i data-lucide="menu"></i></button>
         </div>
     </nav>
 
-    <!-- PAGE: HOME -->
-    <section id="home" class="page-section active">
-        <!-- HERO -->
-        <div class="relative h-[70vh] flex items-center justify-center text-center overflow-hidden">
-            <img src="https://i.imgur.com/2deYxHC.png" class="absolute inset-0 w-full h-full object-cover" alt="Hero">
-            <div class="absolute inset-0 bg-black/50"></div>
-            <div class="relative z-10 p-6 text-white">
-                <h1 class="text-5xl md:text-7xl font-bold mb-4">Salihli'yi Keşfet</h1>
-                <p class="text-xl opacity-90 max-w-2xl mx-auto italic">"Sardes'in mirası, paranın merkezi olan kadim toprakları bizimle keşfedin."</p>
-                <button onclick="showPage('places')" class="mt-8 bg-accent text-white px-8 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition-all">Hemen Başla</button>
-            </div>
-        </div>
+    <!-- MOBİL MENÜ -->
+    <div id="mobile-menu" class="hidden fixed inset-0 bg-heritage z-50 p-10 text-white flex flex-col gap-8 text-2xl font-bold uppercase text-center">
+        <button class="absolute top-5 right-5" onclick="toggleMenu()"><i data-lucide="x"></i></button>
+        <a href="#" onclick="showPage('home'); toggleMenu()">Ana Sayfa</a>
+        <a href="#" onclick="showPage('places'); toggleMenu()">Gezilecek Yerler</a>
+        <a href="#" onclick="showPage('stories'); toggleMenu()">Hikayeler</a>
+        <a href="#" onclick="showPage('guestbook'); toggleMenu()">Defter</a>
+        <a href="#" onclick="showPage('admin'); toggleMenu()">Yönetim Paneli</a>
+    </div>
 
-        <!-- EXPERIENCE MENU -->
-        <div class="container mx-auto px-6 -mt-12 relative z-20">
-            <div class="bg-white rounded-[2.5rem] shadow-2xl p-8 grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div onclick="showPage('places')" class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
-                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="landmark"></i></div>
-                    <span class="font-bold text-xs uppercase">Tarih</span>
-                </div>
-                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
-                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="mountain"></i></div>
-                    <span class="font-bold text-xs uppercase">Doğa</span>
-                </div>
-                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
-                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="utensils"></i></div>
-                    <span class="font-bold text-xs uppercase">Lezzet</span>
-                </div>
-                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
-                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="map"></i></div>
-                    <span class="font-bold text-xs uppercase">Rotalar</span>
-                </div>
-                <div class="flex flex-col items-center gap-3 p-4 hover:bg-primary/5 rounded-3xl cursor-pointer transition-all">
-                    <div class="p-4 bg-primary/10 rounded-2xl text-primary"><i data-lucide="message-square"></i></div>
-                    <span class="font-bold text-xs uppercase">Defter</span>
+    <!-- SAYFA: ANA SAYFA -->
+    <main id="home" class="page active">
+        <section class="h-[70vh] bg-heritage text-white flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+            <div class="z-10 max-w-3xl">
+                <h1 class="text-5xl md:text-8xl font-bold mb-6 leading-none">SALİHLİ'Yİ KEŞFET</h1>
+                <p class="text-xl opacity-80 mb-10 italic">"Sardes'in mirası, paranın merkezi olan kadim topraklar..."</p>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="showPage('places')" class="bg-gold text-black px-8 py-4 rounded-2xl font-bold shadow-2xl hover:scale-105 transition-all">YERLERİ GÖR</button>
+                    <button onclick="showPage('admin')" class="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl font-bold border border-white/20">YÖNETİM</button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+        <section class="container mx-auto px-4 -mt-20 z-20 relative grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl text-center hover:-translate-y-2 transition-all cursor-pointer" onclick="showPage('places')">
+                <i data-lucide="landmark" class="mx-auto mb-4 text-heritage w-10 h-10"></i><p class="font-bold text-xs uppercase">TARİH</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl text-center hover:-translate-y-2 transition-all cursor-pointer" onclick="showPage('places')">
+                <i data-lucide="mountain" class="mx-auto mb-4 text-heritage w-10 h-10"></i><p class="font-bold text-xs uppercase">DOĞA</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl text-center hover:-translate-y-2 transition-all cursor-pointer" onclick="showPage('places')">
+                <i data-lucide="utensils" class="mx-auto mb-4 text-heritage w-10 h-10"></i><p class="font-bold text-xs uppercase">LEZZET</p>
+            </div>
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl text-center hover:-translate-y-2 transition-all cursor-pointer" onclick="showPage('guestbook')">
+                <i data-lucide="message-square" class="mx-auto mb-4 text-heritage w-10 h-10"></i><p class="font-bold text-xs uppercase">DEFTER</p>
+            </div>
+        </section>
+    </main>
 
-    <!-- PAGE: PLACES -->
-    <section id="places" class="page-section container mx-auto px-6 py-20">
-        <h2 class="text-4xl font-bold text-center mb-12">Gezilecek Yerler</h2>
+    <!-- SAYFA: YERLER -->
+    <main id="places" class="page container mx-auto px-4 py-16">
+        <div class="flex items-center gap-4 mb-12">
+            <h1 class="text-4xl font-bold text-heritage border-l-8 border-gold pl-4 uppercase">Gezilecek Yerler</h1>
+        </div>
         <div class="grid md:grid-cols-3 gap-8">
-            <!-- PLACE CARD EXAMPLE -->
-            <div class="bg-white rounded-[2rem] overflow-hidden shadow-lg group hover:shadow-2xl transition-all">
-                <div class="relative h-64">
-                    <img src="https://i.imgur.com/l2YJCmK.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" alt="Sardes">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <h3 class="absolute bottom-6 left-6 text-white text-2xl font-bold">Sardes Antik Kenti</h3>
-                </div>
+            <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-lg border border-gray-100 group">
+                <img src="https://picsum.photos/seed/sart/800/600" class="h-64 w-full object-cover group-hover:scale-110 transition-transform">
                 <div class="p-8">
-                    <p class="text-slate-500 text-sm mb-6 line-clamp-3">Lidya Krallığı'nın görkemli başkenti. Paranın ilk basıldığı yer olarak bilinir.</p>
-                    <button class="text-primary font-bold flex items-center gap-2">Detayları Gör <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    <h3 class="text-2xl font-bold mb-2">Sardes Antik Kenti</h3>
+                    <p class="text-gray-500 text-sm mb-6">Lidya'nın başkenti ve paranın doğduğu topraklar.</p>
+                    <button class="text-heritage font-bold flex items-center gap-2">İNCELE <i data-lucide="chevron-right"></i></button>
                 </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    <!-- PAGE: ADMIN PANEL -->
-    <section id="admin" class="page-section container mx-auto px-6 py-20">
-        <div class="flex items-center justify-between mb-12">
-            <div>
-                <h2 class="text-3xl font-bold">Yönetim Paneli</h2>
-                <p class="text-slate-500">Site içeriğini buradan düzenleyebilirsiniz.</p>
+    <!-- SAYFA: YÖNETİM PANELİ -->
+    <main id="admin" class="page container mx-auto px-4 py-16">
+        <div class="bg-white p-10 rounded-[3rem] shadow-2xl border-heritage/10 border">
+            <div class="flex justify-between items-center mb-10">
+                <h1 class="text-3xl font-bold uppercase text-heritage">Admin Kontrol Paneli</h1>
+                <div class="flex gap-2">
+                    <button class="bg-heritage text-white px-6 py-2 rounded-xl text-xs font-bold">YENİ EKLE</button>
+                    <button onclick="showPage('home')" class="bg-gray-100 px-6 py-2 rounded-xl text-xs font-bold">ÇIKIŞ</button>
+                </div>
             </div>
-            <button class="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2">
-                <i data-lucide="plus"></i> Yeni Ekle
-            </button>
-        </div>
-
-        <!-- STATS -->
-        <div class="grid md:grid-cols-4 gap-6 mb-12">
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
-                <span class="text-slate-400 text-xs font-bold uppercase">Toplam Yer</span>
-                <p class="text-3xl font-bold">24</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <div class="bg-heritage/5 p-6 rounded-2xl">
+                    <p class="text-[10px] uppercase font-bold opacity-50">Toplam Yer</p>
+                    <p class="text-3xl font-bold">12</p>
+                </div>
+                <div class="bg-heritage/5 p-6 rounded-2xl">
+                    <p class="text-[10px] uppercase font-bold opacity-50">Ziyaretçi</p>
+                    <p class="text-3xl font-bold">8.420</p>
+                </div>
+                <div class="bg-heritage/5 p-6 rounded-2xl">
+                    <p class="text-[10px] uppercase font-bold opacity-50">Yeni Mesaj</p>
+                    <p class="text-3xl font-bold">15</p>
+                </div>
+                <div class="bg-heritage/5 p-6 rounded-2xl">
+                    <p class="text-[10px] uppercase font-bold opacity-50">Aktif Rota</p>
+                    <p class="text-3xl font-bold">4</p>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
-                <span class="text-slate-400 text-xs font-bold uppercase">Ziyaretçi</span>
-                <p class="text-3xl font-bold">1,240</p>
-            </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
-                <span class="text-slate-400 text-xs font-bold uppercase">Yorumlar</span>
-                <p class="text-3xl font-bold">85</p>
-            </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-primary/5">
-                <span class="text-slate-400 text-xs font-bold uppercase">Rotalar</span>
-                <p class="text-3xl font-bold">12</p>
-            </div>
-        </div>
-
-        <!-- CONTENT TABLE -->
-        <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-slate-50 border-b">
-                    <tr>
-                        <th class="p-6 font-bold text-sm">Başlık</th>
-                        <th class="p-6 font-bold text-sm">Kategori</th>
-                        <th class="p-6 font-bold text-sm">Durum</th>
-                        <th class="p-6 font-bold text-sm text-right">İşlemler</th>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <tr class="border-b text-xs uppercase font-bold text-gray-400">
+                        <th class="pb-4">İsim</th><th>Kategori</th><th>Durum</th><th class="text-right">İşlem</th>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b hover:bg-slate-50 transition-all">
-                        <td class="p-6 font-bold">Sardes Antik Kenti</td>
-                        <td class="p-6"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Tarih</span></td>
-                        <td class="p-6 text-green-600 font-bold">Aktif</td>
-                        <td class="p-6 text-right">
-                            <button class="p-2 hover:bg-primary/10 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                            <button class="p-2 hover:bg-red-100 text-red-600 rounded-lg ml-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </td>
+                    <tr class="border-b text-sm">
+                        <td class="py-4 font-bold">Kurşunlu Kaplıcaları</td>
+                        <td>Doğa</td>
+                        <td><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">AKTİF</span></td>
+                        <td class="text-right"><button class="text-blue-600 font-bold underline">Düzenle</button></td>
                     </tr>
-                </tbody>
-            </table>
+                </table>
+            </div>
         </div>
-    </section>
+    </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-primary text-white py-20 mt-20">
-        <div class="container mx-auto px-6 text-center">
-            <img src="https://rotasalihli.com/logos.png" class="h-12 w-12 mx-auto mb-6 brightness-0 invert" alt="Logo">
-            <p class="max-w-md mx-auto opacity-70 mb-8 text-sm leading-relaxed">Rota Salihli, Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.</p>
-            <div class="flex justify-center gap-8 font-bold text-xs uppercase tracking-widest opacity-50">
-                <a href="#">Instagram</a>
-                <a href="#">Facebook</a>
-                <a href="#">Twitter</a>
-            </div>
-            <div class="mt-12 pt-8 border-t border-white/10 text-[10px] opacity-30">
-                © 2025 Salihli Belediyesi. Tüm hakları saklıdır.
+    <!-- SAYFA: ZİYARETÇİ DEFTERİ -->
+    <main id="guestbook" class="page container mx-auto px-4 py-16">
+        <div class="max-w-2xl mx-auto text-center">
+            <h1 class="text-4xl font-bold mb-4 uppercase">Salihli Günlüğüm</h1>
+            <p class="text-gray-500 mb-10">Şehirle ilgili deneyimlerinizi paylaşın.</p>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl text-left mb-10">
+                <input type="text" placeholder="Adınız" class="w-full mb-4 p-4 rounded-2xl border border-gray-100 bg-gray-50">
+                <textarea placeholder="Mesajınız..." class="w-full mb-4 p-4 rounded-2xl border border-gray-100 bg-gray-50 h-32"></textarea>
+                <button class="w-full bg-heritage text-white py-4 rounded-2xl font-bold shadow-lg">GÖNDER</button>
             </div>
         </div>
+    </main>
+
+    <!-- SAYFA: HİKAYELER -->
+    <main id="stories" class="page container mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold mb-10 uppercase text-heritage">Şehir Efsaneleri</h1>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-10 rounded-[2.5rem] shadow-xl border-l-8 border-gold">
+                <h3 class="text-2xl font-bold mb-4">Artemis ve Orion</h3>
+                <p class="text-gray-600 leading-relaxed mb-6">Artemis dev bir avcı olan Poseidon’un oğlu olan Orion’a aşık olur. Fakat bu aşk Artemis'in ikiz kardeşi olan Apollon’un hoşuna gitmez...</p>
+                <button class="font-bold text-heritage uppercase text-xs tracking-widest flex items-center gap-2">Devamını Oku <i data-lucide="arrow-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-10 text-center opacity-30 text-xs uppercase font-bold tracking-widest">
+        &copy; 2025 Rota Salihli Dijital Rehber Sistemi
     </footer>
 
-    <!-- CORE LOGIC (Simulation) -->
     <script>
-        // İkonları başlat
+        // İkonları Başlat
         lucide.createIcons();
 
         // Sayfa Değiştirme Fonksiyonu
         function showPage(pageId) {
-            // Tüm bölümleri gizle
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            // İlgili bölümü göster
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            // Sayfa başına kaydır
             window.scrollTo(0, 0);
+        }
+
+        // Mobil Menü
+        function toggleMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         }
     </script>
 </body>
