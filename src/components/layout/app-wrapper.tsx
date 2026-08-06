@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { AudioProximityAlert } from '@/components/audio-proximity-alert';
+import { LegalConsent } from '@/components/legal-consent';
 import { useFirestore } from '@/firebase';
 import { incrementVisitorCount } from '@/firebase/firestore/stats-service';
 import { APIProvider } from '@vis.gl/react-google-maps';
@@ -58,7 +59,12 @@ export default function AppWrapper({
         onTouchStart={handleInteraction}
         className="min-h-screen flex flex-col"
       >
-        {mounted && <AudioProximityAlert />}
+        {mounted && (
+          <>
+            <AudioProximityAlert />
+            <LegalConsent />
+          </>
+        )}
         
         <div className="flex flex-col flex-1">
             <Header />

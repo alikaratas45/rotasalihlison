@@ -239,5 +239,24 @@
     "brochures": {
         "title": "Digital Brochures",
         "description": "You can have more information about our city by examining our digital promotional brochures and publications introducing Salihli."
+    },
+    "accommodation": {
+        "title": "Accommodation",
+        "description": "Comfortable hotels and facilities where you can stay during your Salihli trip."
+    },
+    "legal": {
+        "cookieWarning": "We use cookies in accordance with legal regulations to improve your experience.",
+        "kvkkLink": "Privacy Policy",
+        "details": "Details",
+        "accept": "Accept",
+        "kvkkTitle": "Privacy and Data Protection Policy",
+        "kvkkIntro": "At Rota Salihli, we care about the security of your personal data.",
+        "section1Title": "Data Controller",
+        "section1Text": "In accordance with relevant data protection laws, your data is processed by Salihli Municipality.",
+        "section2Title": "Purpose of Processing",
+        "section2Text": "Collected data is only used to improve the site experience, keep anonymous statistics, and manage user feedback.",
+        "section3Title": "Your Rights",
+        "section3Text": "You have the right to request deletion or correction of your data. You can contact our municipality for your requests.",
+        "footerNote": "By continuing to use this site, you agree to our policies."
     }
 }

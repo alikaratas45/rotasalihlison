@@ -134,7 +134,7 @@
                 "description": "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına ve Kemerdamları'na uzanan, eşsiz doğa manzaraları sunan kapsamlı bir bisiklet parkuru."
             },
             "kula_salihli_geopark": {
-                "name": "Kula-Salihli Geopark Bisiklet Rotası",
+                "name": "Kula-Salihli Jeopark Bisiklet Rotası",
                 "description": "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur."
             }
         }
@@ -244,5 +244,20 @@
     "accommodation": {
         "title": "Konaklama",
         "description": "Salihli seyahatinizde konaklayabileceğiniz konforlu oteller ve tesisler."
+    },
+    "legal": {
+        "cookieWarning": "Deneyiminizi geliştirmek için yasal düzenlemelere uygun çerezler kullanıyoruz.",
+        "kvkkLink": "KVKK ve Gizlilik Politikası",
+        "details": "Detaylar",
+        "accept": "Kabul Ediyorum",
+        "kvkkTitle": "KVKK ve Gizlilik Politikası",
+        "kvkkIntro": "Rota Salihli olarak kişisel verilerinizin güvenliğine önem veriyoruz.",
+        "section1Title": "Veri Sorumlusu",
+        "section1Text": "6698 sayılı Kişisel Verilerin Korunması Kanunu uyarınca, verileriniz Salihli Belediyesi tarafından işlenmektedir.",
+        "section2Title": "Veri İşleme Amacı",
+        "section2Text": "Toplanan veriler sadece site deneyimini iyileştirmek, anonim istatistikler tutmak ve kullanıcı geri bildirimlerini yönetmek amacıyla kullanılmaktadır.",
+        "section3Title": "Haklarınız",
+        "section3Text": "Verilerinizin silinmesini, düzeltilmesini veya işlenip işlenmediğini öğrenme hakkına sahipsiniz. Başvurularınızı belediyemize yapabilirsiniz.",
+        "footerNote": "Bu siteyi kullanmaya devam ederek politikalarımızı kabul etmiş sayılırsınız."
     }
 }
