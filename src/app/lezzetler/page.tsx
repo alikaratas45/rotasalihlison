@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -30,11 +31,10 @@ export default function LezzetlerPage() {
       .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [allPlaces]);
 
-  // Dynamic Featured Logic: Pick Odun Köfte if exists, otherwise pick the first available food place
+  // Dynamic Featured Logic: Pick the first available food place
   const featuredPlace = useMemo(() => {
     if (!foodPlaces || foodPlaces.length === 0) return null;
-    const specific = foodPlaces.find(p => p.id === '3' || p.name.tr.includes('Odun Köfte'));
-    return specific || foodPlaces[0];
+    return foodPlaces[0];
   }, [foodPlaces]);
 
   const otherFoodPlaces = useMemo(() => {
@@ -59,7 +59,7 @@ export default function LezzetlerPage() {
         </div>
 
         <div className="max-w-5xl mx-auto space-y-20">
-            {/* ÖNE ÇIKAN MEKAN (DİNAMİK) */}
+            {/* ÖNE ÇIKAN MEKAN */}
             {loading ? (
                 <Skeleton className="h-[450px] w-full rounded-[2.5rem]" />
             ) : featuredPlace ? (
@@ -163,7 +163,7 @@ export default function LezzetlerPage() {
                     </div>
                     <CardTitle className="text-4xl font-headline font-black tracking-tight">{t('cuisine.allRestaurantsTitle')}</CardTitle>
                     <CardDescription className="mt-4 text-xl max-w-lg mx-auto font-medium text-orange-100 leading-relaxed">
-                        Salihli genelindeki tüm tescilli restoranları ve yerel lezzet noktalarını harita üzerinde görüntüleyin.
+                        Salihli genelindeki tescilli restoranları ve yerel lezzet noktalarını harita üzerinde görüntüleyin.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex justify-center pb-16 pt-8">

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/use-language';
@@ -30,13 +31,14 @@ export default function KonaklamaPage() {
       .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [allPlaces]);
 
-  // Kurşunlu Kaplıcaları usually has ID '2' in seed data
+  // Featured logic: Pick the first available hotel or one with specific high order
   const featuredHotel = useMemo(() => {
-    if (!allPlaces) return null;
-    return allPlaces.find(h => h.id === '2' || h.name.tr.includes('Kurşunlu')) || null;
-  }, [allPlaces]);
+    if (!hotels || hotels.length === 0) return null;
+    return hotels[0];
+  }, [hotels]);
 
   const otherHotels = useMemo(() => {
+    if (!featuredHotel) return hotels;
     return hotels.filter(h => h.id !== featuredHotel?.id);
   }, [hotels, featuredHotel]);
 
@@ -71,7 +73,7 @@ export default function KonaklamaPage() {
 
         <div className="max-w-5xl mx-auto space-y-20">
           
-          {/* ÖNE ÇIKAN: KURŞUNLU KAPLICALARI */}
+          {/* ÖNE ÇIKAN TESİS */}
           {loading ? (
             <Skeleton className="h-[500px] w-full rounded-[2.5rem]" />
           ) : featuredHotel ? (
@@ -84,22 +86,17 @@ export default function KonaklamaPage() {
                     <div className="grid md:grid-cols-2">
                         <div className="relative h-64 md:h-auto overflow-hidden">
                             <Image 
-                            src={featuredHotel.imageUrl || "https://i.imgur.com/n7fioom.jpeg"} 
+                            src={featuredHotel.imageUrl || "https://picsum.photos/seed/hotel-featured/800/600"} 
                             alt={featuredHotel.name[typedLanguage]} 
                             fill 
                             className="object-cover transition-transform duration-700 hover:scale-110"
-                            data-ai-hint="thermal hotel landscape"
+                            data-ai-hint="hotel landscape"
                             sizes="600px"
                             />
-                            <div className="absolute top-6 left-6">
-                                <Badge className="bg-primary/90 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest backdrop-blur-sm shadow-xl border-none">
-                                    Belediye İşletmesi
-                                </Badge>
-                            </div>
                         </div>
                         <div className="p-8 md:p-12 flex flex-col justify-center bg-primary/5">
                             <div className="flex items-center gap-2 text-primary mb-4">
-                                <span className="font-black text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-lg">Termal & Sağlık</span>
+                                <span className="font-black text-xs uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-lg">Konaklama & Konfor</span>
                             </div>
                             <h2 className="text-3xl md:text-5xl font-black font-headline text-slate-900 mb-6 leading-tight">
                                 {featuredHotel.name[typedLanguage]}
@@ -189,7 +186,7 @@ export default function KonaklamaPage() {
               </div>
               <CardTitle className="text-4xl font-headline font-black tracking-tight">Tüm Konaklama Tesisleri</CardTitle>
               <CardDescription className="mt-4 text-xl max-w-lg mx-auto font-medium text-primary-foreground/80 leading-relaxed">
-                  Salihli merkezinde ve termal bölgelerde yer alan tüm otel, pansiyon ve misafirhaneleri harita üzerinde keşfedin.
+                  Salihli merkezinde ve çevresinde yer alan tüm otel, pansiyon ve misafirhaneleri harita üzerinde keşfedin.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center pb-16 pt-8">

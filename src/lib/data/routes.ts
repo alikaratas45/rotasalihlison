@@ -46,14 +46,14 @@ export const routes: Route[] = [
             ja: '自然ルート'
         },
         description: { 
-            tr: 'Gediz Nehri\'nin bereketli topraklarında bir yolculuğa çıkın. Bu rota, sizi Kurşunlu\'nun şifalı sularından, volkanik kanyonlara ve Tabak Deresi\'nin büyüleyici dev kazanlarına uzanan bir huzur yolculuğuna çıkaracak.',
-            en: 'Embark on a journey through the fertile lands of the Gediz River. This route will take you on a peaceful journey from the healing waters of Kurşunlu to volcanic canyons and the fascinating giant cauldrons of Tabak Creek.',
-            fr: 'Embarquez pour un voyage à travers les terres fertiles de la rivière Gediz. Cet itinéraire vous emmènera dans un voyage paisible des eaux curatives de Kurşunlu aux canyons volcaniques et aux fascinants chaudrons géants du ruisseau Tabak.',
-            de: 'Begeben Sie sich auf eine Reise durch die fruchtbaren Länder des Gediz-Flusses. Diese Route führt Sie auf eine friedliche Reise von den heilenden Wassern von Kurşunlu zu vulkanischen Schluchten und den faszinierenden Riesenkesseln des Tabak-Bachs.',
-            ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、クルシュンルの癒しの水から火山の峡谷やタバック・クリーク의魅力的な巨大な大釜へと続く平和な旅にあなたを連れています。'
+            tr: 'Gediz Nehri\'nin bereketli topraklarında bir yolculuğa çıkın. Bu rota, sizi volkanik kanyonlara ve Tabak Deresi\'nin büyüleyici dev kazanlarına uzanan bir huzur yolculuğuna çıkaracak.',
+            en: 'Embark on a journey through the fertile lands of the Gediz River. This route will take you on a peaceful journey to volcanic canyons and the fascinating giant cauldrons of Tabak Creek.',
+            fr: 'Embarquez pour un voyage à travers les terres fertiles de la rivière Gediz. Cet itinéraire vous emmènera dans un voyage paisible vers les canyons volcaniques et les fascinants chaudrons géants du ruisseau Tabak.',
+            de: 'Begeben Sie sich auf eine Reise durch die fruchtbaren Länder des Gediz-Flusses. Diese Route führt Sie auf eine friedliche Reise zu vulkanischen Schluchten und den faszinierenden Riesenkesseln des Tabak-Bachs.',
+            ja: 'ゲディズ川の肥沃な土地を旅に出かけましょう。このルートは、火山の峡谷やタバック・クリークの魅力的な巨大な大釜へと続く平和な旅にあなたを連れています。'
         },
         category: 'thematic',
-        stops: ['2', '6', '7']
+        stops: ['6', '7']
     },
 
     // --- BİSİKLET ROTALARI ---
@@ -97,13 +97,13 @@ export const routes: Route[] = [
         slug: { tr: 'kursunlu-marmara-bisiklet-rotasi', en: 'kursunlu-marmara-bicycle', fr: 'kursunlu-marmara-velo', de: 'kursunlu-marmara-rad', ja: 'kursunlu-marmara-bicycle-ja' },
         name: { tr: 'Kurşunlu - Gölmarmara Bisiklet Rotası', en: 'Kurşunlu - Gölmarmara Bicycle Route', fr: 'Piste Cyclable Kurşunlu-Marmara', de: 'Kurşunlu-Marmara Radroute', ja: 'クルシュンル-マルマラ 自転車ルート' },
         description: { 
-            tr: 'Kurşunlu Kaplıcaları\'ndan başlayıp Marmara Gölü kıyılarına uzanan, eşsiz doğa manzaraları sunan kapsamlı bir bisiklet parkuru.',
-            en: 'A comprehensive bicycle trail starting from Kurşunlu Thermal Springs to the shores of Lake Marmara, offering unique natural views.',
-            fr: 'Un sentier cyclable complet partant des sources thermales de Kurşunlu jusqu\'aux rives du lac Marmara.',
-            de: 'Ein umfassender Fahrradweg, der von den Kurşunlu-Thermalquellen bis zum Ufer des Marmara-Sees führt.',
-            ja: 'クルシュンル温泉から始まりマルマラ湖の岸辺まで続く、独特の自然の景色を楽しめる総合的な自転車コースです。'
+            tr: 'Salihli çevresinden başlayıp Marmara Gölü kıyılarına uzanan, eşsiz doğa manzaraları sunan kapsamlı bir bisiklet parkuru.',
+            en: 'A comprehensive bicycle trail starting from around Salihli to the shores of Lake Marmara, offering unique natural views.',
+            fr: 'Un sentier cyclable complet partant des environs de Salihli jusqu\'aux rives du lac Marmara.',
+            de: 'Ein umfassender Fahrradweg, der von der Umgebung von Salihli bis zum Ufer des Marmara-Sees führt.',
+            ja: 'サリフリ周辺から始まりマルマラ湖の岸辺まで続く、独特の自然の景色を楽しめる総合的な自転車コースです。'
         },
-        stops: ['2']
+        stops: []
     },
     {
         id: 'b-4',
@@ -145,15 +145,15 @@ export const routes: Route[] = [
         distance: '4,2 km',
         wikilocId: '40219400',
         slug: { tr: 'kursunlu-yuruyus-rotasi', en: 'kursunlu-walking-path', fr: 'sentier-kursunlu', de: 'kursunlu-wanderweg', ja: 'kursunlu-walking-ja' },
-        name: { tr: 'Kurşunlu Yürüyüş Rotası', en: 'Kurşunlu Walking Route', fr: 'Itinéraire de Randonnée de Kurşunlu', de: 'Kurşunlu Wanderweg', ja: 'クルシュンル・ウォーキング・ルート' },
+        name: { tr: 'Vadi Yürüyüş Rotası', en: 'Valley Walking Route', fr: 'Itinéraire de Randonnée de la Vallée', de: 'Tal-Wanderweg', ja: 'バレー・ウォーキング・ルート' },
         description: { 
-            tr: 'Kurşunlu Kaplıcaları\'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur.',
-            en: 'A pleasant trail in the unique nature of Kurşunlu Thermal Springs, stretching along the valley where you will feel the coolness of the healing waters.',
-            fr: 'Un sentier agréable dans la nature unique des sources thermales de Kurşunlu.',
-            de: 'Ein angenehmer Weg in der einzigartigen Natur der Kurşunlu Thermalquellen.',
-            ja: 'クルシュンル温泉の独特な自然の中、癒しの水の冷たさを感じながら谷沿いに続くコースです。'
+            tr: 'Salihli\'nin eşsiz doğasında, vadi boyunca uzanan ve doğanın serinliğini hissedeceğiniz keyifli bir parkur.',
+            en: 'A pleasant trail in the unique nature of Salihli, stretching along the valley where you will feel the coolness of nature.',
+            fr: 'Un sentier agréable dans la nature unique de Salihli.',
+            de: 'Ein angenehmer Weg in der einzigartigen Natur von Salihli.',
+            ja: 'サリフリの独特な自然の中、自然の冷たさを感じながら谷沿いに続くコースです。'
         },
-        stops: ['2']
+        stops: []
     },
     {
         id: 'h-3',
@@ -186,6 +186,6 @@ export const routes: Route[] = [
             de: 'Ein herrlicher Naturwanderweg, der vom Dorf Allahdiyen zum Kömürcütepesi führt.',
             ja: 'アッラーディイェン村からキョミュルジュテペシまで続く、松の木と小川のせせらぎに包まれた素晴らしい自然散策コースです。'
         },
-        stops: ['2']
+        stops: []
     }
 ];

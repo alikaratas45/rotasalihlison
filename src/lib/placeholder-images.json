@@ -13,12 +13,6 @@
       "imageHint": "ancient ruins"
     },
     {
-      "id": "kursunlu-thermal-springs",
-      "description": "Image for Kursunlu Thermal Springs.",
-      "imageUrl": "https://i.imgur.com/n7fioom.jpeg",
-      "imageHint": "hot springs"
-    },
-    {
       "id": "salihli-wood-meatballs",
       "description": "Image for Salihli's famous Odun Kofte.",
       "imageUrl": "https://i.imgur.com/IT6VuDV.jpeg",

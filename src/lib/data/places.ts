@@ -19,38 +19,6 @@ export const places: Place[] = [
         imageHint: 'ancient ruins'
     },
     {
-        id: '2',
-        slug: { tr: 'kursunlu-kaplicalari', en: 'kursunlu-thermal-springs', fr: 'sources-thermales-de-kursunlu', de: 'thermalquellen-von-kursunlu', ja: 'kursunlu-thermal-springs-ja' },
-        name: { tr: 'Kurşunlu Kaplıcaları', en: 'Kurşunlu Thermal Springs', fr: 'Sources Thermales de Kurşunlu', de: 'Thermalquellen von Kurşunlu', ja: 'クルシュンル温泉' },
-        description: { 
-            tr: `Salihli’nin güneyinde, Bozdağlar’’ın eteklerinde yer alan Kurşunlu Kaplıcaları, hem şifalı suları hem de muazzam doğal güzelliği ile bölgenin en önemli turizm merkezidir. Efsaneye göre, deri hastalığına yakalanan Prenses Kursun, bu vadi içindeki sıcak sularda yıkanarak eski güzelliğine kavuşmuştur. \n\nBugün modern tesisleri, yeşilin her tonunu barındıran piknik alanları ve huzur veren şelaleleriyle ziyaretçilerine hem sağlık hem de doğa ile iç içe bir tatil imkanı sunmaktadır. Suları özellikle romatizmal hastalıklar ve cilt sorunları için şifa kaynağı olarak kabul edilir.`, 
-            en: `Located at the foothills of the Bozdağ Mountains, Kurşunlu Thermal Springs is a major wellness center famous for its healing waters and lush nature. Legend has it that Princess Kursun regained her legendary beauty after bathing in these thermal springs to cure a skin disease. \n\nNowadays, it offers visitors a peaceful retreat with its modern spa facilities, scenic picnic areas, and soothing waterfalls. The waters are widely recognized for their therapeutic benefits, particularly for skin conditions and rheumatic disorders.`,
-            fr: `Situées au pied des montagnes Bozdağ, les sources thermales de Kurşunlu sont un centre de bien-être majeur, célèbre pour ses eaux curatives et sa nature luxuriante. La légende raconte que la princesse Kursun a retrouvé sa beauté légendaire après s'être baignée dans ces sources.`,
-            de: `Die Thermalquellen von Kurşunlu am Fuße des Bozdağ-Gebirges sind ein bedeutendes Wellnesszentrum, das für sein heilendes Wasser und seine üppige Natur bekannt ist. Die Legende besagt, dass Prinzessin Kursun ihre legendäre Schönheit wiedererlangte, nachdem sie hier badete.`,
-            ja: `ボズダ山脈の麓に位置するクルシュンル温泉は、癒しの水 ve 豊かな自然で有名な主要なウェルネスセンターです。伝説によると、クルスン王女は皮膚病を治すためにこの温泉に浸かった後、伝説的な美しさを取り戻したと言われています。`
-        },
-        category: 'accommodation',
-        coordinates: { lat: 38.448729, lng: 28.114439 },
-        imageUrl: 'https://i.imgur.com/n7fioom.jpeg',
-        imageHint: 'hot springs'
-    },
-    {
-        id: 'bizim-ev-sosyal-tesis',
-        slug: { tr: 'bizim-ev-sosyal-tesisleri', en: 'bizim-ev-social-facilities', fr: 'installations-sociales-bizim-ev', de: 'bizim-ev-soziale-einrichtungen', ja: 'bizim-ev-social-facilities-ja' },
-        name: { tr: 'Bizim Ev Sosyal Tesisleri', en: 'Bizim Ev Social Facilities', fr: 'Installations Sociales Bizim Ev', de: 'Bizim Ev Soziale Einrichtungen', ja: 'ビジム・エヴ・ソーシャル・ファシリティーズ' },
-        description: { 
-            tr: `Salihli Belediyesi tarafından işletilen Bizim Ev Sosyal Tesisleri, Gediz Nehri'nin kıyısında, doğa ile iç içe huzurlu bir atmosfer sunmaktadır. Yerel lezzetlerin, özellikle de Salihli Odun Köftesi'nin en iyi örneklerinin sunulduğu tesis, hem aileler hem de gezginler için ideal bir dinlenme noktasıdır.\n\nGeniş bahçesi, çocuk oyun alanları ve nehir manzarası eşliğinde sunulan kaliteli hizmetiyle Salihli'nin misafirperverliğini en iyi yansıtan mekanlardan biridir.`, 
-            en: `Operated by Salihli Municipality, Bizim Ev Social Facilities offers a peaceful atmosphere intertwined with nature on the banks of the Gediz River. Serving the best examples of local flavors, especially Salihli Wood Meatballs, the facility is an ideal resting point for both families and travelers.\n\nWith its large garden, children's playgrounds, and river views, it is one of the places that best reflects Salihli's hospitality through its high-quality service.`,
-            fr: `Géré par la municipalité de Salihli, Bizim Ev Social Facilities offre une atmosphère paisible au bord du fleuve Gediz. C'est un point de repos idéal proposant les meilleures saveurs locales.`,
-            de: `Die von der Stadtverwaltung Salihli betriebenen Bizim Ev Social Facilities bieten eine friedliche Atmosphäre am Ufer des Flusses Gediz. Ein idealer Ort zum Ausruhen mit lokalen Spezialitäten.`,
-            ja: `サリフリ市が運営するビジム・エヴ・ソーシャル・ファシリティーズは、ゲディズ川のほとりにあり、自然と調和した穏やかな雰囲気を提供しています。地元の味、特にサリフリ・ウッドミートボールを楽しめる、家族や旅行者にとって理想的な休憩所です。`
-        },
-        category: 'food',
-        coordinates: { lat: 38.5815, lng: 28.2710 },
-        imageUrl: 'https://picsum.photos/seed/bizimev/800/600',
-        imageHint: 'river side restaurant'
-    },
-    {
         id: '6',
         slug: { tr: 'tabak-deresi-dev-kazanlari', en: 'tabak-creek-giant-cauldrons', fr: 'cite-tabak-ruisseau-chaudrons', de: 'tabak-bach-riesenkessel', ja: 'tabak-creek-giant-cauldrons-ja' },
         name: { tr: 'Tabak Deresi Dev Kazanları', en: 'Tabak Creek Giant Cauldrons', fr: 'Chaudrons Géants du Ruisseau Tabak', de: 'Tabak-Bach Riesenkessel', ja: 'タバッククリークの巨大な大釜' },
@@ -109,7 +77,7 @@ export const places: Place[] = [
         description: { 
             tr: `Kula-Salihli UNESCO Küresel Jeoparkı’nın bir parçası olan Adala Volkanik Kanyonu, Gediz Nehri’nin binlerce yıl önce akan lavları aşındırmasıyla oluşmuştur. Jeolojik açıdan "Siyah Lavlar" arasında akan nehrin oluşturduğu manzara, doğa severler için büyüleyicidir. \n\nKanyon, doğa yürüyüşü, fotoğrafçılık ve huzur arayanlar için eşsiz bir rotadır. Volkanik kaya oluşumlarının nehirle buluştuğu bu alan, bölgenin volkanik geçmişine dair en canlı kanıtları barındırmaktadır.`, 
             en: `Part of the Kula-Salihli UNESCO Global Geopark, the Adala Volcanic Canyon was formed by the Gediz River eroding ancient lava flows over thousands of years. The sight of the river flowing through "Black Lavas" is mesmerizing for nature enthusiasts. \n\nThe canyon offers unique routes for hiking, photography, and those seeking tranquility. These volcanic rock formations provide vivid evidence of the region's intense volcanic history.`,
-            fr: `Faisant partie du géoparc mondial UNESCO de Kula-Salihli, le canyon volcanique d'Adala a été formé par le fleuve Gediz érodant d'anciennes coulées de lave. C'est un site fascinant pour les amoureux de la nature.`,
+            fr: `Faisant partie du géoparc mondial UNESCO de Kula-Salihli, le canyon volcanique d'Adala ha été formé par le fleuve Gediz érodant d'anciennes coulées de lave. C'est un site fascinant pour les amoureux de la nature.`,
             de: `Der Adala-Vulkancanyon, Teil des UNESCO-Global-Geoparks Kula-Salihli, entstand durch die Erosion alter Lavaströme durch den Fluss Gediz. Ein faszinierender Ort für Naturfreunde.`,
             ja: `ユネスコ世界ジオパークであるクラーサリフリの一部であるアダラ火山渓谷は、ゲディズ川が数千年にわたって古代の溶岩流を侵食して形成されました。`
         },
