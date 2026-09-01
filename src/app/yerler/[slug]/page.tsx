@@ -106,7 +106,7 @@ function PlaceDetailContent() {
           const lng = position.coords.longitude;
           
           const distToMain = calculateDistance(lat, lng, place.coordinates.lat, place.coordinates.lng);
-          // 50 metre tolerans (Kullanıcı isteği üzerine 50m olarak güncellendi)
+          // 50 metre tolerans
           setIsNearPlace(distToMain <= 50);
 
           if (place.subPoints && place.subPoints.length > 0) {
@@ -370,29 +370,14 @@ function PlaceDetailContent() {
               {isGenerating && playingId === (activeSubPoint ? activeSubPoint.id : 'main') ? t('actions.loadingAudio') : isPlaying && playingId === (activeSubPoint ? activeSubPoint.id : 'main') ? t('actions.stopAudio') : t('actions.listenTo', currentDisplayName)}
             </Button>
             
-            {place.id !== '3' ? (
-              <Button 
+            <Button 
                 size="lg" 
                 onClick={() => handleGetDirections()} 
                 className="flex-1 md:flex-none md:min-w-[220px] h-14 px-8 rounded-2xl font-bold gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
-              >
+            >
                 <Navigation className="h-5 w-5" />
                 {t('actions.showOnMap')}
-              </Button>
-            ) : (
-              <Button 
-                size="lg" 
-                onClick={() => {
-                    const searchQuery = encodeURIComponent("Salihli'deki Restaurantlar");
-                    window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
-                }} 
-                className="flex-1 md:flex-none md:min-w-[220px] h-14 px-8 rounded-2xl font-bold gap-2 bg-orange-600 hover:bg-orange-700 text-white border-none shadow-lg shadow-orange-600/20 transition-all hover:scale-[1.02]"
-              >
-                <Utensils className="h-5 w-5" />
-                Haritada Tüm Restaurantlar
-                <ExternalLink className="h-4 w-4 opacity-70 ml-1" />
-              </Button>
-            )}
+            </Button>
           </div>
         </div>
 
