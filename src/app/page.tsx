@@ -59,10 +59,10 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* --- HERO SECTION --- */}
-      <section className="relative h-[75vh] md:h-[80vh] w-full overflow-hidden">
+      <section className="relative h-[70vh] md:h-[80vh] w-full overflow-hidden">
         <Image 
           src="https://i.imgur.com/2deYxHC.png" 
-          alt="Sardes Salihli" 
+          alt="Ancient City" 
           data-ai-hint="ancient ruins" 
           fill 
           className="object-cover scale-105" 
@@ -74,18 +74,6 @@ export default function Home() {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-12">
           <div className="max-w-4xl space-y-6 flex flex-col items-center">
             
-            {/* BELEDİYE LOGOSU */}
-            <div className="relative h-24 w-24 md:h-32 md:w-32 mb-2 animate-in fade-in slide-in-from-top-4 duration-1000">
-                <Image 
-                  src="/salihli.png" 
-                  alt="Salihli Belediyesi" 
-                  fill 
-                  className="object-contain drop-shadow-2xl"
-                  sizes="150px"
-                  priority
-                />
-            </div>
-
             <span className="inline-block bg-accent/90 text-accent-foreground px-4 py-1.5 rounded-full text-[10px] md:text-sm font-black tracking-[0.2em] uppercase shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700">
                 {t('home.heroSubtitle')}
             </span>

@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Home",
@@ -11,8 +12,8 @@
     },
     "guestbook": {
         "title": "Guestbook",
-        "diaryTitle": "My Salihli Diary",
-        "description": "Share your Salihli experiences and discover messages from other visitors.",
+        "diaryTitle": "Travel Diary",
+        "description": "Share your experiences and discover messages from other visitors.",
         "leaveMessage": "Leave a Message",
         "namePlaceholder": "Your Name (Optional)",
         "messagePlaceholder": "Write your experience or message here...",
@@ -25,37 +26,37 @@
         "noFeedback": "No messages yet. Be the first to write!"
     },
     "footer": {
-        "about": "Rota Salihli is a digital guide to discover the historical, cultural and natural beauties of Salihli.",
+        "about": "Rota Digital is an independent guide to discover the historical, cultural and natural beauties of the region.",
         "copyright": "All rights reserved.",
         "links": "Links",
         "contact": "Contact",
         "totalVisitors": "Total Visitors"
     },
     "splash": {
-        "slogan": "Heritage of Sardis, center of money"
+        "slogan": "Heritage of History, Center of Culture"
     },
     "home": {
-        "heroTitle": "Discover Salihli",
-        "heroSubtitle": "Heritage of Sardis, center of money",
-        "heroDescription": "Discover the heritage of Sardis and the center of money with us on these ancient lands.",
+        "heroTitle": "Explore the City",
+        "heroSubtitle": "Digital Guide to Ancient Lands",
+        "heroDescription": "Discover the heritage of history and the center of culture with us on these ancient lands.",
         "getStarted": "View All Places",
-        "aboutSalihli": "About Salihli",
-        "experienceTitle": "A Day in Salihli",
-        "experienceSubtitle": "Choose among different experiences, personalize your Salihli adventure.",
+        "aboutSalihli": "About the Area",
+        "experienceTitle": "Daily Adventure",
+        "experienceSubtitle": "Choose among different experiences, personalize your adventure.",
         "historyTrip": "Journey to History",
         "naturePeace": "Nature and Peace",
         "flavorStops": "Flavor Stops",
         "aroundMe": "What's Around Me?",
         "shopping": "Shopping",
         "thematicRoutesTitle": "Thematic Routes",
-        "thematicRoutesSubtitle": "Discover the riches of Salihli with specially prepared routes.",
+        "thematicRoutesSubtitle": "Discover the riches with specially prepared routes.",
         "allRoutes": "See All Routes",
         "stops": "Stop",
         "stops_plural": "Stops"
     },
     "about": {
-        "title": "History of Salihli",
-        "content": "To tell the history of Salihli, one must start with the Ancient City of Sardis (SART). Sardis was founded in the Gediz basin, on the northern slopes of the hills to the west of Bozdağ. It showed great development especially in the 7th-6th centuries BC, becoming the capital of the Lydian state. Industrial inventions, money, and international migration started here. Sardis maintained its importance as a center during the Persian, Roman, and Byzantine periods."
+        "title": "History and Culture",
+        "content": "The history of this region has a deep heritage stretching from ancient times to the present. These lands, bearing the traces of many civilizations from Lydians to Romans, Ottomans to the present, have been a strategic and cultural center throughout history."
     },
     "actions": {
         "seeDetails": "See Details →",
@@ -76,25 +77,25 @@
     },
     "places": {
         "title": "Discover All Places",
-        "description": "Explore all the historical, natural, and cultural riches that Salihli has to offer.",
-        "mapSearchQuery": "Salihli, Manisa, Turkey, tourist attractions",
+        "description": "Explore all the historical, natural, and cultural riches that we offer.",
+        "mapSearchQuery": "Tourist attractions",
         "notFoundTitle": "Place Not Found",
         "notFoundDescription": "The place you are looking for does not exist."
     },
     "history": {
         "title": "Journey to History",
-        "description": "Salihli is home to a rich historical heritage stretching from ancient times to the present day. Sardis, the capital of the Lydian Kingdom where money was invented, is the most precious treasure of these lands. As an important metropolis during the Roman Empire, the city hosted one of the first seven churches of Christianity. During the Byzantine period, it maintained its importance as a strategic episcopal center. This journey invites you to trace the footsteps of thousands of years of civilizations."
+        "description": "Discover a rich historical heritage stretching from ancient times to the present day."
     },
     "nature": {
         "title": "Nature and Peace",
-        "description": "Rest your soul in the natural beauties of Salihli. It awaits you with its healing waters, lush forests, and unique landscapes."
+        "description": "Rest your soul in natural beauties."
     },
     "shopping": {
         "title": "Shopping Stops",
-        "description": "Discover shopping spots in Salihli, from local markets to modern stores, where you can find everything you're looking for."
+        "description": "Discover shopping spots from local markets to modern stores."
     },
     "stories": {
-        "title": "Stories and Legends of Salihli",
+        "title": "Stories and Legends",
         "description": "Explore the myths and tales that have shaped these ancient lands for millennia.",
         "notFoundTitle": "Story Not Found",
         "notFoundDescription": "The story you are looking for does not exist.",
@@ -103,41 +104,40 @@
     },
     "routePlanner": {
         "title": "Create Your Own Route",
-        "description": "Create your personal route by selecting the places you want to visit (max 10 places).",
+        "description": "Create your personal route by selecting the places you want to visit.",
         "selectPlaces": "Places",
         "selectedPlaces": "Selected Stops",
-        "openInMaps": "Open in Google Maps",
-        "noSelection": "Please select at least two places from the list to create a route.",
+        "openInMaps": "Open in Maps",
+        "noSelection": "Please select at least two places.",
         "maxLimitToastTitle": "Limit Exceeded",
         "maxLimitToastDescription": "You can select a maximum of 10 places.",
         "startPlanning": "Select Places to Start Planning",
         "routeMap": "Route Map",
-        "locationActive": "Location active: The route is ordered starting from the place closest to you.",
-        "locationInactive": "If you allow location access, the route will be optimized to start from the point closest to you.",
+        "locationActive": "Location active.",
+        "locationInactive": "Location access disabled.",
         "totalPlaces": "{0} Total Places",
-        "sortingInfo": "Ordered from nearest to farthest from you.",
+        "sortingInfo": "Ordered by distance.",
         "stopsSelected": "Stops Selected"
     },
     "cuisine": {
-        "title": "Salihli Flavor Stops",
-        "description": "Discover the world-famous flavors of Salihli.",
+        "title": "Flavor Stops",
+        "description": "Discover the local flavors.",
         "famousTitle": "Famous Flavor",
-        "kofteDescription": "The first flavor that comes to mind when Salihli is mentioned. Don't leave without tasting these unique meatballs cooked over an oak wood fire. Click for detailed information and stories.",
-        "allRestaurantsTitle": "All Restaurants in Salihli",
-        "allRestaurantsDescription": "Click the button to explore all the flavor stops and restaurants in Salihli on Google Maps.",
+        "allRestaurantsTitle": "All Restaurants",
+        "allRestaurantsDescription": "Click to explore on map.",
         "viewOnMap": "View on Map"
     },
     "aroundMe": {
         "title": "What's Around Me?",
-        "description": "Discover historical and natural beauties within 15 km of your location.",
-        "searching": "Retrieving your location and searching for nearby places...",
-        "noPlaces": "No registered places found within 15 km of your location.",
-        "locationDenied": "Location access denied. Please grant location permission to see nearby places.",
+        "description": "Discover beauties within 15 km of your location.",
+        "searching": "Searching for nearby places...",
+        "noPlaces": "No registered places found nearby.",
+        "locationDenied": "Location access denied.",
         "distance": "{0} km away"
     },
     "bicycleRoutes": {
         "title": "Bicycle Routes",
-        "description": "Discover bicycle tracks and paths in and around Salihli. Start pedaling!",
+        "description": "Discover bicycle tracks and paths.",
         "availableRoutes": "Available Routes",
         "routeMap": "Route Map",
         "distanceLabel": "Distance:",
@@ -145,118 +145,81 @@
         "viewOnMapLabel": "View on Map",
         "legendText": "* The dark blue line on the map represents the {0}.",
         "poisTitle": "What's on this Route?",
-        "noPoisFound": "No registered places found for this route.",
-        "routes": {
-            "lidya_yolu": {
-                "name": "Lydian Way Bicycle Route",
-                "description": "A path full of history and nature following the traces of the ancient Lydian civilization, starting from Sardis Ancient City and stretching to the foothills of the Bozdağ Mountains."
-            },
-            "salihli_alasehir": {
-                "name": "Salihli-Alaşehir Bicycle Route",
-                "description": "A pleasant trail starting from Salihli and extending to Alaşehir, passing through the region's fertile agricultural lands and world-famous vineyards."
-            },
-            "kursunlu_marmara": {
-                "name": "Kurşunlu - Gölmarmara - Kemerdamları",
-                "description": "A comprehensive bicycle trail starting from Kurşunlu Thermal Springs to the shores of Lake Marmara and Kemerdamları, offering unique natural views."
-            },
-            "kula_salihli_geopark": {
-                "name": "Kula-Salihli Geopark Bicycle Route",
-                "description": "A fascinating trail passing through the unique geological formations of the Kula-Salihli UNESCO Global Geopark, accompanied by volcanic cones and lava flows."
-            }
-        }
+        "noPoisFound": "No registered places found for this route."
     },
     "hikingRoutes": {
         "title": "Hiking Routes",
         "availableRoutes": "Available Routes",
-        "routeMap": "Route Map",
+        "routeMap": "View on Map",
         "distanceLabel": "Distance:",
         "selectedLabel": "Selected",
         "viewOnMapLabel": "View on Map",
-        "legendText": "* The dark blue line on the map represents the {0}.",
-        "wikilocDetailTitle": "Wikiloc Route Detail: {0}",
-        "routes": {
-            "adala": {
-                "name": "Adala Volcanic Canyon Hike",
-                "description": "An unforgettable nature walk among the immense lava formations shaped by the Gediz River in the heart of the Kula-Salihli UNESCO Global Geopark."
-            },
-            "kursunlu": {
-                "name": "Kurşunlu Walking Route",
-                "description": "A pleasant trail in the unique nature of Kurşunlu Thermal Springs, stretching along the valley where you will feel the coolness of the healing waters."
-            },
-            "kursunlu_allahdiyen": {
-                "name": "Kurşunlu-Allahdiyen Walking Route",
-                "description": "A medium-difficulty nature walk trail starting from Kurşunlu Thermal Springs to Allahdiyen village, accompanied by pine trees and the sound of the stream."
-            },
-            "kayabasi": {
-                "name": "Salihli Kayabaşı Walking Route",
-                "description": "A peaceful walking trail in the Kayabaşı area of Salihli, intertwined with nature, offering magnificent views and rock formations."
-            }
-        }
+        "legendText": "* The dark blue line on the map represents the {0}."
     },
     "survey": {
         "title": "Rate Your Experience",
-        "description": "Since you are near this place, you can provide feedback. Your views are valuable to us.",
-        "cleanliness": "Place Cleanliness and Order",
+        "description": "Since you are near this place, you can provide feedback.",
+        "cleanliness": "Cleanliness and Order",
         "accessibility": "Ease of Accessibility",
-        "satisfaction": "Overall Satisfaction Experience",
+        "satisfaction": "Overall Satisfaction",
         "withTour": "Did you come with a tour?",
-        "guided": "Did someone explain this place to you?",
-        "infoBoards": "Are there sufficient information boards in the area?",
+        "guided": "Did you have a guide?",
+        "infoBoards": "Are there enough info boards?",
         "yes": "Yes",
         "no": "No",
         "submitButton": "Send Feedback",
         "updateButton": "Update Feedback",
         "thankYouTitle": "Thank You!",
-        "thankYouDescription": "Your feedback has been successfully received. Thanks for helping us improve Salihli.",
-        "alreadySubmitted": "You have already provided feedback for this place.",
-        "editButton": "Edit My Feedback",
-        "errorTitle": "Missing Information",
+        "thankYouDescription": "Your feedback has been successfully received.",
+        "alreadySubmitted": "You have already provided feedback.",
+        "editButton": "Edit",
+        "errorTitle": "Missing Info",
         "errorDescription": "Please fill in all criteria.",
         "successTitle": "Sent",
-        "successDescription": "Thanks for your feedback!",
+        "successDescription": "Thanks!",
         "submitErrorTitle": "Error",
-        "submitErrorDescription": "There was a problem sending the feedback."
+        "submitErrorDescription": "A problem occurred."
     },
     "proximity": {
-        "alert": "You are currently at {0}. Would you like me to tell you about it?",
+        "alert": "You are currently at {0}. Would you like to hear about it?",
         "yes": "Yes, Listen",
         "no": "No, Thanks"
     },
     "subPoints": {
-        "title": "Sections of the Place",
+        "title": "Sections",
         "listen": "Listen",
         "directions": "Directions"
     },
     "pwa": {
         "title": "Install App",
-        "description": "Add Rota Salihli to your home screen for faster and offline access.",
+        "description": "Add to home screen for faster and offline access.",
         "installButton": "Install Now",
         "installedTitle": "Installed",
-        "installedDescription": "The application has been successfully added to your device.",
-        "errorTitle": "Installation Error",
-        "errorDescription": "Installation could not be started. Please use the browser menu."
+        "installedDescription": "Application added to your device.",
+        "errorTitle": "Error",
+        "errorDescription": "Installation could not be started."
     },
     "brochures": {
         "title": "Digital Brochures",
-        "description": "You can have more information about our city by examining our digital promotional brochures and publications introducing Salihli."
+        "description": "Examine our digital promotional materials."
     },
     "accommodation": {
         "title": "Accommodation",
-        "description": "Comfortable hotels and facilities where you can stay during your Salihli trip."
+        "description": "Comfortable facilities for your stay."
     },
     "legal": {
-        "cookieWarning": "We use cookies in accordance with legal regulations to improve your experience.",
+        "cookieWarning": "We use cookies to improve your experience.",
         "kvkkLink": "Privacy Policy",
         "details": "Details",
         "accept": "Accept",
-        "kvkkTitle": "Privacy and Data Protection Policy",
-        "kvkkIntro": "At Rota Salihli, we care about the security of your personal data.",
-        "section1Title": "Data Controller",
-        "section1Text": "In accordance with relevant data protection laws, your data is processed by Salihli Municipality.",
-        "section2Title": "Purpose of Processing",
-        "section2Text": "Collected data is only used to improve the site experience, keep anonymous statistics, and manage user feedback.",
+        "kvkkTitle": "Privacy Policy",
+        "kvkkIntro": "At Rota Digital, we care about your data security.",
+        "section1Title": "Data Management",
+        "section1Text": "Your data is processed to improve the local tourism experience.",
+        "section2Title": "Purpose",
+        "section2Text": "Collected data is only used for anonymous stats and feedback management.",
         "section3Title": "Your Rights",
-        "section3Text": "You have the right to request deletion or correction of your data. You can contact our municipality for your requests.",
-        "footerNote": "By continuing to use this site, you agree to our policies."
+        "section3Text": "You have the right to request deletion of your data.",
+        "footerNote": "By using this site, you agree to our policies."
     }
 }

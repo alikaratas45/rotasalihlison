@@ -1,3 +1,4 @@
+
 {
     "header": {
         "home": "Ana Sayfa",
@@ -11,8 +12,8 @@
     },
     "guestbook": {
         "title": "Ziyaretçi Defteri",
-        "diaryTitle": "Salihli Günlüğüm",
-        "description": "Salihli deneyimlerinizi paylaşın, diğer ziyaretçilerin mesajlarını keşfedin.",
+        "description": "Şehir deneyimlerinizi paylaşın, diğer ziyaretçilerin mesajlarını keşfedin.",
+        "diaryTitle": "Gezi Günlüğüm",
         "leaveMessage": "Bir Mesaj Bırakın",
         "namePlaceholder": "İsminiz (Opsiyonel)",
         "messagePlaceholder": "Deneyiminizi veya mesajınızı buraya yazın...",
@@ -25,37 +26,37 @@
         "noFeedback": "Henüz mesaj yazılmamış. İlk yazan siz olun!"
     },
     "footer": {
-        "about": "Rota Salihli, Salihli'nin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.",
+        "about": "Rota Dijital, bölgenin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bağımsız bir dijital rehberdir.",
         "copyright": "Tüm hakları saklıdır.",
         "links": "Bağlantılar",
         "contact": "İletişim",
         "totalVisitors": "Toplam Ziyaretçi"
     },
     "splash": {
-        "slogan": "Sardes'in mirası, paranın merkezi"
+        "slogan": "Tarihin Mirası, Kültürün Merkezi"
     },
     "home": {
-        "heroTitle": "Salihli'yi Keşfet",
-        "heroSubtitle": "Sardes'in mirası, paranın merkezi",
-        "heroDescription": "Sardes'in mirası, paranın merkezi olan kadim toprakları bizimle keşfedin.",
+        "heroTitle": "Şehri Keşfet",
+        "heroSubtitle": "Kadim Toprakların Dijital Rehberi",
+        "heroDescription": "Tarihin mirası ve kültürün merkezi olan bu toprakları bizimle keşfedin.",
         "getStarted": "Tüm Gezilecek Yerler",
-        "aboutSalihli": "Salihli Hakkında",
-        "experienceTitle": "Salihli'de Bir Gün",
-        "experienceSubtitle": "Farklı deneyimler arasından seçimini yap, Salihli maceranı kişiselleştir.",
+        "aboutSalihli": "Şehir Hakkında",
+        "experienceTitle": "Bir Günlük Serüven",
+        "experienceSubtitle": "Farklı deneyimler arasından seçimini yap, maceranı kişiselleştir.",
         "historyTrip": "Tarihe Yolculuk",
         "naturePeace": "Doğa ve Huzur",
         "flavorStops": "Lezzet Durakları",
         "aroundMe": "Çevremde Ne Var?",
         "shopping": "Alışveriş",
         "thematicRoutesTitle": "Tematik Rotalar",
-        "thematicRoutesSubtitle": "Salihli'nin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
+        "thematicRoutesSubtitle": "Bölgenin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
         "allRoutes": " Tüm Rotaları Gör",
         "stops": "Durak",
         "stops_plural": "Durak"
     },
     "about": {
-        "title": "Salihli ve Sardes (Sart) Tarihi",
-        "content": "Salihli’nin tarihini anlatmaya, Antik Sardes (Sart) Kenti ile başlamak gerekmektedir.\n\nSardes, Gediz Havzası’nda, Sart Çayı kıyısında ve Bozdağ’ın batısındaki tepelerin kuzey yamaçlarında, Meles adlı bir kral tarafından kurulmuştur.\n\nM.Ö. 1750 ile 1200 yılları arasında, Hititler döneminde Sardes’in de içinde bulunduğu bölge “Assuwa” adıyla anılmıştır.\n\nBu dönemde Sardes’in bir köy mü, kasaba mı yoksa saraya bağlı bir şehir mi olduğu kesin olarak bilinmemektedir.\n\nM.Ö. 1200 ile 1000 yılları arasında önemli bir yerleşim merkezi olan Sardes, özellikle M.Ö. 7. ve 6. yüzyıllarda büyük bir gelişme göstermiş ve Lidya Devleti’nin başkenti olarak büyük önem kazanmıştır.\n\nPara sisteminin ortaya çıkışı, endüstriyel buluşlar, ülkeler arası ticaret, lirik şiir, müzik, felsefe, astronomi, coğrafya ve heykelcilik gibi alanların gelişimi M.Ö. 7. ve 6. yüzyıllarda Sardes’te başlamış ve gelişmiştir.\n\nLidya Devleti sona erdikten after da Sardes önemini korumuştur. Persler döneminde satraplık merkezi, Roma döneminde eyalet merkezi, Bizans döneminde ise thema merkezi olmuştur.\n\nAncak dünya ticaret yollarının değişmesiyle birlikte, Bizans İmparatorluğu’nun son dönemlerinde önemini kaybetmiştir.\n\n1075 yılında Selçuklu Türkleri Sardes’i ele geçirmiştir. Bu tarihten sonra şehir “Sart” olarak anılmaya başlanmıştır.\n\nSart, 1098 yılında Haçlıların desteğiyle yeniden Bizans’ın eline geçmiş olsa da, 1313 yılında Germiyanoğulları komutanı Aydın Bey tarafından kesin olarak Türk egemenliğine alınmıştır.\n\nSalihli’nin güneyindeki Bozdağ eteklerinde ve Çakallar Deresi çevresinde eski dönemlere ait mezarlar bulunmaktadır.\n\nSon olarak M.Ö. 6. yüzyıla tarihlenen bir tümülüs mezar da tespit edilmiştir.\n\nMezarların genellikle yerleşim alanlarının çevresinde bulunması, bugünkü Salihli’nin güneyinde antik bir yerleşim merkezinin varlığını kesin olarak göstermektedir.\n\nBugünkü Salihli ilçesine ait ilk yazılı kayıt 1518 yılına aittir. Bu kayıtlarda yerleşim “Veled-i Salih” veya “Salihoğlu” köyü olarak geçmekte ve Sart kazasına bağlı olduğu belirtilmektedir.\n\n1535 tarihli Osmanlı tahrir defterlerinde de Aydın Livası’na bağlı birçok kazanın yanı sıra Veled-i Salih köyünün varlığı doğrulanmıştır."
+        "title": "Tarih ve Kültür",
+        "content": "Bu bölgenin tarihi, antik çağlardan günümüze uzanan derin bir mirasa sahiptir. Lidyalılardan Romalılara, Osmanlılardan günümüze kadar pek çok medeniyetin izlerini taşıyan bu topraklar, tarihin her döneminde stratejik ve kültürel bir merkez olmuştur."
     },
     "actions": {
         "seeDetails": "Detayları Gör →",
@@ -76,26 +77,26 @@
     },
     "places": {
         "title": "Tüm Yerleri Keşfet",
-        "description": "Salihli'nin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin.",
-        "mapSearchQuery": "Salihli, Manisa, turistik yerler",
+        "description": "Bölgenin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin.",
+        "mapSearchQuery": "Turistik yerler",
         "notFoundTitle": "Yer Bulunamadı",
         "notFoundDescription": "Aradığınız yer mevcut değil."
     },
     "history": {
         "title": "Tarihe Yolculuk",
-        "description": "Salihli, antik çağlardan günümüze uzanan zengin bir tarih mirasına ev sahipliyi yapmaktadır. Paranın icat edildiği Lidya Krallığı'nın başkenti Sardes, bu toprakların en değerli hazinesidir. Roma İmparatorluğu döneminde önemli bir metropol olan kent, Hristiyanlığın ilk yedi kilisesinden birine ev sahipliği yapmıştır. Bizans döneminde ise stratejik bir piskoposluk merkezi olarak önemini korumuştur. Bu yolculuk, sizi binlerce yıllık medeniyetlerin izlerini sürmeye davet ediyor."
+        "description": "Antik çağlardan günümüze uzanan zengin bir tarih mirasını keşfedin."
     },
     "nature": {
         "title": "Doğa ve Huzur",
-        "description": "Salihli'nin doğal güzellikleri içinde ruhunuzu dinlendirin. Şifalı suları, yemyeşil ormanları ve eşsiz manzaralarıyla sizi bekliyor."
+        "description": "Doğal güzellikler içinde ruhunuzu dinlendirin."
     },
     "shopping": {
         "title": "Alışveriş Durakları",
-        "description": "Salihli'nin yerel pazarlarından modern mağazalarına, aradığınız her şeyi bulabileceğiniz alışveriş noktalarını keşfedin."
+        "description": "Yerel pazarlardan modern mağazalara aradığınız her şeyi keşfedin."
     },
     "stories": {
-        "title": "Salihli'nin Hikayeleri ve Efsaneleri",
-        "description": "Bu kadim toprakları binlerce yıldır şekillendiren mitleri ve anlatıları keşfedin.",
+        "title": "Hikayeler ve Efsaneler",
+        "description": "Bu kadim toprakları binlerce yıldır şekillendiren mitleri keşfedin.",
         "notFoundTitle": "Hikaye Bulunamadı",
         "notFoundDescription": "Aradığınız hikaye mevcut değil.",
         "by": "Yazan:",
@@ -103,15 +104,15 @@
     },
     "aroundMe": {
         "title": "Çevremde Ne Var?",
-        "description": "Konumunuza 15 km mesafedeki tarihi ve doğal güzellikleri keşfedin.",
+        "description": "Konumunuza 15 km mesafedeki güzellikleri keşfedin.",
         "searching": "Konumunuz alınıyor ve yakındaki yerler aranıyor...",
         "noPlaces": "15 km çevrenizde kayıtlı bir yer bulunamadı.",
-        "locationDenied": "Konum erişimi reddedildi. Yakındaki yerleri görmek için lütfen tarayıcınızdan konum izni verin.",
+        "locationDenied": "Konum erişimi reddedildi.",
         "distance": "{0} km uzaklıkta"
     },
     "bicycleRoutes": {
         "title": "Bisiklet Rotaları",
-        "description": "Salihli ve çevresindeki bir dizi bisiklet parkurunu ve yollarını keşfedin. Pedal çevirmeye başlayın!",
+        "description": "Bölgedeki bisiklet parkurlarını keşfedin.",
         "availableRoutes": "Mevcut Rotalar",
         "routeMap": "Rota Haritası",
         "distanceLabel": "Mesafe:",
@@ -119,25 +120,7 @@
         "viewOnMapLabel": "Haritada Gör",
         "legendText": "* Harita üzerinde koyu mavi çizgi ile gösterilen rota {0}'nı temsil eder.",
         "poisTitle": "Bu Rotada Neler Var?",
-        "noPoisFound": "Bu rotaya bağlı kayıtlı mekan bulunamadı.",
-        "routes": {
-            "lidya_yolu": {
-                "name": "Lidya Yolu Bisiklet Rotası",
-                "description": "Antik Lidya medeniyetinin izlerini takip eden, Sart Antik Kenti'nden başlayıp Bozdağlar'ın eteklerine uzanan tarih ve doğa dolu bir parkur."
-            },
-            "salihli_alasehir": {
-                "name": "Salihli-Alaşehir Bisiklet Rotası",
-                "description": "Salihli'den başlayıp Alaşehir'e kadar uzanan, bölgenin verimli tarım alanları ve dünyaca ünlü üzüm bağları arasından geçen keyifli bir parkur."
-            },
-            "kursunlu_marmara": {
-                "name": "Kurşunlu - Gölmarmara - Kemerdamları",
-                "description": "Kurşunlu Kaplıcaları'ndan başlayıp Marmara Gölü kıyılarına ve Kemerdamları'na uzanan, eşsiz doğa manzaraları sunan kapsamlı bir bisiklet parkuru."
-            },
-            "kula_salihli_geopark": {
-                "name": "Kula-Salihli Jeopark Bisiklet Rotası",
-                "description": "Kula-Salihli UNESCO Küresel Jeoparkı'nın eşsiz jeolojik oluşumları arasında geçen, volkanik koniler ve lav akıntıları eşliğinde büyüleyici bir parkur."
-            }
-        }
+        "noPoisFound": "Bu rotaya bağlı kayıtlı mekan bulunamadı."
     },
     "hikingRoutes": {
         "title": "Yürüyüş Rotaları",
@@ -146,76 +129,56 @@
         "distanceLabel": "Mesafe:",
         "selectedLabel": "Seçili",
         "viewOnMapLabel": "Haritada Gör",
-        "legendText": "* Harita üzerinde koyu mavi çizgi ile gösterilen rota {0}'nı temsil eder.",
-        "wikilocDetailTitle": "Wikiloc Rota Detayı: {0}",
-        "routes": {
-            "adala": {
-                "name": "Adala Volkanik Kanyon Yürüyüşü",
-                "description": "Kula-Salihli UNESCO Küresel Jeoparkı'nın kalbinde, Gediz Nehri'nin şekillendirdiği muazzam lav oluşumları arasında unutulmaz bir doğa yürüyüşü."
-            },
-            "kursunlu": {
-                "name": "Kurşunlu Yürüyüş Rotası",
-                "description": "Kurşunlu Kaplıcaları'nın eşsiz doğasında, vadi boyunca uzanan ve şifalı suların serinliğini hissedeceğiniz keyifli bir parkur."
-            },
-            "kursunlu_allahdiyen": {
-                "name": "Kurşunlu-Allahdiyen Yürüyüş Rotası",
-                "description": "Kurşunlu Kaplıcaları'ndan başlayıp Allahdiyen köyüne kadar uzanan, çam ağaçları ve dere şırıltıları eşliğinde orta zorlukta bir doğa yürüyüşü parkuru."
-            },
-            "kayabasi": {
-                "name": "Salihli Kayabaşı Yürüyüş Rotası",
-                "description": "Salihli'nin Kayabaşı mevkiinde, doğa ile iç içe, muazzam manzaralar ve kaya oluşumları sunan huzurlu bir yürüyüş parkuru."
-            }
-        }
+        "legendText": "* Harita üzerinde koyu mavi çizgi ile gösterilen rota {0}'nı temsil eder."
     },
     "routePlanner": {
         "title": "Kendi Rotanı Oluştur",
-        "description": "Gezmek istediğin yerleri seçerek kişisel rotanı oluştur (En fazla 10 yer).",
+        "description": "Gezmek istediğin yerleri seçerek kişisel rotanı oluştur.",
         "selectPlaces": "Yerler",
         "selectedPlaces": "Seçili Duraklar",
-        "openInMaps": "Google Haritalar'da Aç",
-        "noSelection": "Rota oluşturmak için lütfen listeden en az iki yer seçin.",
+        "openInMaps": "Haritada Aç",
+        "noSelection": "Lütfen en az iki yer seçin.",
         "maxLimitToastTitle": "Limit Aşıldı",
         "maxLimitToastDescription": "En fazla 10 yer seçebilirsiniz.",
         "startPlanning": "Planlamaya başlamak için yer seçin",
         "routeMap": "Rota Haritası",
-        "locationActive": "Konumunuz aktif: Rota size en yakın yerden başlayacak şekilde sıralanır.",
-        "locationInactive": "Konum erişimine izin verirseniz rota size en yakın noktadan başlayacak şekilde optimize edilir.",
+        "locationActive": "Konumunuz aktif.",
+        "locationInactive": "Konum erişimi kapalı.",
         "totalPlaces": "{0} Toplam Mekan",
-        "sortingInfo": "Size en yakından en uzağa doğru sıralanmıştır.",
+        "sortingInfo": "Mesafeye göre sıralanmıştır.",
         "stopsSelected": "Durak Seçildi"
     },
     "cuisine": {
-        "title": "Salihli Lezzet Durakları",
-        "description": "Salihli'nin dünyaca ünlü lezzetlerini keşfedin.",
+        "title": "Lezzet Durakları",
+        "description": "Bölgenin ünlü lezzetlerini keşfedin.",
         "famousTitle": "Meşhur Lezzet",
-        "kofteDescription": "Salihli denince akla gelen ilk lezzet. Meşe odunu ateşinde pişen bu eşsiz köftenin tadına bakmadan dönmeyin. Detaylı bilgi ve hikayesi için tıklayın.",
-        "allRestaurantsTitle": "Salihli'deki Tüm Restaurantlar",
-        "allRestaurantsDescription": "Salihli'deki tüm lezzet duraklarını ve restaurantları Google Haritalar üzerinde keşfetmek için butona tıklayın.",
+        "allRestaurantsTitle": "Tüm Restaurantlar",
+        "allRestaurantsDescription": "Harita üzerinde keşfetmek için butona tıklayın.",
         "viewOnMap": "Haritada Gör"
     },
     "survey": {
         "title": "Deneyiminizi Puanlayın",
-        "description": "Mekana yakın olduğunuz için geri bildirim verebilirsiniz. Görüşleriniz bizim için değerlidir.",
-        "cleanliness": "Mekan Temizliği ve Düzeni",
+        "description": "Mekana yakın olduğunuz için geri bildirim verebilirsiniz.",
+        "cleanliness": "Temizlik ve Düzen",
         "accessibility": "Ulaşım Kolaylığı",
-        "satisfaction": "Genel Memnuniyet Deneyimi",
-        "withTour": "Bir tur ile mi geldiniz?",
-        "guided": "Size burayı anlatan oldu mu?",
-        "infoBoards": "Alanda yeterli bilgilendirme panoları var mı?",
+        "satisfaction": "Genel Memnuniyet",
+        "withTour": "Tur ile mi geldiniz?",
+        "guided": "Rehberlik aldınız mı?",
+        "infoBoards": "Bilgilendirme yeterli mi?",
         "yes": "Evet",
         "no": "Hayır",
         "submitButton": "Geri Bildirimi Gönder",
         "updateButton": "Geri Bildirimi Güncelle",
         "thankYouTitle": "Teşekkür Ederiz!",
-        "thankYouDescription": "Geri bildiriminiz başarıyla alındı. Salihli'yi geliştirmemize yardımcı olduğunuz için teşekkürler.",
-        "alreadySubmitted": "Bu mekan için daha önce geri bildirimde bulundunuz.",
-        "editButton": "Geri Bildirimi Düzenle",
+        "thankYouDescription": "Geri bildiriminiz başarıyla alındı.",
+        "alreadySubmitted": "Daha önce bildirimde bulundunuz.",
+        "editButton": "Düzenle",
         "errorTitle": "Eksik Bilgi",
         "errorDescription": "Lütfen tüm kriterleri doldurun.",
         "successTitle": "Gönderildi",
-        "successDescription": "Geri bildiriminiz için teşekkürler!",
+        "successDescription": "Teşekkürler!",
         "submitErrorTitle": "Hata",
-        "submitErrorDescription": "Geri bildirim gönderilirken bir sorun oluştu."
+        "submitErrorDescription": "Bir sorun oluştu."
     },
     "proximity": {
         "alert": "Şu anda {0} konumundasınız. Size burayı anlatmamı ister misiniz?",
@@ -230,34 +193,34 @@
     },
     "pwa": {
         "title": "Uygulamayı Yükle",
-        "description": "Rota Salihli'yi ana ekranınıza ekleyerek daha hızlı ve çevrimdışı erişim sağlayın.",
+        "description": "Hızlı ve çevrimdışı erişim için ana ekrana ekleyin.",
         "installButton": "Hemen Yükle",
         "installedTitle": "Yüklendi",
-        "installedDescription": "Uygulama başarıyla cihazınıza eklendi.",
+        "installedDescription": "Uygulama cihazınıza eklendi.",
         "errorTitle": "Yükleme Hatası",
-        "errorDescription": "Yükleme başlatılamadı. Lütfen tarayıcı menüsünü kullanın."
+        "errorDescription": "Yükleme başlatılamadı."
     },
     "brochures": {
         "title": "Dijital Yayınlar",
-        "description": "Salihli'yi tanıtan dijital broşürlerimizi ve yayınlarımızı inceleyerek şehrimiz hakkında daha fazla bilgi sahibi olabilirsiniz."
+        "description": "Bölgeyi tanıtan dijital broşürleri ve yayınları inceleyebilirsiniz."
     },
     "accommodation": {
         "title": "Konaklama",
-        "description": "Salihli seyahatinizde konaklayabileceğiniz konforlu oteller ve tesisler."
+        "description": "Seyahatinizde konaklayabileceğiniz konforlu tesisler."
     },
     "legal": {
         "cookieWarning": "Deneyiminizi geliştirmek için yasal düzenlemelere uygun çerezler kullanıyoruz.",
-        "kvkkLink": "KVKK ve Gizlilik Politikası",
+        "kvkkLink": "Gizlilik Politikası",
         "details": "Detaylar",
         "accept": "Kabul Ediyorum",
-        "kvkkTitle": "KVKK ve Gizlilik Politikası",
-        "kvkkIntro": "Rota Salihli olarak kişisel verilerinizin güvenliğine önem veriyoruz.",
-        "section1Title": "Veri Sorumlusu",
-        "section1Text": "6698 sayılı Kişisel Verilerin Korunması Kanunu uyarınca, verileriniz Salihli Belediyesi tarafından işlenmektedir.",
-        "section2Title": "Veri İşleme Amacı",
-        "section2Text": "Toplanan veriler sadece site deneyimini iyileştirmek, anonim istatistikler tutmak ve kullanıcı geri bildirimlerini yönetmek amacıyla kullanılmaktadır.",
+        "kvkkTitle": "Gizlilik Politikası",
+        "kvkkIntro": "Rota Dijital olarak verilerinizin güvenliğine önem veriyoruz.",
+        "section1Title": "Veri Yönetimi",
+        "section1Text": "Verileriniz, yerel turizm deneyimini iyileştirmek amacıyla işlenmektedir.",
+        "section2Title": "İşleme Amacı",
+        "section2Text": "Toplanan veriler sadece anonim istatistikler ve kullanıcı geri bildirimlerini yönetmek için kullanılır.",
         "section3Title": "Haklarınız",
-        "section3Text": "Verilerinizin silinmesini, düzeltilmesini veya işlenip işlenmediğini öğrenme hakkına sahipsiniz. Başvurularınızı belediyemize yapabilirsiniz.",
-        "footerNote": "Bu siteyi kullanmaya devam ederek politikalarımızı kabul etmiş sayılırsınız."
+        "section3Text": "Verilerinizin silinmesini talep etme hakkına sahipsiniz.",
+        "footerNote": "Siteyi kullanmaya devam ederek politikalarımızı kabul etmiş sayılırsınız."
     }
 }

@@ -1,12 +1,13 @@
+
 import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    id: 'rota-salihli-pwa',
+    id: 'rota-dijital-pwa',
     scope: '/',
-    name: 'Rota Salihli',
-    short_name: 'Rota Salihli',
-    description: "Sardes'in mirası, paranın merkezi Salihli'yi keşfedin.",
+    name: 'Rota Dijital',
+    short_name: 'Rota Dijital',
+    description: "Tarihin mirası ve kültürün merkezini keşfedin.",
     start_url: '/',
     display: 'standalone',
     background_color: '#FDFCE6',

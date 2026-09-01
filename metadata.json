@@ -1,9 +1,9 @@
 
 {
-  "name": "Rota Salihli",
-  "description": "Sardes'in mirası, paranın merkezi Salihli dijital rehberi.",
-  "domain": "rotasalihli.com",
-  "last_updated": "2025-02-18T18:30:00Z",
-  "status": "certificate_minting",
+  "name": "Rota Dijital",
+  "description": "Tarih, doğa ve kültürün dijital rehberi.",
+  "domain": "rotadijital.com",
+  "last_updated": "2025-02-18T19:00:00Z",
+  "status": "ready",
   "hosting_type": "app_hosting"
 }

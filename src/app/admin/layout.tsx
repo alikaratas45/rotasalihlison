@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -22,29 +23,25 @@ export default function AdminLayout({
 
   useEffect(() => {
     if (loading) {
-      return; // Yüklenirken bir şey yapma
+      return;
     }
 
-    // Giriş yapılmamışsa ve giriş sayfasında değilse, girişe yönlendir
     if (!user && pathname !== '/admin/login') {
       router.push('/admin/login');
       return;
     }
 
-    // Admin olarak giriş yapılmışsa ve giriş sayfasındaysa, admin paneline yönlendir
     if (user && isAdmin && pathname === '/admin/login') {
       router.push('/admin');
       return;
     }
     
-    // Giriş yapılmış ama admin değilse VE GİRİŞ SAYFASINDA DEĞİLSE, ana sayfaya yönlendir
     if (user && !isAdmin && pathname !== '/admin/login') {
       router.push('/');
       return;
     }
   }, [user, isAdmin, loading, router, pathname]);
 
-  // Kimlik doğrulama durumu belirlenirken genel bir yükleyici göster
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -53,13 +50,10 @@ export default function AdminLayout({
     );
   }
 
-  // Giriş sayfasındaysa, sadece çocukları (giriş formunu) render et
-  // Yukarıdaki useEffect, zaten giriş yapılmışsa yönlendirmeyi halleder.
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
   
-  // Kullanıcı admin değilse ve giriş sayfasında değilse, yönlendirilirken bir yükleyici göster.
   if (!isAdmin) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -68,8 +62,6 @@ export default function AdminLayout({
     );
   }
   
-  // Buradaysak, kullanıcı bir admindir ve bir admin sayfasındadır.
-  // Tam admin düzenini göster.
   const handleSignOut = async () => {
     await signOut(auth);
     router.push('/admin/login');
@@ -81,11 +73,11 @@ export default function AdminLayout({
         <div className="container flex h-16 items-center">
             <Link href="/admin" className="mr-6 flex items-center gap-2">
                 <Logo className="h-8 w-8 text-primary" />
-                <span className="font-bold sm:inline-block font-headline">Rota Salihli - Admin</span>
+                <span className="font-bold sm:inline-block font-headline uppercase tracking-tight">Rota Dijital - Admin</span>
             </Link>
             <div className="flex flex-1 items-center justify-end gap-2">
-                <Button variant="outline" onClick={handleSignOut}>
-                    <LogOut className="mr-2" />
+                <Button variant="outline" size="sm" onClick={handleSignOut} className="rounded-xl font-bold">
+                    <LogOut className="mr-2 h-4 w-4" />
                     Çıkış Yap
                 </Button>
             </div>
