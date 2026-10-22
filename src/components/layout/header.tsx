@@ -33,7 +33,7 @@ export function Header() {
     { href: '/rotalar', label: t('header.routes') },
     { href: '/hikayeler', label: t('header.stories') },
     { href: '/lezzetler', label: t('header.cuisine') },
-    { href: '/ziyaretci-defteri', label: t('guestbook.title') },
+    { href: '/ziyaretci-defteri', label: t('header.guestbook') },
     { href: '/cevremde-ne-var', label: t('header.nearby') },
   ];
 

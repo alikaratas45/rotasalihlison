@@ -1,4 +1,3 @@
-
 {
     "header": {
         "home": "Ana Sayfa",
@@ -6,6 +5,7 @@
         "routes": "Rotalar",
         "stories": "Hikayeler",
         "cuisine": "Lezzetler",
+        "guestbook": "Ziyaretçi Defteri",
         "nearby": "Yakındakiler",
         "qrScanner": "QR Okuyucu",
         "audioGuide": "Sesli Rehber"
