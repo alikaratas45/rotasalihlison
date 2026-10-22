@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { LanguageProvider } from '@/context/language-context';
 import { ThemeProvider } from '@/providers/theme-provider';
@@ -6,7 +7,7 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Rota Salihli',
+  title: 'Rota Salihli - Salihli Belediyesi',
   description: "Sardes'in mirası, paranın merkezi",
   manifest: '/manifest.json',
   icons: {

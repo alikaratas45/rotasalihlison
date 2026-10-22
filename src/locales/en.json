@@ -12,7 +12,7 @@
     },
     "guestbook": {
         "title": "Guestbook",
-        "diaryTitle": "Travel Diary",
+        "diaryTitle": "Salihli Diary",
         "description": "Share your experiences and discover messages from other visitors.",
         "leaveMessage": "Leave a Message",
         "namePlaceholder": "Your Name (Optional)",
@@ -26,21 +26,21 @@
         "noFeedback": "No messages yet. Be the first to write!"
     },
     "footer": {
-        "about": "Rota Digital is an independent guide to discover the historical, cultural and natural beauties of the region.",
-        "copyright": "All rights reserved.",
+        "about": "Rota Salihli is a digital guide prepared by Salihli Municipality to discover historical and cultural riches.",
+        "copyright": "Salihli Municipality. All rights reserved.",
         "links": "Links",
         "contact": "Contact",
         "totalVisitors": "Total Visitors"
     },
     "splash": {
-        "slogan": "Heritage of History, Center of Culture"
+        "slogan": "Heritage of Sardis, Center of Money"
     },
     "home": {
-        "heroTitle": "Explore the City",
-        "heroSubtitle": "Digital Guide to Ancient Lands",
+        "heroTitle": "Explore Salihli",
+        "heroSubtitle": "Heritage of Sardis, Center of Money",
         "heroDescription": "Discover the heritage of history and the center of culture with us on these ancient lands.",
         "getStarted": "View All Places",
-        "aboutSalihli": "About the Area",
+        "aboutSalihli": "About Salihli",
         "experienceTitle": "Daily Adventure",
         "experienceSubtitle": "Choose among different experiences, personalize your adventure.",
         "historyTrip": "Journey to History",
@@ -55,8 +55,8 @@
         "stops_plural": "Stops"
     },
     "about": {
-        "title": "History and Culture",
-        "content": "The history of this region has a deep heritage stretching from ancient times to the present. These lands, bearing the traces of many civilizations from Lydians to Romans, Ottomans to the present, have been a strategic and cultural center throughout history."
+        "title": "History of Salihli",
+        "content": "The history of Salihli begins with the ancient city of Sardis (SART). It was the capital of the Lydian Kingdom where money was first minted."
     },
     "actions": {
         "seeDetails": "See Details →",
@@ -77,26 +77,26 @@
     },
     "places": {
         "title": "Discover All Places",
-        "description": "Explore all the historical, natural, and cultural riches that we offer.",
-        "mapSearchQuery": "Tourist attractions",
+        "description": "Explore all the historical, natural, and cultural riches of Salihli.",
+        "mapSearchQuery": "Salihli, tourist attractions",
         "notFoundTitle": "Place Not Found",
         "notFoundDescription": "The place you are looking for does not exist."
     },
     "history": {
         "title": "Journey to History",
-        "description": "Discover a rich historical heritage stretching from ancient times to the present day."
+        "description": "Discover a rich historical heritage from Lydians to the present day."
     },
     "nature": {
         "title": "Nature and Peace",
-        "description": "Rest your soul in natural beauties."
+        "description": "Rest your soul in Salihli's natural beauties."
     },
     "shopping": {
         "title": "Shopping Stops",
-        "description": "Discover shopping spots from local markets to modern stores."
+        "description": "Discover local markets and modern stores."
     },
     "stories": {
         "title": "Stories and Legends",
-        "description": "Explore the myths and tales that have shaped these ancient lands for millennia.",
+        "description": "Explore the myths and tales that have shaped Salihli for millennia.",
         "notFoundTitle": "Story Not Found",
         "notFoundDescription": "The story you are looking for does not exist.",
         "by": "By:",
@@ -121,7 +121,7 @@
     },
     "cuisine": {
         "title": "Flavor Stops",
-        "description": "Discover the local flavors.",
+        "description": "Discover the world-famous flavors of Salihli.",
         "famousTitle": "Famous Flavor",
         "allRestaurantsTitle": "All Restaurants",
         "allRestaurantsDescription": "Click to explore on map.",
@@ -137,7 +137,7 @@
     },
     "bicycleRoutes": {
         "title": "Bicycle Routes",
-        "description": "Discover bicycle tracks and paths.",
+        "description": "Discover bicycle tracks in Salihli.",
         "availableRoutes": "Available Routes",
         "routeMap": "Route Map",
         "distanceLabel": "Distance:",
@@ -158,7 +158,7 @@
     },
     "survey": {
         "title": "Rate Your Experience",
-        "description": "Since you are near this place, you can provide feedback.",
+        "description": "As Salihli Municipality, we care about your feedback.",
         "cleanliness": "Cleanliness and Order",
         "accessibility": "Ease of Accessibility",
         "satisfaction": "Overall Satisfaction",
@@ -170,7 +170,7 @@
         "submitButton": "Send Feedback",
         "updateButton": "Update Feedback",
         "thankYouTitle": "Thank You!",
-        "thankYouDescription": "Your feedback has been successfully received.",
+        "thankYouDescription": "Your feedback will help us improve Salihli.",
         "alreadySubmitted": "You have already provided feedback.",
         "editButton": "Edit",
         "errorTitle": "Missing Info",
@@ -201,25 +201,25 @@
     },
     "brochures": {
         "title": "Digital Brochures",
-        "description": "Examine our digital promotional materials."
+        "description": "Materials prepared by Salihli Municipality."
     },
     "accommodation": {
         "title": "Accommodation",
         "description": "Comfortable facilities for your stay."
     },
     "legal": {
-        "cookieWarning": "We use cookies to improve your experience.",
+        "cookieWarning": "As Salihli Municipality, we use cookies to improve your experience.",
         "kvkkLink": "Privacy Policy",
         "details": "Details",
         "accept": "Accept",
         "kvkkTitle": "Privacy Policy",
-        "kvkkIntro": "At Rota Digital, we care about your data security.",
+        "kvkkIntro": "At Rota Salihli, we care about your data security.",
         "section1Title": "Data Management",
         "section1Text": "Your data is processed to improve the local tourism experience.",
         "section2Title": "Purpose",
         "section2Text": "Collected data is only used for anonymous stats and feedback management.",
         "section3Title": "Your Rights",
-        "section3Text": "You have the right to request deletion of your data.",
+        "section3Text": "You can contact Salihli Municipality to exercise your rights under Law No. 6698.",
         "footerNote": "By using this site, you agree to our policies."
     }
 }

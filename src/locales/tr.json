@@ -12,8 +12,8 @@
     },
     "guestbook": {
         "title": "Ziyaretçi Defteri",
-        "description": "Şehir deneyimlerinizi paylaşın, diğer ziyaretçilerin mesajlarını keşfedin.",
-        "diaryTitle": "Gezi Günlüğüm",
+        "description": "Salihli deneyimlerinizi paylaşın, diğer ziyaretçilerin mesajlarını keşfedin.",
+        "diaryTitle": "Salihli Günlüğüm",
         "leaveMessage": "Bir Mesaj Bırakın",
         "namePlaceholder": "İsminiz (Opsiyonel)",
         "messagePlaceholder": "Deneyiminizi veya mesajınızı buraya yazın...",
@@ -26,21 +26,21 @@
         "noFeedback": "Henüz mesaj yazılmamış. İlk yazan siz olun!"
     },
     "footer": {
-        "about": "Rota Dijital, bölgenin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bağımsız bir dijital rehberdir.",
-        "copyright": "Tüm hakları saklıdır.",
+        "about": "Rota Salihli, Salihli Belediyesi tarafından kentin tarihi, kültürel ve doğal güzelliklerini keşfetmeniz için hazırlanmış bir dijital rehberdir.",
+        "copyright": "Salihli Belediyesi. Tüm hakları saklıdır.",
         "links": "Bağlantılar",
         "contact": "İletişim",
         "totalVisitors": "Toplam Ziyaretçi"
     },
     "splash": {
-        "slogan": "Tarihin Mirası, Kültürün Merkezi"
+        "slogan": "Sardes'in Mirası, Paranın Merkezi"
     },
     "home": {
-        "heroTitle": "Şehri Keşfet",
-        "heroSubtitle": "Kadim Toprakların Dijital Rehberi",
+        "heroTitle": "Salihli'yi Keşfet",
+        "heroSubtitle": "Sardes'in Mirası, Paranın Merkezi",
         "heroDescription": "Tarihin mirası ve kültürün merkezi olan bu toprakları bizimle keşfedin.",
         "getStarted": "Tüm Gezilecek Yerler",
-        "aboutSalihli": "Şehir Hakkında",
+        "aboutSalihli": "Salihli Hakkında",
         "experienceTitle": "Bir Günlük Serüven",
         "experienceSubtitle": "Farklı deneyimler arasından seçimini yap, maceranı kişiselleştir.",
         "historyTrip": "Tarihe Yolculuk",
@@ -49,14 +49,14 @@
         "aroundMe": "Çevremde Ne Var?",
         "shopping": "Alışveriş",
         "thematicRoutesTitle": "Tematik Rotalar",
-        "thematicRoutesSubtitle": "Bölgenin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
+        "thematicRoutesSubtitle": "Salihli'nin zenginliklerini özel olarak hazırlanmış rotalarla keşfedin.",
         "allRoutes": " Tüm Rotaları Gör",
         "stops": "Durak",
         "stops_plural": "Durak"
     },
     "about": {
-        "title": "Tarih ve Kültür",
-        "content": "Bu bölgenin tarihi, antik çağlardan günümüze uzanan derin bir mirasa sahiptir. Lidyalılardan Romalılara, Osmanlılardan günümüze kadar pek çok medeniyetin izlerini taşıyan bu topraklar, tarihin her döneminde stratejik ve kültürel bir merkez olmuştur."
+        "title": "Salihli'nin Tarihi",
+        "content": "Salihli'nin tarihini başlatan Antik Sardes (SART) kenti, Gediz havzasında, Sart Çayı kıyısında ve Bozdağ'ın kuzey yamaçları üzerinde kurulmuştur. M.Ö. 7. ve 6. yüzyıllarda Lidya Devleti'nin görkemli başkenti olan Sardes, tarihte paranın ilk basıldığı yer olarak bilinir. Salihli, tarihin her döneminde stratejik ve kültürel bir merkez olmuştur."
     },
     "actions": {
         "seeDetails": "Detayları Gör →",
@@ -77,18 +77,18 @@
     },
     "places": {
         "title": "Tüm Yerleri Keşfet",
-        "description": "Bölgenin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin.",
-        "mapSearchQuery": "Turistik yerler",
+        "description": "Salihli'nin sunduğu tüm tarihi, doğal ve kültürel zenginlikleri keşfedin.",
+        "mapSearchQuery": "Salihli, Manisa, Türkiye, turistik yerler",
         "notFoundTitle": "Yer Bulunamadı",
         "notFoundDescription": "Aradığınız yer mevcut değil."
     },
     "history": {
         "title": "Tarihe Yolculuk",
-        "description": "Antik çağlardan günümüze uzanan zengin bir tarih mirasını keşfedin."
+        "description": "Lidya Krallığı'ndan günümüze uzanan zengin bir tarih mirasını keşfedin."
     },
     "nature": {
         "title": "Doğa ve Huzur",
-        "description": "Doğal güzellikler içinde ruhunuzu dinlendirin."
+        "description": "Salihli'nin doğal güzellikleri içinde ruhunuzu dinlendirin."
     },
     "shopping": {
         "title": "Alışveriş Durakları",
@@ -96,7 +96,7 @@
     },
     "stories": {
         "title": "Hikayeler ve Efsaneler",
-        "description": "Bu kadim toprakları binlerce yıldır şekillendiren mitleri keşfedin.",
+        "description": "Salihli'yi binlerce yıldır şekillendiren mitleri keşfedin.",
         "notFoundTitle": "Hikaye Bulunamadı",
         "notFoundDescription": "Aradığınız hikaye mevcut değil.",
         "by": "Yazan:",
@@ -112,7 +112,7 @@
     },
     "bicycleRoutes": {
         "title": "Bisiklet Rotaları",
-        "description": "Bölgedeki bisiklet parkurlarını keşfedin.",
+        "description": "Salihli'deki profesyonel bisiklet parkurlarını keşfedin.",
         "availableRoutes": "Mevcut Rotalar",
         "routeMap": "Rota Haritası",
         "distanceLabel": "Mesafe:",
@@ -150,7 +150,7 @@
     },
     "cuisine": {
         "title": "Lezzet Durakları",
-        "description": "Bölgenin ünlü lezzetlerini keşfedin.",
+        "description": "Salihli'nin dünyaca ünlü lezzetlerini keşfedin.",
         "famousTitle": "Meşhur Lezzet",
         "allRestaurantsTitle": "Tüm Restaurantlar",
         "allRestaurantsDescription": "Harita üzerinde keşfetmek için butona tıklayın.",
@@ -158,7 +158,7 @@
     },
     "survey": {
         "title": "Deneyiminizi Puanlayın",
-        "description": "Mekana yakın olduğunuz için geri bildirim verebilirsiniz.",
+        "description": "Salihli Belediyesi olarak görüşlerinize önem veriyoruz. Lütfen geri bildirim verin.",
         "cleanliness": "Temizlik ve Düzen",
         "accessibility": "Ulaşım Kolaylığı",
         "satisfaction": "Genel Memnuniyet",
@@ -170,7 +170,7 @@
         "submitButton": "Geri Bildirimi Gönder",
         "updateButton": "Geri Bildirimi Güncelle",
         "thankYouTitle": "Teşekkür Ederiz!",
-        "thankYouDescription": "Geri bildiriminiz başarıyla alındı.",
+        "thankYouDescription": "Geri bildiriminiz Salihli'yi iyileştirmemize yardımcı olacaktır.",
         "alreadySubmitted": "Daha önce bildirimde bulundunuz.",
         "editButton": "Düzenle",
         "errorTitle": "Eksik Bilgi",
@@ -202,25 +202,25 @@
     },
     "brochures": {
         "title": "Dijital Yayınlar",
-        "description": "Bölgeyi tanıtan dijital broşürleri ve yayınları inceleyebilirsiniz."
+        "description": "Salihli Belediyesi tarafından hazırlanan tanıtım materyalleri."
     },
     "accommodation": {
         "title": "Konaklama",
         "description": "Seyahatinizde konaklayabileceğiniz konforlu tesisler."
     },
     "legal": {
-        "cookieWarning": "Deneyiminizi geliştirmek için yasal düzenlemelere uygun çerezler kullanıyoruz.",
-        "kvkkLink": "Gizlilik Politikası",
+        "cookieWarning": "Salihli Belediyesi olarak deneyiminizi geliştirmek için yasal düzenlemelere uygun çerezler kullanıyoruz.",
+        "kvkkLink": "KVKK Politikası",
         "details": "Detaylar",
         "accept": "Kabul Ediyorum",
-        "kvkkTitle": "Gizlilik Politikası",
-        "kvkkIntro": "Rota Dijital olarak verilerinizin güvenliğine önem veriyoruz.",
+        "kvkkTitle": "Kişisel Verilerin Korunması",
+        "kvkkIntro": "Salihli Belediyesi (Veri Sorumlusu) olarak verilerinizin güvenliğine önem veriyoruz.",
         "section1Title": "Veri Yönetimi",
         "section1Text": "Verileriniz, yerel turizm deneyimini iyileştirmek amacıyla işlenmektedir.",
         "section2Title": "İşleme Amacı",
         "section2Text": "Toplanan veriler sadece anonim istatistikler ve kullanıcı geri bildirimlerini yönetmek için kullanılır.",
         "section3Title": "Haklarınız",
-        "section3Text": "Verilerinizin silinmesini talep etme hakkına sahipsiniz.",
+        "section3Text": "6698 sayılı kanun kapsamında belediyemize başvurarak haklarınızı kullanabilirsiniz.",
         "footerNote": "Siteyi kullanmaya devam ederek politikalarımızı kabul etmiş sayılırsınız."
     }
 }

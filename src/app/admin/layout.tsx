@@ -73,7 +73,10 @@ export default function AdminLayout({
         <div className="container flex h-16 items-center">
             <Link href="/admin" className="mr-6 flex items-center gap-2">
                 <Logo className="h-8 w-8 text-primary" />
-                <span className="font-bold sm:inline-block font-headline uppercase tracking-tight">Rota Dijital - Admin</span>
+                <div className="flex flex-col">
+                  <span className="font-bold sm:inline-block font-headline uppercase tracking-tight leading-none">Rota Salihli</span>
+                  <span className="text-[8px] font-black opacity-50 uppercase tracking-widest">Salihli Belediyesi</span>
+                </div>
             </Link>
             <div className="flex flex-1 items-center justify-end gap-2">
                 <Button variant="outline" size="sm" onClick={handleSignOut} className="rounded-xl font-bold">
