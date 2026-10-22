@@ -74,7 +74,7 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-end justify-center">
              <div className="relative h-20 w-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
                 <Image 
-                    src="/salihli-logo.png" 
+                    src="/salihli.png" 
                     alt="Salihli Belediyesi Logo" 
                     fill 
                     style={{ objectFit: 'contain' }}
