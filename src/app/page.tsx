@@ -74,9 +74,10 @@ export default function Home() {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 md:p-12">
           <div className="max-w-4xl space-y-6 flex flex-col items-center">
             
+            {/* SALİHLİ BELEDİYESİ LOGO VE ÜST BAŞLIK */}
             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-xl px-5 py-2 rounded-full border border-white/20 animate-in fade-in slide-in-from-top-4 duration-700">
                 <div className="relative h-6 w-6">
-                    <Image src="/salihli-logo.png" alt="Salihli Logo" fill style={{ objectFit: 'contain' }} />
+                    <Image src="/salihli-logo.png" alt="Salihli Belediyesi" fill style={{ objectFit: 'contain' }} priority />
                 </div>
                 <span className="text-[10px] md:text-xs font-black tracking-[0.2em] uppercase text-white">
                     {t('home.heroSubtitle')}

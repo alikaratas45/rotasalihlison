@@ -78,7 +78,7 @@ export function Footer() {
                     alt="Salihli Belediyesi Logo" 
                     fill 
                     style={{ objectFit: 'contain' }}
-                    onError={(e: any) => e.target.style.display = 'none'}
+                    onError={(e: any) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
              </div>
           </div>

@@ -50,6 +50,10 @@ export function Header() {
             <div className="bg-white p-1 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-500 border border-primary/5">
               <Logo className="h-8 w-8 md:h-10 md:w-10" />
             </div>
+            <div className="ml-3 hidden sm:flex flex-col">
+              <span className="font-bold text-sm md:text-base font-headline leading-none uppercase tracking-tight">Rota Salihli</span>
+              <span className="text-[8px] md:text-[9px] font-black opacity-60 uppercase tracking-widest leading-none mt-1">Salihli Belediyesi</span>
+            </div>
           </Link>
           <Link 
             href="/" 
@@ -88,10 +92,12 @@ export function Header() {
             <SheetContent side="right" className="w-[300px] border-l-primary/10 p-0">
                 <SheetTitle className="sr-only">Menu</SheetTitle>
                 <div className="flex flex-col h-full bg-background">
-                  <div className="p-6 border-b bg-primary/5">
-                      <Link href="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-                        <Logo className="h-12 w-12" />
-                      </Link>
+                  <div className="p-6 border-b bg-primary/5 flex items-center gap-3">
+                      <Logo className="h-10 w-10" />
+                      <div className="flex flex-col">
+                        <span className="font-bold text-base font-headline leading-none">Rota Salihli</span>
+                        <span className="text-[10px] font-black opacity-50 uppercase tracking-wider">Salihli Belediyesi</span>
+                      </div>
                   </div>
                   <nav className="flex-grow overflow-y-auto py-6 px-4">
                     <div className="space-y-1">
