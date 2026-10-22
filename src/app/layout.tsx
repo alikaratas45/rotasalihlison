@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { LanguageProvider } from '@/context/language-context';
 import { ThemeProvider } from '@/providers/theme-provider';
@@ -11,9 +10,9 @@ export const metadata: Metadata = {
   description: "Sardes'in mirası, paranın merkezi",
   manifest: '/manifest.json',
   icons: {
-    icon: '/logos.png',
-    shortcut: '/logos.png',
-    apple: '/logos.png',
+    icon: '/logos.png?v=2',
+    shortcut: '/logos.png?v=2',
+    apple: '/logos.png?v=2',
   },
 };
 
@@ -23,15 +22,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="tr" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
-        <link rel="icon" href="/logos.png" type="image/png" sizes="any" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet"
+        />
+
+        <link
+          rel="icon"
+          href="/logos.png?v=2"
+          type="image/png"
+          sizes="32x32"
+        />
+
+        <link
+          rel="apple-touch-icon"
+          href="/logos.png?v=2"
+        />
       </head>
+
       <body className="font-body antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+        >
           <LanguageProvider>
             <FirebaseClientProvider>
               <AppWrapper>
