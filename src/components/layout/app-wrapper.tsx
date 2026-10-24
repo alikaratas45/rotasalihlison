@@ -57,7 +57,7 @@ export default function AppWrapper({
       <div 
         onClick={handleInteraction} 
         onTouchStart={handleInteraction}
-        className="min-h-screen flex flex-col"
+        className="min-h-dvh flex flex-col overflow-x-hidden"
       >
         {mounted && (
           <>

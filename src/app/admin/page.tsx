@@ -531,7 +531,7 @@ export default function AdminPage() {
                                                         checked={routeForm.watch('stops')?.includes(p.id)}
                                                         onCheckedChange={(checked) => {
                                                             const current = routeForm.getValues('stops') || [];
-                                                            routeForm.setValue('stops', checked ? [...current, p.id] : current.filter(id => id !== p.id));
+                                                            routeForm.setValue('stops', checked ? [...current, p.id] : current.filter((id: string) => id !== p.id));
                                                         }}
                                                     />
                                                     <label htmlFor={`stop-${p.id}`} className="text-xs font-medium cursor-pointer truncate">{p.name.tr}</label>
