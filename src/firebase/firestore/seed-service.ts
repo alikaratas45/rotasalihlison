@@ -74,7 +74,7 @@ export async function undoLastOperation(firestore: Firestore) {
   await deleteDoc(snap.docs[0].ref);
 }
 
-async function seedCollection<T extends { id?: string }>(
+async function seedCollection<T extends object>(
   firestore: Firestore,
   collectionName: string,
   staticData: T[],
@@ -110,7 +110,7 @@ async function seedCollection<T extends { id?: string }>(
         
         // Statik veri (koddaki) veritabanındaki verinin üzerine yazılır (UPDATE modu için)
         // Ancak admin panelinden girilmiş olabilecek 'subPoints' gibi kompleks yapıları korumaya çalışırız
-        let mergedData = { ...currentData, ...staticPayload };
+        let mergedData = { ...(currentData || {}), ...staticPayload };
         
         await setDoc(docRef, mergedData, { merge: true });
         updated++;

@@ -8,6 +8,7 @@ import fr from '@/locales/fr.json';
 import de from '@/locales/de.json';
 import ja from '@/locales/ja.json';
 import { type Language } from '@/lib/language-config';
+export type { Language };
 
 interface LanguageContextType {
   language: Language;

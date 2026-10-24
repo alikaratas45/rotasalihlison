@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useAuth, useFirestore } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, type DocumentReference } from 'firebase/firestore';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import type { UserProfile } from '@/lib/definitions';
 
@@ -12,7 +12,7 @@ export function useUser() {
   const firestore = useFirestore();
   const [user, authLoading, authError] = useAuthState(auth);
 
-  const userDocRef = user ? doc(firestore, `users/${user.uid}`) : null;
+  const userDocRef = user ? (doc(firestore, `users/${user.uid}`) as DocumentReference<UserProfile>) : null;
   const [profile, profileLoading, profileError] = useDocumentData<UserProfile>(userDocRef);
 
   const [isAdmin, setIsAdmin] = useState(false);

@@ -36,7 +36,7 @@ export function LegalConsent() {
   return (
     <>
       {/* Çerez ve KVKK Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:p-6 bg-background/95 backdrop-blur-xl border-t shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] animate-in slide-in-from-bottom-full duration-700">
+      <div className="fixed bottom-0 left-0 right-0 z-[100] p-3 sm:p-4 md:p-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-background/95 backdrop-blur-xl border-t shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] animate-in slide-in-from-bottom-full duration-700">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-left">
             <div className="hidden sm:flex p-3 bg-primary/10 rounded-2xl text-primary">

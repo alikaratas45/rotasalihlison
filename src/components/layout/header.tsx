@@ -39,10 +39,10 @@ export function Header() {
 
   return (
     <header className={cn(
-      "sticky top-0 z-50 w-full transition-all duration-500",
+      "sticky top-0 z-50 w-full transition-all duration-500 pt-[env(safe-area-inset-top)] box-border",
       scrolled 
-        ? "h-16 bg-background/95 backdrop-blur-xl border-b shadow-md" 
-        : "h-20 bg-background/90 backdrop-blur-md border-b border-primary/10 shadow-sm"
+        ? "h-[calc(3.5rem+env(safe-area-inset-top))] md:h-[calc(4rem+env(safe-area-inset-top))] bg-background/95 backdrop-blur-xl border-b shadow-md" 
+        : "h-[calc(3.5rem+env(safe-area-inset-top))] md:h-[calc(5rem+env(safe-area-inset-top))] bg-background/90 backdrop-blur-md border-b border-primary/10 shadow-sm"
     )}>
       <div className="container h-full flex items-center justify-between">
         <div className="flex items-center gap-3 shrink-0">

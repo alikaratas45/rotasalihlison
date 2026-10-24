@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* --- HERO SECTION --- */}
-      <section className="relative h-[80vh] md:h-[90vh] w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden h-[calc(100dvh-3.5rem-env(safe-area-inset-top))] md:h-[calc(100dvh-5rem-env(safe-area-inset-top))]">
         <Image 
           src="https://i.imgur.com/2deYxHC.png" 
           alt="Ancient City" 
@@ -71,43 +71,43 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
         
-        <div className="absolute inset-0 flex flex-col items-center p-6 md:p-12">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-[clamp(0.5rem,2.5vmin,1.5rem)] px-4 py-3 sm:p-6 md:p-12 pb-20 md:pb-24">
           
           {/* ÜSTTE ORTADA VE BÜYÜK LOGO BÖLÜMÜ */}
-          <div className="mt-4 md:mt-10 flex flex-col items-center gap-6 animate-in fade-in slide-in-from-top-8 duration-1000 shrink-0">
-            <div className="relative h-32 w-32 md:h-52 md:w-52 drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-              <Image src="/salihli.png" alt="Salihli Belediyesi" fill style={{ objectFit: 'contain' }} priority />
+          <div className="flex flex-col items-center gap-[clamp(0.5rem,2vmin,1.5rem)] animate-in fade-in slide-in-from-top-8 duration-1000 shrink-0">
+            <div className="relative h-[clamp(5.5rem,22vmin,11rem)] w-[clamp(5.5rem,22vmin,11rem)] drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
+              <Image src="/salihli.png" alt="Salihli Belediyesi" fill style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 22vmin, 176px" priority />
             </div>
-            <div className="bg-black/30 backdrop-blur-xl px-8 py-2 rounded-full border border-white/20 shadow-2xl">
-                <span className="text-[10px] md:text-sm font-black tracking-[0.3em] uppercase text-white whitespace-nowrap">
+            <div className="bg-black/30 backdrop-blur-xl px-4 py-1.5 sm:px-8 sm:py-2 rounded-full border border-white/20 shadow-2xl max-w-[min(100%,24rem)]">
+                <span className="block text-center text-[clamp(0.55rem,2.4vw,0.875rem)] font-black tracking-[0.12em] sm:tracking-[0.3em] uppercase text-white leading-tight">
                     {t('home.heroSubtitle')}
                 </span>
             </div>
           </div>
           
           {/* ANA İÇERİK BÖLÜMÜ */}
-          <div className="max-w-4xl flex-1 flex flex-col items-center justify-center text-center space-y-8">
+          <div className="max-w-4xl w-full flex flex-col items-center justify-center text-center gap-[clamp(0.5rem,2.5vmin,2rem)]">
             
-            <h1 className="text-4xl md:text-8xl font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
+            <h1 className="text-[clamp(1.75rem,8vw,5.5rem)] font-black font-headline text-white text-shadow-strong tracking-tighter leading-none animate-in fade-in slide-in-from-bottom-6 duration-1000">
               {t('home.heroTitle')}
             </h1>
             
-            <p className="text-lg md:text-2xl text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic">
+            <p className="text-[clamp(0.875rem,3.4vw,1.5rem)] text-white/95 font-medium max-w-2xl mx-auto drop-shadow-2xl animate-in fade-in duration-1000 delay-300 italic px-1">
               "{t('home.heroDescription')}"
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-4 animate-in fade-in zoom-in-95 duration-700 delay-500">
-              <Button asChild size="lg" className="h-14 px-10 rounded-2xl text-base font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white">
-                <Link href="/yerler" className="flex items-center gap-2">
-                  <Compass className="h-6 w-6" />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-5 w-full max-w-sm sm:max-w-none pt-1 animate-in fade-in zoom-in-95 duration-700 delay-500">
+              <Button asChild size="lg" className="h-12 sm:h-14 px-6 sm:px-10 rounded-2xl text-sm sm:text-base font-black shadow-2xl hover:scale-105 transition-all bg-primary text-white w-full sm:w-auto">
+                <Link href="/yerler" className="flex items-center justify-center gap-2">
+                  <Compass className="h-5 w-5 sm:h-6 sm:w-6" />
                   {t('home.getStarted')}
                 </Link>
               </Button>
               
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl text-base font-black bg-black/50 backdrop-blur-xl text-white hover:bg-black/70 border-white/30 shadow-2xl transition-all">
-                    <Info className="mr-2 h-6 w-6 text-accent" />
+                  <Button size="lg" variant="outline" className="h-12 sm:h-14 px-6 sm:px-10 rounded-2xl text-sm sm:text-base font-black bg-black/50 backdrop-blur-xl text-white hover:bg-black/70 border-white/30 shadow-2xl transition-all w-full sm:w-auto">
+                    <Info className="mr-2 h-5 w-5 sm:h-6 sm:w-6 text-accent" />
                     {t('home.aboutSalihli')}
                   </Button>
                 </DialogTrigger>

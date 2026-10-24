@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { LanguageProvider } from '@/context/language-context';
 import { ThemeProvider } from '@/providers/theme-provider';
 import AppWrapper from '@/components/layout/app-wrapper';
@@ -14,6 +14,14 @@ export const metadata: Metadata = {
     shortcut: '/logos.png?v=2',
     apple: '/logos.png?v=2',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: '#2D5A27',
 };
 
 export default function RootLayout({
