@@ -11,6 +11,8 @@ import { incrementVisitorCount } from '@/firebase/firestore/stats-service';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { googleMapsApiKey } from '@/lib/config';
 
+const GOOGLE_MAPS_LIBRARIES = ['places', 'marker', 'geometry'];
+
 export default function AppWrapper({
   children,
 }: {
@@ -53,7 +55,11 @@ export default function AppWrapper({
   }, []);
 
   return (
-    <APIProvider apiKey={googleMapsApiKey}>
+    <APIProvider 
+      apiKey={googleMapsApiKey} 
+      libraries={GOOGLE_MAPS_LIBRARIES}
+      onError={(err) => console.warn('Google Maps APIProvider Error:', err)}
+    >
       <div 
         onClick={handleInteraction} 
         onTouchStart={handleInteraction}

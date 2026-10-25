@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Map, useMap, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps';
+import { Map, useMap, AdvancedMarker, Pin, InfoWindow, useApiLoadingStatus, APILoadingStatus } from '@vis.gl/react-google-maps';
 import type { Place } from '@/lib/definitions';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PlacesMapProps {
@@ -27,11 +27,39 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
 }) => {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const apiStatus = useApiLoadingStatus();
+
+  // Google Maps API yüklenemezse veya yetkilendirme hatası verirse fallback göster
+  if (apiStatus === APILoadingStatus.AUTH_FAILURE || apiStatus === APILoadingStatus.FAILED) {
+    const firstCoord = places.find(p => p.coordinates?.lat)?.coordinates;
+    const fallbackUrl = firstCoord 
+      ? `https://www.google.com/maps/search/?api=1&query=${firstCoord.lat},${firstCoord.lng}`
+      : 'https://www.google.com/maps/place/Salihli,+Manisa';
+
+    return (
+      <div className={cn("relative overflow-hidden rounded-xl bg-slate-50 border border-slate-200 h-full w-full flex flex-col items-center justify-center p-6 text-center", className)}>
+        <AlertTriangle className="h-10 w-10 text-amber-500 mb-3" />
+        <h4 className="font-bold text-slate-800 text-sm mb-1">Google Haritalar'a Bağlanılamadı</h4>
+        <p className="text-xs text-slate-500 max-w-sm mb-4 leading-relaxed">
+          Harita servisi yüklenirken bir bağlantı sorunu oluştu. Konumları ve rotayı doğrudan Google Haritalar üzerinde açabilirsiniz.
+        </p>
+        <a 
+          href={fallbackUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white text-xs font-bold rounded-xl shadow-md hover:bg-primary/90 transition-all hover:scale-105"
+        >
+          <ExternalLink className="h-4 w-4" />
+          Google Haritalar'da Görüntüle
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-slate-100 h-full w-full", className)}>
       <Map
-        mapId="ROTA_SALIHLI_MAP_ID"
+        mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID"}
         defaultCenter={{ lat: 38.48, lng: 28.14 }}
         defaultZoom={12}
         gestureHandling={'greedy'}
@@ -85,11 +113,21 @@ export const PlacesMap: React.FC<PlacesMapProps> = ({
             position={selectedPlace.coordinates}
             onCloseClick={() => setSelectedPlace(null)}
           >
-            <div className="p-2 text-slate-900">
-              <h3 className="font-bold text-sm">{selectedPlace.name.tr}</h3>
-              <a href={`/yerler/${selectedPlace.slug.tr}`} className="text-xs text-primary hover:underline mt-1 block">
-                Detayları Gör →
-              </a>
+            <div className="p-2.5 text-slate-900 min-w-[170px]">
+              <h3 className="font-bold text-sm mb-1">{selectedPlace.name.tr}</h3>
+              <div className="flex items-center justify-between gap-3 pt-2 border-t mt-2">
+                <a href={`/yerler/${selectedPlace.slug.tr}`} className="text-xs font-semibold text-primary hover:underline">
+                  Detaylar →
+                </a>
+                <a 
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPlace.coordinates.lat},${selectedPlace.coordinates.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded transition-colors inline-flex items-center gap-1"
+                >
+                  Yol Tarifi ↗
+                </a>
+              </div>
             </div>
           </InfoWindow>
         )}
@@ -134,7 +172,7 @@ const KmlAndDirectionsLayer = ({
   }, []);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || typeof window === 'undefined' || !window.google?.maps) return;
     cleanup();
 
     const bounds = new google.maps.LatLngBounds();
@@ -232,7 +270,7 @@ const drawDirections = (
   bounds: google.maps.LatLngBounds,
   rendererRef: React.MutableRefObject<google.maps.DirectionsRenderer | null>
 ) => {
-  if (!places || places.length < 2) return;
+  if (!places || places.length < 2 || typeof window === 'undefined' || !window.google?.maps) return;
 
   const directionsService = new google.maps.DirectionsService();
   const renderer = new google.maps.DirectionsRenderer({

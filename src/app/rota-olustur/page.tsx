@@ -117,7 +117,7 @@ export default function RotaOlusturPage() {
                 const destination = orderedSelectedPlaces[orderedSelectedPlaces.length - 1];
                 const destinationCoords = `${destination.coordinates.lat},${destination.coordinates.lng}`;
                 const waypoints = orderedSelectedPlaces.slice(0, -1).map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
-                mapsUrl += `&destination=${destinationCoords}&waypoints=${waypoints}`;
+                mapsUrl += `&destination=${destinationCoords}&waypoints=${encodeURIComponent(waypoints)}`;
             }
 
             window.open(mapsUrl, '_blank');
