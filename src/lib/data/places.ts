@@ -47,7 +47,7 @@ export const places: Place[] = [
         },
         category: 'history',
         coordinates: { lat: 38.488480, lng: 28.040289 },
-        imageUrl: 'https://i.imgur.com/l2YJCmK.jpeg',
+        imageUrl: '/images/places/gymnasium.jpeg',
         imageHint: 'ancient gymnasium',
         subPoints: [
             {

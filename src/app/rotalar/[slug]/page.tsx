@@ -121,7 +121,7 @@ export default function RouteDetailPage() {
         const waypoints = optimizedStops.slice(userLat !== undefined ? 0 : 1, -1);
         if (waypoints.length > 0) {
             const waypointsStr = waypoints.map(p => `${p.coordinates.lat},${p.coordinates.lng}`).join('|');
-            mapsUrl += `&waypoints=${waypointsStr}`;
+            mapsUrl += `&waypoints=${encodeURIComponent(waypointsStr)}`;
         }
 
         window.open(mapsUrl, '_blank');

@@ -133,6 +133,7 @@ function YerlerContent() {
                         alt={place.name[typedLanguage]}
                         data-ai-hint={place.imageHint || 'landmark'}
                         fill
+                        unoptimized
                         className="object-cover"
                         sizes="400px"
                         />
